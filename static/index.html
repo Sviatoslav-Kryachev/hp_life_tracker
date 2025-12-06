@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 🎯⏱️🏆 FAVICON -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='70' fill='%23333' font-weight='bold'%3E🎯⏱️%3C/text%3E%3C/svg%3E">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Иконки Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Свои стили -->
+    <link rel="stylesheet" href="style.css">
+
+    <title>HP Life Tracker</title>
+</head>
+
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header + Wallet -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl p-8 mb-8 shadow-2xl border border-white/50">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    <i class="fas fa-shield-alt mr-3"></i>HP Life Tracker
+                </h1>
+                <div id="wallet" class="text-right">
+                    <div class="text-2xl font-bold text-green-600 mb-1" id="balance">0 XP</div>
+                    <div class="text-lg text-gray-600">Уровень <span id="level">1</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Активности (левая колонка) -->
+            <div class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        <i class="fas fa-tasks mr-3 text-blue-500"></i>Активности
+                    </h2>
+                    <button onclick="loadActivities()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-xl transition-all duration-300 flex items-center gap-2">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Обновить</span>
+                    </button>
+                </div>
+
+                <!-- Список активностей -->
+                <div id="activities-list" class="space-y-4 mb-6"></div>
+
+                <!-- Новая активность -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-dashed border-blue-200">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">➕ Новая активность</h3>
+                    <form id="new-activity-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="activity-name" placeholder="Название активности" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                        <input type="number" id="xp-per-hour" placeholder="XP/час" value="60" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all">
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            <span>Создать</span>
+                        </button>
+                    </form>
+                    <p id="activity-message" class="text-sm mt-2 hidden"></p>
+                    <p id="activity-error" class="text-sm text-red-500 mt-2 hidden"></p>
+                </div>
+            </div>
+
+            <!-- Награды (правая колонка) -->
+            <!-- Награды (правая колонка) -->
+<div class="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">
+        <i class="fas fa-trophy mr-3 text-yellow-500"></i>Награды
+    </h2>
+
+    <!-- Список наград -->
+    <div id="rewards-list" class="space-y-4 mb-6"></div>
+
+    <!-- 📝 ФОРМА СОЗДАНИЯ НАГРАДЫ -->
+    <div class="mb-6 p-6 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 shadow-lg">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">➕ Создать награду</h3>
+        <form id="new-reward-form" class="space-y-4">
+            <input type="text" id="reward-name" placeholder="Название награды"
+                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition-all"
+                   required>
+            <input type="number" id="reward-cost" placeholder="Стоимость в XP" min="1"
+                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition-all"
+                   required>
+            <button type="submit"
+                    class="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white py-4 px-6 rounded-xl font-bold transition-all shadow-md hover:shadow-lg">
+                ➕ Создать награду
+            </button>
+        </form>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования активности -->
+    <div id="edit-activity-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">✏️ Редактировать активность</h3>
+                <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="edit-activity-form" class="space-y-4">
+                <input type="hidden" id="edit-activity-id">
+                <input type="text" id="edit-activity-name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                <input type="number" id="edit-xp-per-hour" placeholder="XP/час" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" min="1">
+                <input type="text" id="edit-activity-category" placeholder="Категория (опционально)" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all">
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fas fa-save"></i>
+                        Сохранить
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fas fa-times"></i>
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ✏️ МОДАЛКА РЕДАКТИРОВАНИЯ НАГРАДЫ -->
+    <div id="edit-reward-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">✏️ Редактировать награду</h3>
+                <button onclick="closeEditRewardModal()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+            </div>
+            <form id="edit-reward-form" class="space-y-4">
+                <input type="hidden" id="edit-reward-id">
+                <input type="text" id="edit-reward-name" placeholder="Название" class="w-full p-4 border-2 border-gray-200 rounded-xl" required>
+                <input type="number" id="edit-reward-cost" placeholder="XP стоимость" min="1" class="w-full p-4 border-2 border-gray-200 rounded-xl" required>
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl">Сохранить</button>
+                    <button type="button" onclick="closeEditRewardModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-xl">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно ручного ввода времени -->
+    <div id="manual-time-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">⏱️ Добавить время вручную</h3>
+                <button onclick="closeManualTimeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="manual-time-form" class="space-y-4">
+                <select id="manual-activity-select" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                    <option value="">Выберите активность</option>
+                </select>
+                <input type="number" id="manual-minutes" placeholder="Минут" min="1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i>
+                        Добавить
+                    </button>
+                    <button type="button" onclick="closeManualTimeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fas fa-times"></i>
+                        Отмена
+                    </button>
+                </div>
+                <div id="manual-time-preview" class="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-xl hidden"></div>
+            </form>
+        </div>
+    </div>
+<!-- Модальное окно логина -->
+<!--<div id="login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">-->
+<!--    <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50">-->
+<!--        <div class="flex justify-between items-center mb-6">-->
+<!--            <h3 class="text-2xl font-bold text-gray-800">🔐 Вход в систему</h3>-->
+<!--            <button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>-->
+<!--        </div>-->
+<!--        <form id="login-form" class="space-y-4">-->
+<!--            <input type="email" id="login-email" placeholder="Email"-->
+<!--                   class="w-full p-4 border-2 border-gray-200 rounded-xl" required>-->
+<!--            <input type="password" id="login-password" placeholder="Пароль"-->
+<!--                   class="w-full p-4 border-2 border-gray-200 rounded-xl" required>-->
+<!--            <div class="flex gap-3">-->
+<!--                <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl">-->
+<!--                    Войти-->
+<!--                </button>-->
+<!--                <button type="button" onclick="closeLoginModal()"-->
+<!--                        class="flex-1 bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-xl">-->
+<!--                    Отмена-->
+<!--                </button>-->
+<!--            </div>-->
+        </form>
+        <p class="text-sm text-gray-500 mt-4 text-center">
+            Нет аккаунта? <a href="#" onclick="showRegisterModal()" class="text-indigo-600 hover:underline">Зарегистрироваться</a>
+        </p>
+    </div>
+</div>
+    <!-- Логика фронтенда -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Удаляем старый .gitignore
+rm .gitignore
+
+# Создаем новый с правильным содержимым
+echo "# PyCharm
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+
+# Базы данных
+*.db
+*.sqlite3
+
+# Файлы окружения
+.env
+.env.local
+
+# Системные
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log" > .gitignore
