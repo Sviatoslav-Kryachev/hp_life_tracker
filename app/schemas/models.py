@@ -13,8 +13,7 @@ class UserCreate(UserBase):
 class UserOut(UserBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}
 
 # ----------------- TOKEN -----------------
 class Token(BaseModel):

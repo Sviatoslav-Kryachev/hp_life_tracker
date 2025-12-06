@@ -65,3 +65,14 @@ class TimerLog(Base):
     duration_minutes = Column(Float, default=0.0)
     user = relationship("User", back_populates="timer_logs")
     activity = relationship("Activity", back_populates="timer_logs")
+
+
+class RewardPurchase(Base):
+    """История покупок наград"""
+    __tablename__ = "reward_purchases"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    reward_name = Column(String, nullable=False)
+    xp_spent = Column(Float, default=0.0)
+    purchased_at = Column(DateTime, default=datetime.utcnow)
+    user = relationship("User", backref="purchases")

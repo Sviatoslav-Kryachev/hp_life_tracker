@@ -4,19 +4,17 @@
     box-sizing: border-box;
 }
 
-/* Базовый фон (его можно оставить, он просто перекроется tailwind-классом bg-gradient...) */
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
 }
 
-/* Контейнер на всякий случай (tailwind всё равно задаёт свои классы) */
 .container {
     max-width: 1200px;
 }
 
-/* Можно добавить лёгкую анимацию наведения для карточек активностей */
+/* Карточки активностей */
 .activity-card {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -24,3 +22,47 @@ body {
 .activity-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+/* Карточки наград */
+.reward-card {
+    animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Плавные переходы */
+input:focus {
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}

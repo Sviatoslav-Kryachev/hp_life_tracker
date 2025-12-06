@@ -11,12 +11,11 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     id: int
     email: str
-    username: Optional[str]
-    role: str
+    username: Optional[str] = None
 
-    model_config = ConfigDict(from_attributes=True)  # ✅ Pydantic v2 [web:11]
+    model_config = ConfigDict(from_attributes=True)
 
 
-class UserLogin(BaseModel):  # ✅ Добавили для auth
+class UserLogin(BaseModel):
     email: EmailStr
     password: str

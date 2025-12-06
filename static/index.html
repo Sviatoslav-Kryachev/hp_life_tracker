@@ -3,95 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 🎯⏱️🏆 FAVICON -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='70' fill='%23333' font-weight='bold'%3E🎯⏱️%3C/text%3E%3C/svg%3E">
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Иконки Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Свои стили -->
     <link rel="stylesheet" href="style.css">
-
     <title>HP Life Tracker</title>
 </head>
 
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <!-- Header + Wallet -->
-        <div class="bg-white/80 backdrop-blur-xl rounded-3xl p-8 mb-8 shadow-2xl border border-white/50">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    <i class="fas fa-shield-alt mr-3"></i>HP Life Tracker
+    
+    <!-- AUTH SECTION (показывается когда не залогинен) -->
+    <div id="auth-section" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white/90 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                    <i class="fas fa-shield-alt mr-2"></i>HP Life Tracker
                 </h1>
-                <div id="wallet" class="text-right">
-                    <div class="text-2xl font-bold text-green-600 mb-1" id="balance">0 XP</div>
-                    <div class="text-lg text-gray-600">Уровень <span id="level">1</span></div>
-                </div>
+                <p class="text-gray-600">Трекер активности и опыта</p>
             </div>
+
+            <!-- Табы Login/Register -->
+            <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
+                <button id="login-tab" onclick="showLoginForm()" class="flex-1 py-3 px-4 rounded-lg font-medium transition-all bg-white shadow text-indigo-600">
+                    Вход
+                </button>
+                <button id="register-tab" onclick="showRegisterForm()" class="flex-1 py-3 px-4 rounded-lg font-medium transition-all text-gray-500 hover:text-gray-700">
+                    Регистрация
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="login-email" placeholder="your@email.com"
+                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+                    <input type="password" id="login-password" placeholder="••••••••"
+                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white py-4 px-6 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Войти
+                </button>
+                <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
+            </form>
+
+            <!-- Register Form (hidden by default) -->
+            <form id="register-form" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="register-email" placeholder="your@email.com"
+                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Имя пользователя</label>
+                    <input type="text" id="register-username" placeholder="username"
+                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+                    <input type="password" id="register-password" placeholder="Минимум 6 символов"
+                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required minlength="6">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Подтвердите пароль</label>
+                    <input type="password" id="register-password-confirm" placeholder="Повторите пароль"
+                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-4 px-6 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl">
+                    <i class="fas fa-user-plus mr-2"></i>Зарегистрироваться
+                </button>
+                <p id="register-error" class="text-red-500 text-sm text-center hidden"></p>
+                <p id="register-success" class="text-green-500 text-sm text-center hidden"></p>
+            </form>
         </div>
+    </div>
 
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Активности (левая колонка) -->
-            <div class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800">
-                        <i class="fas fa-tasks mr-3 text-blue-500"></i>Активности
-                    </h2>
-                    <button onclick="loadActivities()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-xl transition-all duration-300 flex items-center gap-2">
-                        <i class="fas fa-sync-alt"></i>
-                        <span>Обновить</span>
-                    </button>
-                </div>
-
-                <!-- Список активностей -->
-                <div id="activities-list" class="space-y-4 mb-6"></div>
-
-                <!-- Новая активность -->
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-dashed border-blue-200">
-                    <h3 class="text-xl font-semibold mb-4 text-gray-800">➕ Новая активность</h3>
-                    <form id="new-activity-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="text" id="activity-name" placeholder="Название активности" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
-                        <input type="number" id="xp-per-hour" placeholder="XP/час" value="60" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all">
-                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                            <i class="fas fa-plus"></i>
-                            <span>Создать</span>
-                        </button>
-                    </form>
-                    <p id="activity-message" class="text-sm mt-2 hidden"></p>
-                    <p id="activity-error" class="text-sm text-red-500 mt-2 hidden"></p>
+    <!-- MAIN APP (показывается когда залогинен) -->
+    <div id="app-section" class="hidden">
+        <div class="container mx-auto px-4 py-8 max-w-6xl">
+            <!-- Header + Wallet -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl p-6 mb-6 shadow-2xl border border-white/50">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        <i class="fas fa-shield-alt mr-2"></i>HP Life Tracker
+                    </h1>
+                    <div class="flex items-center gap-4">
+                        <div id="wallet" class="text-right">
+                            <div class="text-2xl font-bold text-green-600" id="balance">0 XP</div>
+                            <div class="text-sm text-gray-500">Уровень <span id="level" class="font-bold text-indigo-600">1</span></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="user-info" class="text-gray-600 font-medium text-sm"></span>
+                            <button onclick="logout()" class="bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded-lg transition-all text-sm">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Награды (правая колонка) -->
-            <!-- Награды (правая колонка) -->
-<div class="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">
-        <i class="fas fa-trophy mr-3 text-yellow-500"></i>Награды
-    </h2>
+            <!-- Виджеты: Сегодня + Неделя + История -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <!-- Виджет Сегодня -->
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-5 text-white shadow-xl">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-sun text-yellow-300"></i>
+                        <span class="font-bold">Сегодня</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <div class="text-2xl font-black" id="today-earned">0</div>
+                            <div class="text-emerald-100 text-xs">Заработано XP</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-black" id="today-spent">0</div>
+                            <div class="text-emerald-100 text-xs">Потрачено XP</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold" id="today-sessions">0</div>
+                            <div class="text-emerald-100 text-xs">Сессий</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold" id="today-time">0м</div>
+                            <div class="text-emerald-100 text-xs">Время</div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Список наград -->
-    <div id="rewards-list" class="space-y-4 mb-6"></div>
+                <!-- Мини-календарь недели -->
+                <div class="bg-white/90 backdrop-blur rounded-2xl p-5 shadow-xl border border-white/50">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-calendar-week text-indigo-500"></i>
+                        <span class="font-bold text-gray-800">Неделя</span>
+                    </div>
+                    <div class="flex justify-between gap-1" id="week-calendar">
+                        <!-- Заполняется через JS -->
+                    </div>
+                </div>
 
-    <!-- 📝 ФОРМА СОЗДАНИЯ НАГРАДЫ -->
-    <div class="mb-6 p-6 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 shadow-lg">
-        <h3 class="text-xl font-bold mb-4 text-gray-800">➕ Создать награду</h3>
-        <form id="new-reward-form" class="space-y-4">
-            <input type="text" id="reward-name" placeholder="Название награды"
-                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition-all"
-                   required>
-            <input type="number" id="reward-cost" placeholder="Стоимость в XP" min="1"
-                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition-all"
-                   required>
-            <button type="submit"
-                    class="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white py-4 px-6 rounded-xl font-bold transition-all shadow-md hover:shadow-lg">
-                ➕ Создать награду
-            </button>
-        </form>
-    </div>
-</div>
+                <!-- Прогресс до следующего уровня -->
+                <div class="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-xl">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-chart-line text-yellow-300"></i>
+                        <span class="font-bold">Прогресс</span>
+                    </div>
+                    <div class="mb-2">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>До уровня <span id="next-level">2</span></span>
+                            <span id="xp-to-next">0/1000 XP</span>
+                        </div>
+                        <div class="h-3 bg-white/20 rounded-full overflow-hidden">
+                            <div id="level-progress" class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="text-violet-200 text-xs mt-2">
+                        Всего заработано: <span id="total-earned" class="font-bold text-white">0</span> XP
+                    </div>
+                </div>
+            </div>
+
+            <!-- История транзакций (свёрнутая) -->
+            <div class="mb-6">
+                <button onclick="toggleHistory()" class="w-full bg-white/80 backdrop-blur rounded-2xl p-4 shadow-lg border border-white/50 flex items-center justify-between hover:bg-white/90 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-history text-white"></i>
+                        </div>
+                        <span class="font-bold text-gray-800">История транзакций</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform" id="history-chevron"></i>
+                </button>
+                <div id="history-panel" class="hidden mt-2 bg-white/90 backdrop-blur rounded-2xl p-4 shadow-lg border border-white/50 max-h-64 overflow-y-auto">
+                    <div id="history-list" class="space-y-2">
+                        <!-- Заполняется через JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Активности (левая колонка) -->
+                <div class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800">
+                            <i class="fas fa-tasks mr-3 text-blue-500"></i>Активности
+                        </h2>
+                        <button onclick="loadActivities()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-xl transition-all duration-300 flex items-center gap-2">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Обновить</span>
+                        </button>
+                    </div>
+
+                    <!-- Список активностей -->
+                    <div id="activities-list" class="space-y-4 mb-6"></div>
+
+                    <!-- Новая активность -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-dashed border-blue-200">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">➕ Новая активность</h3>
+                        <form id="new-activity-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" id="activity-name" placeholder="Название активности" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                            <input type="number" id="xp-per-hour" placeholder="XP/час" value="60" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all">
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Создать</span>
+                            </button>
+                        </form>
+                        <p id="activity-message" class="text-sm mt-2 hidden"></p>
+                    </div>
+                </div>
+
+                <!-- Награды (правая колонка) -->
+                <div class="relative">
+                    <!-- Декоративные элементы -->
+                    <div class="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-3xl opacity-30"></div>
+                    <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full blur-3xl opacity-20"></div>
+                    
+                    <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden">
+                        <!-- Заголовок с градиентом -->
+                        <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-5">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-crown text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-white">Награды</h2>
+                                    <p class="text-white/80 text-sm">Потрать XP на удовольствия</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5">
+                            <!-- Список наград -->
+                            <div id="rewards-list" class="space-y-3 mb-5 min-h-[200px] max-h-[350px] overflow-y-auto pr-1"></div>
+                            
+                            <!-- Сообщение -->
+                            <p id="reward-message" class="text-sm mb-4 hidden p-3 rounded-xl"></p>
+
+                            <!-- Быстрые награды -->
+                            <div class="mb-5">
+                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-3 font-semibold flex items-center gap-2">
+                                    <i class="fas fa-bolt text-amber-400"></i> Быстрый выбор
+                                </p>
+                                <div class="grid grid-cols-6 gap-2" id="preset-rewards">
+                                    <button type="button" onclick="selectPreset('mcdonalds')" class="preset-btn group p-2 rounded-xl bg-gray-50 hover:bg-red-50 border-2 border-transparent hover:border-red-300 transition-all" title="McDonald's">
+                                        <div class="w-9 h-9 mx-auto rounded-xl bg-red-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                            <span class="text-yellow-400 font-black text-base">M</span>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="selectPreset('youtube')" class="preset-btn group p-2 rounded-xl bg-gray-50 hover:bg-red-50 border-2 border-transparent hover:border-red-400 transition-all" title="YouTube">
+                                        <div class="w-9 h-9 mx-auto rounded-xl bg-red-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                            <i class="fab fa-youtube text-white"></i>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="selectPreset('gaming')" class="preset-btn group p-2 rounded-xl bg-gray-50 hover:bg-purple-50 border-2 border-transparent hover:border-purple-400 transition-all" title="Игры">
+                                        <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-gamepad text-white"></i>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="selectPreset('netflix')" class="preset-btn group p-2 rounded-xl bg-gray-50 hover:bg-gray-100 border-2 border-transparent hover:border-gray-400 transition-all" title="Netflix">
+                                        <div class="w-9 h-9 mx-auto rounded-xl bg-black flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                            <span class="text-red-600 font-black text-sm">N</span>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="selectPreset('coffee')" class="preset-btn group p-2 rounded-xl bg-gray-50 hover:bg-green-50 border-2 border-transparent hover:border-green-500 transition-all" title="Кофе">
+                                        <div class="w-9 h-9 mx-auto rounded-xl bg-green-700 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-coffee text-white"></i>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="selectPreset('custom')" class="preset-btn group p-2 rounded-xl bg-gray-50 hover:bg-amber-50 border-2 border-transparent hover:border-amber-400 transition-all" title="Своя награда">
+                                        <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-plus text-white"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Форма создания награды -->
+                            <form id="new-reward-form" class="space-y-3">
+                                <div class="flex gap-2">
+                                    <input type="text" id="reward-name" placeholder="Название награды"
+                                           class="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 placeholder-gray-400" required>
+                                    <input type="number" id="reward-cost" placeholder="XP" min="1" value="10"
+                                           class="w-20 px-3 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 text-center font-medium" required>
+                                </div>
+                                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white py-3.5 px-6 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
+                                    <i class="fas fa-sparkles"></i>
+                                    Создать награду
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -104,27 +309,23 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
             <form id="edit-activity-form" class="space-y-4">
                 <input type="hidden" id="edit-activity-id">
                 <input type="text" id="edit-activity-name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
                 <input type="number" id="edit-xp-per-hour" placeholder="XP/час" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" min="1">
-                <input type="text" id="edit-activity-category" placeholder="Категория (опционально)" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all">
                 <div class="flex gap-3 pt-2">
                     <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-save"></i>
-                        Сохранить
+                        <i class="fas fa-save"></i> Сохранить
                     </button>
                     <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i>
-                        Отмена
+                        <i class="fas fa-times"></i> Отмена
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ✏️ МОДАЛКА РЕДАКТИРОВАНИЯ НАГРАДЫ -->
+    <!-- Модальное окно редактирования награды -->
     <div id="edit-reward-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50">
             <div class="flex justify-between items-center mb-6">
@@ -152,7 +353,6 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
             <form id="manual-time-form" class="space-y-4">
                 <select id="manual-activity-select" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
                     <option value="">Выберите активность</option>
@@ -160,46 +360,17 @@
                 <input type="number" id="manual-minutes" placeholder="Минут" min="1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
                 <div class="flex gap-3 pt-2">
                     <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-plus"></i>
-                        Добавить
+                        <i class="fas fa-plus"></i> Добавить
                     </button>
                     <button type="button" onclick="closeManualTimeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i>
-                        Отмена
+                        <i class="fas fa-times"></i> Отмена
                     </button>
                 </div>
                 <div id="manual-time-preview" class="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-xl hidden"></div>
             </form>
         </div>
     </div>
-<!-- Модальное окно логина -->
-<!--<div id="login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">-->
-<!--    <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50">-->
-<!--        <div class="flex justify-between items-center mb-6">-->
-<!--            <h3 class="text-2xl font-bold text-gray-800">🔐 Вход в систему</h3>-->
-<!--            <button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>-->
-<!--        </div>-->
-<!--        <form id="login-form" class="space-y-4">-->
-<!--            <input type="email" id="login-email" placeholder="Email"-->
-<!--                   class="w-full p-4 border-2 border-gray-200 rounded-xl" required>-->
-<!--            <input type="password" id="login-password" placeholder="Пароль"-->
-<!--                   class="w-full p-4 border-2 border-gray-200 rounded-xl" required>-->
-<!--            <div class="flex gap-3">-->
-<!--                <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl">-->
-<!--                    Войти-->
-<!--                </button>-->
-<!--                <button type="button" onclick="closeLoginModal()"-->
-<!--                        class="flex-1 bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-xl">-->
-<!--                    Отмена-->
-<!--                </button>-->
-<!--            </div>-->
-        </form>
-        <p class="text-sm text-gray-500 mt-4 text-center">
-            Нет аккаунта? <a href="#" onclick="showRegisterModal()" class="text-indigo-600 hover:underline">Зарегистрироваться</a>
-        </p>
-    </div>
-</div>
-    <!-- Логика фронтенда -->
+
     <script src="app.js"></script>
 </body>
 </html>

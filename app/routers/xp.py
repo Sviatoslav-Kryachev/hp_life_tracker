@@ -1,41 +1,237 @@
-from fastapi import APIRouter, Depends
+# app/routers/xp.py
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from datetime import datetime, timedelta
 from app.utils.database import get_db
-from app.models.base import XPWallet, ActivityLog, User  # ✅ + User
+from app.utils.auth import get_current_user
+from app.models.base import XPWallet, ActivityLog, User, RewardPurchase, TimerLog
 
 router = APIRouter(prefix="/xp", tags=["xp"])
 
 
 @router.get("/wallet")
-def get_wallet(db: Session = Depends(get_db)):
-    # БЕРЁМ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ ПО EMAIL (из токена sub:2)
-    user = db.query(User).filter(User.email == "test@test.com").first()
-    if not user:
-        return {"error": "User not found"}
-
-    wallet = db.query(XPWallet).filter(XPWallet.user_id == user.id).first()
+async def get_wallet(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Получить кошелёк XP текущего пользователя"""
+    wallet = db.query(XPWallet).filter(XPWallet.user_id == current_user.id).first()
+    
     if not wallet:
-        wallet = XPWallet(user_id=user.id)
+        # Создаём кошелёк если его нет
+        wallet = XPWallet(
+            user_id=current_user.id,
+            balance=0.0,
+            level=1,
+            total_earned=0.0,
+            total_spent=0.0
+        )
         db.add(wallet)
         db.commit()
         db.refresh(wallet)
 
-    return {"balance": wallet.balance, "total_earned": wallet.total_earned, "level": wallet.level}
+    return {
+        "balance": wallet.balance, 
+        "total_earned": wallet.total_earned,
+        "total_spent": wallet.total_spent,
+        "level": wallet.level
+    }
 
 
 @router.post("/earn")
-def earn_xp(activity_log_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == "test@test.com").first()
-    if not user:
-        return {"error": "User not found"}
+async def earn_xp(
+    activity_log_id: int, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Начислить XP за активность"""
+    log = db.query(ActivityLog).filter(
+        ActivityLog.id == activity_log_id,
+        ActivityLog.user_id == current_user.id
+    ).first()
+    
+    if not log:
+        raise HTTPException(status_code=404, detail="Лог активности не найден")
+    
+    wallet = db.query(XPWallet).filter(XPWallet.user_id == current_user.id).first()
+    if not wallet:
+        raise HTTPException(status_code=404, detail="Кошелёк не найден")
+    
+    xp = log.duration_minutes * (log.activity.xp_per_hour / 60)
+    wallet.balance += xp
+    wallet.total_earned += xp
+    log.xp_earned = xp
+    
+    # Повышение уровня
+    if wallet.total_earned >= wallet.level * 1000:
+        wallet.level += 1
+    
+    db.commit()
+    
+    return {
+        "earned": xp, 
+        "new_balance": wallet.balance,
+        "level": wallet.level
+    }
 
-    log = db.query(ActivityLog).filter(ActivityLog.id == activity_log_id).first()
-    if log and log.user_id == user.id:
-        wallet = db.query(XPWallet).filter(XPWallet.user_id == user.id).first()
-        xp = log.duration_minutes * (log.activity.xp_per_hour / 60)
-        wallet.balance += xp
-        wallet.total_earned += xp
-        log.xp_earned = xp
-        db.commit()
-        return {"earned": xp, "new_balance": wallet.balance}
-    return {"error": "Activity log not found"}
+
+@router.get("/history")
+async def get_xp_history(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    limit: int = 20
+):
+    """Получить историю заработанного XP"""
+    logs = db.query(ActivityLog).filter(
+        ActivityLog.user_id == current_user.id,
+        ActivityLog.xp_earned > 0
+    ).order_by(ActivityLog.end_time.desc()).limit(limit).all()
+    
+    return [
+        {
+            "id": log.id,
+            "activity_name": log.activity.name,
+            "duration_minutes": log.duration_minutes,
+            "xp_earned": log.xp_earned,
+            "date": log.end_time.isoformat() if log.end_time else None
+        }
+        for log in logs
+    ]
+
+
+@router.get("/today")
+async def get_today_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Статистика за сегодня"""
+    today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    # XP заработано сегодня
+    earned_today = db.query(func.sum(ActivityLog.xp_earned)).filter(
+        ActivityLog.user_id == current_user.id,
+        ActivityLog.end_time >= today_start
+    ).scalar() or 0
+    
+    # Также из TimerLog (ручной ввод)
+    timer_logs_today = db.query(func.sum(TimerLog.duration_minutes)).filter(
+        TimerLog.user_id == current_user.id,
+        TimerLog.start_time >= today_start
+    ).scalar() or 0
+    
+    # XP потрачено сегодня
+    spent_today = db.query(func.sum(RewardPurchase.xp_spent)).filter(
+        RewardPurchase.user_id == current_user.id,
+        RewardPurchase.purchased_at >= today_start
+    ).scalar() or 0
+    
+    # Количество сессий сегодня
+    sessions_today = db.query(ActivityLog).filter(
+        ActivityLog.user_id == current_user.id,
+        ActivityLog.end_time >= today_start
+    ).count()
+    
+    # Общее время сегодня (минуты)
+    time_today = db.query(func.sum(ActivityLog.duration_minutes)).filter(
+        ActivityLog.user_id == current_user.id,
+        ActivityLog.end_time >= today_start
+    ).scalar() or 0
+    
+    return {
+        "earned_today": round(earned_today, 1),
+        "spent_today": round(spent_today, 1),
+        "sessions_today": sessions_today,
+        "time_today_minutes": round(time_today, 1),
+        "net_today": round(earned_today - spent_today, 1)
+    }
+
+
+@router.get("/week")
+async def get_week_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Статистика за неделю (для календаря)"""
+    today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    week_ago = today - timedelta(days=7)
+    
+    # Получаем данные по дням
+    daily_stats = []
+    for i in range(7):
+        day_start = today - timedelta(days=6-i)
+        day_end = day_start + timedelta(days=1)
+        
+        earned = db.query(func.sum(ActivityLog.xp_earned)).filter(
+            ActivityLog.user_id == current_user.id,
+            ActivityLog.end_time >= day_start,
+            ActivityLog.end_time < day_end
+        ).scalar() or 0
+        
+        spent = db.query(func.sum(RewardPurchase.xp_spent)).filter(
+            RewardPurchase.user_id == current_user.id,
+            RewardPurchase.purchased_at >= day_start,
+            RewardPurchase.purchased_at < day_end
+        ).scalar() or 0
+        
+        time_mins = db.query(func.sum(ActivityLog.duration_minutes)).filter(
+            ActivityLog.user_id == current_user.id,
+            ActivityLog.end_time >= day_start,
+            ActivityLog.end_time < day_end
+        ).scalar() or 0
+        
+        daily_stats.append({
+            "date": day_start.strftime("%Y-%m-%d"),
+            "day_name": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"][day_start.weekday()],
+            "earned": round(earned, 1),
+            "spent": round(spent, 1),
+            "time_minutes": round(time_mins, 1)
+        })
+    
+    return daily_stats
+
+
+@router.get("/full-history")
+async def get_full_history(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    limit: int = 50
+):
+    """Полная история доходов и расходов"""
+    # Заработки
+    earnings = db.query(ActivityLog).filter(
+        ActivityLog.user_id == current_user.id,
+        ActivityLog.xp_earned > 0
+    ).order_by(ActivityLog.end_time.desc()).limit(limit).all()
+    
+    # Расходы
+    spendings = db.query(RewardPurchase).filter(
+        RewardPurchase.user_id == current_user.id
+    ).order_by(RewardPurchase.purchased_at.desc()).limit(limit).all()
+    
+    # Объединяем и сортируем
+    history = []
+    
+    for log in earnings:
+        if log.end_time:
+            history.append({
+                "type": "earn",
+                "description": log.activity.name,
+                "amount": round(log.xp_earned, 1),
+                "date": log.end_time.isoformat(),
+                "duration_minutes": round(log.duration_minutes, 1)
+            })
+    
+    for purchase in spendings:
+        history.append({
+            "type": "spend",
+            "description": purchase.reward_name,
+            "amount": round(purchase.xp_spent, 1),
+            "date": purchase.purchased_at.isoformat(),
+            "duration_minutes": None
+        })
+    
+    # Сортируем по дате
+    history.sort(key=lambda x: x["date"], reverse=True)
+    
+    return history[:limit]
