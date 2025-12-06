@@ -135,7 +135,10 @@ async function checkAdminStatus() {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         if (res.ok) {
-            document.getElementById("admin-btn").classList.remove("hidden");
+            const adminBtn = document.getElementById("admin-btn");
+            const footerAdminBtn = document.getElementById("footer-admin-btn");
+            if (adminBtn) adminBtn.classList.remove("hidden");
+            if (footerAdminBtn) footerAdminBtn.classList.remove("hidden");
             loadInviteCode();
         }
     } catch (e) {
@@ -363,6 +366,7 @@ async function loadActivities() {
 function renderActivityCard(activity) {
     const div = document.createElement("div");
     div.className = "activity-card p-4 mb-3 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3";
+    div.setAttribute("data-activity-id", activity.id);
 
     const left = document.createElement("div");
     left.className = "flex-grow";
@@ -1272,7 +1276,7 @@ async function loadStreak() {
         const messageEl = document.getElementById('streak-message');
         
         if (countEl) countEl.textContent = data.current_streak;
-        if (recordEl) recordEl.textContent = data.longest_streak;
+        if (recordEl) recordEl.textContent = `${data.longest_streak} дней`;
         
         if (messageEl) {
             if (data.current_streak === 0) {
@@ -1329,8 +1333,8 @@ async function loadRecommendations() {
             
             let actionBtn = '';
             if (rec.activity_id) {
-                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto px-2 py-1 rounded ${bgColor} ${textColor} text-[10px] font-medium hover:opacity-80 transition-all flex-shrink-0" title="Начать">
-                    <i class="fas fa-play"></i>
+                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="Начать отслеживание">
+                    <i class="fas fa-play text-[10px]"></i>
                 </button>`;
             }
             
@@ -1351,15 +1355,110 @@ async function loadRecommendations() {
     }
 }
 
-function startActivityFromRecommendation(activityId) {
+async function startActivityFromRecommendation(activityId) {
+    // Находим активность в массиве
+    const activity = allActivities.find(a => a.id === activityId);
+    if (!activity) {
+        alert("Активность не найдена. Пожалуйста, обновите страницу.");
+        return;
+    }
+    
+    // Проверяем, не запущен ли уже таймер для этой активности
+    if (activeTimers.has(activityId)) {
+        alert("Таймер уже запущен для этой активности! Прокрутите к разделу 'Активности' чтобы остановить его.");
+        // Прокручиваем к активностям
+        setTimeout(() => {
+            document.getElementById('activities')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+        return;
+    }
+    
     // Находим кнопку старта для этой активности
-    const activityCard = document.querySelector(`[data-activity-id="${activityId}"]`);
-    if (activityCard) {
-        const startBtn = activityCard.querySelector('.timer-btn');
-        if (startBtn) {
-            startBtn.click();
+    // Ищем по data-activity-id на кнопке или по родительскому элементу
+    let startBtn = null;
+    let activityCard = null;
+    
+    // Вариант 1: ищем кнопку с data-activity-id
+    const allTimerBtns = document.querySelectorAll('.timer-btn');
+    for (const btn of allTimerBtns) {
+        if (btn.dataset.activityId == activityId) {
+            startBtn = btn;
+            activityCard = btn.closest('[data-activity-id]') || btn.parentElement;
+            break;
         }
     }
+    
+    // Вариант 2: ищем по родительскому элементу с data-activity-id
+    if (!startBtn) {
+        activityCard = document.querySelector(`[data-activity-id="${activityId}"]`);
+        if (activityCard) {
+            startBtn = activityCard.querySelector('.timer-btn');
+        }
+    }
+    
+    if (startBtn && !startBtn.classList.contains('bg-red-100')) {
+        // Если кнопка найдена и таймер не запущен, запускаем его
+        startBtn.click();
+        
+        // Показываем уведомление
+        showNotification(`✅ Запущена активность "${activity.name}"! Прокрутите к разделу "Активности" чтобы увидеть таймер.`, 'success');
+        
+        // Прокручиваем к активностям для визуального подтверждения
+        setTimeout(() => {
+            document.getElementById('activities')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Подсвечиваем активную карточку
+            if (activityCard) {
+                activityCard.style.transition = 'all 0.3s';
+                activityCard.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.5)';
+                setTimeout(() => {
+                    activityCard.style.boxShadow = '';
+                }, 2000);
+            }
+        }, 300);
+    } else {
+        // Если кнопка не найдена, создаём временную и запускаем таймер напрямую
+        const tempBtn = document.createElement('button');
+        tempBtn.className = 'timer-btn';
+        tempBtn.dataset.activityId = activityId;
+        await toggleTimer(activityId, tempBtn, activity);
+        
+        // Показываем уведомление
+        showNotification(`✅ Запущена активность "${activity.name}"! Прокрутите к разделу "Активности" чтобы увидеть таймер.`, 'success');
+        
+        // Прокручиваем к активностям
+        setTimeout(() => {
+            document.getElementById('activities')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+    }
+}
+
+// Функция для показа уведомлений
+function showNotification(message, type = 'info') {
+    // Создаём элемент уведомления
+    const notification = document.createElement('div');
+    notification.className = `fixed top-24 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-0 ${
+        type === 'success' ? 'bg-green-500 text-white' : 
+        type === 'error' ? 'bg-red-500 text-white' : 
+        'bg-blue-500 text-white'
+    }`;
+    notification.textContent = message;
+    notification.style.maxWidth = '400px';
+    
+    document.body.appendChild(notification);
+    
+    // Анимация появления
+    setTimeout(() => {
+        notification.style.opacity = '1';
+    }, 10);
+    
+    // Удаляем через 4 секунды
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 4000);
 }
 
 // ============= ADMIN PANEL =============
@@ -1380,9 +1479,15 @@ async function loadInviteCode() {
 }
 
 function showAdminPanel() {
-    document.getElementById("admin-panel").classList.remove("hidden");
+    const adminPanel = document.getElementById("admin-panel");
+    adminPanel.classList.remove("hidden");
     loadChildren();
     loadInviteCode();
+    
+    // Прокручиваем к самому верху страницы, где находится админ-панель
+    setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
 }
 
 function hideAdminPanel() {
@@ -1625,7 +1730,7 @@ async function loadGoals() {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         if (!res.ok) return;
-        const data = await res.json();
+        let data = await res.json();
         
         const listEl = document.getElementById('goals-list');
         if (!listEl) return;
@@ -1634,6 +1739,29 @@ async function loadGoals() {
             listEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет целей. Создайте первую цель!</div>';
             return;
         }
+        
+        // Сортируем цели по дате достижения: ближайшие сверху, дальние снизу
+        // Сначала невыполненные с датой (ближайшие сверху), затем невыполненные без даты, затем выполненные
+        data.sort((a, b) => {
+            // Выполненные цели в конец
+            if (a.is_completed && !b.is_completed) return 1;
+            if (!a.is_completed && b.is_completed) return -1;
+            
+            // Если обе выполнены или обе не выполнены, сортируем по дате
+            if (a.target_date && b.target_date) {
+                const dateA = new Date(a.target_date);
+                const dateB = new Date(b.target_date);
+                // Ближайшие даты сверху (меньшая дата = раньше = выше в списке)
+                return dateA - dateB;
+            }
+            
+            // Если у одной есть дата, а у другой нет - с датой выше (приоритет)
+            if (a.target_date && !b.target_date) return -1;
+            if (!a.target_date && b.target_date) return 1;
+            
+            // Если обе без даты - по названию
+            return (a.name || a.title || '').localeCompare(b.name || b.title || '');
+        });
         
         listEl.innerHTML = data.map(goal => {
             const progressPercent = Math.min(goal.progress_percent, 100);
@@ -1891,8 +2019,3 @@ async function deleteGoal(goalId) {
     }
 }
 
-async function editGoal(goalId) {
-    // Пока просто удаляем и предлагаем создать заново
-    // Можно добавить модальное окно редактирования позже
-    alert("Редактирование целей будет добавлено позже. Пока можно удалить и создать заново.");
-}

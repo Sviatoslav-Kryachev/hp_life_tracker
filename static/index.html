@@ -301,7 +301,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <!-- Виджет Сегодня -->
                 <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-5 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-3">
+                    <div class="flex items-center justify-center gap-2 mb-3">
                         <i class="fas fa-sun text-yellow-300"></i>
                         <span class="font-bold">Сегодня</span>
                     </div>
@@ -327,7 +327,7 @@
 
                 <!-- Мини-календарь недели -->
                 <div class="bg-white/90 backdrop-blur rounded-2xl p-5 shadow-xl border border-white/50 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-3">
+                    <div class="flex items-center justify-center gap-2 mb-3">
                         <i class="fas fa-calendar-week text-indigo-500"></i>
                         <span class="font-bold text-gray-800">Неделя</span>
                     </div>
@@ -338,7 +338,7 @@
 
                 <!-- Прогресс до следующего уровня -->
                 <div class="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-3">
+                    <div class="flex items-center justify-center gap-2 mb-3">
                         <i class="fas fa-chart-line text-yellow-300"></i>
                         <span class="font-bold">Прогресс</span>
                     </div>
@@ -393,28 +393,34 @@
                 <div class="space-y-4">
                     <!-- Виджет Streak (компактный) -->
                     <div class="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 rounded-2xl p-4 text-white shadow-xl hover:shadow-2xl transition-all duration-300">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-fire text-yellow-300 text-xl"></i>
-                                <span class="text-sm opacity-90 font-medium">Серия</span>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-2xl font-black" id="streak-count">0</div>
-                                <div class="text-xs opacity-80">Рекорд: <span id="streak-record">0</span></div>
+                        <!-- Заголовок -->
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <i class="fas fa-fire text-yellow-300 text-xl"></i>
+                            <span class="text-sm font-semibold opacity-95">Серия дней</span>
+                        </div>
+                        <!-- Текущая серия -->
+                        <div class="mb-3 text-center">
+                            <div class="flex items-baseline gap-2 justify-center">
+                                <span class="text-3xl font-black" id="streak-count">0</span>
+                                <span class="text-sm opacity-80 font-medium">дней</span>
                             </div>
                         </div>
-                        <div class="text-xs opacity-80" id="streak-message">Начните активность!</div>
+                        <!-- Рекорд -->
+                        <div class="flex items-center justify-between pt-2 border-t border-white/20">
+                            <span class="text-xs opacity-80">Рекорд:</span>
+                            <span class="text-sm font-bold opacity-95" id="streak-record">0 дней</span>
+                        </div>
+                        <!-- Сообщение -->
+                        <div class="text-xs opacity-75 mt-2 italic" id="streak-message">Начните активность!</div>
                     </div>
 
                     <!-- Цели (компактный) -->
                     <div class="bg-white/90 backdrop-blur rounded-2xl p-4 shadow-xl border border-white/50">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-bullseye text-purple-600"></i>
-                                <h3 class="text-sm font-bold text-gray-800">Мои цели</h3>
-                            </div>
-                            <button onclick="showCreateGoalModal()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-lg transition-all text-xs flex items-center gap-1">
-                                <i class="fas fa-plus text-xs"></i>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-bullseye text-purple-600"></i>
+                            <h3 class="text-sm font-bold text-gray-800">Мои цели</h3>
+                            <button onclick="showCreateGoalModal()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white w-5 h-5 rounded-lg transition-all text-xs flex items-center justify-center" title="Добавить цель">
+                                <i class="fas fa-plus text-[10px]"></i>
                             </button>
                         </div>
                         <div id="goals-list" class="space-y-2 max-h-[300px] overflow-y-auto">
@@ -423,9 +429,9 @@
                     </div>
 
                     <!-- Умные рекомендации (компактный) -->
-                    <div class="bg-white/90 backdrop-blur rounded-2xl p-4 shadow-xl border border-white/50">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-lightbulb text-blue-600"></i>
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur rounded-2xl p-4 shadow-xl border-2 border-green-200">
+                        <div class="flex items-center justify-center gap-2 mb-3">
+                            <i class="fas fa-lightbulb text-green-600"></i>
                             <h3 class="text-sm font-bold text-gray-800">Рекомендации</h3>
                         </div>
                         <div id="recommendations-list" class="space-y-2 max-h-[250px] overflow-y-auto">
@@ -615,6 +621,130 @@
             </form>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/95 backdrop-blur-xl border-t border-gray-200 mt-12">
+        <div class="container mx-auto px-4 py-8 max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- О проекте -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-indigo-600"></i>
+                        О проекте
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Система отслеживания активности и мотивации через XP. Достигайте целей и зарабатывайте награды!
+                    </p>
+                    <a href="https://t.me/xp_life_tracker_bot" target="_blank" 
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg transition-all shadow-md hover:shadow-lg">
+                        <i class="fab fa-telegram-plane"></i>
+                        <span class="font-medium">Открыть Telegram бота</span>
+                    </a>
+                </div>
+
+                <!-- Навигация -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-compass text-blue-600"></i>
+                        Навигация
+                    </h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#activities" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2">
+                                <i class="fas fa-tasks text-xs"></i>Активности
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#rewards" class="text-sm text-gray-600 hover:text-amber-600 transition-colors flex items-center gap-2">
+                                <i class="fas fa-crown text-xs"></i>Награды
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#history" class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2">
+                                <i class="fas fa-history text-xs"></i>История
+                            </a>
+                        </li>
+                        <li>
+                            <button onclick="document.querySelector('#activities')?.scrollIntoView({behavior: 'smooth', block: 'start'})" 
+                                    class="text-sm text-gray-600 hover:text-purple-600 transition-colors flex items-center gap-2">
+                                <i class="fas fa-bullseye text-xs"></i>Мои цели
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Функции -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-star text-yellow-500"></i>
+                        Функции
+                    </h3>
+                    <ul class="space-y-2">
+                        <li class="text-sm text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-fire text-orange-500 text-xs"></i>Система серий (Streak)
+                        </li>
+                        <li class="text-sm text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-lightbulb text-blue-500 text-xs"></i>Умные рекомендации
+                        </li>
+                        <li class="text-sm text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-ban text-red-500 text-xs"></i>Черный список наград
+                        </li>
+                        <li class="text-sm text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-bullseye text-purple-500 text-xs"></i>Система целей
+                        </li>
+                        <li>
+                            <a href="https://t.me/xp_life_tracker_bot" target="_blank" 
+                               class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2">
+                                <i class="fab fa-telegram text-blue-500 text-xs"></i>Telegram бот
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Админ и управление -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-cog text-gray-600"></i>
+                        Управление
+                    </h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <button id="footer-admin-btn" onclick="showAdminPanel()" class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2 hidden">
+                                <i class="fas fa-users-cog text-xs"></i>Админ-панель
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="loadWallet(); loadActivities(); loadRewards(); loadGoals(); loadHistory(); alert('✅ Данные обновлены!')" 
+                                    class="text-sm text-gray-600 hover:text-green-600 transition-colors flex items-center gap-2">
+                                <i class="fas fa-sync-alt text-xs"></i>Обновить данные
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="logout()" class="text-sm text-gray-600 hover:text-red-600 transition-colors flex items-center gap-2">
+                                <i class="fas fa-sign-out-alt text-xs"></i>Выход
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Разделитель -->
+            <div class="border-t border-gray-200 mt-8 pt-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p class="text-xs text-gray-500">
+                        © 2024 HP Life Tracker. Система мотивации и отслеживания прогресса.
+                    </p>
+                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                        <span>Версия 1.0</span>
+                        <span>•</span>
+                        <a href="#" class="hover:text-indigo-600 transition-colors">Помощь</a>
+                        <span>•</span>
+                        <a href="#" class="hover:text-indigo-600 transition-colors">Обратная связь</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="app.js"></script>
 </body>
