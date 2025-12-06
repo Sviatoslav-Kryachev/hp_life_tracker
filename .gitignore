@@ -1,7 +1,4 @@
-# Удаляем старый .gitignore
-rm .gitignore
-
-# Создаем новый с правильным содержимым
+# Создаем правильный .gitignore
 echo "# PyCharm
 .idea/
 
@@ -25,3 +22,8 @@ Thumbs.db
 
 # Logs
 *.log" > .gitignore
+
+# Добавляем и коммитим
+git add .gitignore
+git commit -m "Fix .gitignore file"
+git push
