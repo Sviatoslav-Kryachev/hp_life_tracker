@@ -1,9 +1,34 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from app.routers import activities, rewards, timer, auth, xp
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+import traceback
+from app.routers import activities, rewards, timer, auth, xp, streak, recommendations, blacklist, telegram, admin
 
 app = FastAPI(title="XP Tracker API")
+
+# Обработка ошибок
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Глобальный обработчик ошибок"""
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": str(exc),
+            "type": type(exc).__name__,
+            "traceback": traceback.format_exc() if app.debug else None
+        }
+    )
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """Обработчик HTTP ошибок"""
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
 
 origins = ["*"]  # Разрешаем все origin для разработки
 app.add_middleware(
@@ -22,6 +47,11 @@ app.include_router(rewards.router)
 app.include_router(timer.router)
 app.include_router(auth.router)
 app.include_router(xp.router)
+app.include_router(streak.router)
+app.include_router(recommendations.router)
+app.include_router(blacklist.router)
+app.include_router(telegram.router)
+app.include_router(admin.router)
 
 @app.get("/")
 def root():

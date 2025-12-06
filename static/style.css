@@ -27,6 +27,7 @@ body {
 /* Карточки наград */
 .reward-card {
     animation: fadeIn 0.25s ease-out;
+    max-width: 100%;
 }
 
 @keyframes fadeIn {
@@ -65,4 +66,14 @@ button {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
+}
+
+/* Fixed header spacing */
+#app-section {
+    padding-top: 0;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
 }

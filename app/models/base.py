@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date
 from sqlalchemy.orm import relationship
 from app.utils.database import Base
 from datetime import datetime
@@ -9,11 +9,18 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    telegram_id = Column(Integer, unique=True, index=True, nullable=True)  # ID пользователя в Telegram
+    telegram_username = Column(String, nullable=True)  # @username в Telegram
+    parent_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # ID родителя/администратора
+    is_admin = Column(Integer, default=0)  # 1 = администратор, 0 = обычный пользователь
+    invite_code = Column(String, unique=True, index=True, nullable=True)  # Уникальный код приглашения
     wallet = relationship("XPWallet", back_populates="user", uselist=False)
     rewards = relationship("Reward", back_populates="user")
     activities = relationship("Activity", back_populates="user")
     activity_logs = relationship("ActivityLog", back_populates="user")
     timer_logs = relationship("TimerLog", back_populates="user")
+    # Связь с детьми (подопечными)
+    children = relationship("User", remote_side=[id], backref="parent")
 
 class XPWallet(Base):
     __tablename__ = "xp_wallets"
@@ -76,3 +83,25 @@ class RewardPurchase(Base):
     xp_spent = Column(Float, default=0.0)
     purchased_at = Column(DateTime, default=datetime.utcnow)
     user = relationship("User", backref="purchases")
+
+
+class Streak(Base):
+    """Система streak (дни подряд)"""
+    __tablename__ = "streaks"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    current_streak = Column(Integer, default=0)  # Текущая серия дней
+    longest_streak = Column(Integer, default=0)  # Самая длинная серия
+    last_activity_date = Column(DateTime, nullable=True)  # Последний день активности
+    total_days_active = Column(Integer, default=0)  # Всего дней активности
+    user = relationship("User", backref="streak")
+
+
+class BlacklistReward(Base):
+    """Черный список наград (требуют XP для доступа)"""
+    __tablename__ = "blacklist_rewards"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    reward_name_pattern = Column(String, nullable=False)  # Паттерн названия (например, "YouTube", "Instagram")
+    is_active = Column(Integer, default=1)  # 1 = активен, 0 = отключен
+    user = relationship("User", backref="blacklist")

@@ -1,29 +1,31 @@
-# Создаем правильный .gitignore
-echo "# PyCharm
-.idea/
-
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.Python
 venv/
 env/
+ENV/
 
-# Базы данных
+# Database
 *.db
+*.sqlite
 *.sqlite3
 
-# Файлы окружения
+# Environment variables
 .env
 .env.local
 
-# Системные
+# Config with tokens
+config.py
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log" > .gitignore
-
-# Добавляем и коммитим
-git add .gitignore
-git commit -m "Fix .gitignore file"
-git push

@@ -71,12 +71,18 @@ async def stop_timer(
             wallet.level += 1
     
     db.commit()
-
+    
+    # Обновляем streak после завершения активности
+    from app.routers.streak import update_streak as update_streak_func
+    streak_result = update_streak_func(db, current_user.id)
+    
     return {
         "duration_minutes": log.duration_minutes, 
         "xp_earned": log.xp_earned,
         "wallet_balance": wallet.balance if wallet else 0, 
-        "level": wallet.level if wallet else 1
+        "level": wallet.level if wallet else 1,
+        "streak_bonus": streak_result.get("bonus_xp", 0),
+        "streak_message": streak_result.get("message", "")
     }
 
 

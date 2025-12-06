@@ -95,6 +95,22 @@ async def spend_reward(
     if not wallet:
         raise HTTPException(status_code=404, detail="Кошелёк не найден")
     
+    # Проверяем черный список
+    from app.models.base import BlacklistReward
+    blacklist_items = db.query(BlacklistReward).filter(
+        BlacklistReward.user_id == current_user.id,
+        BlacklistReward.is_active == 1
+    ).all()
+    
+    for item in blacklist_items:
+        if item.reward_name_pattern.lower() in reward.name.lower():
+            # Награда в черном списке - требуем XP
+            if wallet.balance < reward.xp_cost:
+                raise HTTPException(
+                    status_code=403, 
+                    detail=f"⚠️ '{reward.name}' заблокирована! Нужно {reward.xp_cost} XP для доступа. У вас: {wallet.balance} XP"
+                )
+    
     if wallet.balance < reward.xp_cost:
         raise HTTPException(status_code=400, detail="Недостаточно XP")
     

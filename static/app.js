@@ -72,10 +72,19 @@ async function login(email, password) {
 
 async function register(email, username, password) {
     try {
+        // Проверяем invite код из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const inviteCode = urlParams.get('invite');
+        
         const res = await fetch(`${API_BASE}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password, username: username || null })
+            body: JSON.stringify({ 
+                email, 
+                password, 
+                username: username || null,
+                invite_code: inviteCode || null
+            })
         });
         
         if (!res.ok) {
@@ -110,9 +119,27 @@ async function loadCurrentUser() {
         currentUser = await res.json();
         document.getElementById("user-info").textContent = currentUser.username || currentUser.email;
         
+        // Проверяем, является ли пользователь администратором
+        checkAdminStatus();
+        
     } catch (e) {
         console.error("Error loading user:", e);
         logout();
+    }
+}
+
+async function checkAdminStatus() {
+    try {
+        // Пытаемся получить invite код - если успешно, значит админ
+        const res = await fetch(`${API_BASE}/admin/invite-code`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+            document.getElementById("admin-btn").classList.remove("hidden");
+            loadInviteCode();
+        }
+    } catch (e) {
+        // Не админ или ошибка
     }
 }
 
@@ -136,6 +163,8 @@ function showApp() {
     loadRewards();
     loadTodayStats();
     loadWeekCalendar();
+    loadStreak();
+    loadRecommendations();
 }
 
 async function checkAuth() {
@@ -592,7 +621,13 @@ async function stopTimer(activityId, button) {
         await loadWallet();
         loadTodayStats(); // Обновляем статистику
         loadWeekCalendar(); // Обновляем календарь
-        alert(`✅ Таймер остановлен! Заработано ${Math.round(data.xp_earned)} XP`);
+        loadStreak(); // Обновляем streak
+        
+        let message = `✅ Таймер остановлен! Заработано ${Math.round(data.xp_earned)} XP`;
+        if (data.streak_bonus && data.streak_bonus > 0) {
+            message += `\n🔥 Бонус за серию: +${data.streak_bonus} XP`;
+        }
+        alert(message);
     } catch (e) {
         console.error("Error stopping timer:", e);
         alert("Ошибка остановки таймера");
@@ -753,15 +788,15 @@ function renderRewardCard(reward) {
     const brand = detectBrand(reward.name);
     
     const div = document.createElement("div");
-    div.className = `reward-card group relative p-3 rounded-2xl bg-gradient-to-r from-gray-50 to-white border-2 ${brand.borderColor} hover:shadow-lg hover:scale-[1.01] transition-all duration-300 flex items-center gap-3`;
+    div.className = `reward-card group relative p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-white border-2 ${brand.borderColor} hover:shadow-lg hover:scale-[1.01] transition-all duration-300 w-full max-w-full`;
 
-    // Левая часть
-    const left = document.createElement("div");
-    left.className = "flex items-center gap-3 flex-1 min-w-0";
+    // Верхняя часть: название и иконка
+    const topSection = document.createElement("div");
+    topSection.className = "flex items-center gap-3 mb-3";
     
     // Иконка бренда
     const icon = document.createElement("div");
-    icon.className = `w-11 h-11 ${brand.bgColor} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300`;
+    icon.className = `w-12 h-12 ${brand.bgColor} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300`;
     
     if (brand.iconType === "text") {
         icon.innerHTML = `<span class="${brand.textColor} font-black text-lg">${brand.icon}</span>`;
@@ -769,62 +804,69 @@ function renderRewardCard(reward) {
         icon.innerHTML = `<i class="${brand.icon} ${brand.textColor} text-lg"></i>`;
     }
     
-    // Текст
-    const text = document.createElement("div");
-    text.className = "flex-1 overflow-hidden";
-    text.innerHTML = `
-        <div class="font-bold text-gray-800 text-sm leading-tight" style="word-break: break-word;">${reward.name}</div>
-        <div class="flex items-center gap-1 mt-1">
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
-                <i class="fas fa-coins text-[10px]"></i> ${reward.xp_cost}
-            </span>
+    // Название
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "flex-1 min-w-0";
+    nameDiv.innerHTML = `<div class="font-bold text-gray-800 text-base leading-tight break-words">${reward.name}</div>`;
+    
+    topSection.appendChild(icon);
+    topSection.appendChild(nameDiv);
+
+    // Нижняя часть: стоимость и кнопки
+    const bottomSection = document.createElement("div");
+    bottomSection.className = "flex items-center justify-between gap-2 pt-2 border-t border-gray-100 w-full";
+    
+    // Стоимость XP (слева)
+    const costBadge = document.createElement("div");
+    costBadge.className = "flex items-center gap-1.5 flex-shrink-0";
+    costBadge.innerHTML = `
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 whitespace-nowrap">
+            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm flex-shrink-0">
+                <i class="fas fa-coins text-white text-[10px]"></i>
+            </div>
+            <span class="text-amber-700 text-sm font-bold">${reward.xp_cost} XP</span>
         </div>
     `;
     
-    left.appendChild(icon);
-    left.appendChild(text);
-
-    // Кнопки
+    // Кнопки (справа)
     const btnContainer = document.createElement("div");
     btnContainer.className = "flex items-center gap-1.5 flex-shrink-0";
 
-    // Кнопка покупки
-    const spendBtn = document.createElement("button");
-    spendBtn.className = "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 hover:scale-105 active:scale-95";
-    spendBtn.innerHTML = '<i class="fas fa-shopping-bag"></i> Купить';
-    spendBtn.addEventListener("click", () => spendReward(reward.id));
-    btnContainer.appendChild(spendBtn);
-
-    // Кнопки редактирования (только для своих наград)
+    // Кнопки редактирования и удаления (только для своих наград, всегда видны)
     if (reward.user_id) {
-        const actionsWrapper = document.createElement("div");
-        actionsWrapper.className = "flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity";
-        
         const editBtn = document.createElement("button");
-        editBtn.className = "w-8 h-8 rounded-lg bg-gray-100 hover:bg-blue-500 text-gray-400 hover:text-white transition-all flex items-center justify-center";
-        editBtn.innerHTML = '<i class="fas fa-pen text-xs"></i>';
+        editBtn.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white transition-all flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 flex-shrink-0";
+        editBtn.innerHTML = '<i class="fas fa-pen text-[10px]"></i>';
         editBtn.title = "Редактировать";
         editBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             openEditRewardModal(reward);
         });
-        actionsWrapper.appendChild(editBtn);
+        btnContainer.appendChild(editBtn);
 
         const deleteBtn = document.createElement("button");
-        deleteBtn.className = "w-8 h-8 rounded-lg bg-gray-100 hover:bg-red-500 text-gray-400 hover:text-white transition-all flex items-center justify-center";
-        deleteBtn.innerHTML = '<i class="fas fa-trash text-xs"></i>';
+        deleteBtn.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 hover:from-red-500 hover:to-rose-600 text-white transition-all flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 flex-shrink-0";
+        deleteBtn.innerHTML = '<i class="fas fa-trash text-[10px]"></i>';
         deleteBtn.title = "Удалить";
         deleteBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             deleteReward(reward.id, div);
         });
-        actionsWrapper.appendChild(deleteBtn);
-        
-        btnContainer.appendChild(actionsWrapper);
+        btnContainer.appendChild(deleteBtn);
     }
 
-    div.appendChild(left);
-    div.appendChild(btnContainer);
+    // Кнопка покупки
+    const spendBtn = document.createElement("button");
+    spendBtn.className = "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1 active:scale-95 flex-shrink-0 whitespace-nowrap";
+    spendBtn.innerHTML = '<i class="fas fa-shopping-bag text-xs"></i><span class="hidden sm:inline">Купить</span>';
+    spendBtn.addEventListener("click", () => spendReward(reward.id));
+    btnContainer.appendChild(spendBtn);
+
+    bottomSection.appendChild(costBadge);
+    bottomSection.appendChild(btnContainer);
+
+    div.appendChild(topSection);
+    div.appendChild(bottomSection);
     rewardsList.appendChild(div);
 }
 
@@ -956,7 +998,12 @@ async function spendReward(rewardId) {
         const data = await res.json();
         
         if (!res.ok) {
-            rewardMessage.textContent = data.detail || "Не удалось потратить XP";
+            let errorMsg = data.detail || "Не удалось потратить XP";
+            // Проверяем, это блокировка из черного списка
+            if (res.status === 403) {
+                errorMsg = `🚫 ${errorMsg}`;
+            }
+            rewardMessage.textContent = errorMsg;
             rewardMessage.classList.remove("text-gray-500");
             rewardMessage.classList.add("text-red-500");
             return;
@@ -1070,3 +1117,453 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// ============= FORGOT PASSWORD =============
+let resetCodeEmail = null;
+
+function showForgotPassword() {
+    document.getElementById("forgot-password-modal").classList.remove("hidden");
+    document.getElementById("forgot-step1").classList.remove("hidden");
+    document.getElementById("forgot-step2").classList.add("hidden");
+    resetCodeEmail = null;
+}
+
+function closeForgotPassword() {
+    document.getElementById("forgot-password-modal").classList.add("hidden");
+    resetCodeEmail = null;
+}
+
+async function requestResetCode() {
+    const email = document.getElementById("forgot-email").value.trim();
+    const errorEl = document.getElementById("forgot-error1");
+    
+    if (!email) {
+        errorEl.textContent = "Введите email";
+        errorEl.classList.remove("hidden");
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.detail || "Ошибка запроса");
+        }
+        
+        // Сохраняем email для следующего шага
+        resetCodeEmail = email;
+        
+        // Показываем код (только для разработки!)
+        alert(`Код восстановления: ${data.code}\n\n(В продакшене код будет отправлен на email)`);
+        
+        // Переходим ко второму шагу
+        document.getElementById("forgot-step1").classList.add("hidden");
+        document.getElementById("forgot-step2").classList.remove("hidden");
+        errorEl.classList.add("hidden");
+        
+    } catch (e) {
+        errorEl.textContent = e.message;
+        errorEl.classList.remove("hidden");
+    }
+}
+
+async function resetPassword() {
+    const code = document.getElementById("forgot-code").value.trim();
+    const newPassword = document.getElementById("forgot-new-password").value;
+    const confirmPassword = document.getElementById("forgot-confirm-password").value;
+    const errorEl = document.getElementById("forgot-error2");
+    const successEl = document.getElementById("forgot-success");
+    
+    errorEl.classList.add("hidden");
+    successEl.classList.add("hidden");
+    
+    if (!code || code.length !== 6) {
+        errorEl.textContent = "Введите 6-значный код";
+        errorEl.classList.remove("hidden");
+        return;
+    }
+    
+    if (!newPassword || newPassword.length < 6) {
+        errorEl.textContent = "Пароль должен быть минимум 6 символов";
+        errorEl.classList.remove("hidden");
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        errorEl.textContent = "Пароли не совпадают";
+        errorEl.classList.remove("hidden");
+        return;
+    }
+    
+    if (!resetCodeEmail) {
+        errorEl.textContent = "Ошибка: email не найден";
+        errorEl.classList.remove("hidden");
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/auth/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: resetCodeEmail,
+                code: code,
+                new_password: newPassword
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.detail || "Ошибка сброса пароля");
+        }
+        
+        successEl.textContent = "✅ Пароль успешно изменён! Теперь войдите.";
+        successEl.classList.remove("hidden");
+        
+        setTimeout(() => {
+            closeForgotPassword();
+            showLoginForm();
+            document.getElementById("login-email").value = resetCodeEmail;
+        }, 2000);
+        
+    } catch (e) {
+        errorEl.textContent = e.message;
+        errorEl.classList.remove("hidden");
+    }
+}
+
+// ============= STREAK =============
+async function loadStreak() {
+    try {
+        const res = await fetch(`${API_BASE}/streak/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const countEl = document.getElementById('streak-count');
+        const recordEl = document.getElementById('streak-record');
+        const messageEl = document.getElementById('streak-message');
+        
+        if (countEl) countEl.textContent = data.current_streak;
+        if (recordEl) recordEl.textContent = data.longest_streak;
+        
+        if (messageEl) {
+            if (data.current_streak === 0) {
+                messageEl.textContent = "Начните активность, чтобы начать серию!";
+            } else if (data.current_streak === 1) {
+                messageEl.textContent = "🔥 Отличное начало! Продолжайте завтра!";
+            } else if (data.current_streak < 7) {
+                messageEl.textContent = `🔥 ${data.current_streak} дней подряд! Продолжайте!`;
+            } else if (data.current_streak < 30) {
+                messageEl.textContent = `🔥 Неделя подряд! Вы получаете бонусы XP!`;
+            } else {
+                messageEl.textContent = `🔥 Месяц без пропусков! Вы получаете +100 XP бонус!`;
+            }
+        }
+    } catch (e) {
+        console.error("Error loading streak", e);
+    }
+}
+
+// ============= RECOMMENDATIONS =============
+async function loadRecommendations() {
+    try {
+        const res = await fetch(`${API_BASE}/recommendations/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const listEl = document.getElementById('recommendations-list');
+        if (!listEl) return;
+        
+        if (!data.recommendations || data.recommendations.length === 0) {
+            listEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет рекомендаций. Продолжайте заниматься!</div>';
+            return;
+        }
+        
+        listEl.innerHTML = data.recommendations.map(rec => {
+            let icon = "fas fa-lightbulb";
+            let bgColor = "bg-blue-50";
+            let borderColor = "border-blue-200";
+            let textColor = "text-blue-700";
+            
+            if (rec.priority === "high") {
+                icon = "fas fa-fire";
+                bgColor = "bg-orange-50";
+                borderColor = "border-orange-300";
+                textColor = "text-orange-700";
+            } else if (rec.priority === "medium") {
+                icon = "fas fa-exclamation-circle";
+                bgColor = "bg-amber-50";
+                borderColor = "border-amber-200";
+                textColor = "text-amber-700";
+            }
+            
+            let actionBtn = '';
+            if (rec.activity_id) {
+                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto px-3 py-1 rounded-lg ${bgColor} ${textColor} text-sm font-medium hover:opacity-80 transition-all">
+                    <i class="fas fa-play mr-1"></i> Начать
+                </button>`;
+            }
+            
+            return `
+                <div class="flex items-center gap-3 p-3 rounded-xl ${bgColor} border ${borderColor} transition-all hover:scale-[1.01]">
+                    <div class="w-8 h-8 rounded-lg ${bgColor} flex items-center justify-center flex-shrink-0">
+                        <i class="${icon} ${textColor} text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium ${textColor} text-sm">${rec.message}</div>
+                    </div>
+                    ${actionBtn}
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error("Error loading recommendations", e);
+    }
+}
+
+function startActivityFromRecommendation(activityId) {
+    // Находим кнопку старта для этой активности
+    const activityCard = document.querySelector(`[data-activity-id="${activityId}"]`);
+    if (activityCard) {
+        const startBtn = activityCard.querySelector('.timer-btn');
+        if (startBtn) {
+            startBtn.click();
+        }
+    }
+}
+
+// ============= ADMIN PANEL =============
+async function loadInviteCode() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/invite-code`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const baseUrl = window.location.origin + window.location.pathname;
+        const inviteLink = `${baseUrl}?invite=${data.invite_code}`;
+        document.getElementById("invite-link").value = inviteLink;
+    } catch (e) {
+        console.error("Error loading invite code:", e);
+    }
+}
+
+function showAdminPanel() {
+    document.getElementById("admin-panel").classList.remove("hidden");
+    loadChildren();
+    loadInviteCode();
+}
+
+function hideAdminPanel() {
+    document.getElementById("admin-panel").classList.add("hidden");
+}
+
+function copyInviteLink() {
+    const input = document.getElementById("invite-link");
+    input.select();
+    document.execCommand("copy");
+    
+    const btn = event.target.closest("button");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
+    btn.classList.add("bg-green-500", "hover:bg-green-600");
+    btn.classList.remove("bg-blue-500", "hover:bg-blue-600");
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove("bg-green-500", "hover:bg-green-600");
+        btn.classList.add("bg-blue-500", "hover:bg-blue-600");
+    }, 2000);
+}
+
+async function loadChildren() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/children`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) {
+            document.getElementById("children-list").innerHTML = '<div class="text-center text-gray-400 py-4">Ошибка загрузки</div>';
+            return;
+        }
+        
+        const children = await res.json();
+        const listEl = document.getElementById("children-list");
+        
+        if (children.length === 0) {
+            listEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет подопечных. Отправьте ссылку для регистрации.</div>';
+            return;
+        }
+        
+        listEl.innerHTML = children.map(child => `
+            <div class="p-4 bg-white rounded-xl border border-gray-200 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-gray-800">${child.username}</div>
+                        <div class="text-sm text-gray-500">${child.email}</div>
+                    </div>
+                    <button onclick="showChildStats(${child.id}, '${child.username}')" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all">
+                        <i class="fas fa-chart-line mr-2"></i>Статистика
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error("Error loading children:", e);
+        document.getElementById("children-list").innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки</div>';
+    }
+}
+
+async function showChildStats(childId, childName) {
+    document.getElementById("child-stats-modal").classList.remove("hidden");
+    document.getElementById("child-stats-name").textContent = `Статистика: ${childName}`;
+    document.getElementById("child-stats-content").innerHTML = '<div class="text-center text-gray-400 py-8">Загрузка...</div>';
+    
+    try {
+        // Загружаем статистику
+        const [statsRes, historyRes, activitiesRes] = await Promise.all([
+            fetch(`${API_BASE}/admin/child/${childId}/stats`, {
+                headers: { "Authorization": `Bearer ${authToken}` }
+            }),
+            fetch(`${API_BASE}/admin/child/${childId}/history?limit=20`, {
+                headers: { "Authorization": `Bearer ${authToken}` }
+            }),
+            fetch(`${API_BASE}/admin/child/${childId}/activities`, {
+                headers: { "Authorization": `Bearer ${authToken}` }
+            })
+        ]);
+        
+        if (!statsRes.ok) throw new Error("Ошибка загрузки статистики");
+        
+        const stats = await statsRes.json();
+        const history = historyRes.ok ? await historyRes.json() : [];
+        const activities = activitiesRes.ok ? await activitiesRes.json() : [];
+        
+        const contentEl = document.getElementById("child-stats-content");
+        contentEl.innerHTML = `
+            <!-- Основная статистика -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 text-white">
+                    <div class="text-2xl font-black">${Math.round(stats.balance)}</div>
+                    <div class="text-sm opacity-90">Баланс XP</div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-4 text-white">
+                    <div class="text-2xl font-black">${stats.level}</div>
+                    <div class="text-sm opacity-90">Уровень</div>
+                </div>
+                <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-4 text-white">
+                    <div class="text-2xl font-black">${stats.current_streak}</div>
+                    <div class="text-sm opacity-90">Серия дней</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 text-white">
+                    <div class="text-2xl font-black">${stats.activities_count}</div>
+                    <div class="text-sm opacity-90">Активностей</div>
+                </div>
+            </div>
+            
+            <!-- Детальная статистика -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h4 class="font-bold text-gray-800 mb-3">📊 Общая статистика</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Всего заработано:</span>
+                            <span class="font-bold text-green-600">${Math.round(stats.total_earned)} XP</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Всего потрачено:</span>
+                            <span class="font-bold text-red-600">${Math.round(stats.total_spent)} XP</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Рекорд серии:</span>
+                            <span class="font-bold">${stats.longest_streak} дней</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Дней активности:</span>
+                            <span class="font-bold">${stats.total_days_active}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h4 class="font-bold text-gray-800 mb-3">📅 Сегодня</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Заработано:</span>
+                            <span class="font-bold text-green-600">${Math.round(stats.today_earned)} XP</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Время:</span>
+                            <span class="font-bold">${Math.round(stats.today_time)} минут</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-gray-200">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">За неделю:</span>
+                            <span class="font-bold text-green-600">${Math.round(stats.week_earned)} XP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- История -->
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-800 mb-3">📜 Последние транзакции</h4>
+                <div class="space-y-2 max-h-64 overflow-y-auto">
+                    ${history.length > 0 ? history.map(item => {
+                        const date = new Date(item.date);
+                        const isEarn = item.type === 'earn';
+                        return `
+                            <div class="flex items-center justify-between p-3 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'}">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center ${isEarn ? 'bg-emerald-500' : 'bg-red-500'}">
+                                        <i class="fas ${isEarn ? 'fa-arrow-up' : 'fa-arrow-down'} text-white text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-800 text-sm">${item.description}</div>
+                                        <div class="text-xs text-gray-500">${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>
+                                    </div>
+                                </div>
+                                <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'}">
+                                    ${isEarn ? '+' : '-'}${Math.round(item.amount)} XP
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : '<div class="text-center text-gray-400 py-4">История пуста</div>'}
+                </div>
+            </div>
+            
+            <!-- Активности -->
+            <div>
+                <h4 class="font-bold text-gray-800 mb-3">🎯 Активности</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    ${activities.length > 0 ? activities.map(act => `
+                        <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="font-medium text-gray-800 text-sm">${act.name}</div>
+                            <div class="text-xs text-gray-600">${act.xp_per_hour} XP/час</div>
+                        </div>
+                    `).join('') : '<div class="text-gray-400 text-sm">Нет активностей</div>'}
+                </div>
+            </div>
+        `;
+    } catch (e) {
+        console.error("Error loading child stats:", e);
+        document.getElementById("child-stats-content").innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки статистики</div>';
+    }
+}
+
+function closeChildStats() {
+    document.getElementById("child-stats-modal").classList.add("hidden");
+}

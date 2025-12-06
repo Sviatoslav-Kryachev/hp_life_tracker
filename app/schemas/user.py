@@ -6,6 +6,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     username: Optional[str] = None
+    invite_code: Optional[str] = None
 
 
 class UserOut(BaseModel):
