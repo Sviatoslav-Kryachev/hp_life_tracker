@@ -76,13 +76,28 @@ async def stop_timer(
     from app.routers.streak import update_streak as update_streak_func
     streak_result = update_streak_func(db, current_user.id)
     
+    # Обновляем прогресс целей
+    from app.routers.goals import update_goal_progress
+    from app.models.base import Goal
+    user_goals = db.query(Goal).filter(
+        Goal.user_id == current_user.id,
+        Goal.is_completed == 0
+    ).all()
+    completed_goals = []
+    for goal in user_goals:
+        old_completed = goal.is_completed
+        update_goal_progress(db, goal)
+        if goal.is_completed == 1 and old_completed == 0:
+            completed_goals.append(goal.title)
+    
     return {
         "duration_minutes": log.duration_minutes, 
         "xp_earned": log.xp_earned,
         "wallet_balance": wallet.balance if wallet else 0, 
         "level": wallet.level if wallet else 1,
         "streak_bonus": streak_result.get("bonus_xp", 0),
-        "streak_message": streak_result.get("message", "")
+        "streak_message": streak_result.get("message", ""),
+        "completed_goals": completed_goals
     }
 
 

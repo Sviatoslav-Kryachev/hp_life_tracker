@@ -165,10 +165,16 @@ function showApp() {
     loadWeekCalendar();
     loadStreak();
     loadRecommendations();
+    loadGoals();
+    loadHistory(); // Автоматически загружаем историю
 }
 
 async function checkAuth() {
-    if (!authToken) {
+    // Сразу скрываем auth-section если есть токен, чтобы избежать мигания
+    if (authToken) {
+        authSection.classList.add("hidden");
+        appSection.classList.remove("hidden");
+    } else {
         showAuth();
         return;
     }
@@ -316,17 +322,17 @@ async function loadHistory() {
             const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
             
             return `
-                <div class="flex items-center justify-between p-3 rounded-xl ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:scale-[1.01]">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg flex items-center justify-center ${isEarn ? 'bg-emerald-500' : 'bg-red-500'}">
-                            <i class="fas ${isEarn ? 'fa-arrow-up' : 'fa-arrow-down'} text-white text-sm"></i>
+                <div class="flex items-center justify-between p-2.5 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:bg-opacity-80">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isEarn ? 'bg-emerald-500' : 'bg-red-500'}">
+                            <i class="fas ${isEarn ? 'fa-arrow-up' : 'fa-arrow-down'} text-white text-xs"></i>
                         </div>
-                        <div>
-                            <div class="font-medium text-gray-800 text-sm">${item.description}</div>
+                        <div class="min-w-0 flex-1">
+                            <div class="font-medium text-gray-800 text-sm truncate">${item.description}</div>
                             <div class="text-xs text-gray-500">${dateStr} в ${timeStr}${item.duration_minutes ? ` • ${Math.round(item.duration_minutes)} мин` : ''}</div>
                         </div>
                     </div>
-                    <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'}">
+                    <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0 ml-2">
                         ${isEarn ? '+' : '-'}${Math.round(item.amount)} XP
                     </div>
                 </div>
@@ -627,6 +633,10 @@ async function stopTimer(activityId, button) {
         if (data.streak_bonus && data.streak_bonus > 0) {
             message += `\n🔥 Бонус за серию: +${data.streak_bonus} XP`;
         }
+        if (data.completed_goals && data.completed_goals.length > 0) {
+            message += `\n🎯 Цель выполнена: ${data.completed_goals.join(", ")}`;
+            loadGoals(); // Обновляем список целей
+        }
         alert(message);
     } catch (e) {
         console.error("Error stopping timer:", e);
@@ -788,15 +798,19 @@ function renderRewardCard(reward) {
     const brand = detectBrand(reward.name);
     
     const div = document.createElement("div");
-    div.className = `reward-card group relative p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-white border-2 ${brand.borderColor} hover:shadow-lg hover:scale-[1.01] transition-all duration-300 w-full max-w-full`;
+    div.className = `reward-card group relative p-4 rounded-lg bg-gradient-to-r from-gray-50 to-white border-2 ${brand.borderColor} hover:shadow-md hover:border-opacity-80 transition-all duration-200 w-full max-w-full overflow-hidden`;
 
-    // Верхняя часть: название и иконка
-    const topSection = document.createElement("div");
-    topSection.className = "flex items-center gap-3 mb-3";
+    // Основная структура: всё в одной строке, кнопки по центру по высоте
+    const mainSection = document.createElement("div");
+    mainSection.className = "flex items-center justify-between gap-4";
+    
+    // Левая часть: иконка и название со стоимостью
+    const leftSection = document.createElement("div");
+    leftSection.className = "flex items-center gap-3 flex-1 min-w-0";
     
     // Иконка бренда
     const icon = document.createElement("div");
-    icon.className = `w-12 h-12 ${brand.bgColor} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300`;
+    icon.className = `w-12 h-12 ${brand.bgColor} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200`;
     
     if (brand.iconType === "text") {
         icon.innerHTML = `<span class="${brand.textColor} font-black text-lg">${brand.icon}</span>`;
@@ -804,39 +818,31 @@ function renderRewardCard(reward) {
         icon.innerHTML = `<i class="${brand.icon} ${brand.textColor} text-lg"></i>`;
     }
     
-    // Название
+    // Название и стоимость
     const nameDiv = document.createElement("div");
     nameDiv.className = "flex-1 min-w-0";
-    nameDiv.innerHTML = `<div class="font-bold text-gray-800 text-base leading-tight break-words">${reward.name}</div>`;
-    
-    topSection.appendChild(icon);
-    topSection.appendChild(nameDiv);
-
-    // Нижняя часть: стоимость и кнопки
-    const bottomSection = document.createElement("div");
-    bottomSection.className = "flex items-center justify-between gap-2 pt-2 border-t border-gray-100 w-full";
-    
-    // Стоимость XP (слева)
-    const costBadge = document.createElement("div");
-    costBadge.className = "flex items-center gap-1.5 flex-shrink-0";
-    costBadge.innerHTML = `
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 whitespace-nowrap">
-            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm flex-shrink-0">
-                <i class="fas fa-coins text-white text-[10px]"></i>
+    nameDiv.innerHTML = `
+        <div class="font-bold text-gray-800 text-base leading-tight break-words mb-1">${reward.name}</div>
+        <div class="flex items-center gap-1.5">
+            <div class="w-5 h-5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm flex-shrink-0">
+                <i class="fas fa-coins text-white text-[8px]"></i>
             </div>
-            <span class="text-amber-700 text-sm font-bold">${reward.xp_cost} XP</span>
+            <span class="text-amber-700 text-xs font-bold">${reward.xp_cost} XP</span>
         </div>
     `;
     
-    // Кнопки (справа)
+    leftSection.appendChild(icon);
+    leftSection.appendChild(nameDiv);
+    
+    // Правая часть: кнопки (выровнены по центру по высоте)
     const btnContainer = document.createElement("div");
-    btnContainer.className = "flex items-center gap-1.5 flex-shrink-0";
+    btnContainer.className = "flex items-center gap-2 flex-shrink-0";
 
     // Кнопки редактирования и удаления (только для своих наград, всегда видны)
     if (reward.user_id) {
         const editBtn = document.createElement("button");
-        editBtn.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white transition-all flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 flex-shrink-0";
-        editBtn.innerHTML = '<i class="fas fa-pen text-[10px]"></i>';
+        editBtn.className = "w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white transition-all flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 flex-shrink-0";
+        editBtn.innerHTML = '<i class="fas fa-pen text-xs"></i>';
         editBtn.title = "Редактировать";
         editBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -845,8 +851,8 @@ function renderRewardCard(reward) {
         btnContainer.appendChild(editBtn);
 
         const deleteBtn = document.createElement("button");
-        deleteBtn.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 hover:from-red-500 hover:to-rose-600 text-white transition-all flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 flex-shrink-0";
-        deleteBtn.innerHTML = '<i class="fas fa-trash text-[10px]"></i>';
+        deleteBtn.className = "w-9 h-9 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 hover:from-red-500 hover:to-rose-600 text-white transition-all flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 flex-shrink-0";
+        deleteBtn.innerHTML = '<i class="fas fa-trash text-xs"></i>';
         deleteBtn.title = "Удалить";
         deleteBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -857,16 +863,15 @@ function renderRewardCard(reward) {
 
     // Кнопка покупки
     const spendBtn = document.createElement("button");
-    spendBtn.className = "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1 active:scale-95 flex-shrink-0 whitespace-nowrap";
+    spendBtn.className = "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 active:scale-95 flex-shrink-0 whitespace-nowrap h-9";
     spendBtn.innerHTML = '<i class="fas fa-shopping-bag text-xs"></i><span class="hidden sm:inline">Купить</span>';
     spendBtn.addEventListener("click", () => spendReward(reward.id));
     btnContainer.appendChild(spendBtn);
 
-    bottomSection.appendChild(costBadge);
-    bottomSection.appendChild(btnContainer);
+    mainSection.appendChild(leftSection);
+    mainSection.appendChild(btnContainer);
 
-    div.appendChild(topSection);
-    div.appendChild(bottomSection);
+    div.appendChild(mainSection);
     rewardsList.appendChild(div);
 }
 
@@ -1037,6 +1042,11 @@ function showRewardMessage(text, type) {
 
 // ============= INITIALIZATION =============
 window.addEventListener("DOMContentLoaded", () => {
+    // Сразу проверяем токен и скрываем auth-section если он есть
+    if (authToken) {
+        authSection.classList.add("hidden");
+        appSection.classList.remove("hidden");
+    }
     // Check auth on load
     checkAuth();
 
@@ -1114,6 +1124,15 @@ window.addEventListener("DOMContentLoaded", () => {
         editRewardForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             await updateReward();
+        });
+    }
+
+    // Create goal form
+    const createGoalForm = document.getElementById("create-goal-form");
+    if (createGoalForm) {
+        createGoalForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            await createGoal();
         });
     }
 });
@@ -1310,18 +1329,18 @@ async function loadRecommendations() {
             
             let actionBtn = '';
             if (rec.activity_id) {
-                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto px-3 py-1 rounded-lg ${bgColor} ${textColor} text-sm font-medium hover:opacity-80 transition-all">
-                    <i class="fas fa-play mr-1"></i> Начать
+                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto px-2 py-1 rounded ${bgColor} ${textColor} text-[10px] font-medium hover:opacity-80 transition-all flex-shrink-0" title="Начать">
+                    <i class="fas fa-play"></i>
                 </button>`;
             }
             
             return `
-                <div class="flex items-center gap-3 p-3 rounded-xl ${bgColor} border ${borderColor} transition-all hover:scale-[1.01]">
-                    <div class="w-8 h-8 rounded-lg ${bgColor} flex items-center justify-center flex-shrink-0">
-                        <i class="${icon} ${textColor} text-sm"></i>
+                <div class="flex items-center gap-2 p-2 rounded-lg ${bgColor} border ${borderColor} transition-all hover:scale-[1.01]">
+                    <div class="w-6 h-6 rounded ${bgColor} flex items-center justify-center flex-shrink-0">
+                        <i class="${icon} ${textColor} text-xs"></i>
                     </div>
-                    <div class="flex-1">
-                        <div class="font-medium ${textColor} text-sm">${rec.message}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-medium ${textColor} text-xs">${rec.message}</div>
                     </div>
                     ${actionBtn}
                 </div>
@@ -1433,7 +1452,7 @@ async function showChildStats(childId, childName) {
     
     try {
         // Загружаем статистику
-        const [statsRes, historyRes, activitiesRes] = await Promise.all([
+        const [statsRes, historyRes, activitiesRes, goalsRes] = await Promise.all([
             fetch(`${API_BASE}/admin/child/${childId}/stats`, {
                 headers: { "Authorization": `Bearer ${authToken}` }
             }),
@@ -1441,6 +1460,9 @@ async function showChildStats(childId, childName) {
                 headers: { "Authorization": `Bearer ${authToken}` }
             }),
             fetch(`${API_BASE}/admin/child/${childId}/activities`, {
+                headers: { "Authorization": `Bearer ${authToken}` }
+            }),
+            fetch(`${API_BASE}/admin/child/${childId}/goals`, {
                 headers: { "Authorization": `Bearer ${authToken}` }
             })
         ]);
@@ -1450,6 +1472,7 @@ async function showChildStats(childId, childName) {
         const stats = await statsRes.json();
         const history = historyRes.ok ? await historyRes.json() : [];
         const activities = activitiesRes.ok ? await activitiesRes.json() : [];
+        const goals = goalsRes.ok ? await goalsRes.json() : [];
         
         const contentEl = document.getElementById("child-stats-content");
         contentEl.innerHTML = `
@@ -1546,7 +1569,7 @@ async function showChildStats(childId, childName) {
             </div>
             
             <!-- Активности -->
-            <div>
+            <div class="mb-4">
                 <h4 class="font-bold text-gray-800 mb-3">🎯 Активности</h4>
                 <div class="grid grid-cols-2 gap-2">
                     ${activities.length > 0 ? activities.map(act => `
@@ -1555,6 +1578,33 @@ async function showChildStats(childId, childName) {
                             <div class="text-xs text-gray-600">${act.xp_per_hour} XP/час</div>
                         </div>
                     `).join('') : '<div class="text-gray-400 text-sm">Нет активностей</div>'}
+                </div>
+            </div>
+            
+            <!-- Цели -->
+            <div>
+                <h4 class="font-bold text-gray-800 mb-3">🎯 Цели</h4>
+                <div class="space-y-2">
+                    ${goals.length > 0 ? goals.map(goal => {
+                        const progressPercent = Math.min(goal.progress_percent, 100);
+                        const isCompleted = goal.is_completed === 1;
+                        return `
+                            <div class="p-3 bg-purple-50 rounded-lg border ${isCompleted ? 'border-green-300' : 'border-purple-200'}">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="font-medium text-gray-800 text-sm">${goal.title}</div>
+                                    ${isCompleted ? '<span class="text-green-600 text-xs">✓ Выполнено</span>' : ''}
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-600 mb-1">
+                                    <span>${Math.round(goal.current_xp)} / ${Math.round(goal.target_xp)} XP</span>
+                                    <span>${Math.round(progressPercent)}%</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ''}" 
+                                         style="width: ${progressPercent}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : '<div class="text-gray-400 text-sm">Нет целей</div>'}
                 </div>
             </div>
         `;
@@ -1566,4 +1616,283 @@ async function showChildStats(childId, childName) {
 
 function closeChildStats() {
     document.getElementById("child-stats-modal").classList.add("hidden");
+}
+
+// ============= GOALS =============
+async function loadGoals() {
+    try {
+        const res = await fetch(`${API_BASE}/goals/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const listEl = document.getElementById('goals-list');
+        if (!listEl) return;
+        
+        if (data.length === 0) {
+            listEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет целей. Создайте первую цель!</div>';
+            return;
+        }
+        
+        listEl.innerHTML = data.map(goal => {
+            const progressPercent = Math.min(goal.progress_percent, 100);
+            const isCompleted = goal.is_completed === 1;
+            const daysLeft = goal.target_date ? Math.ceil((new Date(goal.target_date) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+            
+            return `
+                <div class="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 ${isCompleted ? 'border-green-400 bg-green-50' : 'border-purple-300'} hover:shadow-md transition-all">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                                <h4 class="font-bold text-gray-800 text-sm">${goal.title}</h4>
+                                ${isCompleted ? '<span class="px-1.5 py-0.5 bg-green-500 text-white text-[10px] rounded-full flex-shrink-0">✓ Выполнено</span>' : ''}
+                            </div>
+                            ${goal.activity_name ? `
+                                <div class="flex items-center gap-1 mb-1">
+                                    <i class="fas fa-tag text-purple-600 text-xs"></i>
+                                    <span class="text-xs text-purple-700 font-medium">${goal.activity_name}</span>
+                                </div>
+                            ` : ''}
+                            ${goal.target_date ? `
+                                <div class="flex items-center gap-1 mb-1">
+                                    <i class="fas fa-calendar text-gray-500 text-xs"></i>
+                                    <span class="text-[10px] text-gray-600">
+                                        ${new Date(goal.target_date).toLocaleDateString('ru-RU')} 
+                                        ${daysLeft !== null ? (daysLeft > 0 ? `(${daysLeft} дн.)` : daysLeft === 0 ? '(Сегодня!)' : '(Просрочено)') : ''}
+                                    </span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex gap-1 flex-shrink-0 ml-2">
+                            ${!isCompleted ? `
+                                <button onclick="editGoal(${goal.id})" class="w-6 h-6 rounded bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center transition-all" title="Редактировать">
+                                    <i class="fas fa-edit text-[10px]"></i>
+                                </button>
+                                <button onclick="deleteGoal(${goal.id})" class="w-6 h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition-all" title="Удалить">
+                                    <i class="fas fa-trash text-[10px]"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span class="text-gray-600 font-medium">${Math.round(goal.current_xp)} / ${Math.round(goal.target_xp)} XP</span>
+                            <span class="font-bold text-purple-600">${Math.round(progressPercent)}%</span>
+                        </div>
+                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ''}" 
+                                 style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error("Error loading goals:", e);
+    }
+}
+
+function showCreateGoalModal() {
+    document.getElementById("goal-modal-title").textContent = "🎯 Новая цель";
+    document.getElementById("goal-submit-btn").innerHTML = '<i class="fas fa-check mr-2"></i>Создать цель';
+    document.getElementById("edit-goal-id").value = "";
+    document.getElementById("create-goal-modal").classList.remove("hidden");
+    // Загружаем список активностей для выбора
+    loadActivitiesForGoal();
+    // Очищаем форму
+    document.getElementById("create-goal-form").reset();
+}
+
+function closeCreateGoalModal() {
+    document.getElementById("create-goal-modal").classList.add("hidden");
+    document.getElementById("create-goal-form").reset();
+    document.getElementById("edit-goal-id").value = "";
+}
+
+async function editGoal(goalId) {
+    try {
+        // Загружаем данные цели
+        const res = await fetch(`${API_BASE}/goals/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) {
+            alert("Ошибка загрузки целей");
+            return;
+        }
+        const goals = await res.json();
+        const goal = goals.find(g => g.id === goalId);
+        
+        if (!goal) {
+            alert("Цель не найдена");
+            return;
+        }
+        
+        if (goal.is_completed === 1) {
+            alert("Нельзя редактировать выполненную цель");
+            return;
+        }
+        
+        // Заполняем форму данными цели
+        document.getElementById("edit-goal-id").value = goal.id;
+        document.getElementById("goal-title").value = goal.title;
+        document.getElementById("goal-description").value = goal.description || "";
+        document.getElementById("goal-target-xp").value = goal.target_xp;
+        document.getElementById("goal-target-date").value = goal.target_date ? new Date(goal.target_date).toISOString().split('T')[0] : "";
+        
+        // Загружаем активности и выбираем нужную
+        await loadActivitiesForGoal();
+        if (goal.activity_id) {
+            document.getElementById("goal-activity").value = goal.activity_id;
+        }
+        
+        // Меняем заголовок и кнопку
+        document.getElementById("goal-modal-title").textContent = "✏️ Редактировать цель";
+        document.getElementById("goal-submit-btn").innerHTML = '<i class="fas fa-save mr-2"></i>Сохранить изменения';
+        
+        // Открываем модальное окно
+        document.getElementById("create-goal-modal").classList.remove("hidden");
+    } catch (e) {
+        console.error("Error loading goal for edit:", e);
+        alert("Ошибка загрузки цели: " + e.message);
+    }
+}
+
+async function loadActivitiesForGoal() {
+    try {
+        const res = await fetch(`${API_BASE}/activities/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) {
+            console.error("Failed to load activities");
+            return;
+        }
+        const data = await res.json();
+        
+        const select = document.getElementById("goal-activity");
+        if (!select) {
+            console.error("goal-activity select not found");
+            return;
+        }
+        
+        select.innerHTML = '<option value="">-- Выберите активность --</option>';
+        
+        if (data.length === 0) {
+            const option = document.createElement("option");
+            option.value = "";
+            option.textContent = "Сначала создайте активность";
+            option.disabled = true;
+            select.appendChild(option);
+            return;
+        }
+        
+        data.forEach(activity => {
+            const option = document.createElement("option");
+            option.value = activity.id;
+            option.textContent = `${activity.name} (${activity.xp_per_hour} XP/час)`;
+            select.appendChild(option);
+        });
+    } catch (e) {
+        console.error("Error loading activities for goal:", e);
+        alert("Ошибка загрузки активностей: " + e.message);
+    }
+}
+
+async function createGoal() {
+    const goalId = document.getElementById("edit-goal-id").value;
+    const title = document.getElementById("goal-title").value.trim();
+    const description = document.getElementById("goal-description").value.trim();
+    const targetXp = parseFloat(document.getElementById("goal-target-xp").value);
+    const activityId = document.getElementById("goal-activity").value;
+    const targetDate = document.getElementById("goal-target-date").value;
+    
+    if (!title || !targetXp || targetXp <= 0) {
+        alert("Заполните название и целевое количество XP");
+        return;
+    }
+    
+    if (!activityId) {
+        alert("Пожалуйста, выберите активность для цели");
+        return;
+    }
+    
+    try {
+        // Если есть ID - это редактирование, иначе - создание
+        if (goalId) {
+            // Редактирование
+            const res = await fetch(`${API_BASE}/goals/${goalId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`
+                },
+                body: JSON.stringify({
+                    title,
+                    description: description || null,
+                    target_xp: targetXp,
+                    activity_id: activityId ? parseInt(activityId) : null,
+                    target_date: targetDate ? new Date(targetDate).toISOString() : null
+                })
+            });
+            
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.detail || "Ошибка обновления цели");
+            }
+            
+            closeCreateGoalModal();
+            loadGoals();
+            alert("✅ Цель обновлена!");
+        } else {
+            // Создание
+            const res = await fetch(`${API_BASE}/goals/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`
+                },
+                body: JSON.stringify({
+                    title,
+                    description: description || null,
+                    target_xp: targetXp,
+                    activity_id: activityId ? parseInt(activityId) : null,
+                    target_date: targetDate ? new Date(targetDate).toISOString() : null
+                })
+            });
+            
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.detail || "Ошибка создания цели");
+            }
+            
+            closeCreateGoalModal();
+            loadGoals();
+            alert("✅ Цель создана!");
+        }
+    } catch (e) {
+        alert("Ошибка: " + e.message);
+    }
+}
+
+async function deleteGoal(goalId) {
+    if (!confirm("Удалить эту цель?")) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/goals/${goalId}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) throw new Error("Ошибка удаления");
+        
+        loadGoals();
+    } catch (e) {
+        alert("Ошибка удаления цели");
+    }
+}
+
+async function editGoal(goalId) {
+    // Пока просто удаляем и предлагаем создать заново
+    // Можно добавить модальное окно редактирования позже
+    alert("Редактирование целей будет добавлено позже. Пока можно удалить и создать заново.");
 }

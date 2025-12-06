@@ -216,6 +216,56 @@ async def get_child_activities(
     ]
 
 
+@router.get("/child/{child_id}/goals")
+async def get_child_goals(
+    child_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Получить список целей подопечного"""
+    if not check_admin(current_user):
+        raise HTTPException(status_code=403, detail="Доступ запрещён")
+    
+    child = db.query(User).filter(
+        User.id == child_id,
+        User.parent_id == current_user.id
+    ).first()
+    
+    if not child:
+        raise HTTPException(status_code=404, detail="Подопечный не найден")
+    
+    from app.routers.goals import update_goal_progress
+    from app.models.base import Goal, Activity
+    
+    goals = db.query(Goal).filter(Goal.user_id == child_id).order_by(Goal.created_at.desc()).all()
+    
+    result = []
+    for goal in goals:
+        update_goal_progress(db, goal)
+        
+        activity_name = None
+        if goal.activity_id:
+            activity = db.query(Activity).filter(Activity.id == goal.activity_id).first()
+            activity_name = activity.name if activity else None
+        
+        progress_percent = (goal.current_xp / goal.target_xp * 100) if goal.target_xp > 0 else 0
+        
+        result.append({
+            "id": goal.id,
+            "title": goal.title,
+            "description": goal.description,
+            "target_xp": goal.target_xp,
+            "current_xp": goal.current_xp,
+            "progress_percent": min(progress_percent, 100),
+            "is_completed": goal.is_completed,
+            "target_date": goal.target_date.isoformat() if goal.target_date else None,
+            "activity_name": activity_name,
+            "created_at": goal.created_at.isoformat()
+        })
+    
+    return result
+
+
 @router.get("/invite-code")
 async def get_invite_code(
     db: Session = Depends(get_db),

@@ -105,3 +105,21 @@ class BlacklistReward(Base):
     reward_name_pattern = Column(String, nullable=False)  # Паттерн названия (например, "YouTube", "Instagram")
     is_active = Column(Integer, default=1)  # 1 = активен, 0 = отключен
     user = relationship("User", backref="blacklist")
+
+
+class Goal(Base):
+    """Цели пользователя"""
+    __tablename__ = "goals"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String, nullable=False)  # Название цели
+    description = Column(String, nullable=True)  # Описание
+    target_xp = Column(Float, nullable=False)  # Целевое количество XP
+    current_xp = Column(Float, default=0.0)  # Текущий прогресс
+    target_date = Column(DateTime, nullable=True)  # Дата дедлайна (опционально)
+    activity_id = Column(Integer, ForeignKey("activities.id"), nullable=True)  # Связанная активность (опционально)
+    is_completed = Column(Integer, default=0)  # 1 = выполнена, 0 = в процессе
+    completed_at = Column(DateTime, nullable=True)  # Дата выполнения
+    created_at = Column(DateTime, default=datetime.utcnow)
+    user = relationship("User", backref="goals")
+    activity = relationship("Activity", backref="goals")

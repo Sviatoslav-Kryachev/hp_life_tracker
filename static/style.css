@@ -28,6 +28,12 @@ body {
 .reward-card {
     animation: fadeIn 0.25s ease-out;
     max-width: 100%;
+    overflow: hidden;
+}
+
+.reward-card:hover {
+    transform: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes fadeIn {
