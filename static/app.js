@@ -1,5 +1,32 @@
 const API_BASE = "http://127.0.0.1:8000";
 
+// ============= MOBILE MENU =============
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const btn = document.getElementById('mobile-menu-btn');
+    const icon = btn.querySelector('i');
+    
+    if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+    } else {
+        menu.classList.add('hidden');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+    }
+}
+
+function closeMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const btn = document.getElementById('mobile-menu-btn');
+    const icon = btn.querySelector('i');
+    
+    menu.classList.add('hidden');
+    icon.classList.remove('fa-times');
+    icon.classList.add('fa-bars');
+}
+
 // ============= AUTH STATE =============
 let authToken = localStorage.getItem('token') || '';
 let currentUser = null;
@@ -251,37 +278,332 @@ async function loadTodayStats() {
     }
 }
 
-// ============= WEEK CALENDAR =============
-async function loadWeekCalendar() {
+// ============= CALENDAR =============
+let currentCalendarPeriod = 'week';
+
+function changeCalendarPeriod(period) {
+    currentCalendarPeriod = period;
+    
+    // Обновляем активную кнопку
+    document.querySelectorAll('[id^="period-"]').forEach(btn => {
+        btn.classList.remove('bg-indigo-500', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-700');
+    });
+    const activeBtn = document.getElementById(`period-${period}`);
+    if (activeBtn) {
+        activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        activeBtn.classList.add('bg-indigo-500', 'text-white');
+    }
+    
+    // Загружаем календарь для выбранного периода
+    loadCalendar(period);
+}
+
+async function loadCalendar(period = currentCalendarPeriod) {
     try {
-        const res = await fetch(`${API_BASE}/xp/week`, {
+        const endpoint = period === 'week' ? '/xp/week' : period === 'month' ? '/xp/month' : '/xp/year';
+        const res = await fetch(`${API_BASE}${endpoint}`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         if (!res.ok) return;
         const data = await res.json();
         
-        const calendarEl = document.getElementById('week-calendar');
-        if (!calendarEl) return;
+        const containerEl = document.getElementById('calendar-container');
+        if (!containerEl) return;
         
-        calendarEl.innerHTML = data.map((day, index) => {
-            const isToday = index === 6;
-            const hasActivity = day.earned > 0 || day.spent > 0;
-            const intensity = Math.min(day.earned / 100, 1); // Интенсивность цвета
+        if (period === 'week') {
+            containerEl.innerHTML = `
+                <div class="flex justify-between gap-0.5 md:gap-1" id="week-calendar">
+                    ${data.map((day, index) => {
+                        const isToday = index === 6;
+                        const hasActivity = day.earned > 0 || day.spent > 0;
+                        const intensity = Math.min(day.earned / 100, 1);
+                        const todayDate = new Date();
+                        const dayDate = new Date(day.date);
+                        const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
+                        
+                        return `
+                            <div class="flex flex-col items-center cursor-pointer ${isTodayDate ? 'scale-110' : ''}" 
+                                 onclick="showDayDetails('${day.date}')"
+                                 title="Кликните для деталей: ${day.earned} XP заработано, ${day.spent} XP потрачено">
+                                <span class="text-xs text-gray-500 mb-1">${day.day_name}</span>
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all hover:scale-110
+                                    ${isTodayDate ? 'bg-indigo-500 text-white ring-2 ring-indigo-300' : 
+                                      hasActivity ? `bg-emerald-${Math.round(intensity * 4 + 1)}00 text-emerald-800` : 'bg-gray-100 text-gray-400'}">
+                                    ${Math.round(day.earned)}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } else if (period === 'month') {
+            // Календарь месяца в виде сетки
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Понедельник = 0
             
-            return `
-                <div class="flex flex-col items-center ${isToday ? 'scale-110' : ''}" title="${day.earned} XP заработано, ${day.spent} XP потрачено">
-                    <span class="text-xs text-gray-500 mb-1">${day.day_name}</span>
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all
-                        ${isToday ? 'bg-indigo-500 text-white ring-2 ring-indigo-300' : 
-                          hasActivity ? `bg-emerald-${Math.round(intensity * 4 + 1)}00 text-emerald-800` : 'bg-gray-100 text-gray-400'}">
-                        ${Math.round(day.earned)}
+            // Создаём карту данных по дням
+            const dayDataMap = {};
+            data.forEach(day => {
+                dayDataMap[day.day_number] = day;
+            });
+            
+            let calendarHTML = `
+                <div class="grid grid-cols-7 gap-1 mb-2">
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Пн</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Вт</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Ср</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Чт</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Пт</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Сб</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Вс</div>
+                </div>
+                <div class="grid grid-cols-7 gap-1">
+            `;
+            
+            // Пустые ячейки до первого дня месяца
+            for (let i = 0; i < startDayOfWeek; i++) {
+                calendarHTML += '<div class="aspect-square"></div>';
+            }
+            
+            // Дни месяца
+            for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+                const day = dayDataMap[dayNum] || { day_number: dayNum, earned: 0, spent: 0, date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}` };
+                const dayDate = new Date(day.date);
+                const todayDate = new Date();
+                const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
+                const hasActivity = day.earned > 0 || day.spent > 0;
+                const intensity = Math.min(day.earned / 200, 1);
+                
+                calendarHTML += `
+                    <div class="aspect-square flex flex-col items-center justify-center rounded-lg transition-all hover:bg-gray-50 cursor-pointer ${isTodayDate ? 'ring-2 ring-indigo-400 scale-105 bg-indigo-50' : ''}" 
+                         onclick="showDayDetails('${day.date}')"
+                         title="Кликните для деталей: ${day.earned} XP заработано, ${day.spent} XP потрачено">
+                        <span class="text-[10px] font-medium ${isTodayDate ? 'text-indigo-600 font-bold' : 'text-gray-600'}">${dayNum}</span>
+                        ${hasActivity ? `
+                            <div class="w-2 h-2 rounded-full mt-0.5 ${isTodayDate ? 'bg-indigo-500' : intensity > 0.5 ? 'bg-emerald-500' : intensity > 0.25 ? 'bg-emerald-400' : 'bg-emerald-300'}"></div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            calendarHTML += '</div>';
+            containerEl.innerHTML = calendarHTML;
+        } else if (period === 'year') {
+            // Календарь года - по месяцам
+            containerEl.innerHTML = `
+                <div class="grid grid-cols-4 gap-2">
+                    ${data.map(month => {
+                        const hasActivity = month.earned > 0 || month.spent > 0;
+                        const intensity = Math.min(month.earned / 2000, 1);
+                        const today = new Date();
+                        const isCurrentMonth = today.getMonth() + 1 === month.month;
+                        
+                        let bgColor = 'bg-gray-100';
+                        let textColor = 'text-gray-400';
+                        if (hasActivity) {
+                            if (intensity > 0.75) {
+                                bgColor = 'bg-emerald-500';
+                                textColor = 'text-white';
+                            } else if (intensity > 0.5) {
+                                bgColor = 'bg-emerald-400';
+                                textColor = 'text-white';
+                            } else if (intensity > 0.25) {
+                                bgColor = 'bg-emerald-300';
+                                textColor = 'text-emerald-800';
+                            } else {
+                                bgColor = 'bg-emerald-200';
+                                textColor = 'text-emerald-800';
+                            }
+                        }
+                        
+                        return `
+                            <div class="flex flex-col items-center p-2 rounded-lg transition-all hover:shadow-md cursor-pointer ${isCurrentMonth ? 'bg-indigo-50 ring-2 ring-indigo-300' : ''}" 
+                                 onclick="showMonthDetails(${month.month})"
+                                 title="Кликните для деталей: ${month.month_name} - ${month.earned} XP заработано, ${month.spent} XP потрачено">
+                                <span class="text-xs font-semibold ${isCurrentMonth ? 'text-indigo-600' : 'text-gray-600'} mb-1">${month.month_name}</span>
+                                <div class="w-full h-8 rounded flex items-center justify-center text-[10px] font-bold ${bgColor} ${textColor}">
+                                    ${Math.round(month.earned)}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error("Error loading calendar", e);
+    }
+}
+
+// Старая функция для обратной совместимости
+async function loadWeekCalendar() {
+    await loadCalendar('week');
+}
+
+// ============= DAY DETAILS =============
+async function showDayDetails(date) {
+    try {
+        const modal = document.getElementById('day-details-modal');
+        const titleEl = document.getElementById('day-details-title');
+        const contentEl = document.getElementById('day-details-content');
+        
+        modal.classList.remove('hidden');
+        contentEl.innerHTML = '<div class="text-center text-gray-400 py-4">Загрузка...</div>';
+        
+        const res = await fetch(`${API_BASE}/xp/day/${date}`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) {
+            contentEl.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки данных</div>';
+            return;
+        }
+        
+        const data = await res.json();
+        
+        // Форматируем дату
+        const dateObj = new Date(date);
+        const formattedDate = dateObj.toLocaleDateString('ru-RU', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        titleEl.textContent = `📅 ${formattedDate}`;
+        
+        // Форматируем время
+        const formatTime = (timeStr) => {
+            if (!timeStr) return '';
+            const time = new Date(timeStr);
+            return time.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        };
+        
+        // Форматируем длительность
+        const formatDuration = (minutes) => {
+            if (!minutes || minutes === 0) return '0м';
+            const hours = Math.floor(minutes / 60);
+            const mins = Math.round(minutes % 60);
+            if (hours > 0) {
+                return mins > 0 ? `${hours}ч ${mins}м` : `${hours}ч`;
+            }
+            return `${mins}м`;
+        };
+        
+        let html = `
+            <div class="space-y-4">
+                <!-- Общая статистика -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border-2 border-indigo-200">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <div class="text-xs text-gray-600 mb-1">Заработано</div>
+                            <div class="text-xl font-bold text-green-600">+${data.total_earned} XP</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-600 mb-1">Потрачено</div>
+                            <div class="text-xl font-bold text-red-600">-${data.total_spent} XP</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-600 mb-1">Время активности</div>
+                            <div class="text-lg font-semibold text-indigo-600">${formatDuration(data.total_time)}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-600 mb-1">Итого</div>
+                            <div class="text-lg font-semibold ${data.net >= 0 ? 'text-green-600' : 'text-red-600'}">${data.net >= 0 ? '+' : ''}${data.net} XP</div>
+                        </div>
+                    </div>
+                </div>
+        `;
+        
+        // Заработки
+        if (data.earnings && data.earnings.length > 0) {
+            html += `
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        <i class="fas fa-arrow-up text-green-500"></i>
+                        Заработки (${data.sessions_count} сессий)
+                    </h4>
+                    <div class="space-y-2">
+                        ${data.earnings.map(earning => `
+                            <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-gray-800">${earning.activity_name}</div>
+                                        <div class="text-xs text-gray-600 mt-1">
+                                            <i class="fas fa-clock text-xs"></i> ${formatDuration(earning.duration_minutes)}
+                                            ${earning.time ? ` • ${formatTime(earning.time)}` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="text-green-600 font-bold">+${earning.xp_earned} XP</div>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             `;
-        }).join('');
+        } else {
+            html += `
+                <div class="text-center text-gray-400 py-4 bg-gray-50 rounded-lg">
+                    <i class="fas fa-info-circle mb-2"></i>
+                    <div>Нет активности в этот день</div>
+                </div>
+            `;
+        }
+        
+        // Расходы
+        if (data.spendings && data.spendings.length > 0) {
+            html += `
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        <i class="fas fa-arrow-down text-red-500"></i>
+                        Расходы (${data.purchases_count} покупок)
+                    </h4>
+                    <div class="space-y-2">
+                        ${data.spendings.map(spending => `
+                            <div class="bg-red-50 rounded-lg p-3 border border-red-200">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-gray-800">${spending.reward_name}</div>
+                                        ${spending.time ? `
+                                            <div class="text-xs text-gray-600 mt-1">
+                                                <i class="fas fa-clock text-xs"></i> ${formatTime(spending.time)}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="text-red-600 font-bold">-${spending.xp_spent} XP</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += '</div>';
+        contentEl.innerHTML = html;
+        
     } catch (e) {
-        console.error("Error loading week calendar", e);
+        console.error("Error loading day details:", e);
+        document.getElementById('day-details-content').innerHTML = 
+            '<div class="text-center text-red-400 py-4">Ошибка загрузки данных</div>';
     }
+}
+
+function closeDayDetailsModal() {
+    document.getElementById('day-details-modal').classList.add('hidden');
+}
+
+// Показать детали месяца (переключаемся на календарь месяца)
+function showMonthDetails(month) {
+    changeCalendarPeriod('month');
+    // Прокручиваем к календарю
+    setTimeout(() => {
+        document.getElementById('calendar-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
 }
 
 // ============= HISTORY =============
@@ -1333,18 +1655,18 @@ async function loadRecommendations() {
             
             let actionBtn = '';
             if (rec.activity_id) {
-                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="Начать отслеживание">
-                    <i class="fas fa-play text-[10px]"></i>
+                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="Начать отслеживание">
+                    <i class="fas fa-play text-[9px] md:text-[10px]"></i>
                 </button>`;
             }
             
             return `
-                <div class="flex items-center gap-2 p-2 rounded-lg ${bgColor} border ${borderColor} transition-all hover:scale-[1.01]">
-                    <div class="w-6 h-6 rounded ${bgColor} flex items-center justify-center flex-shrink-0">
-                        <i class="${icon} ${textColor} text-xs"></i>
+                <div class="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 rounded-lg ${bgColor} border ${borderColor} transition-all hover:scale-[1.01]">
+                    <div class="w-5 h-5 md:w-6 md:h-6 rounded ${bgColor} flex items-center justify-center flex-shrink-0">
+                        <i class="${icon} ${textColor} text-[10px] md:text-xs"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="font-medium ${textColor} text-xs">${rec.message}</div>
+                        <div class="font-medium ${textColor} text-[10px] md:text-xs leading-tight">${rec.message}</div>
                     </div>
                     ${actionBtn}
                 </div>
@@ -1769,46 +2091,46 @@ async function loadGoals() {
             const daysLeft = goal.target_date ? Math.ceil((new Date(goal.target_date) - new Date()) / (1000 * 60 * 60 * 24)) : null;
             
             return `
-                <div class="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 ${isCompleted ? 'border-green-400 bg-green-50' : 'border-purple-300'} hover:shadow-md transition-all">
-                    <div class="flex items-start justify-between mb-2">
+                <div class="p-2 md:p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg md:rounded-xl border-2 ${isCompleted ? 'border-green-400 bg-green-50' : 'border-purple-300'} hover:shadow-md transition-all">
+                    <div class="flex items-start justify-between mb-1.5 md:mb-2">
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-1.5 mb-1 flex-wrap">
-                                <h4 class="font-bold text-gray-800 text-sm">${goal.title}</h4>
-                                ${isCompleted ? '<span class="px-1.5 py-0.5 bg-green-500 text-white text-[10px] rounded-full flex-shrink-0">✓ Выполнено</span>' : ''}
+                            <div class="flex items-center gap-1 md:gap-1.5 mb-1 flex-wrap">
+                                <h4 class="font-bold text-gray-800 text-xs md:text-sm">${goal.title}</h4>
+                                ${isCompleted ? '<span class="px-1 md:px-1.5 py-0.5 bg-green-500 text-white text-[9px] md:text-[10px] rounded-full flex-shrink-0">✓ Выполнено</span>' : ''}
                             </div>
                             ${goal.activity_name ? `
-                                <div class="flex items-center gap-1 mb-1">
-                                    <i class="fas fa-tag text-purple-600 text-xs"></i>
-                                    <span class="text-xs text-purple-700 font-medium">${goal.activity_name}</span>
+                                <div class="flex items-center gap-1 mb-0.5 md:mb-1">
+                                    <i class="fas fa-tag text-purple-600 text-[10px] md:text-xs"></i>
+                                    <span class="text-[10px] md:text-xs text-purple-700 font-medium">${goal.activity_name}</span>
                                 </div>
                             ` : ''}
                             ${goal.target_date ? `
-                                <div class="flex items-center gap-1 mb-1">
-                                    <i class="fas fa-calendar text-gray-500 text-xs"></i>
-                                    <span class="text-[10px] text-gray-600">
+                                <div class="flex items-center gap-1 mb-0.5 md:mb-1">
+                                    <i class="fas fa-calendar text-gray-500 text-[10px] md:text-xs"></i>
+                                    <span class="text-[9px] md:text-[10px] text-gray-600">
                                         ${new Date(goal.target_date).toLocaleDateString('ru-RU')} 
                                         ${daysLeft !== null ? (daysLeft > 0 ? `(${daysLeft} дн.)` : daysLeft === 0 ? '(Сегодня!)' : '(Просрочено)') : ''}
                                     </span>
                                 </div>
                             ` : ''}
                         </div>
-                        <div class="flex gap-1 flex-shrink-0 ml-2">
+                        <div class="flex gap-0.5 md:gap-1 flex-shrink-0 ml-1 md:ml-2">
                             ${!isCompleted ? `
-                                <button onclick="editGoal(${goal.id})" class="w-6 h-6 rounded bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center transition-all" title="Редактировать">
-                                    <i class="fas fa-edit text-[10px]"></i>
+                                <button onclick="editGoal(${goal.id})" class="w-5 h-5 md:w-6 md:h-6 rounded bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center transition-all" title="Редактировать">
+                                    <i class="fas fa-edit text-[9px] md:text-[10px]"></i>
                                 </button>
-                                <button onclick="deleteGoal(${goal.id})" class="w-6 h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition-all" title="Удалить">
-                                    <i class="fas fa-trash text-[10px]"></i>
+                                <button onclick="deleteGoal(${goal.id})" class="w-5 h-5 md:w-6 md:h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition-all" title="Удалить">
+                                    <i class="fas fa-trash text-[9px] md:text-[10px]"></i>
                                 </button>
                             ` : ''}
                         </div>
                     </div>
-                    <div class="mb-1">
-                        <div class="flex justify-between text-[10px] mb-1">
+                    <div class="mb-0.5 md:mb-1">
+                        <div class="flex justify-between text-[9px] md:text-[10px] mb-0.5 md:mb-1">
                             <span class="text-gray-600 font-medium">${Math.round(goal.current_xp)} / ${Math.round(goal.target_xp)} XP</span>
                             <span class="font-bold text-purple-600">${Math.round(progressPercent)}%</span>
                         </div>
-                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-1.5 md:h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ''}" 
                                  style="width: ${progressPercent}%"></div>
                         </div>

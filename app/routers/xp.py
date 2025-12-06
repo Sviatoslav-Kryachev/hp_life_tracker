@@ -154,7 +154,6 @@ async def get_week_stats(
 ):
     """Статистика за неделю (для календаря)"""
     today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    week_ago = today - timedelta(days=7)
     
     # Получаем данные по дням
     daily_stats = []
@@ -189,6 +188,174 @@ async def get_week_stats(
         })
     
     return daily_stats
+
+
+@router.get("/month")
+async def get_month_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Статистика за месяц (для календаря)"""
+    today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    first_day = today.replace(day=1)
+    
+    # Получаем количество дней в месяце
+    if today.month == 12:
+        last_day = today.replace(year=today.year + 1, month=1, day=1) - timedelta(days=1)
+    else:
+        last_day = today.replace(month=today.month + 1, day=1) - timedelta(days=1)
+    
+    days_in_month = last_day.day
+    
+    # Получаем данные по дням
+    daily_stats = []
+    for day_num in range(1, days_in_month + 1):
+        day_start = first_day.replace(day=day_num)
+        day_end = day_start + timedelta(days=1)
+        
+        earned = db.query(func.sum(ActivityLog.xp_earned)).filter(
+            ActivityLog.user_id == current_user.id,
+            ActivityLog.end_time >= day_start,
+            ActivityLog.end_time < day_end
+        ).scalar() or 0
+        
+        spent = db.query(func.sum(RewardPurchase.xp_spent)).filter(
+            RewardPurchase.user_id == current_user.id,
+            RewardPurchase.purchased_at >= day_start,
+            RewardPurchase.purchased_at < day_end
+        ).scalar() or 0
+        
+        time_mins = db.query(func.sum(ActivityLog.duration_minutes)).filter(
+            ActivityLog.user_id == current_user.id,
+            ActivityLog.end_time >= day_start,
+            ActivityLog.end_time < day_end
+        ).scalar() or 0
+        
+        daily_stats.append({
+            "date": day_start.strftime("%Y-%m-%d"),
+            "day_number": day_num,
+            "day_name": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"][day_start.weekday()],
+            "earned": round(earned, 1),
+            "spent": round(spent, 1),
+            "time_minutes": round(time_mins, 1)
+        })
+    
+    return daily_stats
+
+
+@router.get("/year")
+async def get_year_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Статистика за год (для календаря)"""
+    today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    first_day = today.replace(month=1, day=1)
+    
+    # Получаем данные по месяцам
+    monthly_stats = []
+    month_names = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"]
+    
+    for month_num in range(1, 13):
+        month_start = first_day.replace(month=month_num)
+        if month_num == 12:
+            month_end = first_day.replace(year=first_day.year + 1, month=1, day=1)
+        else:
+            month_end = first_day.replace(month=month_num + 1, day=1)
+        
+        earned = db.query(func.sum(ActivityLog.xp_earned)).filter(
+            ActivityLog.user_id == current_user.id,
+            ActivityLog.end_time >= month_start,
+            ActivityLog.end_time < month_end
+        ).scalar() or 0
+        
+        spent = db.query(func.sum(RewardPurchase.xp_spent)).filter(
+            RewardPurchase.user_id == current_user.id,
+            RewardPurchase.purchased_at >= month_start,
+            RewardPurchase.purchased_at < month_end
+        ).scalar() or 0
+        
+        time_mins = db.query(func.sum(ActivityLog.duration_minutes)).filter(
+            ActivityLog.user_id == current_user.id,
+            ActivityLog.end_time >= month_start,
+            ActivityLog.end_time < month_end
+        ).scalar() or 0
+        
+        monthly_stats.append({
+            "month": month_num,
+            "month_name": month_names[month_num - 1],
+            "earned": round(earned, 1),
+            "spent": round(spent, 1),
+            "time_minutes": round(time_mins, 1)
+        })
+    
+    return monthly_stats
+
+
+@router.get("/day/{date}")
+async def get_day_details(
+    date: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Детальная информация по конкретному дню"""
+    try:
+        day_start = datetime.strptime(date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Неверный формат даты. Используйте YYYY-MM-DD")
+    
+    day_end = day_start + timedelta(days=1)
+    
+    # Заработки за день
+    earnings = db.query(ActivityLog).filter(
+        ActivityLog.user_id == current_user.id,
+        ActivityLog.end_time >= day_start,
+        ActivityLog.end_time < day_end,
+        ActivityLog.xp_earned > 0
+    ).order_by(ActivityLog.end_time.desc()).all()
+    
+    # Расходы за день
+    spendings = db.query(RewardPurchase).filter(
+        RewardPurchase.user_id == current_user.id,
+        RewardPurchase.purchased_at >= day_start,
+        RewardPurchase.purchased_at < day_end
+    ).order_by(RewardPurchase.purchased_at.desc()).all()
+    
+    # Общая статистика
+    total_earned = sum(log.xp_earned for log in earnings)
+    total_spent = sum(purchase.xp_spent for purchase in spendings)
+    total_time = sum(log.duration_minutes for log in earnings)
+    
+    # Детали заработков
+    earnings_details = []
+    for log in earnings:
+        earnings_details.append({
+            "activity_name": log.activity.name,
+            "xp_earned": round(log.xp_earned, 1),
+            "duration_minutes": round(log.duration_minutes, 1),
+            "time": log.end_time.isoformat() if log.end_time else None
+        })
+    
+    # Детали расходов
+    spendings_details = []
+    for purchase in spendings:
+        spendings_details.append({
+            "reward_name": purchase.reward_name,
+            "xp_spent": round(purchase.xp_spent, 1),
+            "time": purchase.purchased_at.isoformat() if purchase.purchased_at else None
+        })
+    
+    return {
+        "date": date,
+        "total_earned": round(total_earned, 1),
+        "total_spent": round(total_spent, 1),
+        "total_time": round(total_time, 1),
+        "net": round(total_earned - total_spent, 1),
+        "earnings": earnings_details,
+        "spendings": spendings_details,
+        "sessions_count": len(earnings),
+        "purchases_count": len(spendings)
+    }
 
 
 @router.get("/full-history")
