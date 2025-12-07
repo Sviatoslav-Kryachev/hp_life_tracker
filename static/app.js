@@ -42,6 +42,14 @@ const translations = {
         "quick_select": "Быстрый выбор",
         "custom_reward": "Своя награда",
         "spend_xp": "Потрать XP на удовольствия",
+        "buy": "Купить",
+        "edit_reward": "✏️ Редактировать награду",
+        "reward_name_placeholder": "Название",
+        "xp_cost_placeholder": "XP стоимость",
+        "save_reward": "Сохранить",
+        "reward_updated": "Награда обновлена!",
+        "error_updating_reward": "Ошибка обновления",
+        "enter_correct_name_cost": "Введите корректное название и стоимость",
         
         // History
         "transaction_history": "История транзакций",
@@ -100,11 +108,22 @@ const translations = {
         // Goals
         "my_goals": "Мои цели",
         "new_goal": "🎯 Новая цель",
+        "edit_goal": "✏️ Редактировать цель",
         "goal_title": "Название цели",
         "target_xp": "Целевое количество XP",
         "description": "Описание (необязательно)",
         "deadline": "Дедлайн (необязательно)",
         "create_goal": "Создать цель",
+        "important": "Важно:",
+        "goal_info_text": "Выберите активность из вашего списка. Цель будет отслеживать прогресс только по этой активности.",
+        "select_activity_label": "Выберите активность",
+        "loading_activities": "-- Загрузка активностей --",
+        "create_activity_first": "Сначала создайте активность, если её нет в списке",
+        "goal_title_placeholder": "Например: Изучить 100 часов немецкого",
+        "target_xp_description": "Сколько XP нужно заработать для достижения цели",
+        "goal_description_placeholder": "Дополнительная информация о цели",
+        "deadline_description": "Установите дату, к которой хотите достичь цели",
+        "save_changes": "Сохранить изменения",
         
         // Common
         "save": "Сохранить",
@@ -211,7 +230,14 @@ const translations = {
         "stats_for": "Статистика:",
         "balance_xp": "Баланс XP",
         "level": "Уровень",
+        "level_text": "Уровень",
         "current_streak": "Текущая серия",
+        "current_streak_text": "Серия дней",
+        "activities_count_text": "Активностей",
+        "activities": "Активности",
+        "no_category_data": "Нет данных по категориям",
+        "no_activities_text": "Нет активностей",
+        "no_goals_text": "Нет целей",
         "general_stats": "Общая статистика",
         "total_earned": "Всего заработано:",
         "total_spent": "Всего потрачено:",
@@ -224,7 +250,13 @@ const translations = {
         "week": "За неделю:",
         "recent_transactions": "Последние транзакции",
         "history_empty": "История пуста",
-        "category_stats_week": "Статистика по категориям (неделя)"
+        "category_stats_week": "Статистика по категориям (неделя)",
+        "min_short": "мин",
+        "activities_count": "активностей",
+        "days_short": "дн.",
+        "today_exclamation": "Сегодня!",
+        "overdue": "Просрочено",
+        "completed": "Выполнено"
     },
     uk: {
         // Header
@@ -266,6 +298,14 @@ const translations = {
         "quick_select": "Швидкий вибір",
         "custom_reward": "Своя нагорода",
         "spend_xp": "Витрать XP на задоволення",
+        "buy": "Купити",
+        "edit_reward": "✏️ Редагувати нагороду",
+        "reward_name_placeholder": "Назва",
+        "xp_cost_placeholder": "XP вартість",
+        "save_reward": "Зберегти",
+        "reward_updated": "Нагорода оновлена!",
+        "error_updating_reward": "Помилка оновлення",
+        "enter_correct_name_cost": "Введіть коректну назву та вартість",
         
         // History
         "transaction_history": "Історія транзакцій",
@@ -324,11 +364,22 @@ const translations = {
         // Goals
         "my_goals": "Мої цілі",
         "new_goal": "🎯 Нова ціль",
+        "edit_goal": "✏️ Редагувати ціль",
         "goal_title": "Назва цілі",
         "target_xp": "Цільова кількість XP",
         "description": "Опис (необов'язково)",
         "deadline": "Дедлайн (необов'язково)",
         "create_goal": "Створити ціль",
+        "important": "Важливо:",
+        "goal_info_text": "Виберіть активність зі свого списку. Ціль буде відстежувати прогрес тільки за цією активністю.",
+        "select_activity_label": "Виберіть активність",
+        "loading_activities": "-- Завантаження активностей --",
+        "create_activity_first": "Спочатку створіть активність, якщо її немає в списку",
+        "goal_title_placeholder": "Наприклад: Вивчити 100 годин німецької",
+        "target_xp_description": "Скільки XP потрібно заробити для досягнення цілі",
+        "goal_description_placeholder": "Додаткова інформація про ціль",
+        "deadline_description": "Встановіть дату, до якої хочете досягти цілі",
+        "save_changes": "Зберегти зміни",
         
         // Common
         "save": "Зберегти",
@@ -435,7 +486,14 @@ const translations = {
         "stats_for": "Статистика:",
         "balance_xp": "Баланс XP",
         "level": "Рівень",
+        "level_text": "Рівень",
         "current_streak": "Поточна серія",
+        "current_streak_text": "Серія днів",
+        "activities_count_text": "Активностей",
+        "activities": "Активності",
+        "no_category_data": "Немає даних за категоріями",
+        "no_activities_text": "Немає активностей",
+        "no_goals_text": "Немає цілей",
         "general_stats": "Загальна статистика",
         "total_earned": "Всього зароблено:",
         "total_spent": "Всього витрачено:",
@@ -453,7 +511,9 @@ const translations = {
         "days_short": "дн.",
         "today_exclamation": "Сьогодні!",
         "overdue": "Прострочено",
-        "completed": "Виконано"
+        "completed": "Виконано",
+        "min_short": "хв",
+        "activities_count": "активностей"
     },
     de: {
         // Header
@@ -495,6 +555,14 @@ const translations = {
         "quick_select": "Schnellauswahl",
         "custom_reward": "Eigene Belohnung",
         "spend_xp": "XP für Vergnügen ausgeben",
+        "buy": "Kaufen",
+        "edit_reward": "✏️ Belohnung bearbeiten",
+        "reward_name_placeholder": "Name",
+        "xp_cost_placeholder": "XP-Kosten",
+        "save_reward": "Speichern",
+        "reward_updated": "Belohnung aktualisiert!",
+        "error_updating_reward": "Fehler beim Aktualisieren",
+        "enter_correct_name_cost": "Geben Sie einen korrekten Namen und Kosten ein",
         
         // History
         "transaction_history": "Transaktionsverlauf",
@@ -553,11 +621,22 @@ const translations = {
         // Goals
         "my_goals": "Meine Ziele",
         "new_goal": "🎯 Neues Ziel",
+        "edit_goal": "✏️ Ziel bearbeiten",
         "goal_title": "Zielname",
         "target_xp": "Ziel-XP-Menge",
         "description": "Beschreibung (optional)",
         "deadline": "Frist (optional)",
         "create_goal": "Ziel erstellen",
+        "important": "Wichtig:",
+        "goal_info_text": "Wählen Sie eine Aktivität aus Ihrer Liste. Das Ziel verfolgt nur den Fortschritt dieser Aktivität.",
+        "select_activity_label": "Aktivität auswählen",
+        "loading_activities": "-- Aktivitäten werden geladen --",
+        "create_activity_first": "Erstellen Sie zuerst eine Aktivität, wenn sie nicht in der Liste ist",
+        "goal_title_placeholder": "Zum Beispiel: 100 Stunden Deutsch lernen",
+        "target_xp_description": "Wie viel XP müssen verdient werden, um das Ziel zu erreichen",
+        "goal_description_placeholder": "Zusätzliche Informationen zum Ziel",
+        "deadline_description": "Legen Sie das Datum fest, bis zu dem Sie das Ziel erreichen möchten",
+        "save_changes": "Änderungen speichern",
         
         // Common
         "save": "Speichern",
@@ -664,7 +743,14 @@ const translations = {
         "stats_for": "Statistik:",
         "balance_xp": "XP-Guthaben",
         "level": "Stufe",
+        "level_text": "Stufe",
         "current_streak": "Aktuelle Serie",
+        "current_streak_text": "Tages-Serie",
+        "activities_count_text": "Aktivitäten",
+        "activities": "Aktivitäten",
+        "no_category_data": "Keine Kategoriedaten",
+        "no_activities_text": "Keine Aktivitäten",
+        "no_goals_text": "Keine Ziele",
         "general_stats": "Allgemeine Statistik",
         "total_earned": "Insgesamt verdient:",
         "total_spent": "Insgesamt ausgegeben:",
@@ -679,10 +765,12 @@ const translations = {
         "history_empty": "Verlauf leer",
         "category_stats_week": "Statistik nach Kategorien (Woche)",
         "no_children": "Keine Schützlinge. Senden Sie den Link zur Registrierung.",
-        "days_short": "T.",
+        "days_short": "Tage",
         "today_exclamation": "Heute!",
         "overdue": "Überfällig",
-        "completed": "Abgeschlossen"
+        "completed": "Abgeschlossen",
+        "min_short": "Min.",
+        "activities_count": "Aktivitäten"
     },
     en: {
         // Header
@@ -724,6 +812,14 @@ const translations = {
         "quick_select": "Quick Select",
         "custom_reward": "Custom Reward",
         "spend_xp": "Spend XP on pleasures",
+        "buy": "Buy",
+        "edit_reward": "✏️ Edit Reward",
+        "reward_name_placeholder": "Name",
+        "xp_cost_placeholder": "XP Cost",
+        "save_reward": "Save",
+        "reward_updated": "Reward updated!",
+        "error_updating_reward": "Error updating",
+        "enter_correct_name_cost": "Enter correct name and cost",
         
         // History
         "transaction_history": "Transaction History",
@@ -782,11 +878,22 @@ const translations = {
         // Goals
         "my_goals": "My Goals",
         "new_goal": "🎯 New Goal",
+        "edit_goal": "✏️ Edit Goal",
         "goal_title": "Goal Title",
         "target_xp": "Target XP Amount",
         "description": "Description (optional)",
         "deadline": "Deadline (optional)",
         "create_goal": "Create Goal",
+        "important": "Important:",
+        "goal_info_text": "Select an activity from your list. The goal will track progress only for this activity.",
+        "select_activity_label": "Select Activity",
+        "loading_activities": "-- Loading activities --",
+        "create_activity_first": "Create an activity first if it's not in the list",
+        "goal_title_placeholder": "For example: Learn 100 hours of German",
+        "target_xp_description": "How much XP needs to be earned to achieve the goal",
+        "goal_description_placeholder": "Additional information about the goal",
+        "deadline_description": "Set the date by which you want to achieve the goal",
+        "save_changes": "Save Changes",
         
         // Common
         "save": "Save",
@@ -893,7 +1000,14 @@ const translations = {
         "stats_for": "Statistics:",
         "balance_xp": "Balance XP",
         "level": "Level",
+        "level_text": "Level",
         "current_streak": "Current streak",
+        "current_streak_text": "Day Streak",
+        "activities_count_text": "Activities",
+        "activities": "Activities",
+        "no_category_data": "No category data",
+        "no_activities_text": "No activities",
+        "no_goals_text": "No goals",
         "general_stats": "General statistics",
         "total_earned": "Total earned:",
         "total_spent": "Total spent:",
@@ -911,7 +1025,9 @@ const translations = {
         "days_short": "days",
         "today_exclamation": "Today!",
         "overdue": "Overdue",
-        "completed": "Completed"
+        "completed": "Completed",
+        "min_short": "min",
+        "activities_count": "activities"
     }
 };
 
@@ -919,6 +1035,45 @@ let currentLanguage = localStorage.getItem('language') || 'ru';
 
 function t(key) {
     return translations[currentLanguage][key] || translations['ru'][key] || key;
+}
+
+// Функция для правильного склонения "активностей" на разных языках
+function formatActivitiesCount(count) {
+    if (currentLanguage === 'uk') {
+        // Украинский: одна активність, дві активності, три активності, чотири активності, п'ять активностей и т.д.
+        const lastDigit = count % 10;
+        const lastTwoDigits = count % 100;
+        
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return `${count} активностей`;
+        } else if (lastDigit === 1) {
+            return `${count} активність`;
+        } else if (lastDigit >= 2 && lastDigit <= 4) {
+            return `${count} активності`;
+        } else {
+            return `${count} активностей`;
+        }
+    } else if (currentLanguage === 'ru') {
+        // Русский: 1 активность, 2-4 активности, 5+ активностей
+        const lastDigit = count % 10;
+        const lastTwoDigits = count % 100;
+        
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return `${count} активностей`;
+        } else if (lastDigit === 1) {
+            return `${count} активность`;
+        } else if (lastDigit >= 2 && lastDigit <= 4) {
+            return `${count} активности`;
+        } else {
+            return `${count} активностей`;
+        }
+    } else if (currentLanguage === 'de') {
+        // Немецкий: 1 Aktivität, 2+ Aktivitäten
+        return count === 1 ? `${count} Aktivität` : `${count} Aktivitäten`;
+    } else {
+        // Английский: 1 activity, 2+ activities
+        return count === 1 ? `${count} activity` : `${count} activities`;
+    }
 }
 
 function changeLanguage(lang) {
@@ -934,7 +1089,9 @@ function changeLanguage(lang) {
         loadCategoryStats();
         loadCalendar(currentCalendarPeriod);
         loadActivities();
+        loadRewards(); // Перезагружаем награды для обновления кнопки "Купить"
         loadRecommendations();
+        loadGoals(); // Перезагружаем цели для обновления дней до цели
         updateAdminCategoryFilter();
     }
     closeLanguageMenu();
@@ -1391,7 +1548,9 @@ async function loadTodayStats() {
         if (timeEl) {
             const hours = Math.floor(data.time_today_minutes / 60);
             const mins = Math.round(data.time_today_minutes % 60);
-            timeEl.textContent = hours > 0 ? `${hours}ч ${mins}м` : `${mins}м`;
+            const hourLabel = currentLanguage === 'uk' ? 'год' : currentLanguage === 'de' ? 'Std.' : currentLanguage === 'en' ? 'h' : 'ч';
+            const minLabel = currentLanguage === 'uk' ? 'хв' : currentLanguage === 'de' ? 'Min.' : currentLanguage === 'en' ? 'm' : 'м';
+            timeEl.textContent = hours > 0 ? `${hours}${hourLabel} ${mins}${minLabel}` : `${mins}${minLabel}`;
         }
     } catch (e) {
         console.error("Error loading today stats", e);
@@ -1459,7 +1618,7 @@ async function loadCategoryStats() {
                     <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
                         <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
                     </div>
-                    <div class="text-xs text-gray-500">${Math.round(cat.total_time)} мин • ${cat.activity_count} активностей</div>
+                    <div class="text-xs text-gray-500">${Math.round(cat.total_time)} ${t('min_short')} • ${formatActivitiesCount(cat.activity_count)}</div>
                 </div>
             `;
         }).join('');
@@ -2113,6 +2272,9 @@ async function loadActivities() {
             return;
         }
         
+        // Загружаем активные таймеры перед отрисовкой карточек (после заполнения allActivities)
+        await loadActiveTimers();
+        
         data.forEach(renderActivityCard);
     } catch (e) {
         console.error("Error loading activities", e);
@@ -2120,6 +2282,90 @@ async function loadActivities() {
         if (activitiesListEl) {
             activitiesListEl.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
         }
+    }
+}
+
+// Загружает активные таймеры с сервера и восстанавливает их состояние
+async function loadActiveTimers() {
+    try {
+        if (!authToken) return;
+        
+        // Сохраняем текущие активные таймеры перед загрузкой с сервера
+        // Это нужно, чтобы не потерять локальное состояние при смене языка
+        const existingTimers = new Map();
+        activeTimers.forEach((timerInfo, activityId) => {
+            existingTimers.set(activityId, {
+                logId: timerInfo.logId,
+                startTime: timerInfo.startTime,
+                intervalId: timerInfo.intervalId,
+                activity: timerInfo.activity
+            });
+        });
+        
+        const res = await fetch(`${API_BASE}/timer/active`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) {
+            console.warn("Failed to load active timers:", res.status);
+            return;
+        }
+        
+        const activeTimersData = await res.json();
+        
+        // Очищаем старые интервалы перед восстановлением
+        activeTimers.forEach((timerInfo) => {
+            if (timerInfo.intervalId) {
+                clearInterval(timerInfo.intervalId);
+            }
+        });
+        activeTimers.clear();
+        
+        // Восстанавливаем активные таймеры
+        activeTimersData.forEach(timerData => {
+            const activity = allActivities.find(a => a.id === timerData.activity_id);
+            if (!activity) return;
+            
+            // Проверяем, есть ли уже активный таймер для этой активности
+            const existingTimer = existingTimers.get(timerData.activity_id);
+            
+            let startTime;
+            if (existingTimer && existingTimer.logId === timerData.log_id) {
+                // Используем сохраненное локальное время, если это тот же таймер
+                startTime = existingTimer.startTime;
+            } else {
+                // Парсим время начала с сервера (ISO формат в UTC)
+                // Важно: сервер возвращает время в UTC, нужно правильно его парсить
+                const serverStartTime = new Date(timerData.start_time);
+                startTime = serverStartTime.getTime();
+                
+                // Проверяем, что время валидное
+                if (isNaN(startTime)) {
+                    console.error("Invalid start_time from server:", timerData.start_time);
+                    return;
+                }
+            }
+            
+            const timerInfo = {
+                logId: timerData.log_id,
+                startTime: startTime,
+                intervalId: null,
+                activity: activity
+            };
+            
+            activeTimers.set(timerData.activity_id, timerInfo);
+            
+            // Запускаем обновление отображения таймера с правильным startTime
+            const intervalId = setInterval(() => {
+                const timerInfo = activeTimers.get(timerData.activity_id);
+                if (timerInfo) {
+                    updateTimerDisplay(timerData.activity_id, timerInfo.startTime, activity);
+                }
+            }, 1000);
+            timerInfo.intervalId = intervalId;
+        });
+    } catch (e) {
+        console.error("Error loading active timers:", e);
     }
 }
 
@@ -2158,10 +2404,27 @@ function renderActivityCard(activity) {
         <div class="text-sm text-gray-500">${activity.xp_per_hour} XP/час</div>
     `;
 
-    // Timer button
+    // Timer button - проверяем, есть ли активный таймер
     const timerBtn = document.createElement("button");
-    timerBtn.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2";
-    timerBtn.innerHTML = '<i class="fas fa-play text-green-500"></i> Старт';
+    const isActive = activeTimers.has(activity.id);
+    
+    if (isActive) {
+        // Если таймер активен, отображаем его в активном состоянии
+        const timerInfo = activeTimers.get(activity.id);
+        const elapsedMs = Date.now() - timerInfo.startTime;
+        const elapsedSeconds = Math.floor(elapsedMs / 1000);
+        const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, "0");
+        const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
+        const xpPerSecond = activity.xp_per_hour / 3600;
+        const earnedXP = Math.round(elapsedSeconds * xpPerSecond);
+        
+        timerBtn.className = "timer-btn px-6 py-2 rounded-xl text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-2 transition-all duration-300";
+        timerBtn.innerHTML = `<i class="fas fa-stop text-red-500"></i> <span id="timer-${activity.id}">${minutes}:${seconds} (+${earnedXP} XP)</span>`;
+    } else {
+        timerBtn.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2";
+        timerBtn.innerHTML = '<i class="fas fa-play text-green-500"></i> Старт';
+    }
+    
     timerBtn.dataset.activityId = activity.id;
     timerBtn.addEventListener("click", (e) => toggleTimer(activity.id, e.currentTarget, activity));
 
@@ -2385,7 +2648,12 @@ async function startTimer(activityId, button, activity) {
         button.innerHTML = '<i class="fas fa-stop text-red-500"></i> <span id="timer-' + activityId + '">00:00</span>';
         button.className = "timer-btn px-6 py-2 rounded-xl text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-2 transition-all duration-300";
         
-        const intervalId = setInterval(() => updateTimerDisplay(activityId, startTime, activity), 1000);
+        const intervalId = setInterval(() => {
+            const timerInfo = activeTimers.get(activityId);
+            if (timerInfo) {
+                updateTimerDisplay(activityId, timerInfo.startTime, activity);
+            }
+        }, 1000);
         timerInfo.intervalId = intervalId;
     } catch (e) {
         console.error("Error starting timer:", e);
@@ -2394,7 +2662,23 @@ async function startTimer(activityId, button, activity) {
 }
 
 function updateTimerDisplay(activityId, startTime, activity) {
-    const elapsedMs = Date.now() - startTime;
+    // Получаем актуальный startTime из activeTimers, если таймер еще активен
+    const timerInfo = activeTimers.get(activityId);
+    if (!timerInfo) {
+        // Таймер был остановлен, не обновляем
+        return;
+    }
+    
+    // Используем startTime из timerInfo, чтобы всегда иметь актуальное значение
+    const actualStartTime = timerInfo.startTime;
+    const elapsedMs = Date.now() - actualStartTime;
+    
+    // Проверяем, что elapsedMs не отрицательное (на случай проблем с синхронизацией времени)
+    if (elapsedMs < 0) {
+        console.warn(`Negative elapsed time for activity ${activityId}, startTime: ${actualStartTime}, now: ${Date.now()}`);
+        return;
+    }
+    
     const elapsedSeconds = Math.floor(elapsedMs / 1000);
     const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, "0");
     const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
@@ -2789,7 +3073,7 @@ function renderRewardCard(reward) {
     // Кнопка покупки
     const spendBtn = document.createElement("button");
     spendBtn.className = "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 active:scale-95 flex-shrink-0 whitespace-nowrap h-9";
-    spendBtn.innerHTML = '<i class="fas fa-shopping-bag text-xs"></i><span class="hidden sm:inline">Купить</span>';
+    spendBtn.innerHTML = `<i class="fas fa-shopping-bag text-xs"></i><span class="hidden sm:inline">${t('buy')}</span>`;
     spendBtn.addEventListener("click", () => spendReward(reward.id));
     btnContainer.appendChild(spendBtn);
 
@@ -2829,7 +3113,28 @@ async function createReward() {
         rewardNameInput.value = "";
         rewardCostInput.value = "10";
         allRewards.push(created);
-        renderRewardCard(created);
+        
+        // Добавляем награду в правильный список (visible или hidden)
+        getRewardsElements();
+        if (rewardsListVisible) {
+            const currentVisibleCount = rewardsListVisible.children.length;
+            const div = renderRewardCard(created);
+            if (div) {
+                if (currentVisibleCount < 4) {
+                    // Добавляем в видимый список
+                    rewardsListVisible.appendChild(div);
+                } else {
+                    // Добавляем в скрытый список и показываем кнопку аккордеона
+                    if (rewardsListHidden) {
+                        rewardsListHidden.appendChild(div);
+                    }
+                    if (rewardsAccordionBtn) {
+                        rewardsAccordionBtn.classList.remove('hidden');
+                    }
+                }
+            }
+        }
+        
         showRewardMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {
         console.error("Error:", e);
@@ -2842,6 +3147,8 @@ function openEditRewardModal(reward) {
     document.getElementById("edit-reward-name").value = reward.name;
     document.getElementById("edit-reward-cost").value = reward.xp_cost;
     document.getElementById("edit-reward-modal").classList.remove("hidden");
+    // Применяем переводы для всех элементов в модальном окне
+    applyTranslations();
 }
 
 function closeEditRewardModal() {
@@ -2854,7 +3161,7 @@ async function updateReward() {
     const xpCost = Number(document.getElementById("edit-reward-cost").value) || 0;
     
     if (!name || xpCost <= 0) {
-        alert("Введите корректное название и стоимость");
+        alert(t('enter_correct_name_cost'));
         return;
     }
     
@@ -2870,16 +3177,16 @@ async function updateReward() {
         
         if (!res.ok) {
             const error = await res.json();
-            alert(error.detail || "Ошибка обновления");
+            alert(error.detail || t('error_updating_reward'));
             return;
         }
         
         closeEditRewardModal();
         await loadRewards();
-        showRewardMessage("✅ Награда обновлена!", "success");
+        showRewardMessage(`✅ ${t('reward_updated')}`, "success");
     } catch (e) {
         console.error("Error:", e);
-        alert("Ошибка сети");
+        alert(t('network_error'));
     }
 }
 
@@ -3269,7 +3576,36 @@ async function loadRecommendations() {
             return;
         }
         
-        listEl.innerHTML = data.recommendations.map(rec => {
+        // Сортируем рекомендации: сначала те, которые еще не делались сегодня
+        // minutes_today === 0 или null/undefined означает "не делалось сегодня"
+        // minutes_today > 0 означает "уже делалось сегодня"
+        const sortedRecommendations = [...data.recommendations].sort((a, b) => {
+            // Получаем значения minutes_today и конвертируем в число (может быть undefined, null, 0, или >0)
+            const aMinutes = a.minutes_today !== undefined && a.minutes_today !== null ? Number(a.minutes_today) : null;
+            const bMinutes = b.minutes_today !== undefined && b.minutes_today !== null ? Number(b.minutes_today) : null;
+            
+            // Определяем, делалась ли активность сегодня (minutes_today > 0)
+            // Если minutes_today === 0 или null/undefined, значит не делалось сегодня
+            const aDidToday = aMinutes !== null && aMinutes > 0;
+            const bDidToday = bMinutes !== null && bMinutes > 0;
+            
+            // Если одна делалась сегодня (minutes_today > 0), а другая нет (0, null, undefined) - та, что не делалась, идет первой
+            if (!aDidToday && bDidToday) return -1;
+            if (aDidToday && !bDidToday) return 1;
+            
+            // Если обе не делались или обе делались, сохраняем исходный порядок (по приоритету)
+            return 0;
+        });
+        
+        // Отладочный вывод (можно удалить после проверки)
+        console.log('Рекомендации после сортировки:', sortedRecommendations.map(r => ({
+            name: r.activity_name,
+            minutes_today: r.minutes_today,
+            type: r.type,
+            didToday: r.minutes_today !== undefined && r.minutes_today !== null && Number(r.minutes_today) > 0
+        })));
+        
+        listEl.innerHTML = sortedRecommendations.map(rec => {
             let icon = "fas fa-lightbulb";
             let bgColor = "bg-blue-50";
             let borderColor = "border-blue-200";
@@ -3629,22 +3965,24 @@ async function showChildStats(childId, childName) {
         const contentEl = document.getElementById("child-stats-content");
         contentEl.innerHTML = `
             <!-- Основная статистика -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 text-white">
-                    <div class="text-2xl font-black">${Math.round(stats.balance)}</div>
-                    <div class="text-sm opacity-90">Баланс XP</div>
-                </div>
-                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-4 text-white">
-                    <div class="text-2xl font-black">${stats.level}</div>
-                    <div class="text-sm opacity-90">Уровень</div>
-                </div>
-                <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-4 text-white">
-                    <div class="text-2xl font-black">${stats.current_streak}</div>
-                    <div class="text-sm opacity-90">Серия дней</div>
-                </div>
-                <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 text-white">
-                    <div class="text-2xl font-black">${stats.activities_count}</div>
-                    <div class="text-sm opacity-90">Активностей</div>
+            <div class="flex justify-center mb-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                    <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 text-white text-center">
+                        <div class="text-2xl font-black">${Math.round(stats.balance)}</div>
+                        <div class="text-sm opacity-90">${t('balance_xp')}</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-4 text-white text-center">
+                        <div class="text-2xl font-black">${stats.level}</div>
+                        <div class="text-sm opacity-90">${t('level_text')}</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-4 text-white text-center">
+                        <div class="text-2xl font-black">${stats.current_streak}</div>
+                        <div class="text-sm opacity-90">${t('current_streak_text')}</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 text-white text-center">
+                        <div class="text-2xl font-black">${stats.activities_count}</div>
+                        <div class="text-sm opacity-90">${t('activities_count_text')}</div>
+                    </div>
                 </div>
             </div>
             
@@ -3754,16 +4092,16 @@ async function showChildStats(childId, childName) {
                                 <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
                                     <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
                                 </div>
-                                <div class="text-xs text-gray-500">${Math.round(cat.total_time)} мин • ${cat.activity_count} активностей</div>
+                                <div class="text-xs text-gray-500">${Math.round(cat.total_time)} ${t('min_short')} • ${formatActivitiesCount(cat.activity_count)}</div>
                             </div>
                         `;
-                    }).join('') : '<div class="text-center text-gray-400 py-4">Нет данных по категориям</div>'}
+                    }).join('') : `<div class="text-center text-gray-400 py-4">${t('no_category_data')}</div>`}
                 </div>
             </div>
             
             <!-- Активности -->
             <div class="mb-4">
-                <h4 class="font-bold text-gray-800 mb-3">🎯 Активности</h4>
+                <h4 class="font-bold text-gray-800 mb-3">🎯 ${t('activities')}</h4>
                 <div class="grid grid-cols-2 gap-2">
                     ${activities.length > 0 ? activities.map(act => {
                         const categoryNames = {
@@ -3791,7 +4129,7 @@ async function showChildStats(childId, childName) {
                             <div class="text-xs text-gray-600">${act.xp_per_hour} XP/час</div>
                         </div>
                     `;
-                    }).join('') : '<div class="text-gray-400 text-sm">Нет активностей</div>'}
+                    }).join('') : `<div class="text-gray-400 text-sm">${t('no_activities_text')}</div>`}
                 </div>
             </div>
             
@@ -3806,7 +4144,7 @@ async function showChildStats(childId, childName) {
                             <div class="p-3 bg-purple-50 rounded-lg border ${isCompleted ? 'border-green-300' : 'border-purple-200'}">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="font-medium text-gray-800 text-sm">${goal.title}</div>
-                                    ${isCompleted ? '<span class="text-green-600 text-xs">✓ Выполнено</span>' : ''}
+                                    ${isCompleted ? `<span class="text-green-600 text-xs">✓ ${t('completed')}</span>` : ''}
                                 </div>
                                 <div class="flex justify-between text-xs text-gray-600 mb-1">
                                     <span>${Math.round(goal.current_xp)} / ${Math.round(goal.target_xp)} XP</span>
@@ -3818,7 +4156,7 @@ async function showChildStats(childId, childName) {
                                 </div>
                             </div>
                         `;
-                    }).join('') : '<div class="text-gray-400 text-sm">Нет целей</div>'}
+                    }).join('') : `<div class="text-gray-400 text-sm">${t('no_goals_text')}</div>`}
                 </div>
             </div>
         `;
@@ -4129,7 +4467,11 @@ function createDropdownOption(value, name, isCustom, categoryData, selectId) {
     
     // Категория "Общее" - захардкоженная, без кнопок редактирования и удаления
     if (value === 'general') {
-        // Для категории "Общее" не добавляем кнопки
+        // Для категории "Общее" не добавляем кнопки, но добавляем обработчик клика для выбора
+        option.onclick = (e) => {
+            e.stopPropagation();
+            selectCategoryOption(selectId, value, name);
+        };
         return option;
     }
     
@@ -4663,10 +5005,12 @@ function showCreateGoalModal() {
     document.getElementById("goal-submit-btn").innerHTML = `<i class="fas fa-check mr-2"></i>${t('create_goal_btn')}`;
     document.getElementById("edit-goal-id").value = "";
     document.getElementById("create-goal-modal").classList.remove("hidden");
-    // Загружаем список активностей для выбора
-    loadActivitiesForGoal();
     // Очищаем форму
     document.getElementById("create-goal-form").reset();
+    // Загружаем список активностей для выбора (после очистки формы)
+    loadActivitiesForGoal();
+    // Применяем переводы для всех элементов в модальном окне
+    applyTranslations();
 }
 
 function closeCreateGoalModal() {
@@ -4712,8 +5056,11 @@ async function editGoal(goalId) {
         }
         
         // Меняем заголовок и кнопку
-        document.getElementById("goal-modal-title").textContent = "✏️ Редактировать цель";
-        document.getElementById("goal-submit-btn").innerHTML = '<i class="fas fa-save mr-2"></i>Сохранить изменения';
+        document.getElementById("goal-modal-title").textContent = t('edit_goal');
+        document.getElementById("goal-submit-btn").innerHTML = `<i class="fas fa-save mr-2"></i>${t('save_changes')}`;
+        
+        // Применяем переводы для всех элементов в модальном окне
+        applyTranslations();
         
         // Открываем модальное окно
         document.getElementById("create-goal-modal").classList.remove("hidden");
@@ -4740,7 +5087,17 @@ async function loadActivitiesForGoal() {
             return;
         }
         
-        select.innerHTML = '<option value="">-- Выберите активность --</option>';
+        const loadingOption = select.querySelector('option[value=""]');
+        if (loadingOption) {
+            loadingOption.textContent = t('loading_activities');
+            loadingOption.setAttribute('data-i18n', 'loading_activities');
+        } else {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = t('loading_activities');
+            option.setAttribute('data-i18n', 'loading_activities');
+            select.appendChild(option);
+        }
         
         if (data.length === 0) {
             const option = document.createElement("option");
