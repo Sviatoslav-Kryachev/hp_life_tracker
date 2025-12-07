@@ -191,8 +191,7 @@ select {
 }
 
 /* Стили для инпутов с длинными плейсхолдерами */
-#activity-name,
-#edit-activity-name {
+#activity-name {
     min-height: 3.5rem;
     text-align: center;
     display: block;
@@ -200,9 +199,22 @@ select {
     padding-bottom: 1rem;
 }
 
-#activity-name::placeholder,
-#edit-activity-name::placeholder {
+#edit-activity-name {
+    min-height: 3.5rem;
+    text-align: left;
+    display: block;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#activity-name::placeholder {
     text-align: center;
+    line-height: 1.5;
+    opacity: 0.6;
+}
+
+#edit-activity-name::placeholder {
+    text-align: left;
     line-height: 1.5;
     opacity: 0.6;
 }

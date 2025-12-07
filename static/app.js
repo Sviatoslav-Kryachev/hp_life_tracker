@@ -60,6 +60,7 @@ const translations = {
         "hide_rewards": "Скрыть награды",
         "earned": "Заработано",
         "spent": "Потрачено",
+        "at_time": "в",
         
         // Stats
         "today": "Сегодня",
@@ -76,6 +77,11 @@ const translations = {
         "days": "дней",
         "record": "Рекорд:",
         "start_activity": "Начните активность!",
+        "start_streak_message": "Начните активность, чтобы начать серию!",
+        "streak_1_day": "🔥 Отличное начало! Продолжайте завтра!",
+        "streak_days_in_row": "🔥 {days} дней подряд! Продолжайте!",
+        "streak_week": "🔥 Неделя подряд! Вы получаете бонусы XP!",
+        "streak_month": "🔥 Месяц без пропусков! Вы получаете +100 XP бонус!",
         // Week days
         "mon": "Пн",
         "tue": "Вт",
@@ -316,6 +322,7 @@ const translations = {
         "hide_rewards": "Приховати нагороди",
         "earned": "Зароблено",
         "spent": "Витрачено",
+        "at_time": "о",
         
         // Stats
         "today": "Сьогодні",
@@ -332,6 +339,11 @@ const translations = {
         "days": "днів",
         "record": "Рекорд:",
         "start_activity": "Почніть активність!",
+        "start_streak_message": "Почніть активність, щоб почати серію!",
+        "streak_1_day": "🔥 Чудовий початок! Продовжуйте завтра!",
+        "streak_days_in_row": "🔥 {days} днів поспіль! Продовжуйте!",
+        "streak_week": "🔥 Тиждень поспіль! Ви отримуєте бонуси XP!",
+        "streak_month": "🔥 Місяць без пропусків! Ви отримуєте +100 XP бонус!",
         // Week days
         "mon": "Пн",
         "tue": "Вт",
@@ -573,6 +585,7 @@ const translations = {
         "hide_rewards": "Belohnungen ausblenden",
         "earned": "Verdient",
         "spent": "Ausgegeben",
+        "at_time": "um",
         
         // Stats
         "today": "Heute",
@@ -589,6 +602,11 @@ const translations = {
         "days": "Tage",
         "record": "Rekord:",
         "start_activity": "Beginnen Sie eine Aktivität!",
+        "start_streak_message": "Starten Sie eine Aktivität, um eine Serie zu beginnen!",
+        "streak_1_day": "🔥 Großartiger Start! Machen Sie morgen weiter!",
+        "streak_days_in_row": "🔥 {days} Tage in Folge! Weiter so!",
+        "streak_week": "🔥 Eine Woche in Folge! Sie erhalten XP-Boni!",
+        "streak_month": "🔥 Ein Monat ohne Auslassung! Sie erhalten +100 XP Bonus!",
         // Week days
         "mon": "Mo",
         "tue": "Di",
@@ -830,6 +848,7 @@ const translations = {
         "hide_rewards": "Hide rewards",
         "earned": "Earned",
         "spent": "Spent",
+        "at_time": "at",
         
         // Stats
         "today": "Today",
@@ -846,6 +865,11 @@ const translations = {
         "days": "days",
         "record": "Record:",
         "start_activity": "Start an activity!",
+        "start_streak_message": "Start an activity to begin a streak!",
+        "streak_1_day": "🔥 Great start! Continue tomorrow!",
+        "streak_days_in_row": "🔥 {days} days in a row! Keep going!",
+        "streak_week": "🔥 A week in a row! You're getting XP bonuses!",
+        "streak_month": "🔥 A month without skipping! You get +100 XP bonus!",
         // Week days
         "mon": "Mon",
         "tue": "Tue",
@@ -1040,18 +1064,18 @@ function t(key) {
 // Функция для правильного склонения "активностей" на разных языках
 function formatActivitiesCount(count) {
     if (currentLanguage === 'uk') {
-        // Украинский: одна активність, дві активності, три активності, чотири активності, п'ять активностей и т.д.
+        // Украинский: 1 активність, 2-4 активності, 5+ активностів
         const lastDigit = count % 10;
         const lastTwoDigits = count % 100;
         
         if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
-            return `${count} активностей`;
+            return `${count} активностів`;
         } else if (lastDigit === 1) {
             return `${count} активність`;
         } else if (lastDigit >= 2 && lastDigit <= 4) {
             return `${count} активності`;
         } else {
-            return `${count} активностей`;
+            return `${count} активностів`;
         }
     } else if (currentLanguage === 'ru') {
         // Русский: 1 активность, 2-4 активности, 5+ активностей
@@ -1092,6 +1116,10 @@ function changeLanguage(lang) {
         loadRewards(); // Перезагружаем награды для обновления кнопки "Купить"
         loadRecommendations();
         loadGoals(); // Перезагружаем цели для обновления дней до цели
+        loadStreak(); // Перезагружаем streak для обновления "дней"
+        loadHistory(); // Перезагружаем историю для обновления формата даты/времени
+        updateCategoryDropdown('activity-category'); // Обновляем дропдаун категорий для новой активности
+        updateCategoryDropdown('edit-activity-category'); // Обновляем дропдаун категорий для редактирования активности
         updateAdminCategoryFilter();
     }
     closeLanguageMenu();
@@ -2021,8 +2049,12 @@ function toggleHistory() {
 function renderHistoryItem(item) {
     const isEarn = item.type === 'earn';
     const date = new Date(item.date);
-    const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    
+    // Локализация даты и времени
+    const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
+    const locale = localeMap[currentLanguage] || 'ru-RU';
+    const timeStr = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    const dateStr = date.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
     
     return `
         <div class="flex items-center justify-between p-2.5 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:bg-opacity-80">
@@ -2032,10 +2064,10 @@ function renderHistoryItem(item) {
                 </div>
                 <div class="min-w-0 flex-1">
                     <div class="font-medium text-gray-800 text-sm truncate">${item.description}</div>
-                    <div class="text-xs text-gray-500">${dateStr} в ${timeStr}${item.duration_minutes ? ` • ${Math.round(item.duration_minutes)} мин` : ''}</div>
+                    <div class="text-xs text-gray-500">${dateStr} ${t('at_time')} ${timeStr}${item.duration_minutes ? ` • ${Math.round(item.duration_minutes)} ${t('min_short')}` : ''}</div>
                 </div>
             </div>
-            <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0 ml-2">
+            <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0 ml-2 text-center">
                 ${isEarn ? '+' : '-'}${Math.round(item.amount)} XP
             </div>
         </div>
@@ -2401,7 +2433,7 @@ function renderActivityCard(activity) {
             <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
             <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">${categoryName}</span>
         </div>
-        <div class="text-sm text-gray-500">${activity.xp_per_hour} XP/час</div>
+        <div class="text-sm text-gray-500">${activity.xp_per_hour} ${t('xp_per_hour')}</div>
     `;
 
     // Timer button - проверяем, есть ли активный таймер
@@ -2422,7 +2454,7 @@ function renderActivityCard(activity) {
         timerBtn.innerHTML = `<i class="fas fa-stop text-red-500"></i> <span id="timer-${activity.id}">${minutes}:${seconds} (+${earnedXP} XP)</span>`;
     } else {
         timerBtn.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2";
-        timerBtn.innerHTML = '<i class="fas fa-play text-green-500"></i> Старт';
+        timerBtn.innerHTML = `<i class="fas fa-play text-green-500"></i> ${t('start')}`;
     }
     
     timerBtn.dataset.activityId = activity.id;
@@ -2432,7 +2464,7 @@ function renderActivityCard(activity) {
     const manualTimeBtn = document.createElement("button");
     manualTimeBtn.className = "manual-time-btn p-2 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
     manualTimeBtn.innerHTML = '<i class="fas fa-clock"></i>';
-    manualTimeBtn.title = "Добавить время вручную";
+    manualTimeBtn.title = t('manual_time');
     manualTimeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         openManualTimeModal(activity.id);
@@ -2442,7 +2474,7 @@ function renderActivityCard(activity) {
     const editBtn = document.createElement("button");
     editBtn.className = "edit-btn p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
     editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-    editBtn.title = "Редактировать";
+    editBtn.title = t('edit');
     editBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         openEditModal(activity);
@@ -2452,7 +2484,7 @@ function renderActivityCard(activity) {
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
     deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    deleteBtn.title = "Удалить";
+    deleteBtn.title = t('delete');
     deleteBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         deleteActivity(activity.id, div);
@@ -2716,7 +2748,7 @@ async function stopTimer(activityId, button) {
         const data = await res.json();
         activeTimers.delete(activityId);
         
-        button.innerHTML = '<i class="fas fa-play text-green-500"></i> Старт';
+        button.innerHTML = `<i class="fas fa-play text-green-500"></i> ${t('start')}`;
         button.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2 transition-all duration-300";
         
         await loadWallet();
@@ -2743,11 +2775,11 @@ async function stopTimer(activityId, button) {
 // ============= MANUAL TIME =============
 function openManualTimeModal(activityId) {
     const select = document.getElementById("manual-activity-select");
-    select.innerHTML = '<option value="">Выберите активность</option>';
+    select.innerHTML = `<option value="">${t('select_activity_label')}</option>`;
     allActivities.forEach(activity => {
         const option = document.createElement("option");
         option.value = activity.id;
-        option.textContent = `${activity.name} (${activity.xp_per_hour} XP/час)`;
+        option.textContent = `${activity.name} (${activity.xp_per_hour} ${t('xp_per_hour')})`;
         select.appendChild(option);
     });
     select.value = activityId;
@@ -3523,19 +3555,22 @@ async function loadStreak() {
         const messageEl = document.getElementById('streak-message');
         
         if (countEl) countEl.textContent = data.current_streak;
-        if (recordEl) recordEl.textContent = `${data.longest_streak} дней`;
+        if (recordEl) {
+            const daysText = t('days');
+            recordEl.innerHTML = `${data.longest_streak} <span data-i18n="days">${daysText}</span>`;
+        }
         
         if (messageEl) {
             if (data.current_streak === 0) {
-                messageEl.textContent = "Начните активность, чтобы начать серию!";
+                messageEl.textContent = t('start_streak_message');
             } else if (data.current_streak === 1) {
-                messageEl.textContent = "🔥 Отличное начало! Продолжайте завтра!";
+                messageEl.textContent = t('streak_1_day');
             } else if (data.current_streak < 7) {
-                messageEl.textContent = `🔥 ${data.current_streak} дней подряд! Продолжайте!`;
+                messageEl.textContent = t('streak_days_in_row').replace('{days}', data.current_streak);
             } else if (data.current_streak < 30) {
-                messageEl.textContent = `🔥 Неделя подряд! Вы получаете бонусы XP!`;
+                messageEl.textContent = t('streak_week');
             } else {
-                messageEl.textContent = `🔥 Месяц без пропусков! Вы получаете +100 XP бонус!`;
+                messageEl.textContent = t('streak_month');
             }
         }
     } catch (e) {
@@ -4126,7 +4161,7 @@ async function showChildStats(childId, childName) {
                         <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
                             <div class="font-medium text-gray-800 text-sm">${act.name}</div>
                             <div class="text-xs text-blue-600 mt-1">${catName}</div>
-                            <div class="text-xs text-gray-600">${act.xp_per_hour} XP/час</div>
+                            <div class="text-xs text-gray-600">${act.xp_per_hour} ${t('xp_per_hour')}</div>
                         </div>
                     `;
                     }).join('') : `<div class="text-gray-400 text-sm">${t('no_activities_text')}</div>`}
@@ -4399,7 +4434,7 @@ function updateCategoryDropdown(selectId) {
     // Всегда добавляем кнопку "Добавить категорию" в конец списка
     const addOption = document.createElement('div');
     addOption.className = 'px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-t border-gray-200';
-    addOption.innerHTML = '<span class="text-blue-600 font-semibold">➕ Добавить категорию</span>';
+    addOption.innerHTML = `<span class="text-blue-600 font-semibold">➕ ${t('add_category')}</span>`;
     addOption.onclick = (e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -5102,7 +5137,7 @@ async function loadActivitiesForGoal() {
         if (data.length === 0) {
             const option = document.createElement("option");
             option.value = "";
-            option.textContent = "Сначала создайте активность";
+            option.textContent = t('create_activity_first');
             option.disabled = true;
             select.appendChild(option);
             return;
@@ -5111,7 +5146,7 @@ async function loadActivitiesForGoal() {
         data.forEach(activity => {
             const option = document.createElement("option");
             option.value = activity.id;
-            option.textContent = `${activity.name} (${activity.xp_per_hour} XP/час)`;
+            option.textContent = `${activity.name} (${activity.xp_per_hour} ${t('xp_per_hour')})`;
             select.appendChild(option);
         });
     } catch (e) {
