@@ -153,7 +153,78 @@ const translations = {
         "error_loading_recommendations": "Ошибка загрузки рекомендаций",
         "no_recommendations": "Нет рекомендаций. Продолжайте заниматься!",
         "start_tracking": "Начать отслеживание",
-        "click_for_details": "Кликните для деталей"
+        "click_for_details": "Кликните для деталей",
+        // Day details modal
+        "earned": "Заработано",
+        "spent": "Потрачено",
+        "activity_time": "Время активности",
+        "total": "Итого",
+        "earnings": "Заработки",
+        "sessions": "сессий",
+        "spendings": "Расходы",
+        "purchases": "покупок",
+        "no_activity_today": "Нет активности в этот день",
+        "error_loading_data": "Ошибка загрузки данных",
+        "edit_activity": "Редактировать активность",
+        "enter_activity_name": "Введите название активности",
+        "activity_updated": "Активность обновлена!",
+        "error_updating": "Ошибка обновления",
+        "network_error": "Ошибка сети",
+        // Goal modal
+        "edit_goal": "Редактировать цель",
+        "goal_not_found": "Цель не найдена",
+        "cannot_edit_completed": "Нельзя редактировать выполненную цель",
+        "error_loading_goals": "Ошибка загрузки целей",
+        "create_goal_btn": "Создать цель",
+        // Notifications
+        "reward_purchased": "Награда \"{reward}\" куплена! Потрачено {spent} XP",
+        "reward_received": "{reward} получена! Минус {spent} XP. Баланс: {balance} XP",
+        "activity_started": "Запущена активность \"{activity}\"! Прокрутите к разделу \"Активности\" чтобы увидеть таймер.",
+        "connection_error": "Ошибка соединения. Проверьте сервер.",
+        "activity_saved": "Активность сохранена!",
+        "activity_deleted": "Активность удалена!",
+        "goal_created": "Цель создана!",
+        "goal_updated": "Цель обновлена!",
+        "goal_deleted": "Цель удалена!",
+        "scroll_to_activities": "Прокрутите к разделу \"Активности\" чтобы увидеть таймер",
+        "no_goals": "Нет целей. Создайте первую цель!",
+        "fill_title_and_xp": "Заполните название и целевое количество XP",
+        "select_activity_for_goal": "Пожалуйста, выберите активность для цели",
+        "error_creating_goal": "Ошибка создания цели",
+        "delete_goal_confirm": "Удалить эту цель?",
+        "error_deleting": "Ошибка удаления",
+        "error_deleting_goal": "Ошибка удаления цели",
+        "error": "Ошибка",
+        // Admin panel
+        "invite_link": "Ссылка для приглашения",
+        "copy": "Копировать",
+        "send_link_to_daughter": "Отправьте эту ссылку дочери для регистрации",
+        "filter_by_category": "Фильтр по категориям активностей",
+        "all_categories": "Все категории",
+        "children": "Подопечные",
+        "stats": "Статистика",
+        "access_denied": "Доступ запрещён. Только администраторы могут просматривать админ-панель.",
+        "error_checking_access": "Ошибка проверки прав доступа.",
+        "error_loading": "Ошибка загрузки",
+        "error_loading_stats": "Ошибка загрузки статистики",
+        // Child stats modal
+        "stats_for": "Статистика:",
+        "balance_xp": "Баланс XP",
+        "level": "Уровень",
+        "current_streak": "Текущая серия",
+        "general_stats": "Общая статистика",
+        "total_earned": "Всего заработано:",
+        "total_spent": "Всего потрачено:",
+        "record_streak": "Рекорд серии:",
+        "days_active": "Дней активности:",
+        "today": "Сегодня",
+        "earned": "Заработано:",
+        "time": "Время:",
+        "minutes": "минут",
+        "week": "За неделю:",
+        "recent_transactions": "Последние транзакции",
+        "history_empty": "История пуста",
+        "category_stats_week": "Статистика по категориям (неделя)"
     },
     uk: {
         // Header
@@ -306,7 +377,83 @@ const translations = {
         "error_loading_recommendations": "Помилка завантаження рекомендацій",
         "no_recommendations": "Немає рекомендацій. Продовжуйте займатися!",
         "start_tracking": "Почати відстеження",
-        "click_for_details": "Клікніть для деталей"
+        "click_for_details": "Клікніть для деталей",
+        // Day details modal
+        "earned": "Зароблено",
+        "spent": "Витрачено",
+        "activity_time": "Час активності",
+        "total": "Разом",
+        "earnings": "Заробітки",
+        "sessions": "сесій",
+        "spendings": "Витрати",
+        "purchases": "покупок",
+        "no_activity_today": "Немає активності в цей день",
+        "error_loading_data": "Помилка завантаження даних",
+        "edit_activity": "Редагувати активність",
+        "enter_activity_name": "Введіть назву активності",
+        "activity_updated": "Активність оновлено!",
+        "error_updating": "Помилка оновлення",
+        "network_error": "Помилка з'єднання. Перевірте сервер.",
+        // Goal modal
+        "edit_goal": "Редагувати ціль",
+        "goal_not_found": "Ціль не знайдено",
+        "cannot_edit_completed": "Не можна редагувати виконану ціль",
+        "error_loading_goals": "Помилка завантаження цілей",
+        "create_goal_btn": "Створити ціль",
+        // Notifications
+        "reward_purchased": "Нагорода \"{reward}\" куплена! Витрачено {spent} XP",
+        "reward_received": "{reward} отримано! Мінус {spent} XP. Баланс: {balance} XP",
+        "activity_started": "Запущено активність \"{activity}\"! Прокрутіть до розділу \"Активності\" щоб побачити таймер.",
+        "connection_error": "Помилка з'єднання. Перевірте сервер.",
+        "activity_saved": "Активність збережено!",
+        "activity_deleted": "Активність видалено!",
+        "goal_created": "Ціль створено!",
+        "goal_updated": "Ціль оновлено!",
+        "goal_deleted": "Ціль видалено!",
+        "scroll_to_activities": "Прокрутіть до розділу \"Активності\" щоб побачити таймер",
+        "no_goals": "Немає цілей. Створіть першу ціль!",
+        "fill_title_and_xp": "Заповніть назву та цільову кількість XP",
+        "select_activity_for_goal": "Будь ласка, виберіть активність для цілі",
+        "error_creating_goal": "Помилка створення цілі",
+        "delete_goal_confirm": "Видалити цю ціль?",
+        "error_deleting": "Помилка видалення",
+        "error_deleting_goal": "Помилка видалення цілі",
+        "error": "Помилка",
+        // Admin panel
+        "invite_link": "Посилання для запрошення",
+        "copy": "Копіювати",
+        "send_link_to_daughter": "Надішліть це посилання дочці для реєстрації",
+        "filter_by_category": "Фільтр за категоріями активностей",
+        "all_categories": "Всі категорії",
+        "children": "Підопічні",
+        "stats": "Статистика",
+        "access_denied": "Доступ заборонено. Тільки адміністратори можуть переглядати адмін-панель.",
+        "error_checking_access": "Помилка перевірки прав доступу.",
+        "error_loading": "Помилка завантаження",
+        "error_loading_stats": "Помилка завантаження статистики",
+        // Child stats modal
+        "stats_for": "Статистика:",
+        "balance_xp": "Баланс XP",
+        "level": "Рівень",
+        "current_streak": "Поточна серія",
+        "general_stats": "Загальна статистика",
+        "total_earned": "Всього зароблено:",
+        "total_spent": "Всього витрачено:",
+        "record_streak": "Рекорд серії:",
+        "days_active": "Днів активності:",
+        "today": "Сьогодні",
+        "earned": "Зароблено:",
+        "time": "Час:",
+        "minutes": "хвилин",
+        "week": "За тиждень:",
+        "recent_transactions": "Останні транзакції",
+        "history_empty": "Історія порожня",
+        "category_stats_week": "Статистика за категоріями (тиждень)",
+        "no_children": "Немає підопічних. Надішліть посилання для реєстрації.",
+        "days_short": "дн.",
+        "today_exclamation": "Сьогодні!",
+        "overdue": "Прострочено",
+        "completed": "Виконано"
     },
     de: {
         // Header
@@ -459,7 +606,83 @@ const translations = {
         "error_loading_recommendations": "Fehler beim Laden der Empfehlungen",
         "no_recommendations": "Keine Empfehlungen. Machen Sie weiter!",
         "start_tracking": "Verfolgung starten",
-        "click_for_details": "Klicken Sie für Details"
+        "click_for_details": "Klicken Sie für Details",
+        // Day details modal
+        "earned": "Verdient",
+        "spent": "Ausgegeben",
+        "activity_time": "Aktivitätszeit",
+        "total": "Gesamt",
+        "earnings": "Einnahmen",
+        "sessions": "Sitzungen",
+        "spendings": "Ausgaben",
+        "purchases": "Käufe",
+        "no_activity_today": "Keine Aktivität an diesem Tag",
+        "error_loading_data": "Fehler beim Laden der Daten",
+        "edit_activity": "Aktivität bearbeiten",
+        "enter_activity_name": "Geben Sie den Aktivitätsnamen ein",
+        "activity_updated": "Aktivität aktualisiert!",
+        "error_updating": "Fehler beim Aktualisieren",
+        "network_error": "Verbindungsfehler. Überprüfen Sie den Server.",
+        // Goal modal
+        "edit_goal": "Ziel bearbeiten",
+        "goal_not_found": "Ziel nicht gefunden",
+        "cannot_edit_completed": "Abgeschlossenes Ziel kann nicht bearbeitet werden",
+        "error_loading_goals": "Fehler beim Laden der Ziele",
+        "create_goal_btn": "Ziel erstellen",
+        // Notifications
+        "reward_purchased": "Belohnung \"{reward}\" gekauft! {spent} XP ausgegeben",
+        "reward_received": "{reward} erhalten! Minus {spent} XP. Kontostand: {balance} XP",
+        "activity_started": "Aktivität \"{activity}\" gestartet! Scrollen Sie zum Abschnitt \"Aktivitäten\", um den Timer zu sehen.",
+        "connection_error": "Verbindungsfehler. Überprüfen Sie den Server.",
+        "activity_saved": "Aktivität gespeichert!",
+        "activity_deleted": "Aktivität gelöscht!",
+        "goal_created": "Ziel erstellt!",
+        "goal_updated": "Ziel aktualisiert!",
+        "goal_deleted": "Ziel gelöscht!",
+        "scroll_to_activities": "Scrollen Sie zum Abschnitt \"Aktivitäten\", um den Timer zu sehen",
+        "no_goals": "Keine Ziele. Erstellen Sie das erste Ziel!",
+        "fill_title_and_xp": "Füllen Sie den Titel und die Ziel-XP-Menge aus",
+        "select_activity_for_goal": "Bitte wählen Sie eine Aktivität für das Ziel",
+        "error_creating_goal": "Fehler beim Erstellen des Ziels",
+        "delete_goal_confirm": "Dieses Ziel löschen?",
+        "error_deleting": "Fehler beim Löschen",
+        "error_deleting_goal": "Fehler beim Löschen des Ziels",
+        "error": "Fehler",
+        // Admin panel
+        "invite_link": "Einladungslink",
+        "copy": "Kopieren",
+        "send_link_to_daughter": "Senden Sie diesen Link an Ihre Tochter zur Registrierung",
+        "filter_by_category": "Filter nach Aktivitätskategorien",
+        "all_categories": "Alle Kategorien",
+        "children": "Schützlinge",
+        "stats": "Statistik",
+        "access_denied": "Zugriff verweigert. Nur Administratoren können das Admin-Panel anzeigen.",
+        "error_checking_access": "Fehler beim Überprüfen der Zugriffsrechte.",
+        "error_loading": "Fehler beim Laden",
+        "error_loading_stats": "Fehler beim Laden der Statistik",
+        // Child stats modal
+        "stats_for": "Statistik:",
+        "balance_xp": "XP-Guthaben",
+        "level": "Stufe",
+        "current_streak": "Aktuelle Serie",
+        "general_stats": "Allgemeine Statistik",
+        "total_earned": "Insgesamt verdient:",
+        "total_spent": "Insgesamt ausgegeben:",
+        "record_streak": "Rekordserie:",
+        "days_active": "Aktive Tage:",
+        "today": "Heute",
+        "earned": "Verdient:",
+        "time": "Zeit:",
+        "minutes": "Minuten",
+        "week": "Diese Woche:",
+        "recent_transactions": "Letzte Transaktionen",
+        "history_empty": "Verlauf leer",
+        "category_stats_week": "Statistik nach Kategorien (Woche)",
+        "no_children": "Keine Schützlinge. Senden Sie den Link zur Registrierung.",
+        "days_short": "T.",
+        "today_exclamation": "Heute!",
+        "overdue": "Überfällig",
+        "completed": "Abgeschlossen"
     },
     en: {
         // Header
@@ -612,7 +835,83 @@ const translations = {
         "error_loading_recommendations": "Error loading recommendations",
         "no_recommendations": "No recommendations. Keep practicing!",
         "start_tracking": "Start tracking",
-        "click_for_details": "Click for details"
+        "click_for_details": "Click for details",
+        // Day details modal
+        "earned": "Earned",
+        "spent": "Spent",
+        "activity_time": "Activity time",
+        "total": "Total",
+        "earnings": "Earnings",
+        "sessions": "sessions",
+        "spendings": "Spendings",
+        "purchases": "purchases",
+        "no_activity_today": "No activity on this day",
+        "error_loading_data": "Error loading data",
+        "edit_activity": "Edit activity",
+        "enter_activity_name": "Enter activity name",
+        "activity_updated": "Activity updated!",
+        "error_updating": "Error updating",
+        "network_error": "Connection error. Check the server.",
+        // Goal modal
+        "edit_goal": "Edit goal",
+        "goal_not_found": "Goal not found",
+        "cannot_edit_completed": "Cannot edit completed goal",
+        "error_loading_goals": "Error loading goals",
+        "create_goal_btn": "Create goal",
+        // Notifications
+        "reward_purchased": "Reward \"{reward}\" purchased! Spent {spent} XP",
+        "reward_received": "{reward} received! Minus {spent} XP. Balance: {balance} XP",
+        "activity_started": "Activity \"{activity}\" started! Scroll to the \"Activities\" section to see the timer.",
+        "connection_error": "Connection error. Check the server.",
+        "activity_saved": "Activity saved!",
+        "activity_deleted": "Activity deleted!",
+        "goal_created": "Goal created!",
+        "goal_updated": "Goal updated!",
+        "goal_deleted": "Goal deleted!",
+        "scroll_to_activities": "Scroll to the \"Activities\" section to see the timer",
+        "no_goals": "No goals. Create your first goal!",
+        "fill_title_and_xp": "Fill in the title and target XP amount",
+        "select_activity_for_goal": "Please select an activity for the goal",
+        "error_creating_goal": "Error creating goal",
+        "delete_goal_confirm": "Delete this goal?",
+        "error_deleting": "Error deleting",
+        "error_deleting_goal": "Error deleting goal",
+        "error": "Error",
+        // Admin panel
+        "invite_link": "Invite link",
+        "copy": "Copy",
+        "send_link_to_daughter": "Send this link to your daughter for registration",
+        "filter_by_category": "Filter by activity categories",
+        "all_categories": "All categories",
+        "children": "Children",
+        "stats": "Statistics",
+        "access_denied": "Access denied. Only administrators can view the admin panel.",
+        "error_checking_access": "Error checking access rights.",
+        "error_loading": "Error loading",
+        "error_loading_stats": "Error loading statistics",
+        // Child stats modal
+        "stats_for": "Statistics:",
+        "balance_xp": "Balance XP",
+        "level": "Level",
+        "current_streak": "Current streak",
+        "general_stats": "General statistics",
+        "total_earned": "Total earned:",
+        "total_spent": "Total spent:",
+        "record_streak": "Record streak:",
+        "days_active": "Days active:",
+        "today": "Today",
+        "earned": "Earned:",
+        "time": "Time:",
+        "minutes": "minutes",
+        "week": "This week:",
+        "recent_transactions": "Recent transactions",
+        "history_empty": "History is empty",
+        "category_stats_week": "Category statistics (week)",
+        "no_children": "No children. Send the link for registration.",
+        "days_short": "days",
+        "today_exclamation": "Today!",
+        "overdue": "Overdue",
+        "completed": "Completed"
     }
 };
 
@@ -636,6 +935,7 @@ function changeLanguage(lang) {
         loadCalendar(currentCalendarPeriod);
         loadActivities();
         loadRecommendations();
+        updateAdminCategoryFilter();
     }
     closeLanguageMenu();
 }
@@ -1369,14 +1669,14 @@ async function showDayDetails(date) {
         const contentEl = document.getElementById('day-details-content');
         
         modal.classList.remove('hidden');
-        contentEl.innerHTML = '<div class="text-center text-gray-400 py-4">Загрузка...</div>';
+        contentEl.innerHTML = `<div class="text-center text-gray-400 py-4">${t('loading')}</div>`;
         
         const res = await fetch(`${API_BASE}/xp/day/${date}`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         
         if (!res.ok) {
-            contentEl.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки данных</div>';
+            contentEl.innerHTML = `<div class="text-center text-red-400 py-4">${t('error_loading_data')}</div>`;
             return;
         }
         
@@ -1384,12 +1684,28 @@ async function showDayDetails(date) {
         
         // Форматируем дату
         const dateObj = new Date(date);
-        const formattedDate = dateObj.toLocaleDateString('ru-RU', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
+        
+        // Для украинского языка используем правильный падеж (именительный)
+        let formattedDate;
+        if (currentLanguage === 'uk') {
+            const weekdays = ['неділя', 'понеділок', 'вівторок', 'середа', 'четвер', 'п\'ятниця', 'субота'];
+            const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 
+                           'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+            const weekday = weekdays[dateObj.getDay()];
+            const month = months[dateObj.getMonth()];
+            const day = dateObj.getDate();
+            const year = dateObj.getFullYear();
+            formattedDate = `${weekday}, ${day} ${month} ${year}`;
+        } else {
+            const localeMap = { 'ru': 'ru-RU', 'de': 'de-DE', 'en': 'en-US' };
+            const locale = localeMap[currentLanguage] || 'ru-RU';
+            formattedDate = dateObj.toLocaleDateString(locale, { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
         
         titleEl.textContent = `📅 ${formattedDate}`;
         
@@ -1397,7 +1713,9 @@ async function showDayDetails(date) {
         const formatTime = (timeStr) => {
             if (!timeStr) return '';
             const time = new Date(timeStr);
-            return time.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
+            const locale = localeMap[currentLanguage] || 'ru-RU';
+            return time.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
         };
         
         // Форматируем длительность
@@ -1417,19 +1735,19 @@ async function showDayDetails(date) {
                 <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border-2 border-indigo-200">
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <div class="text-xs text-gray-600 mb-1">Заработано</div>
+                            <div class="text-xs text-gray-600 mb-1">${t('earned')}</div>
                             <div class="text-xl font-bold text-green-600">+${data.total_earned} XP</div>
                         </div>
                         <div>
-                            <div class="text-xs text-gray-600 mb-1">Потрачено</div>
+                            <div class="text-xs text-gray-600 mb-1">${t('spent')}</div>
                             <div class="text-xl font-bold text-red-600">-${data.total_spent} XP</div>
                         </div>
                         <div>
-                            <div class="text-xs text-gray-600 mb-1">Время активности</div>
+                            <div class="text-xs text-gray-600 mb-1">${t('activity_time')}</div>
                             <div class="text-lg font-semibold text-indigo-600">${formatDuration(data.total_time)}</div>
                         </div>
                         <div>
-                            <div class="text-xs text-gray-600 mb-1">Итого</div>
+                            <div class="text-xs text-gray-600 mb-1">${t('total')}</div>
                             <div class="text-lg font-semibold ${data.net >= 0 ? 'text-green-600' : 'text-red-600'}">${data.net >= 0 ? '+' : ''}${data.net} XP</div>
                         </div>
                     </div>
@@ -1442,7 +1760,7 @@ async function showDayDetails(date) {
                 <div>
                     <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
                         <i class="fas fa-arrow-up text-green-500"></i>
-                        Заработки (${data.sessions_count} сессий)
+                        ${t('earnings')} (${data.sessions_count} ${t('sessions')})
                     </h4>
                     <div class="space-y-2">
                         ${data.earnings.map(earning => `
@@ -1466,7 +1784,7 @@ async function showDayDetails(date) {
             html += `
                 <div class="text-center text-gray-400 py-4 bg-gray-50 rounded-lg">
                     <i class="fas fa-info-circle mb-2"></i>
-                    <div>Нет активности в этот день</div>
+                    <div>${t('no_activity_today')}</div>
                 </div>
             `;
         }
@@ -1477,7 +1795,7 @@ async function showDayDetails(date) {
                 <div>
                     <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
                         <i class="fas fa-arrow-down text-red-500"></i>
-                        Расходы (${data.purchases_count} покупок)
+                        ${t('spendings')} (${data.purchases_count} ${t('purchases')})
                     </h4>
                     <div class="space-y-2">
                         ${data.spendings.map(spending => `
@@ -1506,7 +1824,7 @@ async function showDayDetails(date) {
     } catch (e) {
         console.error("Error loading day details:", e);
         document.getElementById('day-details-content').innerHTML = 
-            '<div class="text-center text-red-400 py-4">Ошибка загрузки данных</div>';
+            `<div class="text-center text-red-400 py-4">${t('error_loading_data')}</div>`;
     }
 }
 
@@ -1971,7 +2289,7 @@ async function updateActivity() {
     const category = categoryEl ? categoryEl.value || "general" : "general";
 
     if (!name) {
-        alert("Введите название активности");
+        alert(t('enter_activity_name'));
         return;
     }
 
@@ -1987,16 +2305,16 @@ async function updateActivity() {
 
         if (!res.ok) {
             const error = await res.json();
-            alert(error.detail || "Ошибка обновления");
+            alert(error.detail || t('error_updating'));
             return;
         }
 
         closeEditModal();
         await loadActivities();
-        showActivityMessage("✅ Активность обновлена!", "success");
+        showActivityMessage(`✅ ${t('activity_updated')}`, "success");
     } catch (e) {
         console.error("Error:", e);
-        alert("Ошибка сети");
+        alert(t('network_error'));
     }
 }
 
@@ -2627,13 +2945,13 @@ async function spendReward(rewardId) {
         }
         
         // Успешная покупка
-        const successMsg = `✅ ${data.reward} получена! Минус ${data.spent} XP. Баланс: ${Math.round(data.new_balance)} XP`;
+        const successMsg = `✅ ${t('reward_received').replace('{reward}', data.reward).replace('{spent}', data.spent).replace('{balance}', Math.round(data.new_balance))}`;
         rewardMessage.textContent = successMsg;
         rewardMessage.classList.remove("text-gray-500");
         rewardMessage.classList.add("text-green-600");
         
         // Показываем уведомление
-        showNotification(`✅ Награда "${data.reward}" куплена! Потрачено ${data.spent} XP`, 'success');
+        showNotification(`✅ ${t('reward_purchased').replace('{reward}', data.reward).replace('{spent}', data.spent)}`, 'success');
         
         // Обновляем все данные
         await loadWallet();
@@ -2641,7 +2959,7 @@ async function spendReward(rewardId) {
         loadTodayStats(); // Обновляем статистику
     } catch (e) {
         console.error("Error:", e);
-        const errorMsg = "Ошибка соединения. Проверьте сервер.";
+        const errorMsg = t('connection_error');
         rewardMessage.textContent = errorMsg;
         rewardMessage.classList.remove("text-gray-500");
         rewardMessage.classList.add("text-red-500");
@@ -3069,7 +3387,7 @@ async function startActivityFromRecommendation(activityId) {
         startBtn.click();
         
         // Показываем уведомление
-        showNotification(`✅ Запущена активность "${activity.name}"! Прокрутите к разделу "Активности" чтобы увидеть таймер.`, 'success');
+        showNotification(`✅ ${t('activity_started').replace('{activity}', activity.name)}`, 'success');
         
         // Прокручиваем к активностям для визуального подтверждения
         setTimeout(() => {
@@ -3091,7 +3409,7 @@ async function startActivityFromRecommendation(activityId) {
         await toggleTimer(activityId, tempBtn, activity);
         
         // Показываем уведомление
-        showNotification(`✅ Запущена активность "${activity.name}"! Прокрутите к разделу "Активности" чтобы увидеть таймер.`, 'success');
+        showNotification(`✅ ${t('activity_started').replace('{activity}', activity.name)}`, 'success');
         
         // Прокручиваем к активностям
         setTimeout(() => {
@@ -3140,7 +3458,7 @@ async function loadInviteCode() {
             if (res.status === 403) {
                 // Подопечный пытается получить invite код
                 hideAdminPanel();
-                showNotification('🚫 Доступ запрещён. Только администраторы могут просматривать админ-панель.', 'error');
+                showNotification(`🚫 ${t('access_denied')}`, 'error');
             }
             return;
         }
@@ -3170,16 +3488,17 @@ async function showAdminPanel() {
         
         if (!res.ok) {
             // Подопечный пытается открыть админ-панель
-            showNotification('🚫 Доступ запрещён. Только администраторы могут просматривать админ-панель.', 'error');
+            showNotification(`🚫 ${t('access_denied')}`, 'error');
             return;
         }
     } catch (e) {
-        showNotification('🚫 Ошибка проверки прав доступа.', 'error');
+        showNotification(`🚫 ${t('error_checking_access')}`, 'error');
         return;
     }
     
     const adminPanel = document.getElementById("admin-panel");
     adminPanel.classList.remove("hidden");
+    updateAdminCategoryFilter();
     loadChildren();
     loadInviteCode();
     
@@ -3233,12 +3552,12 @@ async function loadChildren() {
         if (!res.ok) {
             if (res.status === 403) {
                 // Подопечный пытается загрузить данные
-                document.getElementById("children-list").innerHTML = '<div class="text-center text-red-500 py-4">🚫 Доступ запрещён. Только администраторы могут просматривать подопечных.</div>';
+                document.getElementById("children-list").innerHTML = `<div class="text-center text-red-500 py-4">🚫 ${t('access_denied')}</div>`;
                 // Скрываем панель, если подопечный каким-то образом её открыл
                 hideAdminPanel();
-                showNotification('🚫 Доступ запрещён. Только администраторы могут просматривать админ-панель.', 'error');
+                showNotification(`🚫 ${t('access_denied')}`, 'error');
             } else {
-                document.getElementById("children-list").innerHTML = '<div class="text-center text-gray-400 py-4">Ошибка загрузки</div>';
+                document.getElementById("children-list").innerHTML = `<div class="text-center text-gray-400 py-4">${t('error_loading')}</div>`;
             }
             return;
         }
@@ -3247,7 +3566,7 @@ async function loadChildren() {
         const listEl = document.getElementById("children-list");
         
         if (children.length === 0) {
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет подопечных. Отправьте ссылку для регистрации.</div>';
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4">${t('no_children')}</div>`;
             return;
         }
         
@@ -3260,21 +3579,21 @@ async function loadChildren() {
                     </div>
                     <button onclick="showChildStats(${child.id}, '${child.username}')" 
                             class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all">
-                        <i class="fas fa-chart-line mr-2"></i>Статистика
+                        <i class="fas fa-chart-line mr-2"></i>${t('stats')}
                     </button>
                 </div>
             </div>
         `).join('');
     } catch (e) {
         console.error("Error loading children:", e);
-        document.getElementById("children-list").innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки</div>';
+        document.getElementById("children-list").innerHTML = `<div class="text-center text-red-400 py-4">${t('error_loading')}</div>`;
     }
 }
 
 async function showChildStats(childId, childName) {
     document.getElementById("child-stats-modal").classList.remove("hidden");
-    document.getElementById("child-stats-name").textContent = `Статистика: ${childName}`;
-    document.getElementById("child-stats-content").innerHTML = '<div class="text-center text-gray-400 py-8">Загрузка...</div>';
+    document.getElementById("child-stats-name").textContent = `${t('stats_for')} ${childName}`;
+    document.getElementById("child-stats-content").innerHTML = `<div class="text-center text-gray-400 py-8">${t('loading')}</div>`;
     
     try {
         const categoryFilter = document.getElementById('admin-category-filter');
@@ -3332,42 +3651,42 @@ async function showChildStats(childId, childName) {
             <!-- Детальная статистика -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-gray-50 rounded-xl p-4">
-                    <h4 class="font-bold text-gray-800 mb-3">📊 Общая статистика</h4>
+                    <h4 class="font-bold text-gray-800 mb-3">📊 ${t('general_stats')}</h4>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Всего заработано:</span>
+                            <span class="text-gray-600">${t('total_earned')}</span>
                             <span class="font-bold text-green-600">${Math.round(stats.total_earned)} XP</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Всего потрачено:</span>
+                            <span class="text-gray-600">${t('total_spent')}</span>
                             <span class="font-bold text-red-600">${Math.round(stats.total_spent)} XP</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Рекорд серии:</span>
-                            <span class="font-bold">${stats.longest_streak} дней</span>
+                            <span class="text-gray-600">${t('record_streak')}</span>
+                            <span class="font-bold">${stats.longest_streak} ${t('days')}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Дней активности:</span>
+                            <span class="text-gray-600">${t('days_active')}</span>
                             <span class="font-bold">${stats.total_days_active}</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="bg-gray-50 rounded-xl p-4">
-                    <h4 class="font-bold text-gray-800 mb-3">📅 Сегодня</h4>
+                    <h4 class="font-bold text-gray-800 mb-3">📅 ${t('today')}</h4>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Заработано:</span>
+                            <span class="text-gray-600">${t('earned')}</span>
                             <span class="font-bold text-green-600">${Math.round(stats.today_earned)} XP</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Время:</span>
-                            <span class="font-bold">${Math.round(stats.today_time)} минут</span>
+                            <span class="text-gray-600">${t('time')}</span>
+                            <span class="font-bold">${Math.round(stats.today_time)} ${t('minutes')}</span>
                         </div>
                     </div>
                     <div class="mt-3 pt-3 border-t border-gray-200">
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">За неделю:</span>
+                            <span class="text-gray-600">${t('week')}</span>
                             <span class="font-bold text-green-600">${Math.round(stats.week_earned)} XP</span>
                         </div>
                     </div>
@@ -3376,11 +3695,13 @@ async function showChildStats(childId, childName) {
             
             <!-- История -->
             <div class="mb-4">
-                <h4 class="font-bold text-gray-800 mb-3">📜 Последние транзакции</h4>
+                <h4 class="font-bold text-gray-800 mb-3">📜 ${t('recent_transactions')}</h4>
                 <div class="space-y-2 max-h-64 overflow-y-auto">
                     ${history.length > 0 ? history.map(item => {
                         const date = new Date(item.date);
                         const isEarn = item.type === 'earn';
+                        const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
+                        const locale = localeMap[currentLanguage] || 'ru-RU';
                         return `
                             <div class="flex items-center justify-between p-3 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'}">
                                 <div class="flex items-center gap-3">
@@ -3389,7 +3710,7 @@ async function showChildStats(childId, childName) {
                                     </div>
                                     <div>
                                         <div class="font-medium text-gray-800 text-sm">${item.description}</div>
-                                        <div class="text-xs text-gray-500">${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>
+                                        <div class="text-xs text-gray-500">${date.toLocaleDateString(locale)} ${date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</div>
                                     </div>
                                 </div>
                                 <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'}">
@@ -3397,13 +3718,13 @@ async function showChildStats(childId, childName) {
                                 </div>
                             </div>
                         `;
-                    }).join('') : '<div class="text-center text-gray-400 py-4">История пуста</div>'}
+                    }).join('') : `<div class="text-center text-gray-400 py-4">${t('history_empty')}</div>`}
                 </div>
             </div>
             
             <!-- Статистика по категориям -->
             <div class="mb-4">
-                <h4 class="font-bold text-gray-800 mb-3">📊 Статистика по категориям (неделя)</h4>
+                <h4 class="font-bold text-gray-800 mb-3">📊 ${t('category_stats_week')}</h4>
                 <div class="space-y-2">
                     ${categoryStats.categories && categoryStats.categories.length > 0 ? categoryStats.categories.map(cat => {
                         const categoryNames = {
@@ -3503,7 +3824,7 @@ async function showChildStats(childId, childName) {
         `;
     } catch (e) {
         console.error("Error loading child stats:", e);
-        document.getElementById("child-stats-content").innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки статистики</div>';
+        document.getElementById("child-stats-content").innerHTML = `<div class="text-center text-red-400 py-4">${t('error_loading_stats')}</div>`;
     }
 }
 
@@ -3511,12 +3832,85 @@ function closeChildStats() {
     document.getElementById("child-stats-modal").classList.add("hidden");
 }
 
+function updateAdminCategoryFilter() {
+    const filterSelect = document.getElementById('admin-category-filter');
+    if (!filterSelect) return;
+    
+    // Сохраняем текущее значение
+    const currentValue = filterSelect.value;
+    
+    // Очищаем селект
+    filterSelect.innerHTML = '';
+    
+    // Добавляем опцию "Все категории"
+    const newAllOption = document.createElement('option');
+    newAllOption.value = '';
+    newAllOption.textContent = t('all_categories');
+    filterSelect.appendChild(newAllOption);
+    
+    // Используем те же данные, что и в updateCategoryDropdown - берем категории из allCategories
+    // Стандартные категории (с fallback если еще не загружены)
+    const standardCats = allCategories.standard && allCategories.standard.length > 0 
+        ? allCategories.standard 
+        : [
+            {id: "general", name: "Общее"},
+            {id: "study", name: "Учеба"},
+            {id: "sport", name: "Спорт"},
+            {id: "hobby", name: "Хобби"},
+            {id: "work", name: "Работа"},
+            {id: "health", name: "Здоровье"}
+        ];
+    
+    // Определяем, какие стандартные категории были заменены пользовательскими
+    const replacedStandardCategories = new Set();
+    if (allCategories.custom && allCategories.custom.length > 0) {
+        allCategories.custom.forEach(cat => {
+            if (cat.replaced_standard_category) {
+                replacedStandardCategories.add(cat.replaced_standard_category);
+            }
+        });
+    }
+    
+    // Добавляем стандартные категории, пропуская те, что были заменены пользовательскими
+    standardCats.forEach(cat => {
+        if (!replacedStandardCategories.has(cat.id)) {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.name; // Используем название из бэкенда (уже переведенное или оригинальное)
+            filterSelect.appendChild(option);
+        } else {
+            // Находим пользовательскую категорию, которая заменяет эту стандартную
+            const replacement = allCategories.custom.find(c => c.replaced_standard_category === cat.id);
+            if (replacement) {
+                const option = document.createElement('option');
+                option.value = replacement.id;
+                option.textContent = replacement.name; // Оригинальное название пользователя
+                filterSelect.appendChild(option);
+            }
+        }
+    });
+    
+    // Добавляем остальные пользовательские категории (которые не заменяют стандартные)
+    const nonReplacementCustom = allCategories.custom?.filter(cat => !cat.replaced_standard_category) || [];
+    if (nonReplacementCustom.length > 0) {
+        nonReplacementCustom.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.name; // Оригинальное название пользователя
+            filterSelect.appendChild(option);
+        });
+    }
+    
+    // Восстанавливаем значение
+    filterSelect.value = currentValue;
+}
+
 function filterChildrenByCategory() {
     // Перезагружаем статистику для всех открытых модальных окон
     const modal = document.getElementById("child-stats-modal");
     if (!modal.classList.contains("hidden")) {
         const childId = modal.getAttribute("data-child-id");
-        const childName = document.getElementById("child-stats-name").textContent.replace("Статистика: ", "");
+        const childName = document.getElementById("child-stats-name").textContent.replace(`${t('stats_for')} `, "");
         if (childId) {
             showChildStats(parseInt(childId), childName);
         }
@@ -3554,6 +3948,8 @@ async function loadCategories() {
         updateCategoryDropdown('activity-category');
         // Обновляем dropdown для редактирования активности
         updateCategoryDropdown('edit-activity-category');
+        // Обновляем селект категорий в админ панели
+        updateAdminCategoryFilter();
         
         // Кнопки действий больше не нужны, так как они теперь в dropdown
         
@@ -3593,6 +3989,15 @@ function updateCategoryDropdown(selectId) {
             dropdown: !!dropdown
         });
         return;
+    }
+    
+    // Устанавливаем "Общее" по умолчанию, если значение не установлено или пустое
+    if (!hiddenInput.value || hiddenInput.value === '') {
+        hiddenInput.value = 'general';
+        if (textSpan) {
+            const generalCat = allCategories.standard?.find(c => c.id === 'general') || { name: t('category_general') };
+            textSpan.textContent = generalCat.name;
+        }
     }
     
     const currentValue = hiddenInput.value || 'general';
@@ -3677,7 +4082,9 @@ function updateCategoryDropdown(selectId) {
         textSpan.textContent = selectedCat.name;
         hiddenInput.value = currentValue;
     } else {
-        textSpan.textContent = 'Общее';
+        // Если категория не найдена, устанавливаем "Общее" по умолчанию
+        const generalCat = standardCats.find(c => c.id === 'general');
+        textSpan.textContent = generalCat ? generalCat.name : t('category_general');
         hiddenInput.value = 'general';
     }
     
@@ -3709,13 +4116,14 @@ function updateCategoryDropdown(selectId) {
 
 function createDropdownOption(value, name, isCustom, categoryData, selectId) {
     const option = document.createElement('div');
-    option.className = 'px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between group';
+    option.className = 'px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between group min-w-0';
     option.dataset.value = value;
     option.dataset.isCustom = isCustom ? 'true' : 'false';
     
     const leftPart = document.createElement('div');
-    leftPart.className = 'flex-1';
+    leftPart.className = 'flex-1 min-w-0 pr-2';
     leftPart.textContent = name;
+    leftPart.style.wordBreak = 'break-word';
     
     option.appendChild(leftPart);
     
@@ -4020,6 +4428,14 @@ async function saveCategory() {
             }
         }
         
+        // Автоматически выбираем сохраненную категорию в dropdown активности
+        if (newData.id && activityCategory && activityCategoryText) {
+            // Небольшая задержка, чтобы dropdown успел обновиться
+            setTimeout(() => {
+                selectCategoryOption('activity-category', newData.id, newData.name);
+            }, 100);
+        }
+        
         // Закрываем модальное окно после сохранения
         closeCategoryModal();
         
@@ -4136,7 +4552,7 @@ async function loadGoals() {
         
         if (!authToken) {
             console.error("No auth token available");
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Требуется авторизация</div>';
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
             return;
         }
         
@@ -4147,16 +4563,19 @@ async function loadGoals() {
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load goals:", res.status, res.statusText, errorText);
-            listEl.innerHTML = '<div class="text-center text-red-400 py-4 text-xs">Ошибка загрузки целей</div>';
+            listEl.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${t('error_loading_goals')}</div>`;
             return;
         }
         
         let data = await res.json();
         
         if (data.length === 0) {
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Нет целей. Создайте первую цель!</div>';
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('no_goals')}</div>`;
             return;
         }
+        
+        // Маппинг локалей для форматирования дат
+        const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
         
         // Сортируем цели по дате достижения: ближайшие сверху, дальние снизу
         // Сначала невыполненные с датой (ближайшие сверху), затем невыполненные без даты, затем выполненные
@@ -4192,7 +4611,7 @@ async function loadGoals() {
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1 md:gap-1.5 mb-1 flex-wrap">
                                 <h4 class="font-bold text-gray-800 text-xs md:text-sm">${goal.title}</h4>
-                                ${isCompleted ? '<span class="px-1 md:px-1.5 py-0.5 bg-green-500 text-white text-[9px] md:text-[10px] rounded-full flex-shrink-0">✓ Выполнено</span>' : ''}
+                                ${isCompleted ? `<span class="px-1 md:px-1.5 py-0.5 bg-green-500 text-white text-[9px] md:text-[10px] rounded-full flex-shrink-0">✓ ${t('completed')}</span>` : ''}
                             </div>
                             ${goal.activity_name ? `
                                 <div class="flex items-center gap-1 mb-0.5 md:mb-1">
@@ -4204,8 +4623,8 @@ async function loadGoals() {
                                 <div class="flex items-center gap-1 mb-0.5 md:mb-1">
                                     <i class="fas fa-calendar text-gray-500 text-[10px] md:text-xs"></i>
                                     <span class="text-[9px] md:text-[10px] text-gray-600">
-                                        ${new Date(goal.target_date).toLocaleDateString('ru-RU')} 
-                                        ${daysLeft !== null ? (daysLeft > 0 ? `(${daysLeft} дн.)` : daysLeft === 0 ? '(Сегодня!)' : '(Просрочено)') : ''}
+                                        ${new Date(goal.target_date).toLocaleDateString(localeMap[currentLanguage] || 'ru-RU')} 
+                                        ${daysLeft !== null ? (daysLeft > 0 ? `(${daysLeft} ${t('days_short')})` : daysLeft === 0 ? `(${t('today_exclamation')})` : `(${t('overdue')})`) : ''}
                                     </span>
                                 </div>
                             ` : ''}
@@ -4240,8 +4659,8 @@ async function loadGoals() {
 }
 
 function showCreateGoalModal() {
-    document.getElementById("goal-modal-title").textContent = "🎯 Новая цель";
-    document.getElementById("goal-submit-btn").innerHTML = '<i class="fas fa-check mr-2"></i>Создать цель';
+    document.getElementById("goal-modal-title").textContent = t('new_goal');
+    document.getElementById("goal-submit-btn").innerHTML = `<i class="fas fa-check mr-2"></i>${t('create_goal_btn')}`;
     document.getElementById("edit-goal-id").value = "";
     document.getElementById("create-goal-modal").classList.remove("hidden");
     // Загружаем список активностей для выбора
@@ -4263,19 +4682,19 @@ async function editGoal(goalId) {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         if (!res.ok) {
-            alert("Ошибка загрузки целей");
+            alert(t('error_loading_goals'));
             return;
         }
         const goals = await res.json();
         const goal = goals.find(g => g.id === goalId);
         
         if (!goal) {
-            alert("Цель не найдена");
+            alert(t('goal_not_found'));
             return;
         }
         
         if (goal.is_completed === 1) {
-            alert("Нельзя редактировать выполненную цель");
+            alert(t('cannot_edit_completed'));
             return;
         }
         
@@ -4353,12 +4772,12 @@ async function createGoal() {
     const targetDate = document.getElementById("goal-target-date").value;
     
     if (!title || !targetXp || targetXp <= 0) {
-        alert("Заполните название и целевое количество XP");
+        alert(t('fill_title_and_xp'));
         return;
     }
     
     if (!activityId) {
-        alert("Пожалуйста, выберите активность для цели");
+        alert(t('select_activity_for_goal'));
         return;
     }
     
@@ -4383,12 +4802,12 @@ async function createGoal() {
             
             if (!res.ok) {
                 const error = await res.json();
-                throw new Error(error.detail || "Ошибка обновления цели");
+                throw new Error(error.detail || t('error_updating'));
             }
             
             closeCreateGoalModal();
             loadGoals();
-            alert("✅ Цель обновлена!");
+            showNotification(`✅ ${t('goal_updated')}`, 'success');
         } else {
             // Создание
             const res = await fetch(`${API_BASE}/goals/`, {
@@ -4408,20 +4827,20 @@ async function createGoal() {
             
             if (!res.ok) {
                 const error = await res.json();
-                throw new Error(error.detail || "Ошибка создания цели");
+                throw new Error(error.detail || t('error_creating_goal'));
             }
             
             closeCreateGoalModal();
             loadGoals();
-            alert("✅ Цель создана!");
+            showNotification(`✅ ${t('goal_created')}`, 'success');
         }
     } catch (e) {
-        alert("Ошибка: " + e.message);
+        alert(t('error') + ": " + e.message);
     }
 }
 
 async function deleteGoal(goalId) {
-    if (!confirm("Удалить эту цель?")) return;
+    if (!confirm(t('delete_goal_confirm'))) return;
     
     try {
         const res = await fetch(`${API_BASE}/goals/${goalId}`, {
@@ -4429,11 +4848,12 @@ async function deleteGoal(goalId) {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         
-        if (!res.ok) throw new Error("Ошибка удаления");
+        if (!res.ok) throw new Error(t('error_deleting'));
         
         loadGoals();
+        showNotification(`✅ ${t('goal_deleted')}`, 'success');
     } catch (e) {
-        alert("Ошибка удаления цели");
+        alert(t('error_deleting_goal'));
     }
 }
 

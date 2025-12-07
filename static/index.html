@@ -251,7 +251,7 @@
             <div id="admin-panel" class="hidden mb-6 bg-white/90 backdrop-blur rounded-2xl p-6 shadow-xl border border-white/50 mt-2">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-users-cog mr-2 text-blue-600"></i>Админ-панель
+                        <i class="fas fa-users-cog mr-2 text-blue-600"></i><span data-i18n="admin_panel">Админ-панель</span>
                     </h2>
                     <button onclick="hideAdminPanel()" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times text-xl"></i>
@@ -260,24 +260,24 @@
                 
                 <!-- Invite Code Section -->
                 <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-                    <h3 class="font-bold text-gray-800 mb-2">🔗 Ссылка для приглашения</h3>
+                    <h3 class="font-bold text-gray-800 mb-2" data-i18n="invite_link">🔗 Ссылка для приглашения</h3>
                     <div class="flex items-center gap-2 mb-2">
                         <input type="text" id="invite-link" readonly
                                class="flex-1 p-3 border-2 border-blue-200 rounded-lg bg-white text-sm font-mono">
                         <button onclick="copyInviteLink()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg transition-all">
-                            <i class="fas fa-copy"></i> Копировать
+                            <i class="fas fa-copy"></i> <span data-i18n="copy">Копировать</span>
                         </button>
                     </div>
-                    <p class="text-xs text-gray-600">Отправьте эту ссылку дочери для регистрации</p>
+                    <p class="text-xs text-gray-600" data-i18n="send_link_to_daughter">Отправьте эту ссылку дочери для регистрации</p>
                 </div>
                 
                 <!-- Category Filter -->
                 <div class="mb-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-filter text-blue-600 mr-1"></i>Фильтр по категориям активностей
+                        <i class="fas fa-filter text-blue-600 mr-1"></i><span data-i18n="filter_by_category">Фильтр по категориям активностей</span>
                     </label>
                     <select id="admin-category-filter" onchange="filterChildrenByCategory()" class="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white">
-                        <option value="">Все категории</option>
+                        <option value="" data-i18n="all_categories">Все категории</option>
                         <option value="general">Общее</option>
                         <option value="study">Учеба</option>
                         <option value="sport">Спорт</option>
@@ -289,9 +289,9 @@
                 
                 <!-- Children List -->
                 <div>
-                    <h3 class="font-bold text-gray-800 mb-3">👥 Подопечные</h3>
+                    <h3 class="font-bold text-gray-800 mb-3" data-i18n="children">👥 Подопечные</h3>
                     <div id="children-list" class="space-y-3">
-                        <div class="text-center text-gray-400 py-4">Загрузка...</div>
+                        <div class="text-center text-gray-400 py-4" data-i18n="loading">Загрузка...</div>
                     </div>
                 </div>
             </div>
@@ -501,15 +501,15 @@
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-dashed border-blue-200">
                         <h3 class="text-xl font-semibold mb-4 text-gray-800"><span data-i18n="new_activity">➕ Новая активность</span></h3>
                         <form id="new-activity-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                            <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-center placeholder:text-center" required>
                             <div class="relative">
                                 <div id="activity-category-wrapper" class="custom-dropdown">
                                     <input type="hidden" id="activity-category" value="general">
-                                    <button type="button" id="activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-left flex items-center justify-between">
-                                        <span id="activity-category-text">Общее</span>
-                                        <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+                                    <button type="button" id="activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-left flex items-center gap-2 min-w-0">
+                                        <span id="activity-category-text" class="flex-1 min-w-0 break-words line-clamp-2">Общее</span>
+                                        <i class="fas fa-chevron-down text-gray-500 text-sm flex-shrink-0"></i>
                                     </button>
-                                    <div id="activity-category-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                                    <div id="activity-category-dropdown" class="hidden absolute z-50 min-w-full w-max max-w-md mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                                         <!-- Опции будут добавлены через JavaScript -->
                                     </div>
                                 </div>
@@ -716,22 +716,22 @@
     <div id="edit-activity-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeEditModal()">
         <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">✏️ Редактировать активность</h3>
+                <h3 class="text-2xl font-bold text-gray-800" data-i18n="edit_activity">✏️ Редактировать активность</h3>
                 <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <form id="edit-activity-form" class="space-y-4">
                 <input type="hidden" id="edit-activity-id">
-                <input type="text" id="edit-activity-name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                <input type="text" id="edit-activity-name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-center placeholder:text-center" required>
                 <div class="relative">
                     <div id="edit-activity-category-wrapper" class="custom-dropdown">
                         <input type="hidden" id="edit-activity-category" value="general">
-                        <button type="button" id="edit-activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-left flex items-center justify-between">
-                            <span id="edit-activity-category-text">Общее</span>
-                            <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+                        <button type="button" id="edit-activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-left flex items-center gap-2 min-w-0">
+                            <span id="edit-activity-category-text" class="flex-1 min-w-0 break-words line-clamp-2">Общее</span>
+                            <i class="fas fa-chevron-down text-gray-500 text-sm flex-shrink-0"></i>
                         </button>
-                        <div id="edit-activity-category-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        <div id="edit-activity-category-dropdown" class="hidden absolute z-50 min-w-full w-max max-w-md mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                             <!-- Опции будут добавлены через JavaScript -->
                         </div>
                     </div>

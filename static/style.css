@@ -156,6 +156,17 @@ select {
     padding-right: 2.5rem;
 }
 
+/* Убираем стандартную иконку браузера для админ селекта категорий */
+#admin-category-filter {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+}
+
 /* Сдвиг иконки левее на 15-20px от правого края */
 #goal-activity,
 #manual-activity-select {
@@ -177,4 +188,21 @@ select {
 
 .custom-dropdown button i.rotate-180 {
     transform: rotate(180deg);
+}
+
+/* Стили для инпутов с длинными плейсхолдерами */
+#activity-name,
+#edit-activity-name {
+    min-height: 3.5rem;
+    text-align: center;
+    display: block;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#activity-name::placeholder,
+#edit-activity-name::placeholder {
+    text-align: center;
+    line-height: 1.5;
+    opacity: 0.6;
 }
