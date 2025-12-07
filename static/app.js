@@ -61,6 +61,8 @@ const translations = {
         "earned": "Заработано",
         "spent": "Потрачено",
         "at_time": "в",
+        "filter_period": "Период",
+        "all": "Все",
         
         // Stats
         "today": "Сегодня",
@@ -129,6 +131,8 @@ const translations = {
         "target_xp_description": "Сколько XP нужно заработать для достижения цели",
         "goal_description_placeholder": "Дополнительная информация о цели",
         "deadline_description": "Установите дату, к которой хотите достичь цели",
+        "date_format_placeholder": "дд.мм.гггг",
+        "format_label": "Формат:",
         "save_changes": "Сохранить изменения",
         
         // Common
@@ -323,6 +327,8 @@ const translations = {
         "earned": "Зароблено",
         "spent": "Витрачено",
         "at_time": "о",
+        "filter_period": "Період",
+        "all": "Всі",
         
         // Stats
         "today": "Сьогодні",
@@ -391,6 +397,8 @@ const translations = {
         "target_xp_description": "Скільки XP потрібно заробити для досягнення цілі",
         "goal_description_placeholder": "Додаткова інформація про ціль",
         "deadline_description": "Встановіть дату, до якої хочете досягти цілі",
+        "date_format_placeholder": "дд.мм.рррр",
+        "format_label": "Формат:",
         "save_changes": "Зберегти зміни",
         
         // Common
@@ -586,6 +594,8 @@ const translations = {
         "earned": "Verdient",
         "spent": "Ausgegeben",
         "at_time": "um",
+        "filter_period": "Zeitraum",
+        "all": "Alle",
         
         // Stats
         "today": "Heute",
@@ -654,6 +664,8 @@ const translations = {
         "target_xp_description": "Wie viel XP müssen verdient werden, um das Ziel zu erreichen",
         "goal_description_placeholder": "Zusätzliche Informationen zum Ziel",
         "deadline_description": "Legen Sie das Datum fest, bis zu dem Sie das Ziel erreichen möchten",
+        "date_format_placeholder": "tt.mm.jjjj",
+        "format_label": "Format:",
         "save_changes": "Änderungen speichern",
         
         // Common
@@ -849,6 +861,8 @@ const translations = {
         "earned": "Earned",
         "spent": "Spent",
         "at_time": "at",
+        "filter_period": "Period",
+        "all": "All",
         
         // Stats
         "today": "Today",
@@ -917,6 +931,8 @@ const translations = {
         "target_xp_description": "How much XP needs to be earned to achieve the goal",
         "goal_description_placeholder": "Additional information about the goal",
         "deadline_description": "Set the date by which you want to achieve the goal",
+        "date_format_placeholder": "dd.mm.yyyy",
+        "format_label": "Format:",
         "save_changes": "Save Changes",
         
         // Common
@@ -1105,6 +1121,8 @@ function changeLanguage(lang) {
     localStorage.setItem('language', lang);
     applyTranslations();
     updateLanguageMenu();
+    // Обновляем lang атрибут для календаря
+    updateDateInputLang();
     // Обновляем тексты аккордеонов
     updateHistoryAccordionButton();
     updateRewardsAccordionButton();
@@ -1118,9 +1136,23 @@ function changeLanguage(lang) {
         loadGoals(); // Перезагружаем цели для обновления дней до цели
         loadStreak(); // Перезагружаем streak для обновления "дней"
         loadHistory(); // Перезагружаем историю для обновления формата даты/времени
+        // Инициализируем кнопки фильтра периода
+        if (document.getElementById('history-period-today')) {
+            setHistoryPeriod(historyPeriod);
+        }
         updateCategoryDropdown('activity-category'); // Обновляем дропдаун категорий для новой активности
         updateCategoryDropdown('edit-activity-category'); // Обновляем дропдаун категорий для редактирования активности
         updateAdminCategoryFilter();
+        
+        // Если модальное окно статистики открыто, обновляем его
+        const childStatsModal = document.getElementById("child-stats-modal");
+        if (childStatsModal && !childStatsModal.classList.contains("hidden")) {
+            const childId = childStatsModal.getAttribute("data-child-id");
+            const childName = document.getElementById("child-stats-name")?.textContent.replace(`${t('stats_for')} `, "") || "";
+            if (childId) {
+                showChildStats(parseInt(childId), childName);
+            }
+        }
     }
     closeLanguageMenu();
 }
@@ -1221,6 +1253,7 @@ window.toggleFooterLanguageMenu = toggleFooterLanguageMenu;
 document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
     updateLanguageMenu();
+    updateDateInputLang(); // Обновляем lang атрибут календаря при загрузке
 });
 
 // Экспортируем функции для использования в HTML
@@ -1494,6 +1527,11 @@ function showApp() {
         loadStreak();
         loadRecommendations();
         loadGoals();
+        loadHistory();
+        // Инициализируем кнопки фильтра периода истории
+        if (document.getElementById('history-period-today')) {
+            setHistoryPeriod(historyPeriod);
+        }
         loadHistory(); // Автоматически загружаем историю
         
         // Дополнительное обновление dropdown через небольшую задержку на случай, если элементы еще не готовы
@@ -2005,6 +2043,17 @@ async function showDayDetails(date) {
             `;
         }
         
+        // Добавляем кнопку создания цели внизу
+        html += `
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <button onclick="showCreateGoalModal(); closeDayDetailsModal();" 
+                        class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 px-6 rounded-xl font-medium transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                    <i class="fas fa-bullseye"></i>
+                    <span>${t('create_goal')}</span>
+                </button>
+            </div>
+        `;
+        
         html += '</div>';
         contentEl.innerHTML = html;
         
@@ -2030,6 +2079,7 @@ function showMonthDetails(month) {
 
 // ============= HISTORY =============
 let historyOpen = false;
+let historyPeriod = 'today'; // По умолчанию показываем сегодня
 
 function toggleHistory() {
     historyOpen = !historyOpen;
@@ -2074,6 +2124,62 @@ function renderHistoryItem(item) {
     `;
 }
 
+// Функция для фильтрации истории по периоду
+function filterHistoryByPeriod(data, period) {
+    if (!data || data.length === 0) return [];
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    let startDate;
+    
+    switch (period) {
+        case 'today':
+            startDate = new Date(today);
+            break;
+        case 'week':
+            startDate = new Date(today);
+            startDate.setDate(startDate.getDate() - 7);
+            break;
+        case 'month':
+            startDate = new Date(today);
+            startDate.setMonth(startDate.getMonth() - 1);
+            break;
+        case 'year':
+            startDate = new Date(today);
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            break;
+        case 'all':
+        default:
+            return data; // Возвращаем все данные без фильтрации
+    }
+    
+    return data.filter(item => {
+        const itemDate = new Date(item.date);
+        return itemDate >= startDate;
+    });
+}
+
+// Функция для установки периода фильтра
+function setHistoryPeriod(period) {
+    historyPeriod = period;
+    
+    // Обновляем стили кнопок
+    document.querySelectorAll('.history-period-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-500', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-700');
+    });
+    
+    const activeBtn = document.getElementById(`history-period-${period}`);
+    if (activeBtn) {
+        activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        activeBtn.classList.add('bg-indigo-500', 'text-white');
+    }
+    
+    // Перезагружаем историю с фильтром
+    loadHistory();
+}
+
 async function loadHistory() {
     try {
         // Инициализируем элементы каждый раз
@@ -2099,7 +2205,8 @@ async function loadHistory() {
             return;
         }
         
-        const res = await fetch(`${API_BASE}/xp/full-history?limit=30`, {
+        // Увеличиваем лимит для получения достаточного количества данных для фильтрации
+        const res = await fetch(`${API_BASE}/xp/full-history?limit=1000`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         
@@ -2113,19 +2220,22 @@ async function loadHistory() {
             return;
         }
         
-        const data = await res.json();
+        const allData = await res.json();
+        
+        // Фильтруем данные по выбранному периоду
+        const filteredData = filterHistoryByPeriod(allData, historyPeriod);
         
         historyListVisible.innerHTML = '';
         historyListHidden.innerHTML = '';
         
-        if (data.length === 0) {
+        if (filteredData.length === 0) {
             historyListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">История пуста</div>';
             historyAccordionBtn.classList.add('hidden');
             return;
         }
         
-        const visibleHistory = data.slice(0, 4);
-        const hiddenHistory = data.slice(4);
+        const visibleHistory = filteredData.slice(0, 4);
+        const hiddenHistory = filteredData.slice(4);
         
         visibleHistory.forEach(item => {
             historyListVisible.innerHTML += renderHistoryItem(item);
@@ -3962,7 +4072,9 @@ async function loadChildren() {
 }
 
 async function showChildStats(childId, childName) {
-    document.getElementById("child-stats-modal").classList.remove("hidden");
+    const modal = document.getElementById("child-stats-modal");
+    modal.classList.remove("hidden");
+    modal.setAttribute("data-child-id", childId); // Сохраняем childId для обновления при смене языка
     document.getElementById("child-stats-name").textContent = `${t('stats_for')} ${childName}`;
     document.getElementById("child-stats-content").innerHTML = `<div class="text-center text-gray-400 py-8">${t('loading')}</div>`;
     
@@ -4170,7 +4282,7 @@ async function showChildStats(childId, childName) {
             
             <!-- Цели -->
             <div>
-                <h4 class="font-bold text-gray-800 mb-3">🎯 Цели</h4>
+                <h4 class="font-bold text-gray-800 mb-3">🎯 ${t('my_goals')}</h4>
                 <div class="space-y-2">
                     ${goals.length > 0 ? goals.map(goal => {
                         const progressPercent = goal.target_xp > 0 ? Math.min((goal.current_xp / goal.target_xp) * 100, 100) : 0;
@@ -5036,6 +5148,9 @@ async function loadGoals() {
 }
 
 function showCreateGoalModal() {
+    // Сначала обновляем lang атрибут для календаря ДО открытия модального окна
+    updateDateInputLang();
+    
     document.getElementById("goal-modal-title").textContent = t('new_goal');
     document.getElementById("goal-submit-btn").innerHTML = `<i class="fas fa-check mr-2"></i>${t('create_goal_btn')}`;
     document.getElementById("edit-goal-id").value = "";
@@ -5046,12 +5161,72 @@ function showCreateGoalModal() {
     loadActivitiesForGoal();
     // Применяем переводы для всех элементов в модальном окне
     applyTranslations();
+    
+    // Добавляем обработчик клика на календарь для обновления языка
+    const dateInput = document.getElementById('goal-target-date');
+    if (dateInput) {
+        // Удаляем старые обработчики
+        dateInput.removeEventListener('focus', updateDateInputLang);
+        dateInput.removeEventListener('click', updateDateInputLang);
+        // Добавляем новые обработчики
+        dateInput.addEventListener('focus', updateDateInputLang);
+        dateInput.addEventListener('click', updateDateInputLang);
+    }
+    
+    // Повторно обновляем lang после небольшой задержки для гарантии
+    setTimeout(() => {
+        updateDateInputLang();
+    }, 100);
 }
 
 function closeCreateGoalModal() {
     document.getElementById("create-goal-modal").classList.add("hidden");
     document.getElementById("create-goal-form").reset();
     document.getElementById("edit-goal-id").value = "";
+}
+
+// Функция для обновления lang атрибута календаря в зависимости от выбранного языка
+function updateDateInputLang() {
+    const dateInput = document.getElementById('goal-target-date');
+    const goalModal = document.getElementById('create-goal-modal');
+    const goalForm = document.getElementById('create-goal-form');
+    
+    // Используем полные коды локалей для правильной локализации date picker
+    const langMap = { 
+        'ru': 'ru-RU', 
+        'uk': 'uk-UA', 
+        'de': 'de-DE', 
+        'en': 'en-US' 
+    };
+    const locale = langMap[currentLanguage] || 'ru-RU';
+    const shortLang = currentLanguage || 'ru';
+    
+    // Обновляем lang на HTML элементе для глобальной локализации
+    if (document.documentElement) {
+        document.documentElement.setAttribute('lang', shortLang);
+    }
+    
+    if (dateInput) {
+        // Устанавливаем lang атрибут на input и всех родительских элементах
+        dateInput.setAttribute('lang', locale);
+        dateInput.setAttribute('xml:lang', locale);
+        
+        // Также устанавливаем атрибут для родительских элементов
+        if (goalModal) {
+            goalModal.setAttribute('lang', locale);
+            goalModal.setAttribute('xml:lang', locale);
+        }
+        if (goalForm) {
+            goalForm.setAttribute('lang', locale);
+            goalForm.setAttribute('xml:lang', locale);
+        }
+    }
+    
+    // Обновляем текст описания с форматом даты
+    const deadlineDesc = document.getElementById('deadline-description-text');
+    if (deadlineDesc) {
+        deadlineDesc.innerHTML = `${t('deadline_description')} ${t('format_label')} <span id="date-format-text">${t('date_format_placeholder')}</span>`;
+    }
 }
 
 async function editGoal(goalId) {
@@ -5090,12 +5265,34 @@ async function editGoal(goalId) {
             document.getElementById("goal-activity").value = goal.activity_id;
         }
         
+        // Обновляем lang атрибут для календаря
+        updateDateInputLang();
+        
+        // Обновляем lang атрибут для календаря ДО открытия модального окна
+        updateDateInputLang();
+        
         // Меняем заголовок и кнопку
         document.getElementById("goal-modal-title").textContent = t('edit_goal');
         document.getElementById("goal-submit-btn").innerHTML = `<i class="fas fa-save mr-2"></i>${t('save_changes')}`;
         
         // Применяем переводы для всех элементов в модальном окне
         applyTranslations();
+        
+        // Добавляем обработчик клика на календарь для обновления языка
+        const dateInput = document.getElementById('goal-target-date');
+        if (dateInput) {
+            // Удаляем старые обработчики
+            dateInput.removeEventListener('focus', updateDateInputLang);
+            dateInput.removeEventListener('click', updateDateInputLang);
+            // Добавляем новые обработчики
+            dateInput.addEventListener('focus', updateDateInputLang);
+            dateInput.addEventListener('click', updateDateInputLang);
+        }
+        
+        // Повторно обновляем lang после небольшой задержки для гарантии
+        setTimeout(() => {
+            updateDateInputLang();
+        }, 100);
         
         // Открываем модальное окно
         document.getElementById("create-goal-modal").classList.remove("hidden");

@@ -335,13 +335,13 @@
             </div>
 
             <!-- Create/Edit Goal Modal -->
-            <div id="create-goal-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" onclick="if(event.target === this) closeCreateGoalModal()">
+            <div id="create-goal-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" lang="ru" onclick="if(event.target === this) closeCreateGoalModal()">
                 <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 my-8 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-2xl font-bold text-gray-800" id="goal-modal-title" data-i18n="new_goal">🎯 Новая цель</h3>
                         <button onclick="closeCreateGoalModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
                     </div>
-                    <form id="create-goal-form" class="space-y-4">
+                    <form id="create-goal-form" class="space-y-4" lang="ru">
                         <input type="hidden" id="edit-goal-id" value="">
                         <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-2">
                             <p class="text-xs text-purple-700">
@@ -384,9 +384,9 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="deadline">Дедлайн (необязательно)</label>
-                            <input type="date" id="goal-target-date"
+                            <input type="date" id="goal-target-date" lang="ru"
                                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                            <p class="text-xs text-gray-500 mt-1" data-i18n="deadline_description">Установите дату, к которой хотите достичь цели</p>
+                            <p class="text-xs text-gray-500 mt-1" id="deadline-description-text">Установите дату, к которой хотите достичь цели. Формат: <span id="date-format-text">дд.мм.гггг</span></p>
                         </div>
                         
                         <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 px-6 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl" id="goal-submit-btn">
@@ -485,7 +485,7 @@
             </div>
 
             <!-- Основной контент: Активности + Боковая панель -->
-            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
+            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
                 <!-- Активности (основной контент, 2/3 ширины) -->
                 <div id="activities" class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl border border-white/50 scroll-mt-20 md:scroll-mt-24">
                     <div class="flex justify-center items-center mb-4 md:mb-6">
@@ -498,7 +498,7 @@
                     <div id="activities-list" class="space-y-4 mb-6"></div>
 
                     <!-- Новая активность -->
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-dashed border-blue-200">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 pt-6 pb-4 rounded-2xl border-2 border-dashed border-blue-200">
                         <h3 class="text-xl font-semibold mb-4 text-gray-800"><span data-i18n="new_activity">➕ Новая активность</span></h3>
                         <form id="new-activity-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-center placeholder:text-center" required>
@@ -520,7 +520,7 @@
                                 <span data-i18n="create">Создать</span>
                             </button>
                         </form>
-                        <p id="activity-message" class="text-sm mt-2 hidden"></p>
+                        <p id="activity-message" class="text-sm mt-2 mb-0 hidden"></p>
                     </div>
                 </div>
 
@@ -587,15 +587,15 @@
                 </div>
             </div>
 
-            <!-- Награды и История (50/50) -->
-            <div class="grid lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
+            <!-- Награды и История (2/3 и 1/3) -->
+            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
                 <!-- Награды -->
-                <div id="rewards" class="relative scroll-mt-20 md:scroll-mt-24">
+                <div id="rewards" class="lg:col-span-2 relative scroll-mt-20 md:scroll-mt-24">
                     <!-- Декоративные элементы -->
                     <div class="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-3xl opacity-30"></div>
                     <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full blur-3xl opacity-20"></div>
                     
-                    <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden h-full flex flex-col">
+                    <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col">
                         <!-- Заголовок с градиентом -->
                         <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center">
                             <div class="flex items-start gap-2 md:gap-3">
@@ -611,9 +611,9 @@
 
                         <div class="p-5 flex-1 flex flex-col overflow-hidden">
                             <!-- Список наград -->
-                            <div class="mb-5 flex-1 flex flex-col overflow-hidden">
-                                <div id="rewards-list-visible" class="space-y-2 overflow-x-hidden pr-2"></div>
-                                <div id="rewards-list-hidden" class="space-y-2 overflow-x-hidden pr-2 hidden"></div>
+                            <div class="mb-5 flex flex-col">
+                                <div id="rewards-list-visible" class="space-y-2 overflow-x-hidden pr-2 max-h-[300px] overflow-y-auto"></div>
+                                <div id="rewards-list-hidden" class="space-y-2 overflow-x-hidden pr-2 hidden max-h-[300px] overflow-y-auto"></div>
                                 <button id="rewards-accordion-btn" onclick="toggleRewardsAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-amber-100 to-orange-100 hover:from-amber-200 hover:to-orange-200 text-amber-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
                                     <span class="accordion-text" data-i18n="show_all_rewards">Показать все награды</span>
                                     <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
@@ -680,7 +680,7 @@
                 </div>
 
                 <!-- История транзакций -->
-                <div id="history" class="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col scroll-mt-20 md:scroll-mt-24">
+                <div id="history" class="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col scroll-mt-20 md:scroll-mt-24 lg:self-start">
                     <!-- Заголовок с градиентом -->
                     <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center flex-shrink-0">
                         <div class="flex items-start gap-2 md:gap-3">
@@ -695,6 +695,30 @@
                     </div>
 
                     <div class="p-5 flex flex-col">
+                        <!-- Фильтр периода -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-filter text-indigo-600 mr-1"></i>
+                                <span data-i18n="filter_period">Период</span>
+                            </label>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setHistoryPeriod('today')" id="history-period-today" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-indigo-500 text-white font-medium transition-all hover:bg-indigo-600">
+                                    <span data-i18n="today">Сегодня</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('week')" id="history-period-week" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="week">Неделя</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('month')" id="history-period-month" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="month">Месяц</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('year')" id="history-period-year" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="year">Год</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('all')" id="history-period-all" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="all">Все</span>
+                                </button>
+                            </div>
+                        </div>
                         <!-- Список истории -->
                         <div class="flex flex-col mb-3">
                             <div class="overflow-x-hidden pr-2">
@@ -996,7 +1020,7 @@
                     <div class="flex items-center gap-4 text-xs text-gray-500">
                         <span>Версия 1.0</span>
                         <span>•</span>
-                        <a href="#" class="hover:text-indigo-600 transition-colors">Помощь</a>
+                        <a href="https://t.me/sviat_kryachev" target="_blank" class="hover:text-indigo-600 transition-colors">Помощь</a>
                         <span>•</span>
                         <a href="#" class="hover:text-indigo-600 transition-colors">Обратная связь</a>
                     </div>

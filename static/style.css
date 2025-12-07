@@ -135,14 +135,19 @@ html {
         min-height: 0;
     }
     
-    /* История транзакций не должна растягиваться */
-    #history {
+    /* Блоки Награды и История не должны растягиваться друг под друга */
+    .grid.lg\:grid-cols-3.lg\:items-start > #rewards,
+    .grid.lg\:grid-cols-3.lg\:items-start > #history {
         height: auto !important;
         align-self: start;
     }
     
-    #history > div {
+    #rewards > div,
+    #history {
         height: auto !important;
+    }
+    
+    #rewards > div > div {
         flex: none !important;
     }
 }
@@ -217,4 +222,27 @@ select {
     text-align: left;
     line-height: 1.5;
     opacity: 0.6;
+}
+
+/* Убираем лишнее пространство в блоке "Новая активность" */
+#new-activity-form {
+    margin-bottom: 0;
+}
+
+#activity-message {
+    margin-bottom: 0;
+}
+
+/* Блок "Новая активность" не должен растягиваться */
+#activities > div:last-child {
+    height: auto;
+    min-height: auto;
+}
+
+/* Блок "Активности" не должен растягиваться по высоте боковой панели */
+@media (min-width: 1024px) {
+    .grid.lg\:grid-cols-3.lg\:items-start > #activities {
+        height: auto !important;
+        align-self: start;
+    }
 }
