@@ -1,5 +1,692 @@
 const API_BASE = "http://127.0.0.1:8000";
 
+// ============= I18N (INTERNATIONALIZATION) =============
+const translations = {
+    ru: {
+        // Header
+        "level": "Ур.",
+        "activities": "Активности",
+        "rewards": "Награды",
+        "history": "История",
+        "goals": "Мои цели",
+        "admin_panel": "Админ-панель",
+        "logout": "Выход",
+        "telegram_bot": "Открыть Telegram бота",
+        
+        // Auth
+        "login": "Вход",
+        "register": "Регистрация",
+        "email": "Email",
+        "password": "Пароль",
+        "username": "Имя пользователя",
+        "confirm_password": "Подтвердите пароль",
+        "forgot_password": "Забыли пароль?",
+        "enter": "Войти",
+        "create_account": "Зарегистрироваться",
+        
+        // Activities
+        "new_activity": "➕ Новая активность",
+        "activity_name": "Название активности",
+        "xp_per_hour": "XP/час",
+        "create": "Создать",
+        "edit": "Редактировать",
+        "delete": "Удалить",
+        "start": "Старт",
+        "stop": "Стоп",
+        "time": "Время",
+        "sessions": "Сессий",
+        
+        // Rewards
+        "reward_name": "Название награды",
+        "create_reward": "Создать награду",
+        "quick_select": "Быстрый выбор",
+        "custom_reward": "Своя награда",
+        "spend_xp": "Потрать XP на удовольствия",
+        
+        // History
+        "transaction_history": "История транзакций",
+        "all_xp_operations": "Все операции с XP",
+        "show_all_history": "Показать всю историю",
+        "hide_history": "Скрыть историю",
+        "show_all_rewards": "Показать все награды",
+        "hide_rewards": "Скрыть награды",
+        "earned": "Заработано",
+        "spent": "Потрачено",
+        
+        // Stats
+        "today": "Сегодня",
+        "earned_xp": "Заработано XP",
+        "spent_xp": "Потрачено XP",
+        "calendar": "Календарь",
+        "week": "Неделя",
+        "month": "Месяц",
+        "year": "Год",
+        "progress": "Прогресс",
+        "to_level": "До уровня",
+        "total_earned": "Всего заработано",
+        "streak_days": "Серия дней",
+        "days": "дней",
+        "record": "Рекорд:",
+        "start_activity": "Начните активность!",
+        // Week days
+        "mon": "Пн",
+        "tue": "Вт",
+        "wed": "Ср",
+        "thu": "Чт",
+        "fri": "Пт",
+        "sat": "Сб",
+        "sun": "Вс",
+        // Categories
+        "category_general": "Общее",
+        "category_study": "Учеба",
+        "category_sport": "Спорт",
+        "category_hobby": "Хобби",
+        "category_work": "Работа",
+        "category_health": "Здоровье",
+        
+        // Goals
+        "my_goals": "Мои цели",
+        "new_goal": "🎯 Новая цель",
+        "goal_title": "Название цели",
+        "target_xp": "Целевое количество XP",
+        "description": "Описание (необязательно)",
+        "deadline": "Дедлайн (необязательно)",
+        "create_goal": "Создать цель",
+        
+        // Common
+        "save": "Сохранить",
+        "cancel": "Отмена",
+        "close": "Закрыть",
+        "loading": "Загрузка...",
+        "empty": "Пусто",
+        // Footer
+        "about_project": "О проекте",
+        "project_description": "Система отслеживания активности и мотивации через XP. Достигайте целей и зарабатывайте награды!",
+        "navigation": "Навигация",
+        "features": "Функции",
+        "tools": "Инструменты",
+        "settings": "Настройки",
+        "language": "Язык",
+        "manual_time": "Ручной ввод времени",
+        "manage_categories": "Управление категориями",
+        "refresh_data": "Обновить данные",
+        "data_updated": "✅ Данные обновлены!",
+        "timer": "Таймер",
+        "streak_system": "Система серий (Streak)",
+        "smart_recommendations": "Умные рекомендации",
+        "recommendations": "Рекомендации",
+        "blacklist": "Черный список наград",
+        "goals_system": "Система целей",
+        "calendar_stats": "Календарь активности",
+        "category_stats": "Статистика по категориям",
+        "add_category": "Добавить категорию",
+        // Recommendations messages
+        "rec_continue": "Вчера вы делали '{activity}' - продолжите серию! 🔥",
+        "rec_reminder": "Вы {days} дней не занимались '{activity}' - время вернуться!",
+        "rec_more": "Сегодня вы занимались '{activity}' {minutes} минут - можно ещё!",
+        "rec_new": "Попробуйте '{activity}' - вы ещё не начинали эту активность!",
+        "rec_info": "Создайте первую активность, чтобы начать зарабатывать XP!",
+        "yesterday": "Вчера",
+        "continue_streak": "продолжите серию",
+        "days_not_practiced": "дней не занимались",
+        "time_to_return": "время вернуться",
+        "today_practiced": "Сегодня вы занимались",
+        "minutes": "минут",
+        "can_more": "можно ещё",
+        "try_activity": "Попробуйте",
+        "not_started": "вы ещё не начинали эту активность",
+        "create_first_activity": "Создайте первую активность, чтобы начать зарабатывать XP!",
+        "auth_required": "Требуется авторизация",
+        "error_loading_recommendations": "Ошибка загрузки рекомендаций",
+        "no_recommendations": "Нет рекомендаций. Продолжайте заниматься!",
+        "start_tracking": "Начать отслеживание"
+    },
+    uk: {
+        // Header
+        "level": "Рів.",
+        "activities": "Активності",
+        "rewards": "Нагороди",
+        "history": "Історія",
+        "goals": "Мої цілі",
+        "admin_panel": "Адмін-панель",
+        "logout": "Вихід",
+        "telegram_bot": "Відкрити Telegram бота",
+        
+        // Auth
+        "login": "Вхід",
+        "register": "Реєстрація",
+        "email": "Email",
+        "password": "Пароль",
+        "username": "Ім'я користувача",
+        "confirm_password": "Підтвердіть пароль",
+        "forgot_password": "Забули пароль?",
+        "enter": "Увійти",
+        "create_account": "Зареєструватися",
+        
+        // Activities
+        "new_activity": "➕ Нова активність",
+        "activity_name": "Назва активності",
+        "xp_per_hour": "XP/година",
+        "create": "Створити",
+        "edit": "Редагувати",
+        "delete": "Видалити",
+        "start": "Старт",
+        "stop": "Стоп",
+        "time": "Час",
+        "sessions": "Сесій",
+        
+        // Rewards
+        "reward_name": "Назва нагороди",
+        "create_reward": "Створити нагороду",
+        "quick_select": "Швидкий вибір",
+        "custom_reward": "Своя нагорода",
+        "spend_xp": "Витрать XP на задоволення",
+        
+        // History
+        "transaction_history": "Історія транзакцій",
+        "all_xp_operations": "Всі операції з XP",
+        "show_all_history": "Показати всю історію",
+        "hide_history": "Приховати історію",
+        "show_all_rewards": "Показати всі нагороди",
+        "hide_rewards": "Приховати нагороди",
+        "earned": "Зароблено",
+        "spent": "Витрачено",
+        
+        // Stats
+        "today": "Сьогодні",
+        "earned_xp": "Зароблено XP",
+        "spent_xp": "Витрачено XP",
+        "calendar": "Календар",
+        "week": "Тиждень",
+        "month": "Місяць",
+        "year": "Рік",
+        "progress": "Прогрес",
+        "to_level": "До рівня",
+        "total_earned": "Всього зароблено",
+        "streak_days": "Серія днів",
+        "days": "днів",
+        "record": "Рекорд:",
+        "start_activity": "Почніть активність!",
+        // Week days
+        "mon": "Пн",
+        "tue": "Вт",
+        "wed": "Ср",
+        "thu": "Чт",
+        "fri": "Пт",
+        "sat": "Сб",
+        "sun": "Нд",
+        // Categories
+        "category_general": "Загальне",
+        "category_study": "Навчання",
+        "category_sport": "Спорт",
+        "category_hobby": "Хобі",
+        "category_work": "Робота",
+        "category_health": "Здоров'я",
+        
+        // Goals
+        "my_goals": "Мої цілі",
+        "new_goal": "🎯 Нова ціль",
+        "goal_title": "Назва цілі",
+        "target_xp": "Цільова кількість XP",
+        "description": "Опис (необов'язково)",
+        "deadline": "Дедлайн (необов'язково)",
+        "create_goal": "Створити ціль",
+        
+        // Common
+        "save": "Зберегти",
+        "cancel": "Скасувати",
+        "close": "Закрити",
+        "loading": "Завантаження...",
+        "empty": "Порожньо",
+        // Footer
+        "about_project": "Про проект",
+        "project_description": "Система відстеження активності та мотивації через XP. Досягайте цілей і заробляйте нагороди!",
+        "navigation": "Навігація",
+        "features": "Функції",
+        "tools": "Інструменти",
+        "settings": "Налаштування",
+        "language": "Мова",
+        "manual_time": "Ручний ввід часу",
+        "manage_categories": "Управління категоріями",
+        "refresh_data": "Оновити дані",
+        "data_updated": "✅ Дані оновлено!",
+        "timer": "Таймер",
+        "streak_system": "Система серій (Streak)",
+        "smart_recommendations": "Розумні рекомендації",
+        "recommendations": "Рекомендації",
+        "blacklist": "Чорний список нагород",
+        "goals_system": "Система цілей",
+        "calendar_stats": "Календар активності",
+        "category_stats": "Статистика за категоріями",
+        "add_category": "Додати категорію",
+        // Recommendations messages
+        "rec_continue": "Вчора ви робили '{activity}' - продовжте серію! 🔥",
+        "rec_reminder": "Ви {days} днів не займалися '{activity}' - час повернутися!",
+        "rec_more": "Сьогодні ви займалися '{activity}' {minutes} хвилин - можна ще!",
+        "rec_new": "Спробуйте '{activity}' - ви ще не починали цю активність!",
+        "rec_info": "Створіть першу активність, щоб почати заробляти XP!",
+        "yesterday": "Вчора",
+        "continue_streak": "продовжте серію",
+        "days_not_practiced": "днів не займалися",
+        "time_to_return": "час повернутися",
+        "today_practiced": "Сьогодні ви займалися",
+        "minutes": "хвилин",
+        "can_more": "можна ще",
+        "try_activity": "Спробуйте",
+        "not_started": "ви ще не починали цю активність",
+        "create_first_activity": "Створіть першу активність, щоб почати заробляти XP!",
+        "auth_required": "Потрібна авторизація",
+        "error_loading_recommendations": "Помилка завантаження рекомендацій",
+        "no_recommendations": "Немає рекомендацій. Продовжуйте займатися!",
+        "start_tracking": "Почати відстеження"
+    },
+    de: {
+        // Header
+        "level": "Stufe",
+        "activities": "Aktivitäten",
+        "rewards": "Belohnungen",
+        "history": "Verlauf",
+        "goals": "Meine Ziele",
+        "admin_panel": "Admin-Panel",
+        "logout": "Abmelden",
+        "telegram_bot": "Telegram-Bot öffnen",
+        
+        // Auth
+        "login": "Anmelden",
+        "register": "Registrieren",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "username": "Benutzername",
+        "confirm_password": "Passwort bestätigen",
+        "forgot_password": "Passwort vergessen?",
+        "enter": "Anmelden",
+        "create_account": "Konto erstellen",
+        
+        // Activities
+        "new_activity": "➕ Neue Aktivität",
+        "activity_name": "Aktivitätsname",
+        "xp_per_hour": "XP/Stunde",
+        "create": "Erstellen",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "start": "Start",
+        "stop": "Stop",
+        "time": "Zeit",
+        "sessions": "Sitzungen",
+        
+        // Rewards
+        "reward_name": "Belohnungsname",
+        "create_reward": "Belohnung erstellen",
+        "quick_select": "Schnellauswahl",
+        "custom_reward": "Eigene Belohnung",
+        "spend_xp": "XP für Vergnügen ausgeben",
+        
+        // History
+        "transaction_history": "Transaktionsverlauf",
+        "all_xp_operations": "Alle XP-Operationen",
+        "show_all_history": "Gesamten Verlauf anzeigen",
+        "hide_history": "Verlauf ausblenden",
+        "show_all_rewards": "Alle Belohnungen anzeigen",
+        "hide_rewards": "Belohnungen ausblenden",
+        "earned": "Verdient",
+        "spent": "Ausgegeben",
+        
+        // Stats
+        "today": "Heute",
+        "earned_xp": "Verdiente XP",
+        "spent_xp": "Ausgegebene XP",
+        "calendar": "Kalender",
+        "week": "Woche",
+        "month": "Monat",
+        "year": "Jahr",
+        "progress": "Fortschritt",
+        "to_level": "Bis Stufe",
+        "total_earned": "Gesamt verdient",
+        "streak_days": "Tages-Serie",
+        "days": "Tage",
+        "record": "Rekord:",
+        "start_activity": "Beginnen Sie eine Aktivität!",
+        // Week days
+        "mon": "Mo",
+        "tue": "Di",
+        "wed": "Mi",
+        "thu": "Do",
+        "fri": "Fr",
+        "sat": "Sa",
+        "sun": "So",
+        // Categories
+        "category_general": "Allgemein",
+        "category_study": "Lernen",
+        "category_sport": "Sport",
+        "category_hobby": "Hobby",
+        "category_work": "Arbeit",
+        "category_health": "Gesundheit",
+        
+        // Goals
+        "my_goals": "Meine Ziele",
+        "new_goal": "🎯 Neues Ziel",
+        "goal_title": "Zielname",
+        "target_xp": "Ziel-XP-Menge",
+        "description": "Beschreibung (optional)",
+        "deadline": "Frist (optional)",
+        "create_goal": "Ziel erstellen",
+        
+        // Common
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "close": "Schließen",
+        "loading": "Lädt...",
+        "empty": "Leer",
+        // Footer
+        "about_project": "Über das Projekt",
+        "project_description": "System zur Aktivitätsverfolgung und Motivation durch XP. Erreichen Sie Ziele und verdienen Sie Belohnungen!",
+        "navigation": "Navigation",
+        "features": "Funktionen",
+        "tools": "Werkzeuge",
+        "settings": "Einstellungen",
+        "language": "Sprache",
+        "manual_time": "Manuelle Zeiteingabe",
+        "manage_categories": "Kategorien verwalten",
+        "refresh_data": "Daten aktualisieren",
+        "data_updated": "✅ Daten aktualisiert!",
+        "timer": "Timer",
+        "streak_system": "Streak-System",
+        "smart_recommendations": "Intelligente Empfehlungen",
+        "recommendations": "Empfehlungen",
+        "blacklist": "Schwarze Liste der Belohnungen",
+        "goals_system": "Zielsystem",
+        "calendar_stats": "Aktivitätskalender",
+        "category_stats": "Statistik nach Kategorien",
+        "add_category": "Kategorie hinzufügen",
+        // Recommendations messages
+        "rec_continue": "Gestern haben Sie '{activity}' gemacht - setzen Sie die Serie fort! 🔥",
+        "rec_reminder": "Sie haben {days} Tage lang '{activity}' nicht gemacht - Zeit zurückzukehren!",
+        "rec_more": "Heute haben Sie {minutes} Minuten '{activity}' gemacht - es geht noch mehr!",
+        "rec_new": "Versuchen Sie '{activity}' - Sie haben diese Aktivität noch nicht begonnen!",
+        "rec_info": "Erstellen Sie Ihre erste Aktivität, um XP zu verdienen!",
+        "yesterday": "Gestern",
+        "continue_streak": "setzen Sie die Serie fort",
+        "days_not_practiced": "Tage nicht gemacht",
+        "time_to_return": "Zeit zurückzukehren",
+        "today_practiced": "Heute haben Sie",
+        "minutes": "Minuten",
+        "can_more": "es geht noch mehr",
+        "try_activity": "Versuchen Sie",
+        "not_started": "Sie haben diese Aktivität noch nicht begonnen",
+        "create_first_activity": "Erstellen Sie Ihre erste Aktivität, um XP zu verdienen!",
+        "auth_required": "Autorisierung erforderlich",
+        "error_loading_recommendations": "Fehler beim Laden der Empfehlungen",
+        "no_recommendations": "Keine Empfehlungen. Machen Sie weiter!",
+        "start_tracking": "Verfolgung starten"
+    },
+    en: {
+        // Header
+        "level": "Level",
+        "activities": "Activities",
+        "rewards": "Rewards",
+        "history": "History",
+        "goals": "My Goals",
+        "admin_panel": "Admin Panel",
+        "logout": "Logout",
+        "telegram_bot": "Open Telegram Bot",
+        
+        // Auth
+        "login": "Login",
+        "register": "Register",
+        "email": "Email",
+        "password": "Password",
+        "username": "Username",
+        "confirm_password": "Confirm Password",
+        "forgot_password": "Forgot Password?",
+        "enter": "Enter",
+        "create_account": "Create Account",
+        
+        // Activities
+        "new_activity": "➕ New Activity",
+        "activity_name": "Activity Name",
+        "xp_per_hour": "XP/hour",
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "start": "Start",
+        "stop": "Stop",
+        "time": "Time",
+        "sessions": "Sessions",
+        
+        // Rewards
+        "reward_name": "Reward Name",
+        "create_reward": "Create Reward",
+        "quick_select": "Quick Select",
+        "custom_reward": "Custom Reward",
+        "spend_xp": "Spend XP on pleasures",
+        
+        // History
+        "transaction_history": "Transaction History",
+        "all_xp_operations": "All XP operations",
+        "show_all_history": "Show all history",
+        "hide_history": "Hide history",
+        "show_all_rewards": "Show all rewards",
+        "hide_rewards": "Hide rewards",
+        "earned": "Earned",
+        "spent": "Spent",
+        
+        // Stats
+        "today": "Today",
+        "earned_xp": "Earned XP",
+        "spent_xp": "Spent XP",
+        "calendar": "Calendar",
+        "week": "Week",
+        "month": "Month",
+        "year": "Year",
+        "progress": "Progress",
+        "to_level": "To level",
+        "total_earned": "Total earned",
+        "streak_days": "Day Streak",
+        "days": "days",
+        "record": "Record:",
+        "start_activity": "Start an activity!",
+        // Week days
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun",
+        // Categories
+        "category_general": "General",
+        "category_study": "Study",
+        "category_sport": "Sport",
+        "category_hobby": "Hobby",
+        "category_work": "Work",
+        "category_health": "Health",
+        
+        // Goals
+        "my_goals": "My Goals",
+        "new_goal": "🎯 New Goal",
+        "goal_title": "Goal Title",
+        "target_xp": "Target XP Amount",
+        "description": "Description (optional)",
+        "deadline": "Deadline (optional)",
+        "create_goal": "Create Goal",
+        
+        // Common
+        "save": "Save",
+        "cancel": "Cancel",
+        "close": "Close",
+        "loading": "Loading...",
+        "empty": "Empty",
+        // Footer
+        "about_project": "About Project",
+        "project_description": "Activity tracking and motivation system through XP. Achieve goals and earn rewards!",
+        "navigation": "Navigation",
+        "features": "Features",
+        "tools": "Tools",
+        "settings": "Settings",
+        "language": "Language",
+        "manual_time": "Manual Time Entry",
+        "manage_categories": "Manage Categories",
+        "refresh_data": "Refresh Data",
+        "data_updated": "✅ Data updated!",
+        "timer": "Timer",
+        "streak_system": "Streak System",
+        "smart_recommendations": "Smart Recommendations",
+        "recommendations": "Recommendations",
+        "blacklist": "Rewards Blacklist",
+        "goals_system": "Goals System",
+        "calendar_stats": "Activity Calendar",
+        "category_stats": "Category Statistics",
+        "add_category": "Add Category",
+        // Recommendations messages
+        "rec_continue": "Yesterday you did '{activity}' - continue the streak! 🔥",
+        "rec_reminder": "You haven't practiced '{activity}' for {days} days - time to return!",
+        "rec_more": "Today you practiced '{activity}' for {minutes} minutes - you can do more!",
+        "rec_new": "Try '{activity}' - you haven't started this activity yet!",
+        "rec_info": "Create your first activity to start earning XP!",
+        "yesterday": "Yesterday",
+        "continue_streak": "continue the streak",
+        "days_not_practiced": "days not practiced",
+        "time_to_return": "time to return",
+        "today_practiced": "Today you practiced",
+        "minutes": "minutes",
+        "can_more": "you can do more",
+        "try_activity": "Try",
+        "not_started": "you haven't started this activity yet",
+        "create_first_activity": "Create your first activity to start earning XP!",
+        "auth_required": "Authorization required",
+        "error_loading_recommendations": "Error loading recommendations",
+        "no_recommendations": "No recommendations. Keep practicing!",
+        "start_tracking": "Start tracking"
+    }
+};
+
+let currentLanguage = localStorage.getItem('language') || 'ru';
+
+function t(key) {
+    return translations[currentLanguage][key] || translations['ru'][key] || key;
+}
+
+function changeLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('language', lang);
+    applyTranslations();
+    updateLanguageMenu();
+    // Обновляем тексты аккордеонов
+    updateHistoryAccordionButton();
+    updateRewardsAccordionButton();
+    // Перезагружаем данные, которые зависят от языка
+    if (document.getElementById('app-section') && !document.getElementById('app-section').classList.contains('hidden')) {
+        loadCategoryStats();
+        loadCalendar(currentCalendarPeriod);
+        loadActivities();
+        loadRecommendations();
+    }
+    closeLanguageMenu();
+}
+
+function applyTranslations() {
+    // Применяем переводы ко всем элементам с data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+    });
+    
+    // Применяем переводы к placeholder'ам
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = t(key);
+    });
+    
+    // Применяем переводы к title атрибутам
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        el.title = t(key);
+    });
+}
+
+function toggleLanguageMenu() {
+    const menu = document.getElementById('language-menu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+function closeLanguageMenu() {
+    const menu = document.getElementById('language-menu');
+    if (menu) {
+        menu.classList.add('hidden');
+    }
+}
+
+function updateLanguageMenu() {
+    document.querySelectorAll('[data-check]').forEach(check => {
+        check.classList.add('hidden');
+    });
+    document.querySelectorAll('[data-check-footer]').forEach(check => {
+        check.classList.add('hidden');
+    });
+    const activeCheck = document.querySelector(`[data-check="${currentLanguage}"]`);
+    if (activeCheck) {
+        activeCheck.classList.remove('hidden');
+    }
+    const activeCheckFooter = document.querySelector(`[data-check-footer="${currentLanguage}"]`);
+    if (activeCheckFooter) {
+        activeCheckFooter.classList.remove('hidden');
+    }
+    
+    // Обновляем флажок в кнопке хедера
+    const flagMap = {
+        'ru': '🇷🇺',
+        'uk': '🇺🇦',
+        'de': '🇩🇪',
+        'en': '🇬🇧'
+    };
+    const flagEl = document.getElementById('current-language-flag');
+    if (flagEl) {
+        flagEl.textContent = flagMap[currentLanguage] || '🇷🇺';
+    }
+    const flagFooterEl = document.getElementById('footer-language-flag');
+    if (flagFooterEl) {
+        flagFooterEl.textContent = flagMap[currentLanguage] || '🇷🇺';
+    }
+}
+
+// Закрываем меню при клике вне его
+document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('language-switcher-wrapper');
+    const menu = document.getElementById('language-menu');
+    if (wrapper && menu && !wrapper.contains(e.target)) {
+        closeLanguageMenu();
+    }
+    
+    // Закрываем меню языка в футере
+    const footerMenu = document.getElementById('footer-language-menu');
+    if (footerMenu && !footerMenu.contains(e.target) && !e.target.closest('button[onclick*="toggleLanguageMenu"]')) {
+        footerMenu.classList.add('hidden');
+    }
+});
+
+// Функция для переключения меню языка в футере
+function toggleFooterLanguageMenu() {
+    const menu = document.getElementById('footer-language-menu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+window.toggleFooterLanguageMenu = toggleFooterLanguageMenu;
+
+// Применяем переводы при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    applyTranslations();
+    updateLanguageMenu();
+});
+
+// Экспортируем функции для использования в HTML
+window.changeLanguage = changeLanguage;
+window.toggleLanguageMenu = toggleLanguageMenu;
+window.t = t;
+
 // ============= MOBILE MENU =============
 function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
@@ -389,12 +1076,12 @@ async function loadCategoryStats() {
         }
         
         const categoryNames = {
-            "general": "Общее",
-            "study": "Учеба",
-            "sport": "Спорт",
-            "hobby": "Хобби",
-            "work": "Работа",
-            "health": "Здоровье"
+            "general": t('category_general'),
+            "study": t('category_study'),
+            "sport": t('category_sport'),
+            "hobby": t('category_hobby'),
+            "work": t('category_work'),
+            "health": t('category_health')
         };
         
         // Добавляем пользовательские категории
@@ -504,13 +1191,13 @@ async function loadCalendar(period = currentCalendarPeriod) {
             
             let calendarHTML = `
                 <div class="grid grid-cols-7 gap-1 mb-2">
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Пн</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Вт</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Ср</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Чт</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Пт</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Сб</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">Вс</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('mon')}</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('tue')}</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('wed')}</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('thu')}</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('fri')}</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('sat')}</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('sun')}</div>
                 </div>
                 <div class="grid grid-cols-7 gap-1">
             `;
@@ -894,13 +1581,13 @@ function toggleRewardsAccordion() {
         const height = rewardsListHidden.scrollHeight;
         rewardsListHidden.style.maxHeight = height + 'px';
         icon.style.transform = 'rotate(180deg)';
-        text.textContent = 'Скрыть награды';
+        text.textContent = t('hide_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'true');
     } else {
         // Скрываем элементы
         rewardsListHidden.style.maxHeight = '0px';
         icon.style.transform = 'rotate(0deg)';
-        text.textContent = 'Показать все награды';
+        text.textContent = t('show_all_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'false');
         setTimeout(() => {
             if (rewardsListHidden && rewardsListHidden.style.maxHeight === '0px') {
@@ -925,12 +1612,12 @@ function updateRewardsAccordionButton() {
         const height = rewardsListHidden.scrollHeight;
         rewardsListHidden.style.maxHeight = height + 'px';
         icon.style.transform = 'rotate(180deg)';
-        text.textContent = 'Скрыть награды';
+        text.textContent = t('hide_rewards');
     } else {
         rewardsListHidden.classList.add('hidden');
         rewardsListHidden.style.maxHeight = '0px';
         icon.style.transform = 'rotate(0deg)';
-        text.textContent = 'Показать все награды';
+        text.textContent = t('show_all_rewards');
     }
 }
 
@@ -954,13 +1641,13 @@ function toggleHistoryAccordion() {
         const height = historyListHidden.scrollHeight;
         historyListHidden.style.maxHeight = height + 'px';
         icon.style.transform = 'rotate(180deg)';
-        text.textContent = 'Скрыть историю';
+        text.textContent = t('hide_history');
         localStorage.setItem('historyAccordionExpanded', 'true');
     } else {
         // Скрываем элементы
         historyListHidden.style.maxHeight = '0px';
         icon.style.transform = 'rotate(0deg)';
-        text.textContent = 'Показать всю историю';
+        text.textContent = t('show_all_history');
         localStorage.setItem('historyAccordionExpanded', 'false');
         setTimeout(() => {
             if (historyListHidden && historyListHidden.style.maxHeight === '0px') {
@@ -985,12 +1672,12 @@ function updateHistoryAccordionButton() {
         const height = historyListHidden.scrollHeight;
         historyListHidden.style.maxHeight = height + 'px';
         icon.style.transform = 'rotate(180deg)';
-        text.textContent = 'Скрыть историю';
+        text.textContent = t('hide_history');
     } else {
         historyListHidden.classList.add('hidden');
         historyListHidden.style.maxHeight = '0px';
         icon.style.transform = 'rotate(0deg)';
-        text.textContent = 'Показать всю историю';
+        text.textContent = t('show_all_history');
     }
 }
 
@@ -1046,12 +1733,12 @@ function renderActivityCard(activity) {
 
     // Создаем объект с названиями категорий
     const categoryNames = {
-        "general": "Общее",
-        "study": "Учеба",
-        "sport": "Спорт",
-        "hobby": "Хобби",
-        "work": "Работа",
-        "health": "Здоровье"
+        "general": t('category_general'),
+        "study": t('category_study'),
+        "sport": t('category_sport'),
+        "hobby": t('category_hobby'),
+        "work": t('category_work'),
+        "health": t('category_health')
     };
     
     // Добавляем пользовательские категории
@@ -2163,7 +2850,7 @@ async function loadRecommendations() {
         
         if (!authToken) {
             console.error("No auth token available");
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Требуется авторизация</div>';
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
             return;
         }
         
@@ -2174,14 +2861,14 @@ async function loadRecommendations() {
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load recommendations:", res.status, res.statusText, errorText);
-            listEl.innerHTML = '<div class="text-center text-red-400 py-4 text-xs">Ошибка загрузки рекомендаций</div>';
+            listEl.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${t('error_loading_recommendations')}</div>`;
             return;
         }
         
         const data = await res.json();
         
         if (!data.recommendations || data.recommendations.length === 0) {
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Нет рекомендаций. Продолжайте заниматься!</div>';
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('no_recommendations')}</div>`;
             return;
         }
         
@@ -2206,6 +2893,24 @@ async function loadRecommendations() {
                 iconBgColor = "bg-amber-100";
             }
             
+            // Генерируем локализованное сообщение на основе типа
+            let localizedMessage = rec.message; // Fallback на оригинальное сообщение
+            if (rec.type === "continue" && rec.activity_name) {
+                localizedMessage = t('rec_continue').replace('{activity}', rec.activity_name);
+            } else if (rec.type === "reminder" && rec.activity_name && rec.days_since) {
+                localizedMessage = t('rec_reminder')
+                    .replace('{activity}', rec.activity_name)
+                    .replace('{days}', rec.days_since);
+            } else if (rec.type === "more" && rec.activity_name && rec.minutes_today !== undefined) {
+                localizedMessage = t('rec_more')
+                    .replace('{activity}', rec.activity_name)
+                    .replace('{minutes}', rec.minutes_today);
+            } else if (rec.type === "new" && rec.activity_name) {
+                localizedMessage = t('rec_new').replace('{activity}', rec.activity_name);
+            } else if (rec.type === "info") {
+                localizedMessage = t('rec_info');
+            }
+            
             // Проверяем, начата ли активность (не начата = есть activity_id, но нет активного таймера)
             const isNotStarted = rec.activity_id && !activeTimers.has(rec.activity_id);
             const notStartedStyles = isNotStarted 
@@ -2214,7 +2919,7 @@ async function loadRecommendations() {
             
             let actionBtn = '';
             if (rec.activity_id) {
-                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-7 h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="Начать отслеживание">
+                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-7 h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="${t('start_tracking')}">
                     <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </button>`;
             }
@@ -2228,7 +2933,7 @@ async function loadRecommendations() {
                         </div>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="font-medium ${textColor} text-xs md:text-sm leading-tight">${rec.message}</div>
+                        <div class="font-medium ${textColor} text-xs md:text-sm leading-tight">${localizedMessage}</div>
                     </div>
                     ${actionBtn}
                 </div>
@@ -2623,12 +3328,12 @@ async function showChildStats(childId, childName) {
                 <div class="space-y-2">
                     ${categoryStats.categories && categoryStats.categories.length > 0 ? categoryStats.categories.map(cat => {
                         const categoryNames = {
-                            "general": "Общее",
-                            "study": "Учеба",
-                            "sport": "Спорт",
-                            "hobby": "Хобби",
-                            "work": "Работа",
-                            "health": "Здоровье"
+                            "general": t('category_general'),
+                            "study": t('category_study'),
+                            "sport": t('category_sport'),
+                            "hobby": t('category_hobby'),
+                            "work": t('category_work'),
+                            "health": t('category_health')
                         };
                         
                         // Добавляем пользовательские категории
@@ -2662,12 +3367,12 @@ async function showChildStats(childId, childName) {
                 <div class="grid grid-cols-2 gap-2">
                     ${activities.length > 0 ? activities.map(act => {
                         const categoryNames = {
-                            "general": "Общее",
-                            "study": "Учеба",
-                            "sport": "Спорт",
-                            "hobby": "Хобби",
-                            "work": "Работа",
-                            "health": "Здоровье"
+                            "general": t('category_general'),
+                            "study": t('category_study'),
+                            "sport": t('category_sport'),
+                            "hobby": t('category_hobby'),
+                            "work": t('category_work'),
+                            "health": t('category_health')
                         };
                         
                         // Добавляем пользовательские категории
