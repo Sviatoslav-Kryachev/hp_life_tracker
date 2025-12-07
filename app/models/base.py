@@ -46,6 +46,7 @@ class Activity(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     name = Column(String, nullable=False)
+    category = Column(String, default="general")  # Категория: учеба, спорт, хобби и т.д.
     xp_per_hour = Column(Float, default=10.0)
     user = relationship("User", back_populates="activities")
     activity_logs = relationship("ActivityLog", back_populates="activity")
@@ -123,3 +124,14 @@ class Goal(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     user = relationship("User", backref="goals")
     activity = relationship("Activity", backref="goals")
+
+
+class CustomCategory(Base):
+    """Пользовательские категории"""
+    __tablename__ = "custom_categories"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    name = Column(String, nullable=False)  # Название категории
+    replaced_standard_category = Column(String, nullable=True)  # ID стандартной категории, которую заменяет (study, sport и т.д.)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    user = relationship("User", backref="custom_categories")

@@ -5,7 +5,7 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 from app.utils.database import get_db
 from app.utils.auth import get_current_user
-from app.models.base import XPWallet, ActivityLog, User, RewardPurchase, TimerLog
+from app.models.base import XPWallet, ActivityLog, User, RewardPurchase, TimerLog, Activity
 
 router = APIRouter(prefix="/xp", tags=["xp"])
 
@@ -402,3 +402,58 @@ async def get_full_history(
     history.sort(key=lambda x: x["date"], reverse=True)
     
     return history[:limit]
+
+
+@router.get("/category-stats")
+async def get_category_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    period: str = "week"  # week, month, year
+):
+    """Получить статистику по категориям активностей"""
+    from datetime import datetime, timedelta
+    
+    # Определяем период
+    now = datetime.utcnow()
+    if period == "week":
+        start_date = now - timedelta(days=7)
+    elif period == "month":
+        start_date = now - timedelta(days=30)
+    elif period == "year":
+        start_date = now - timedelta(days=365)
+    else:
+        start_date = now - timedelta(days=7)
+    
+    # Получаем логи активностей за период
+    logs = db.query(ActivityLog).join(Activity).filter(
+        ActivityLog.user_id == current_user.id,
+        ActivityLog.end_time >= start_date,
+        ActivityLog.xp_earned > 0
+    ).all()
+    
+    # Группируем по категориям
+    category_stats = {}
+    for log in logs:
+        category = log.activity.category if log.activity.category else "general"
+        if category not in category_stats:
+            category_stats[category] = {
+                "category": category,
+                "total_xp": 0.0,
+                "total_time": 0.0,  # в минутах
+                "activity_count": 0
+            }
+        
+        category_stats[category]["total_xp"] += log.xp_earned
+        category_stats[category]["total_time"] += log.duration_minutes or 0
+        category_stats[category]["activity_count"] += 1
+    
+    # Преобразуем в список и сортируем по XP
+    result = list(category_stats.values())
+    result.sort(key=lambda x: x["total_xp"], reverse=True)
+    
+    return {
+        "period": period,
+        "categories": result,
+        "total_xp": sum(cat["total_xp"] for cat in result),
+        "total_time": sum(cat["total_time"] for cat in result)
+    }

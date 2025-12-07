@@ -223,3 +223,5 @@ async def complete_goal(
     return {"message": "Цель отмечена как выполненная", "goal": goal}
 
 
+
+

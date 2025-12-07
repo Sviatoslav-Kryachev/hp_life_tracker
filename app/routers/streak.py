@@ -138,3 +138,5 @@ async def update_streak_endpoint(
     return update_streak(db, current_user.id)
 
 
+
+

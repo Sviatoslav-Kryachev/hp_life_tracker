@@ -254,16 +254,25 @@ function showApp() {
     historyAccordionBtn = null;
     
     // Небольшая задержка, чтобы DOM успел обновиться
-    setTimeout(() => {
+    setTimeout(async () => {
         loadWallet();
-        loadActivities();
+        // Сначала загружаем категории, чтобы они были доступны при отображении активностей
+        await loadCategories();
+        loadActivities(); // Теперь загружаем активности, когда категории уже загружены
         loadRewards();
         loadTodayStats();
         loadWeekCalendar();
+        setTimeout(() => loadCategoryStats(), 100);
         loadStreak();
         loadRecommendations();
         loadGoals();
         loadHistory(); // Автоматически загружаем историю
+        
+        // Дополнительное обновление dropdown через небольшую задержку на случай, если элементы еще не готовы
+        setTimeout(() => {
+            updateCategoryDropdown('activity-category');
+            updateCategoryDropdown('edit-activity-category');
+        }, 200);
     }, 50);
 }
 
@@ -343,6 +352,80 @@ async function loadTodayStats() {
         }
     } catch (e) {
         console.error("Error loading today stats", e);
+    }
+}
+
+// ============= CATEGORY STATS =============
+async function loadCategoryStats() {
+    try {
+        const categoryStatsEl = document.getElementById('category-stats');
+        if (!categoryStatsEl) {
+            console.warn("Category stats element not found");
+            return;
+        }
+        
+        if (!authToken) {
+            console.error("No auth token available");
+            categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Требуется авторизация</div>';
+            return;
+        }
+        
+        const res = await fetch(`${API_BASE}/xp/category-stats?period=week`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load category stats:", res.status, res.statusText, errorText);
+            categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Ошибка загрузки</div>';
+            return;
+        }
+        
+        const data = await res.json();
+        
+        if (!data.categories || data.categories.length === 0) {
+            categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Нет данных по категориям</div>';
+            return;
+        }
+        
+        const categoryNames = {
+            "general": "Общее",
+            "study": "Учеба",
+            "sport": "Спорт",
+            "hobby": "Хобби",
+            "work": "Работа",
+            "health": "Здоровье"
+        };
+        
+        // Добавляем пользовательские категории
+        if (allCategories.custom) {
+            allCategories.custom.forEach(customCat => {
+                categoryNames[customCat.id] = customCat.name;
+            });
+        }
+        
+        categoryStatsEl.innerHTML = data.categories.map(cat => {
+            const catName = categoryNames[cat.category] || cat.category;
+            const percentage = data.total_xp > 0 ? (cat.total_xp / data.total_xp * 100) : 0;
+            return `
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200 mb-2">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-gray-800 text-sm">${catName}</span>
+                        <span class="font-bold text-blue-600 text-sm">${Math.round(cat.total_xp)} XP</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500">${Math.round(cat.total_time)} мин • ${cat.activity_count} активностей</div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error("Error loading category stats", e);
+        const categoryStatsEl = document.getElementById('category-stats');
+        if (categoryStatsEl) {
+            categoryStatsEl.innerHTML = '<div class="text-center text-red-400 py-4 text-sm">Ошибка загрузки</div>';
+        }
     }
 }
 
@@ -727,16 +810,35 @@ async function loadHistory() {
             getHistoryElements();
         }
         
-        const res = await fetch(`${API_BASE}/xp/full-history?limit=30`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        
         if (!historyListVisible || !historyListHidden) {
             console.error("History elements not found", { historyListVisible, historyListHidden });
             return;
         }
+        
+        if (!authToken) {
+            console.error("No auth token available");
+            if (historyListVisible) {
+                historyListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            }
+            if (historyAccordionBtn) historyAccordionBtn.classList.add('hidden');
+            return;
+        }
+        
+        const res = await fetch(`${API_BASE}/xp/full-history?limit=30`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load history:", res.status, res.statusText, errorText);
+            if (historyListVisible) {
+                historyListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки истории</div>';
+            }
+            if (historyAccordionBtn) historyAccordionBtn.classList.add('hidden');
+            return;
+        }
+        
+        const data = await res.json();
         
         historyListVisible.innerHTML = '';
         historyListHidden.innerHTML = '';
@@ -895,16 +997,45 @@ function updateHistoryAccordionButton() {
 // ============= ACTIVITIES =============
 async function loadActivities() {
     try {
+        const activitiesListEl = document.getElementById('activities-list');
+        if (!activitiesListEl) {
+            console.warn("Activities list element not found");
+            return;
+        }
+        
+        if (!authToken) {
+            console.error("No auth token available");
+            activitiesListEl.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
+        }
+        
         const res = await fetch(`${API_BASE}/activities/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        if (!res.ok) return;
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load activities:", res.status, res.statusText, errorText);
+            activitiesListEl.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+            return;
+        }
+        
         const data = await res.json();
         allActivities = data;
-        activitiesList.innerHTML = "";
+        activitiesListEl.innerHTML = "";
+        
+        if (data.length === 0) {
+            activitiesListEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет активностей. Создайте первую активность!</div>';
+            return;
+        }
+        
         data.forEach(renderActivityCard);
     } catch (e) {
         console.error("Error loading activities", e);
+        const activitiesListEl = document.getElementById('activities-list');
+        if (activitiesListEl) {
+            activitiesListEl.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+        }
     }
 }
 
@@ -913,10 +1044,33 @@ function renderActivityCard(activity) {
     div.className = "activity-card p-4 mb-3 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3";
     div.setAttribute("data-activity-id", activity.id);
 
+    // Создаем объект с названиями категорий
+    const categoryNames = {
+        "general": "Общее",
+        "study": "Учеба",
+        "sport": "Спорт",
+        "hobby": "Хобби",
+        "work": "Работа",
+        "health": "Здоровье"
+    };
+    
+    // Добавляем пользовательские категории
+    if (allCategories.custom) {
+        allCategories.custom.forEach(customCat => {
+            categoryNames[customCat.id] = customCat.name;
+        });
+    }
+    
+    const category = activity.category || "general";
+    const categoryName = categoryNames[category] || category;
+    
     const left = document.createElement("div");
     left.className = "flex-grow";
     left.innerHTML = `
-        <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
+        <div class="flex items-center gap-2 mb-1">
+            <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">${categoryName}</span>
+        </div>
         <div class="text-sm text-gray-500">${activity.xp_per_hour} XP/час</div>
     `;
 
@@ -968,6 +1122,8 @@ function renderActivityCard(activity) {
 async function createActivity() {
     const name = activityNameInput.value.trim();
     const xp = xpPerHourInput ? Number(xpPerHourInput.value) || 60 : 60;
+    const categoryEl = document.getElementById("activity-category");
+    const category = categoryEl ? (categoryEl.value || "general") : "general";
     
     if (!name) {
         showActivityMessage("Введите название активности", "error");
@@ -988,7 +1144,7 @@ async function createActivity() {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`
             },
-            body: JSON.stringify({ name, xp_per_hour: xp })
+            body: JSON.stringify({ name, xp_per_hour: xp, category: category })
         });
         
         if (!res.ok) {
@@ -1010,9 +1166,29 @@ async function createActivity() {
 }
 
 function openEditModal(activity) {
+    // Обновляем dropdown категорий перед открытием модального окна
+    updateCategoryDropdown('edit-activity-category');
+    
     document.getElementById("edit-activity-id").value = activity.id;
     document.getElementById("edit-activity-name").value = activity.name;
     document.getElementById("edit-xp-per-hour").value = activity.xp_per_hour;
+    const categoryEl = document.getElementById("edit-activity-category");
+    const categoryText = document.getElementById("edit-activity-category-text");
+    if (categoryEl && categoryText) {
+        // Устанавливаем значение после небольшой задержки, чтобы dropdown успел обновиться
+        setTimeout(() => {
+            const categoryValue = activity.category || "general";
+            categoryEl.value = categoryValue;
+            // Находим название категории
+            const allCats = [...(allCategories.standard || []), ...(allCategories.custom || [])];
+            const selectedCat = allCats.find(c => c.id === categoryValue);
+            if (selectedCat) {
+                categoryText.textContent = selectedCat.name;
+            } else {
+                categoryText.textContent = "Общее";
+            }
+        }, 100);
+    }
     document.getElementById("edit-activity-modal").classList.remove("hidden");
 }
 
@@ -1025,6 +1201,8 @@ async function updateActivity() {
     const id = document.getElementById("edit-activity-id").value;
     const name = document.getElementById("edit-activity-name").value.trim();
     const xpPerHour = Number(document.getElementById("edit-xp-per-hour").value) || 60;
+    const categoryEl = document.getElementById("edit-activity-category");
+    const category = categoryEl ? categoryEl.value || "general" : "general";
 
     if (!name) {
         alert("Введите название активности");
@@ -1038,7 +1216,7 @@ async function updateActivity() {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`
             },
-            body: JSON.stringify({ name, xp_per_hour: xpPerHour })
+            body: JSON.stringify({ name, xp_per_hour: xpPerHour, category: category })
         });
 
         if (!res.ok) {
@@ -1347,11 +1525,28 @@ async function loadRewards() {
             return;
         }
         
+        if (!authToken) {
+            console.error("No auth token available");
+            if (rewardsListVisible) {
+                rewardsListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            }
+            if (rewardsAccordionBtn) rewardsAccordionBtn.classList.add('hidden');
+            return;
+        }
+        
         const res = await fetch(`${API_BASE}/rewards/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         
-        if (!res.ok) return;
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load rewards:", res.status, res.statusText, errorText);
+            if (rewardsListVisible) {
+                rewardsListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки наград</div>';
+            }
+            if (rewardsAccordionBtn) rewardsAccordionBtn.classList.add('hidden');
+            return;
+        }
         
         const data = await res.json();
         allRewards = data;
@@ -1960,17 +2155,33 @@ async function loadStreak() {
 // ============= RECOMMENDATIONS =============
 async function loadRecommendations() {
     try {
+        const listEl = document.getElementById('recommendations-list');
+        if (!listEl) {
+            console.warn("Recommendations list element not found");
+            return;
+        }
+        
+        if (!authToken) {
+            console.error("No auth token available");
+            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Требуется авторизация</div>';
+            return;
+        }
+        
         const res = await fetch(`${API_BASE}/recommendations/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        if (!res.ok) return;
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load recommendations:", res.status, res.statusText, errorText);
+            listEl.innerHTML = '<div class="text-center text-red-400 py-4 text-xs">Ошибка загрузки рекомендаций</div>';
+            return;
+        }
+        
         const data = await res.json();
         
-        const listEl = document.getElementById('recommendations-list');
-        if (!listEl) return;
-        
         if (!data.recommendations || data.recommendations.length === 0) {
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет рекомендаций. Продолжайте заниматься!</div>';
+            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Нет рекомендаций. Продолжайте заниматься!</div>';
             return;
         }
         
@@ -2109,13 +2320,14 @@ async function startActivityFromRecommendation(activityId) {
 function showNotification(message, type = 'info') {
     // Создаём элемент уведомления
     const notification = document.createElement('div');
-    notification.className = `fixed top-24 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-0 ${
+    notification.className = `fixed top-24 right-4 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-0 ${
         type === 'success' ? 'bg-green-500 text-white' : 
         type === 'error' ? 'bg-red-500 text-white' : 
         'bg-blue-500 text-white'
     }`;
-    notification.textContent = message;
     notification.style.maxWidth = '400px';
+    notification.style.zIndex = '9999'; // Высокий z-index, чтобы показываться поверх всех элементов
+    notification.textContent = message;
     
     document.body.appendChild(notification);
     
@@ -2281,18 +2493,24 @@ async function showChildStats(childId, childName) {
     document.getElementById("child-stats-content").innerHTML = '<div class="text-center text-gray-400 py-8">Загрузка...</div>';
     
     try {
+        const categoryFilter = document.getElementById('admin-category-filter');
+        const selectedCategory = categoryFilter ? categoryFilter.value : '';
+        
         // Загружаем статистику
-        const [statsRes, historyRes, activitiesRes, goalsRes] = await Promise.all([
+        const [statsRes, historyRes, activitiesRes, goalsRes, categoryStatsRes] = await Promise.all([
             fetch(`${API_BASE}/admin/child/${childId}/stats`, {
                 headers: { "Authorization": `Bearer ${authToken}` }
             }),
             fetch(`${API_BASE}/admin/child/${childId}/history?limit=20`, {
                 headers: { "Authorization": `Bearer ${authToken}` }
             }),
-            fetch(`${API_BASE}/admin/child/${childId}/activities`, {
+            fetch(`${API_BASE}/admin/child/${childId}/activities${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ''}`, {
                 headers: { "Authorization": `Bearer ${authToken}` }
             }),
             fetch(`${API_BASE}/admin/child/${childId}/goals`, {
+                headers: { "Authorization": `Bearer ${authToken}` }
+            }),
+            fetch(`${API_BASE}/admin/child/${childId}/category-stats?period=week`, {
                 headers: { "Authorization": `Bearer ${authToken}` }
             })
         ]);
@@ -2303,6 +2521,7 @@ async function showChildStats(childId, childName) {
         const history = historyRes.ok ? await historyRes.json() : [];
         const activities = activitiesRes.ok ? await activitiesRes.json() : [];
         const goals = goalsRes.ok ? await goalsRes.json() : [];
+        const categoryStats = categoryStatsRes.ok ? await categoryStatsRes.json() : { categories: [] };
         
         const contentEl = document.getElementById("child-stats-content");
         contentEl.innerHTML = `
@@ -2398,16 +2617,76 @@ async function showChildStats(childId, childName) {
                 </div>
             </div>
             
+            <!-- Статистика по категориям -->
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-800 mb-3">📊 Статистика по категориям (неделя)</h4>
+                <div class="space-y-2">
+                    ${categoryStats.categories && categoryStats.categories.length > 0 ? categoryStats.categories.map(cat => {
+                        const categoryNames = {
+                            "general": "Общее",
+                            "study": "Учеба",
+                            "sport": "Спорт",
+                            "hobby": "Хобби",
+                            "work": "Работа",
+                            "health": "Здоровье"
+                        };
+                        
+                        // Добавляем пользовательские категории
+                        if (allCategories.custom) {
+                            allCategories.custom.forEach(customCat => {
+                                categoryNames[customCat.id] = customCat.name;
+                            });
+                        }
+                        
+                        const catName = categoryNames[cat.category] || cat.category;
+                        const percentage = categoryStats.total_xp > 0 ? (cat.total_xp / categoryStats.total_xp * 100) : 0;
+                        return `
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-medium text-gray-800">${catName}</span>
+                                    <span class="font-bold text-blue-600">${Math.round(cat.total_xp)} XP</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
+                                </div>
+                                <div class="text-xs text-gray-500">${Math.round(cat.total_time)} мин • ${cat.activity_count} активностей</div>
+                            </div>
+                        `;
+                    }).join('') : '<div class="text-center text-gray-400 py-4">Нет данных по категориям</div>'}
+                </div>
+            </div>
+            
             <!-- Активности -->
             <div class="mb-4">
                 <h4 class="font-bold text-gray-800 mb-3">🎯 Активности</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    ${activities.length > 0 ? activities.map(act => `
+                    ${activities.length > 0 ? activities.map(act => {
+                        const categoryNames = {
+                            "general": "Общее",
+                            "study": "Учеба",
+                            "sport": "Спорт",
+                            "hobby": "Хобби",
+                            "work": "Работа",
+                            "health": "Здоровье"
+                        };
+                        
+                        // Добавляем пользовательские категории
+                        if (allCategories.custom) {
+                            allCategories.custom.forEach(customCat => {
+                                categoryNames[customCat.id] = customCat.name;
+                            });
+                        }
+                        
+                        const category = act.category || "general";
+                        const catName = categoryNames[category] || category;
+                        return `
                         <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
                             <div class="font-medium text-gray-800 text-sm">${act.name}</div>
+                            <div class="text-xs text-blue-600 mt-1">${catName}</div>
                             <div class="text-xs text-gray-600">${act.xp_per_hour} XP/час</div>
                         </div>
-                    `).join('') : '<div class="text-gray-400 text-sm">Нет активностей</div>'}
+                    `;
+                    }).join('') : '<div class="text-gray-400 text-sm">Нет активностей</div>'}
                 </div>
             </div>
             
@@ -2416,7 +2695,7 @@ async function showChildStats(childId, childName) {
                 <h4 class="font-bold text-gray-800 mb-3">🎯 Цели</h4>
                 <div class="space-y-2">
                     ${goals.length > 0 ? goals.map(goal => {
-                        const progressPercent = Math.min(goal.progress_percent, 100);
+                        const progressPercent = goal.target_xp > 0 ? Math.min((goal.current_xp / goal.target_xp) * 100, 100) : 0;
                         const isCompleted = goal.is_completed === 1;
                         return `
                             <div class="p-3 bg-purple-50 rounded-lg border ${isCompleted ? 'border-green-300' : 'border-purple-200'}">
@@ -2448,20 +2727,650 @@ function closeChildStats() {
     document.getElementById("child-stats-modal").classList.add("hidden");
 }
 
+function filterChildrenByCategory() {
+    // Перезагружаем статистику для всех открытых модальных окон
+    const modal = document.getElementById("child-stats-modal");
+    if (!modal.classList.contains("hidden")) {
+        const childId = modal.getAttribute("data-child-id");
+        const childName = document.getElementById("child-stats-name").textContent.replace("Статистика: ", "");
+        if (childId) {
+            showChildStats(parseInt(childId), childName);
+        }
+    }
+}
+
+// ============= CATEGORIES =============
+let allCategories = { standard: [], custom: [], all: [] };
+
+async function loadCategories() {
+    try {
+        if (!authToken) {
+            // Даже без токена обновляем dropdown с базовыми категориями
+            updateCategoryDropdown('activity-category');
+            updateCategoryDropdown('edit-activity-category');
+            return;
+        }
+        
+        const res = await fetch(`${API_BASE}/categories/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) {
+            console.error("Failed to load categories:", res.status);
+            // Обновляем dropdown с базовыми категориями даже при ошибке
+            updateCategoryDropdown('activity-category');
+            updateCategoryDropdown('edit-activity-category');
+            return;
+        }
+        
+        const data = await res.json();
+        allCategories = data;
+        
+        // Обновляем dropdown для создания активности
+        updateCategoryDropdown('activity-category');
+        // Обновляем dropdown для редактирования активности
+        updateCategoryDropdown('edit-activity-category');
+        
+        // Кнопки действий больше не нужны, так как они теперь в dropdown
+        
+        // Обновляем список категорий в модальном окне, если оно открыто
+        const categoryModal = document.getElementById('category-modal');
+        if (categoryModal && !categoryModal.classList.contains('hidden')) {
+            renderCustomCategoriesList();
+        }
+        
+        // Перерисовываем активности, если они уже были загружены, чтобы обновить названия категорий
+        if (allActivities && allActivities.length > 0) {
+            const activitiesListEl = document.getElementById('activities-list');
+            if (activitiesListEl) {
+                activitiesListEl.innerHTML = "";
+                allActivities.forEach(renderActivityCard);
+            }
+        }
+    } catch (e) {
+        console.error("Error loading categories:", e);
+        // Обновляем dropdown с базовыми категориями даже при ошибке
+        updateCategoryDropdown('activity-category');
+        updateCategoryDropdown('edit-activity-category');
+    }
+}
+
+function updateCategoryDropdown(selectId) {
+    const hiddenInput = document.getElementById(selectId);
+    const button = document.getElementById(`${selectId}-button`);
+    const textSpan = document.getElementById(`${selectId}-text`);
+    const dropdown = document.getElementById(`${selectId}-dropdown`);
+    
+    if (!hiddenInput || !button || !textSpan || !dropdown) {
+        console.warn(`Custom dropdown elements for ${selectId} not found:`, {
+            hiddenInput: !!hiddenInput,
+            button: !!button,
+            textSpan: !!textSpan,
+            dropdown: !!dropdown
+        });
+        return;
+    }
+    
+    const currentValue = hiddenInput.value || 'general';
+    
+    // Очищаем dropdown
+    dropdown.innerHTML = '';
+    
+    // Добавляем стандартные категории (с fallback если еще не загружены)
+    const standardCats = allCategories.standard && allCategories.standard.length > 0 
+        ? allCategories.standard 
+        : [
+            {id: "general", name: "Общее"},
+            {id: "study", name: "Учеба"},
+            {id: "sport", name: "Спорт"},
+            {id: "hobby", name: "Хобби"},
+            {id: "work", name: "Работа"},
+            {id: "health", name: "Здоровье"}
+        ];
+    
+    // Определяем, какие стандартные категории были заменены пользовательскими
+    const replacedStandardCategories = new Set();
+    if (allCategories.custom && allCategories.custom.length > 0) {
+        allCategories.custom.forEach(cat => {
+            if (cat.replaced_standard_category) {
+                replacedStandardCategories.add(cat.replaced_standard_category);
+            }
+        });
+    }
+    
+    // Добавляем стандартные категории, пропуская те, что были заменены пользовательскими
+    standardCats.forEach(cat => {
+        // Пропускаем стандартные категории, которые были заменены пользовательскими
+        if (!replacedStandardCategories.has(cat.id)) {
+            const option = createDropdownOption(cat.id, cat.name, false, null, selectId);
+            dropdown.appendChild(option);
+        } else {
+            // Находим пользовательскую категорию, которая заменяет эту стандартную
+            const replacement = allCategories.custom.find(c => c.replaced_standard_category === cat.id);
+            if (replacement) {
+                // Показываем пользовательскую категорию на месте стандартной
+                const option = createDropdownOption(replacement.id, replacement.name, true, replacement, selectId);
+                dropdown.appendChild(option);
+            }
+        }
+    });
+    
+    // Добавляем остальные пользовательские категории (которые не заменяют стандартные)
+    const nonReplacementCustom = allCategories.custom?.filter(cat => !cat.replaced_standard_category) || [];
+    if (nonReplacementCustom.length > 0) {
+        const separator = document.createElement('div');
+        separator.className = 'px-4 py-2 text-gray-400 text-xs border-t border-gray-200';
+        separator.textContent = '──────────';
+        dropdown.appendChild(separator);
+        
+        nonReplacementCustom.forEach(cat => {
+            const option = createDropdownOption(cat.id, cat.name, true, cat, selectId);
+            dropdown.appendChild(option);
+        });
+    }
+    
+    // Всегда добавляем кнопку "Добавить категорию" в конец списка
+    const addOption = document.createElement('div');
+    addOption.className = 'px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-t border-gray-200';
+    addOption.innerHTML = '<span class="text-blue-600 font-semibold">➕ Добавить категорию</span>';
+    addOption.onclick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        closeDropdown(selectId);
+        openCategoryModal();
+    };
+    dropdown.appendChild(addOption);
+    
+    console.log(`Dropdown ${selectId} updated:`, {
+        standardCats: standardCats.length,
+        customCats: allCategories.custom?.length || 0,
+        addOptionAdded: true
+    });
+    
+    // Обновляем отображаемый текст
+    const selectedCat = [...standardCats, ...(allCategories.custom || [])].find(c => c.id === currentValue);
+    if (selectedCat) {
+        textSpan.textContent = selectedCat.name;
+        hiddenInput.value = currentValue;
+    } else {
+        textSpan.textContent = 'Общее';
+        hiddenInput.value = 'general';
+    }
+    
+    // Обработчик открытия/закрытия dropdown
+    if (!button._dropdownHandler) {
+        button._dropdownHandler = (e) => {
+            e.stopPropagation();
+            const isOpen = !dropdown.classList.contains('hidden');
+            if (isOpen) {
+                closeDropdown(selectId);
+            } else {
+                openDropdown(selectId);
+            }
+        };
+        button.addEventListener('click', button._dropdownHandler);
+    }
+    
+    // Закрываем dropdown при клике вне его
+    if (!document._categoryDropdownHandler) {
+        document._categoryDropdownHandler = (e) => {
+            if (!e.target.closest('.custom-dropdown')) {
+                closeDropdown('activity-category');
+                closeDropdown('edit-activity-category');
+            }
+        };
+        document.addEventListener('click', document._categoryDropdownHandler);
+    }
+}
+
+function createDropdownOption(value, name, isCustom, categoryData, selectId) {
+    const option = document.createElement('div');
+    option.className = 'px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between group';
+    option.dataset.value = value;
+    option.dataset.isCustom = isCustom ? 'true' : 'false';
+    
+    const leftPart = document.createElement('div');
+    leftPart.className = 'flex-1';
+    leftPart.textContent = name;
+    
+    option.appendChild(leftPart);
+    
+    // Категория "Общее" - захардкоженная, без кнопок редактирования и удаления
+    if (value === 'general') {
+        // Для категории "Общее" не добавляем кнопки
+        return option;
+    }
+    
+    // Добавляем кнопки редактирования для всех остальных категорий
+    const actions = document.createElement('div');
+    // Для стандартных категорий уменьшаем gap между кнопками
+    actions.className = isCustom ? 'flex items-center gap-1' : 'flex items-center gap-0.5';
+    
+    // Кнопка редактирования - для всех категорий кроме "Общее"
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors';
+    editBtn.innerHTML = '<i class="fas fa-pencil-alt text-xs"></i>';
+    editBtn.title = 'Редактировать категорию';
+    editBtn.onclick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        closeDropdown(selectId);
+        if (isCustom && categoryData) {
+            // Для пользовательских категорий редактируем напрямую
+            openCategoryModal(categoryData.id, categoryData.name);
+        } else {
+            // Для стандартных категорий (кроме "Общее") создаем пользовательскую копию
+            // Передаем ID стандартной категории для замены активностей
+            openCategoryModal(null, name, value);
+        }
+    };
+    
+    actions.appendChild(editBtn);
+    
+    // Кнопка удаления
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    if (isCustom && categoryData) {
+        // Для пользовательских категорий - активная кнопка удаления
+        deleteBtn.className = 'p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors';
+        deleteBtn.title = 'Удалить категорию (активности перейдут в "Общее")';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            closeDropdown(selectId);
+            deleteCategory(categoryData.id);
+        };
+    } else {
+        // Для стандартных категорий - красная кнопка, но с сообщением при клике
+        deleteBtn.className = 'p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer';
+        deleteBtn.title = 'Стандартные категории нельзя удалить';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            showNotification('❌ Стандартные категории нельзя удалить', 'error');
+        };
+    }
+    deleteBtn.innerHTML = '<i class="fas fa-trash text-xs"></i>';
+    actions.appendChild(deleteBtn);
+    
+    option.appendChild(actions);
+    
+    // При клике на опцию выбираем её
+    option.onclick = (e) => {
+        if (e.target.closest('button')) return; // Игнорируем клики по кнопкам
+        selectCategoryOption(selectId, value, name);
+    };
+    
+    return option;
+}
+
+function selectCategoryOption(selectId, value, name) {
+    const hiddenInput = document.getElementById(selectId);
+    const textSpan = document.getElementById(`${selectId}-text`);
+    
+    if (hiddenInput && textSpan) {
+        hiddenInput.value = value;
+        textSpan.textContent = name;
+        closeDropdown(selectId);
+        
+        // Триггерим событие change для совместимости
+        const event = new Event('change', { bubbles: true });
+        hiddenInput.dispatchEvent(event);
+    }
+}
+
+function openDropdown(selectId) {
+    const dropdown = document.getElementById(`${selectId}-dropdown`);
+    const button = document.getElementById(`${selectId}-button`);
+    if (dropdown && button) {
+        dropdown.classList.remove('hidden');
+        const icon = button.querySelector('i');
+        if (icon) icon.classList.add('rotate-180');
+    }
+}
+
+function closeDropdown(selectId) {
+    const dropdown = document.getElementById(`${selectId}-dropdown`);
+    const button = document.getElementById(`${selectId}-button`);
+    if (dropdown && button) {
+        dropdown.classList.add('hidden');
+        const icon = button.querySelector('i');
+        if (icon) icon.classList.remove('rotate-180');
+    }
+}
+
+// Функция updateCategoryActions больше не нужна, так как кнопки теперь в dropdown
+function updateCategoryActions(selectId) {
+    // Оставлена для совместимости, но не используется
+}
+
+function openCategoryModal(categoryId = null, categoryName = null, standardCategoryId = null) {
+    const modal = document.getElementById('category-modal');
+    const title = document.getElementById('category-modal-title');
+    const nameInput = document.getElementById('category-name');
+    const idInput = document.getElementById('category-id');
+    
+    if (categoryId && categoryName) {
+        // Редактирование пользовательской категории
+        title.textContent = 'Редактировать категорию';
+        idInput.value = categoryId;
+        nameInput.value = categoryName;
+        delete idInput.dataset.originalName;
+        delete idInput.dataset.originalValue;
+    } else if (categoryName) {
+        // Редактирование стандартной категории - предзаполняем название
+        title.textContent = 'Редактировать категорию';
+        idInput.value = '';
+        nameInput.value = categoryName;
+        // Сохраняем оригинальное название и ID стандартной категории для замены активностей
+        idInput.dataset.originalName = categoryName;
+        idInput.dataset.originalValue = standardCategoryId || categoryName; // ID стандартной категории (study, sport и т.д.)
+    } else {
+        // Создание новой категории
+        title.textContent = 'Добавить категорию';
+        idInput.value = '';
+        nameInput.value = '';
+        delete idInput.dataset.originalName;
+        delete idInput.dataset.originalValue;
+    }
+    
+    // Загружаем список категорий
+    renderCustomCategoriesList();
+    
+    modal.classList.remove('hidden');
+}
+
+function closeCategoryModal() {
+    document.getElementById('category-modal').classList.add('hidden');
+    document.getElementById('category-form').reset();
+}
+
+async function saveCategory() {
+    const nameInput = document.getElementById('category-name');
+    const idInput = document.getElementById('category-id');
+    const name = nameInput.value.trim();
+    
+    if (!name) {
+        alert('Введите название категории');
+        return;
+    }
+    
+    try {
+        let res;
+        if (idInput.value) {
+            // Редактирование
+            const dbId = idInput.value.replace('custom_', '');
+            res = await fetch(`${API_BASE}/categories/${dbId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ name })
+            });
+        } else {
+            // Создание новой категории или редактирование стандартной
+            const originalName = idInput.dataset.originalName;
+            const originalValue = idInput.dataset.originalValue; // ID стандартной категории (study, sport и т.д.)
+            
+            if (originalName && originalValue) {
+                // Редактируем стандартную категорию
+                // Ищем существующую пользовательскую категорию с таким названием
+                const existingCategory = allCategories.custom?.find(cat => cat.name === originalName);
+                
+                if (existingCategory) {
+                    // Если есть пользовательская категория с таким названием, редактируем её
+                    const dbId = existingCategory.id.replace('custom_', '');
+                    res = await fetch(`${API_BASE}/categories/${dbId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({ name })
+                    });
+                } else {
+                    // Создаем новую пользовательскую категорию и обновляем активности
+                    res = await fetch(`${API_BASE}/categories/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({ 
+                            name: name,
+                            replace_standard_category: originalValue // ID стандартной категории для замены
+                        })
+                    });
+                }
+            } else {
+                // Создание новой категории
+                res = await fetch(`${API_BASE}/categories/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name })
+                });
+            }
+        }
+        
+        if (!res.ok) {
+            let errorMessage = 'Ошибка сохранения категории';
+            try {
+                const errorData = await res.json();
+                errorMessage = errorData.detail || errorMessage;
+            } catch (e) {
+                // Если не удалось распарсить JSON, используем текст ответа
+                const text = await res.text().catch(() => '');
+                if (text.includes('уже существует') || text.includes('already exists') || text.includes('duplicate')) {
+                    errorMessage = 'Категория с таким названием уже существует';
+                }
+            }
+            
+            // Показываем понятное сообщение пользователю
+            if (errorMessage.includes('уже существует') || errorMessage.includes('already exists') || errorMessage.includes('duplicate')) {
+                showNotification('❌ Категория с таким названием уже существует!', 'error');
+            } else if (errorMessage.includes('no such table')) {
+                showNotification('❌ Ошибка базы данных. Обратитесь к администратору.', 'error');
+            } else {
+                showNotification(`❌ ${errorMessage}`, 'error');
+            }
+            return;
+        }
+        
+        const newData = await res.json();
+        await loadCategories();
+        renderCustomCategoriesList(); // Обновляем список в модальном окне
+        
+        // Если редактировали стандартную категорию, обновляем все активности
+        const originalValue = idInput.dataset.originalValue;
+        if (originalValue && newData.id) {
+            // Обновляем все активности, которые используют старую стандартную категорию
+            await loadActivities(); // Перезагружаем активности, чтобы они обновились с новой категорией
+        }
+        
+        // Обновляем dropdown категорий
+        updateCategoryDropdown('activity-category');
+        updateCategoryDropdown('edit-activity-category');
+        
+        // Обновляем выбранную категорию в активных dropdown
+        const activityCategory = document.getElementById('activity-category');
+        const activityCategoryText = document.getElementById('activity-category-text');
+        const editCategory = document.getElementById('edit-activity-category');
+        const editCategoryText = document.getElementById('edit-activity-category-text');
+        
+        // Если редактировали стандартную категорию, обновляем выбранную категорию на новую пользовательскую
+        const originalName = idInput.dataset.originalName;
+        if (originalValue && newData.id) {
+            // Обновляем все dropdown, где была выбрана стандартная категория
+            if (activityCategory && activityCategoryText) {
+                if (activityCategory.value === originalValue || activityCategoryText.textContent === originalName) {
+                    activityCategory.value = newData.id;
+                    activityCategoryText.textContent = newData.name;
+                }
+            }
+            if (editCategory && editCategoryText) {
+                if (editCategory.value === originalValue || editCategoryText.textContent === originalName) {
+                    editCategory.value = newData.id;
+                    editCategoryText.textContent = newData.name;
+                }
+            }
+        }
+        
+        // Если редактировали пользовательскую категорию, обновляем её значение
+        if (idInput.value && newData.id) {
+            if (activityCategory && activityCategoryText) {
+                if (activityCategory.value === idInput.value) {
+                    activityCategory.value = newData.id;
+                    activityCategoryText.textContent = newData.name;
+                }
+            }
+            if (editCategory && editCategoryText) {
+                if (editCategory.value === idInput.value) {
+                    editCategory.value = newData.id;
+                    editCategoryText.textContent = newData.name;
+                }
+            }
+        }
+        
+        // Закрываем модальное окно после сохранения
+        closeCategoryModal();
+        
+        showNotification('✅ Категория сохранена!', 'success');
+    } catch (e) {
+        console.error('Error saving category:', e);
+        alert('Ошибка сохранения категории');
+    }
+}
+
+async function deleteCategory(categoryId) {
+    if (!confirm('Удалить эту категорию? Активности с этой категорией будут переведены в "Общее".')) {
+        return;
+    }
+    
+    try {
+        const dbId = categoryId.replace('custom_', '');
+        const res = await fetch(`${API_BASE}/categories/${dbId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) {
+            const error = await res.json();
+            alert(error.detail || 'Ошибка удаления категории');
+            return;
+        }
+        
+        await loadCategories();
+        renderCustomCategoriesList(); // Обновляем список в модальном окне
+        
+        // Обновляем кнопки действий
+        updateCategoryActions('activity-category');
+        updateCategoryActions('edit-activity-category');
+        
+        showNotification('✅ Категория удалена!', 'success');
+    } catch (e) {
+        console.error('Error deleting category:', e);
+        alert('Ошибка удаления категории');
+    }
+}
+
+function renderCustomCategoriesList() {
+    const listContainer = document.getElementById('custom-categories-list');
+    if (!listContainer) {
+        console.warn('custom-categories-list container not found');
+        return;
+    }
+    
+    if (!allCategories.custom || allCategories.custom.length === 0) {
+        listContainer.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">У вас пока нет пользовательских категорий</div>';
+        return;
+    }
+    
+    listContainer.innerHTML = allCategories.custom.map(cat => {
+        const categoryName = (cat.name || 'Без названия').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const categoryId = cat.id || `custom_${cat.db_id}`;
+        const dbId = cat.db_id || categoryId.replace('custom_', '');
+        
+        return `
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group">
+                <span class="font-medium text-gray-800 flex-1">${categoryName}</span>
+                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                        onclick="event.stopPropagation(); openCategoryModal('${categoryId}', '${categoryName.replace(/&#39;/g, "'")}')" 
+                        class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" 
+                        title="Редактировать категорию">
+                        <i class="fas fa-pencil-alt text-sm"></i>
+                    </button>
+                    <button 
+                        onclick="event.stopPropagation(); deleteCategory('${categoryId}')" 
+                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
+                        title="Удалить категорию">
+                        <i class="fas fa-trash text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Делаем функции глобальными
+window.openCategoryModal = openCategoryModal;
+window.closeCategoryModal = closeCategoryModal;
+window.saveCategory = saveCategory;
+window.deleteCategory = deleteCategory;
+window.renderCustomCategoriesList = renderCustomCategoriesList;
+
+// Обработчик формы категории
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCategoryForm);
+} else {
+    initCategoryForm();
+}
+
+function initCategoryForm() {
+    const categoryForm = document.getElementById('category-form');
+    if (categoryForm) {
+        categoryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveCategory();
+        });
+    }
+}
+
 // ============= GOALS =============
 async function loadGoals() {
     try {
+        const listEl = document.getElementById('goals-list');
+        if (!listEl) {
+            console.warn("Goals list element not found");
+            return;
+        }
+        
+        if (!authToken) {
+            console.error("No auth token available");
+            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Требуется авторизация</div>';
+            return;
+        }
+        
         const res = await fetch(`${API_BASE}/goals/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        if (!res.ok) return;
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load goals:", res.status, res.statusText, errorText);
+            listEl.innerHTML = '<div class="text-center text-red-400 py-4 text-xs">Ошибка загрузки целей</div>';
+            return;
+        }
+        
         let data = await res.json();
         
-        const listEl = document.getElementById('goals-list');
-        if (!listEl) return;
-        
         if (data.length === 0) {
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет целей. Создайте первую цель!</div>';
+            listEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Нет целей. Создайте первую цель!</div>';
             return;
         }
         
@@ -2489,7 +3398,7 @@ async function loadGoals() {
         });
         
         listEl.innerHTML = data.map(goal => {
-            const progressPercent = Math.min(goal.progress_percent, 100);
+            const progressPercent = goal.target_xp > 0 ? Math.min((goal.current_xp / goal.target_xp) * 100, 100) : 0;
             const isCompleted = goal.is_completed === 1;
             const daysLeft = goal.target_date ? Math.ceil((new Date(goal.target_date) - new Date()) / (1000 * 60 * 60 * 24)) : null;
             

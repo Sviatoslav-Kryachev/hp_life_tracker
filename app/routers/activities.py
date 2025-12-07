@@ -25,8 +25,9 @@ async def create_activity(
     current_user: User = Depends(get_current_user)
 ):
     """Создать новую активность"""
-    # Убираем category если передано (поля нет в модели)
-    activity_data.pop('category', None)
+    # Устанавливаем category по умолчанию если не передано
+    if 'category' not in activity_data or not activity_data.get('category'):
+        activity_data['category'] = 'general'
     
     activity = Activity(user_id=current_user.id, **activity_data)
     db.add(activity)
@@ -51,8 +52,9 @@ async def update_activity(
     if not activity:
         raise HTTPException(status_code=404, detail="Активность не найдена")
     
-    # Убираем category если передано (поля нет в модели)
-    activity_data.pop('category', None)
+    # Устанавливаем category по умолчанию если не передано
+    if 'category' in activity_data and not activity_data.get('category'):
+        activity_data['category'] = 'general'
     
     for field, value in activity_data.items():
         if hasattr(activity, field):

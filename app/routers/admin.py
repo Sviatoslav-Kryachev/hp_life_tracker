@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 from app.models.base import User, XPWallet, ActivityLog, RewardPurchase, Streak, Activity
@@ -59,11 +59,10 @@ async def get_child_stats(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Получить полную статистику подопечного"""
+    """Получить статистику подопечного"""
     if not check_admin(current_user):
         raise HTTPException(status_code=403, detail="Доступ запрещён")
     
-    # Проверяем, что это действительно наш подопечный
     child = db.query(User).filter(
         User.id == child_id,
         User.parent_id == current_user.id
@@ -72,7 +71,6 @@ async def get_child_stats(
     if not child:
         raise HTTPException(status_code=404, detail="Подопечный не найден")
     
-    # Получаем кошелёк
     wallet = db.query(XPWallet).filter(XPWallet.user_id == child_id).first()
     if not wallet:
         wallet = XPWallet(user_id=child_id, balance=0.0, level=1, total_earned=0.0, total_spent=0.0)
@@ -80,54 +78,52 @@ async def get_child_stats(
         db.commit()
         db.refresh(wallet)
     
-    # Получаем streak
     streak = db.query(Streak).filter(Streak.user_id == child_id).first()
     if not streak:
-        streak = Streak(user_id=child_id, current_streak=0, longest_streak=0)
+        streak = Streak(user_id=child_id, current_streak=0, longest_streak=0, total_days_active=0)
+        db.add(streak)
+        db.commit()
+        db.refresh(streak)
     
-    # Статистика за сегодня
-    today = datetime.utcnow().date()
-    today_start = datetime.combine(today, datetime.min.time())
-    today_end = datetime.combine(today, datetime.max.time())
-    
-    today_earned = db.query(func.sum(ActivityLog.xp_earned)).filter(
-        ActivityLog.user_id == child_id,
-        ActivityLog.end_time >= today_start,
-        ActivityLog.end_time <= today_end
-    ).scalar() or 0
-    
-    today_time = db.query(func.sum(ActivityLog.duration_minutes)).filter(
-        ActivityLog.user_id == child_id,
-        ActivityLog.end_time >= today_start,
-        ActivityLog.end_time <= today_end
-    ).scalar() or 0
-    
-    # Статистика за неделю
-    week_ago = today - timedelta(days=7)
-    week_earned = db.query(func.sum(ActivityLog.xp_earned)).filter(
-        ActivityLog.user_id == child_id,
-        ActivityLog.end_time >= week_ago
-    ).scalar() or 0
-    
-    # Количество активностей
     activities_count = db.query(Activity).filter(Activity.user_id == child_id).count()
     
-    return {
-        "user_id": child.id,
-        "username": child.username,
-        "email": child.email,
-        "balance": wallet.balance,
-        "level": wallet.level,
-        "total_earned": wallet.total_earned,
-        "total_spent": wallet.total_spent,
-        "current_streak": streak.current_streak,
-        "longest_streak": streak.longest_streak,
-        "total_days_active": streak.total_days_active,
-        "activities_count": activities_count,
-        "today_earned": today_earned,
-        "today_time": today_time,
-        "week_earned": week_earned
-    }
+    # Статистика за сегодня
+    today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    today_logs = db.query(ActivityLog).filter(
+        ActivityLog.user_id == child_id,
+        ActivityLog.end_time >= today_start,
+        ActivityLog.xp_earned > 0
+    ).all()
+    
+    today_earned = sum(log.xp_earned for log in today_logs)
+    today_time = sum(log.duration_minutes or 0 for log in today_logs)
+    
+    # Статистика за неделю
+    week_start = datetime.utcnow() - timedelta(days=7)
+    week_logs = db.query(ActivityLog).filter(
+        ActivityLog.user_id == child_id,
+        ActivityLog.end_time >= week_start,
+        ActivityLog.xp_earned > 0
+    ).all()
+    
+    week_earned = sum(log.xp_earned for log in week_logs)
+    
+    return ChildStats(
+        user_id=child.id,
+        username=child.username,
+        email=child.email,
+        balance=wallet.balance,
+        level=wallet.level,
+        total_earned=wallet.total_earned,
+        total_spent=wallet.total_spent,
+        current_streak=streak.current_streak,
+        longest_streak=streak.longest_streak,
+        total_days_active=streak.total_days_active,
+        activities_count=activities_count,
+        today_earned=today_earned,
+        today_time=today_time,
+        week_earned=week_earned
+    )
 
 
 @router.get("/child/{child_id}/history")
@@ -149,28 +145,31 @@ async def get_child_history(
     if not child:
         raise HTTPException(status_code=404, detail="Подопечный не найден")
     
-    # История заработков
-    earnings = db.query(ActivityLog).filter(
+    # Получаем логи активностей
+    logs = db.query(ActivityLog).filter(
         ActivityLog.user_id == child_id,
+        ActivityLog.end_time.isnot(None),
         ActivityLog.xp_earned > 0
     ).order_by(ActivityLog.end_time.desc()).limit(limit).all()
     
-    # История расходов
+    # Получаем покупки наград
     spendings = db.query(RewardPurchase).filter(
         RewardPurchase.user_id == child_id
     ).order_by(RewardPurchase.purchased_at.desc()).limit(limit).all()
     
     history = []
     
-    for log in earnings:
-        if log.end_time:
-            history.append({
-                "type": "earn",
-                "description": log.activity.name,
-                "amount": round(log.xp_earned, 1),
-                "date": log.end_time.isoformat(),
-                "duration_minutes": round(log.duration_minutes, 1)
-            })
+    for log in logs:
+        activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
+        activity_name = activity.name if activity else "Неизвестная активность"
+        
+        history.append({
+            "type": "earn",
+            "description": activity_name,
+            "amount": round(log.xp_earned, 1),
+            "date": log.end_time.isoformat(),
+            "duration_minutes": round(log.duration_minutes, 1)
+        })
     
     for purchase in spendings:
         history.append({
@@ -189,10 +188,11 @@ async def get_child_history(
 @router.get("/child/{child_id}/activities")
 async def get_child_activities(
     child_id: int,
+    category: Optional[str] = None,  # Фильтр по категории
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Получить список активностей подопечного"""
+    """Получить список активностей подопечного с возможностью фильтрации по категории"""
     if not check_admin(current_user):
         raise HTTPException(status_code=403, detail="Доступ запрещён")
     
@@ -204,16 +204,79 @@ async def get_child_activities(
     if not child:
         raise HTTPException(status_code=404, detail="Подопечный не найден")
     
-    activities = db.query(Activity).filter(Activity.user_id == child_id).all()
+    query = db.query(Activity).filter(Activity.user_id == child_id)
     
-    return [
-        {
-            "id": act.id,
-            "name": act.name,
-            "xp_per_hour": act.xp_per_hour
-        }
-        for act in activities
-    ]
+    # Фильтр по категории если указан
+    if category:
+        query = query.filter(Activity.category == category)
+    
+    activities = query.all()
+    return activities
+
+
+@router.get("/child/{child_id}/category-stats")
+async def get_child_category_stats(
+    child_id: int,
+    period: str = "week",  # week, month, year
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Получить статистику по категориям для подопечного"""
+    if not check_admin(current_user):
+        raise HTTPException(status_code=403, detail="Доступ запрещён")
+    
+    child = db.query(User).filter(
+        User.id == child_id,
+        User.parent_id == current_user.id
+    ).first()
+    
+    if not child:
+        raise HTTPException(status_code=404, detail="Подопечный не найден")
+    
+    # Определяем период
+    now = datetime.utcnow()
+    if period == "week":
+        start_date = now - timedelta(days=7)
+    elif period == "month":
+        start_date = now - timedelta(days=30)
+    elif period == "year":
+        start_date = now - timedelta(days=365)
+    else:
+        start_date = now - timedelta(days=7)
+    
+    # Получаем логи активностей за период
+    logs = db.query(ActivityLog).join(Activity).filter(
+        ActivityLog.user_id == child_id,
+        ActivityLog.end_time >= start_date,
+        ActivityLog.xp_earned > 0
+    ).all()
+    
+    # Группируем по категориям
+    category_stats = {}
+    for log in logs:
+        category = log.activity.category if log.activity.category else "general"
+        if category not in category_stats:
+            category_stats[category] = {
+                "category": category,
+                "total_xp": 0.0,
+                "total_time": 0.0,  # в минутах
+                "activity_count": 0
+            }
+        
+        category_stats[category]["total_xp"] += log.xp_earned
+        category_stats[category]["total_time"] += log.duration_minutes or 0
+        category_stats[category]["activity_count"] += 1
+    
+    # Преобразуем в список и сортируем по XP
+    result = list(category_stats.values())
+    result.sort(key=lambda x: x["total_xp"], reverse=True)
+    
+    return {
+        "period": period,
+        "categories": result,
+        "total_xp": sum(cat["total_xp"] for cat in result),
+        "total_time": sum(cat["total_time"] for cat in result)
+    }
 
 
 @router.get("/child/{child_id}/goals")
@@ -234,36 +297,9 @@ async def get_child_goals(
     if not child:
         raise HTTPException(status_code=404, detail="Подопечный не найден")
     
-    from app.routers.goals import update_goal_progress
-    from app.models.base import Goal, Activity
-    
-    goals = db.query(Goal).filter(Goal.user_id == child_id).order_by(Goal.created_at.desc()).all()
-    
-    result = []
-    for goal in goals:
-        update_goal_progress(db, goal)
-        
-        activity_name = None
-        if goal.activity_id:
-            activity = db.query(Activity).filter(Activity.id == goal.activity_id).first()
-            activity_name = activity.name if activity else None
-        
-        progress_percent = (goal.current_xp / goal.target_xp * 100) if goal.target_xp > 0 else 0
-        
-        result.append({
-            "id": goal.id,
-            "title": goal.title,
-            "description": goal.description,
-            "target_xp": goal.target_xp,
-            "current_xp": goal.current_xp,
-            "progress_percent": min(progress_percent, 100),
-            "is_completed": goal.is_completed,
-            "target_date": goal.target_date.isoformat() if goal.target_date else None,
-            "activity_name": activity_name,
-            "created_at": goal.created_at.isoformat()
-        })
-    
-    return result
+    from app.models.base import Goal
+    goals = db.query(Goal).filter(Goal.user_id == child_id).all()
+    return goals
 
 
 @router.get("/invite-code")
@@ -271,26 +307,14 @@ async def get_invite_code(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Получить или создать код приглашения"""
+    """Получить код приглашения текущего пользователя"""
     if not check_admin(current_user):
         raise HTTPException(status_code=403, detail="Доступ запрещён")
     
-    # Если код уже есть, возвращаем его
-    if current_user.invite_code:
-        return {
-            "invite_code": current_user.invite_code,
-            "invite_link": f"/register?invite={current_user.invite_code}"
-        }
+    if not current_user.invite_code:
+        # Генерируем код если его нет
+        import secrets
+        current_user.invite_code = secrets.token_urlsafe(16)
+        db.commit()
     
-    # Генерируем новый код
-    import secrets
-    invite_code = secrets.token_urlsafe(16)[:16]  # 16 символов
-    
-    current_user.invite_code = invite_code
-    db.commit()
-    
-    return {
-        "invite_code": invite_code,
-        "invite_link": f"/register?invite={invite_code}"
-    }
-
+    return {"invite_code": current_user.invite_code}

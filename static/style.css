@@ -134,6 +134,17 @@ html {
         flex-direction: column;
         min-height: 0;
     }
+    
+    /* История транзакций не должна растягиваться */
+    #history {
+        height: auto !important;
+        align-self: start;
+    }
+    
+    #history > div {
+        height: auto !important;
+        flex: none !important;
+    }
 }
 
 /* Сдвиг иконки выпадающего списка (chevron) влево для всех селектов */
@@ -149,4 +160,21 @@ select {
 #goal-activity,
 #manual-activity-select {
     background-position: right 1.25rem center;
+}
+
+/* Кастомный dropdown для категорий */
+.custom-dropdown {
+    position: relative;
+}
+
+.custom-dropdown button {
+    cursor: pointer;
+}
+
+.custom-dropdown button i {
+    transition: transform 0.2s;
+}
+
+.custom-dropdown button i.rotate-180 {
+    transform: rotate(180deg);
 }
