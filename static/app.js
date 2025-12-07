@@ -76,6 +76,19 @@ const translations = {
         "fri": "Пт",
         "sat": "Сб",
         "sun": "Вс",
+        // Months
+        "month_jan": "Янв",
+        "month_feb": "Фев",
+        "month_mar": "Мар",
+        "month_apr": "Апр",
+        "month_may": "Май",
+        "month_jun": "Июн",
+        "month_jul": "Июл",
+        "month_aug": "Авг",
+        "month_sep": "Сен",
+        "month_oct": "Окт",
+        "month_nov": "Ноя",
+        "month_dec": "Дек",
         // Categories
         "category_general": "Общее",
         "category_study": "Учеба",
@@ -139,7 +152,8 @@ const translations = {
         "auth_required": "Требуется авторизация",
         "error_loading_recommendations": "Ошибка загрузки рекомендаций",
         "no_recommendations": "Нет рекомендаций. Продолжайте заниматься!",
-        "start_tracking": "Начать отслеживание"
+        "start_tracking": "Начать отслеживание",
+        "click_for_details": "Кликните для деталей"
     },
     uk: {
         // Header
@@ -215,6 +229,19 @@ const translations = {
         "fri": "Пт",
         "sat": "Сб",
         "sun": "Нд",
+        // Months
+        "month_jan": "Січ",
+        "month_feb": "Лют",
+        "month_mar": "Бер",
+        "month_apr": "Кві",
+        "month_may": "Тра",
+        "month_jun": "Чер",
+        "month_jul": "Лип",
+        "month_aug": "Сер",
+        "month_sep": "Вер",
+        "month_oct": "Жов",
+        "month_nov": "Лис",
+        "month_dec": "Гру",
         // Categories
         "category_general": "Загальне",
         "category_study": "Навчання",
@@ -278,7 +305,8 @@ const translations = {
         "auth_required": "Потрібна авторизація",
         "error_loading_recommendations": "Помилка завантаження рекомендацій",
         "no_recommendations": "Немає рекомендацій. Продовжуйте займатися!",
-        "start_tracking": "Почати відстеження"
+        "start_tracking": "Почати відстеження",
+        "click_for_details": "Клікніть для деталей"
     },
     de: {
         // Header
@@ -354,6 +382,19 @@ const translations = {
         "fri": "Fr",
         "sat": "Sa",
         "sun": "So",
+        // Months
+        "month_jan": "Jan",
+        "month_feb": "Feb",
+        "month_mar": "Mär",
+        "month_apr": "Apr",
+        "month_may": "Mai",
+        "month_jun": "Jun",
+        "month_jul": "Jul",
+        "month_aug": "Aug",
+        "month_sep": "Sep",
+        "month_oct": "Okt",
+        "month_nov": "Nov",
+        "month_dec": "Dez",
         // Categories
         "category_general": "Allgemein",
         "category_study": "Lernen",
@@ -417,7 +458,8 @@ const translations = {
         "auth_required": "Autorisierung erforderlich",
         "error_loading_recommendations": "Fehler beim Laden der Empfehlungen",
         "no_recommendations": "Keine Empfehlungen. Machen Sie weiter!",
-        "start_tracking": "Verfolgung starten"
+        "start_tracking": "Verfolgung starten",
+        "click_for_details": "Klicken Sie für Details"
     },
     en: {
         // Header
@@ -493,6 +535,19 @@ const translations = {
         "fri": "Fri",
         "sat": "Sat",
         "sun": "Sun",
+        // Months
+        "month_jan": "Jan",
+        "month_feb": "Feb",
+        "month_mar": "Mar",
+        "month_apr": "Apr",
+        "month_may": "May",
+        "month_jun": "Jun",
+        "month_jul": "Jul",
+        "month_aug": "Aug",
+        "month_sep": "Sep",
+        "month_oct": "Oct",
+        "month_nov": "Nov",
+        "month_dec": "Dec",
         // Categories
         "category_general": "General",
         "category_study": "Study",
@@ -556,7 +611,8 @@ const translations = {
         "auth_required": "Authorization required",
         "error_loading_recommendations": "Error loading recommendations",
         "no_recommendations": "No recommendations. Keep practicing!",
-        "start_tracking": "Start tracking"
+        "start_tracking": "Start tracking",
+        "click_for_details": "Click for details"
     }
 };
 
@@ -1150,6 +1206,9 @@ async function loadCalendar(period = currentCalendarPeriod) {
         if (!containerEl) return;
         
         if (period === 'week') {
+            // Маппинг индексов дней недели (0=Пн, 6=Вс) на ключи переводов
+            const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+            
             containerEl.innerHTML = `
                 <div class="flex justify-between gap-0.5 md:gap-1" id="week-calendar">
                     ${data.map((day, index) => {
@@ -1160,11 +1219,15 @@ async function loadCalendar(period = currentCalendarPeriod) {
                         const dayDate = new Date(day.date);
                         const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
                         
+                        // Получаем локализованное название дня недели
+                        const dayKey = dayKeys[index];
+                        const localizedDayName = dayKey ? t(dayKey) : day.day_name;
+                        
                         return `
                             <div class="flex flex-col items-center cursor-pointer ${isTodayDate ? 'scale-110' : ''}" 
                                  onclick="showDayDetails('${day.date}')"
-                                 title="Кликните для деталей: ${day.earned} XP заработано, ${day.spent} XP потрачено">
-                                <span class="text-xs text-gray-500 mb-1">${day.day_name}</span>
+                                 title="${t('click_for_details')}: ${day.earned} ${t('earned_xp')}, ${day.spent} ${t('spent_xp')}">
+                                <span class="text-xs text-gray-500 mb-1">${localizedDayName}</span>
                                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all hover:scale-110
                                     ${isTodayDate ? 'bg-indigo-500 text-white ring-2 ring-indigo-300' : 
                                       hasActivity ? `bg-emerald-${Math.round(intensity * 4 + 1)}00 text-emerald-800` : 'bg-gray-100 text-gray-400'}">
@@ -1219,7 +1282,7 @@ async function loadCalendar(period = currentCalendarPeriod) {
                 calendarHTML += `
                     <div class="aspect-square flex flex-col items-center justify-center rounded-lg transition-all hover:bg-gray-50 cursor-pointer ${isTodayDate ? 'ring-2 ring-indigo-400 scale-105 bg-indigo-50' : ''}" 
                          onclick="showDayDetails('${day.date}')"
-                         title="Кликните для деталей: ${day.earned} XP заработано, ${day.spent} XP потрачено">
+                         title="${t('click_for_details')}: ${day.earned} ${t('earned_xp')}, ${day.spent} ${t('spent_xp')}">
                         <span class="text-[10px] font-medium ${isTodayDate ? 'text-indigo-600 font-bold' : 'text-gray-600'}">${dayNum}</span>
                         ${hasActivity ? `
                             <div class="w-2 h-2 rounded-full mt-0.5 ${isTodayDate ? 'bg-indigo-500' : intensity > 0.5 ? 'bg-emerald-500' : intensity > 0.25 ? 'bg-emerald-400' : 'bg-emerald-300'}"></div>
@@ -1232,13 +1295,29 @@ async function loadCalendar(period = currentCalendarPeriod) {
             containerEl.innerHTML = calendarHTML;
         } else if (period === 'year') {
             // Календарь года - по месяцам
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            
+            // Маппинг номеров месяцев на ключи переводов
+            const monthKeys = [
+                'month_jan', 'month_feb', 'month_mar', 'month_apr', 'month_may', 'month_jun',
+                'month_jul', 'month_aug', 'month_sep', 'month_oct', 'month_nov', 'month_dec'
+            ];
+            
             containerEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h4 class="text-sm font-bold text-gray-700">${currentYear}</h4>
+                </div>
                 <div class="grid grid-cols-4 gap-2">
                     ${data.map(month => {
                         const hasActivity = month.earned > 0 || month.spent > 0;
                         const intensity = Math.min(month.earned / 2000, 1);
                         const today = new Date();
                         const isCurrentMonth = today.getMonth() + 1 === month.month;
+                        
+                        // Получаем локализованное название месяца
+                        const monthKey = monthKeys[month.month - 1];
+                        const localizedMonthName = t(monthKey);
                         
                         let bgColor = 'bg-gray-100';
                         let textColor = 'text-gray-400';
@@ -1259,10 +1338,10 @@ async function loadCalendar(period = currentCalendarPeriod) {
                         }
                         
                         return `
-                            <div class="flex flex-col items-center p-2 rounded-lg transition-all hover:shadow-md cursor-pointer ${isCurrentMonth ? 'bg-indigo-50 ring-2 ring-indigo-300' : ''}" 
+                            <div class="flex flex-col items-center p-2 rounded-lg transition-all hover:shadow-md cursor-pointer ${isCurrentMonth ? 'ring-2 ring-indigo-300' : ''}" 
                                  onclick="showMonthDetails(${month.month})"
-                                 title="Кликните для деталей: ${month.month_name} - ${month.earned} XP заработано, ${month.spent} XP потрачено">
-                                <span class="text-xs font-semibold ${isCurrentMonth ? 'text-indigo-600' : 'text-gray-600'} mb-1">${month.month_name}</span>
+                                 title="${t('click_for_details')}: ${localizedMonthName} - ${month.earned} ${t('earned_xp')}, ${month.spent} ${t('spent_xp')}">
+                                <span class="text-xs font-semibold ${isCurrentMonth ? 'text-indigo-600' : 'text-gray-600'} mb-1">${localizedMonthName}</span>
                                 <div class="w-full h-8 rounded flex items-center justify-center text-[10px] font-bold ${bgColor} ${textColor}">
                                     ${Math.round(month.earned)}
                                 </div>
