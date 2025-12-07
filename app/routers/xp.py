@@ -314,19 +314,23 @@ async def get_day_details(
         ActivityLog.xp_earned > 0
     ).order_by(ActivityLog.end_time.desc()).all()
     
-    # Расходы за день
-    spendings = db.query(RewardPurchase).filter(
+    # Покупки/награды за день (включая бонусы за достижение целей)
+    purchases = db.query(RewardPurchase).filter(
         RewardPurchase.user_id == current_user.id,
         RewardPurchase.purchased_at >= day_start,
         RewardPurchase.purchased_at < day_end
     ).order_by(RewardPurchase.purchased_at.desc()).all()
     
+    # Разделяем на заработки (отрицательный xp_spent) и траты (положительный xp_spent)
+    bonus_earnings = [p for p in purchases if p.xp_spent < 0]
+    spendings = [p for p in purchases if p.xp_spent > 0]
+    
     # Общая статистика
-    total_earned = sum(log.xp_earned for log in earnings)
-    total_spent = sum(purchase.xp_spent for purchase in spendings)
+    total_earned = sum(log.xp_earned for log in earnings) + sum(abs(p.xp_spent) for p in bonus_earnings)
+    total_spent = sum(p.xp_spent for p in spendings)
     total_time = sum(log.duration_minutes for log in earnings)
     
-    # Детали заработков
+    # Детали заработков (активности + бонусы)
     earnings_details = []
     for log in earnings:
         earnings_details.append({
@@ -336,7 +340,19 @@ async def get_day_details(
             "time": log.end_time.isoformat() if log.end_time else None
         })
     
-    # Детали расходов
+    # Добавляем бонусы за достижение целей как заработки
+    for purchase in bonus_earnings:
+        earnings_details.append({
+            "activity_name": purchase.reward_name,
+            "xp_earned": round(abs(purchase.xp_spent), 1),
+            "duration_minutes": None,
+            "time": purchase.purchased_at.isoformat() if purchase.purchased_at else None
+        })
+    
+    # Сортируем заработки по времени
+    earnings_details.sort(key=lambda x: x["time"] or "", reverse=True)
+    
+    # Детали расходов (только реальные траты)
     spendings_details = []
     for purchase in spendings:
         spendings_details.append({
@@ -381,19 +397,34 @@ async def get_full_history(
     
     for log in earnings:
         if log.end_time:
+            # Безопасно получаем название активности
+            activity_name = "Неизвестная активность"
+            if log.activity:
+                activity_name = log.activity.name
+            elif log.activity_id:
+                # Если активность не загружена, пытаемся получить её из базы
+                activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
+                if activity:
+                    activity_name = activity.name
+            
             history.append({
                 "type": "earn",
-                "description": log.activity.name,
+                "description": activity_name,
                 "amount": round(log.xp_earned, 1),
                 "date": log.end_time.isoformat(),
-                "duration_minutes": round(log.duration_minutes, 1)
+                "duration_minutes": round(log.duration_minutes, 1) if log.duration_minutes else None
             })
     
     for purchase in spendings:
+        # Если xp_spent отрицательный, это заработок (например, бонус за достижение цели)
+        # Если положительный, это трата (покупка награды)
+        is_earn = purchase.xp_spent < 0
+        amount = abs(purchase.xp_spent)  # Используем абсолютное значение для отображения
+        
         history.append({
-            "type": "spend",
+            "type": "earn" if is_earn else "spend",
             "description": purchase.reward_name,
-            "amount": round(purchase.xp_spent, 1),
+            "amount": round(amount, 1),
             "date": purchase.purchased_at.isoformat(),
             "duration_minutes": None
         })

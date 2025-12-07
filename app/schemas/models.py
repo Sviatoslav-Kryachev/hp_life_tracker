@@ -38,4 +38,5 @@ class ActivityOut(ActivityBase):
 # ----------------- MANUAL TIMER -----------------
 class ManualTimeCreate(BaseModel):
     activity_id: int
-    minutes: float
+    minutes: Optional[float] = None  # Для time типа
+    quantity: Optional[float] = None  # Для quantity типа

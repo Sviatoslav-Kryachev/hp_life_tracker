@@ -48,6 +48,9 @@ class Activity(Base):
     name = Column(String, nullable=False)
     category = Column(String, default="general")  # Категория: учеба, спорт, хобби и т.д.
     xp_per_hour = Column(Float, default=10.0)
+    unit_type = Column(String, default="time")  # "time" или "quantity" - единица измерения
+    xp_per_unit = Column(Float, nullable=True)  # XP за единицу (для quantity типа)
+    display_order = Column(Integer, default=0)  # Порядок отображения (для drag and drop)
     user = relationship("User", back_populates="activities")
     activity_logs = relationship("ActivityLog", back_populates="activity")
     timer_logs = relationship("TimerLog", back_populates="activity")
@@ -117,6 +120,9 @@ class Goal(Base):
     description = Column(String, nullable=True)  # Описание
     target_xp = Column(Float, nullable=False)  # Целевое количество XP
     current_xp = Column(Float, default=0.0)  # Текущий прогресс
+    target_quantity = Column(Float, nullable=True)  # Целевое количество (для quantity типа активности)
+    current_quantity = Column(Float, default=0.0)  # Текущее количество (для quantity типа активности)
+    completion_bonus_xp = Column(Float, default=0.0)  # Бонус XP за достижение цели
     target_date = Column(DateTime, nullable=True)  # Дата дедлайна (опционально)
     activity_id = Column(Integer, ForeignKey("activities.id"), nullable=True)  # Связанная активность (опционально)
     is_completed = Column(Integer, default=0)  # 1 = выполнена, 0 = в процессе

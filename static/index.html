@@ -337,9 +337,9 @@
             <!-- Create/Edit Goal Modal -->
             <div id="create-goal-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" lang="ru" onclick="if(event.target === this) closeCreateGoalModal()">
                 <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 my-8 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800" id="goal-modal-title" data-i18n="new_goal">🎯 Новая цель</h3>
-                        <button onclick="closeCreateGoalModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                    <div class="flex justify-between items-center mb-4 relative">
+                        <h3 class="text-2xl font-bold text-gray-800 text-center flex-1" id="goal-modal-title" data-i18n="new_goal">🎯 Новая цель</h3>
+                        <button onclick="closeCreateGoalModal()" class="text-gray-400 hover:text-gray-600 text-2xl absolute right-0">&times;</button>
                     </div>
                     <form id="create-goal-form" class="space-y-4" lang="ru">
                         <input type="hidden" id="edit-goal-id" value="">
@@ -366,14 +366,51 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="goal_title">Название цели</label>
                             <input type="text" id="goal-title" data-i18n-placeholder="goal_title_placeholder" placeholder="Например: Изучить 100 часов немецкого"
-                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
+                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
                         </div>
                         
-                        <div>
+                        <!-- Переключатель режима цели (только для активностей в штуках) -->
+                        <div id="goal-mode-selector" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Выберите тип цели:</label>
+                            <div class="flex gap-3 mb-3">
+                                <label class="flex-1 p-3 border-2 border-purple-300 rounded-xl cursor-pointer hover:bg-purple-50 transition-all goal-mode-option">
+                                    <input type="radio" name="goal-mode" value="quantity" class="sr-only" checked>
+                                    <div class="text-center">
+                                        <i class="fas fa-hashtag text-purple-600 mb-1"></i>
+                                        <div class="text-sm font-medium text-gray-700">По количеству</div>
+                                    </div>
+                                </label>
+                                <label class="flex-1 p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all goal-mode-option">
+                                    <input type="radio" name="goal-mode" value="xp" class="sr-only">
+                                    <div class="text-center">
+                                        <i class="fas fa-coins text-purple-600 mb-1"></i>
+                                        <div class="text-sm font-medium text-gray-700">По XP</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Поле целевого количества XP (для активностей во времени или выбран режим XP) -->
+                        <div id="goal-xp-container">
                             <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="target_xp">Целевое количество XP <span class="text-red-500">*</span></label>
                             <input type="number" id="goal-target-xp" placeholder="1000" min="1" step="1"
                                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
                             <p class="text-xs text-gray-500 mt-1" data-i18n="target_xp_description">Сколько XP нужно заработать для достижения цели</p>
+                        </div>
+                        
+                        <!-- Поле количества штук (только для активностей в штуках в режиме количества) -->
+                        <div id="goal-quantity-container" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="target_quantity">К-во для достижения <span class="text-red-500">*</span></label>
+                            <input type="number" id="goal-target-quantity" placeholder="1500" min="1" step="1"
+                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="target_quantity_description">Целевое количество (для активностей в штуках)</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="completion_bonus_xp">Бонус XP за достижение цели</label>
+                            <input type="number" id="goal-completion-bonus" placeholder="0" min="0" step="1" value="0"
+                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="completion_bonus_xp_description">Дополнительный бонус XP при достижении цели</p>
                         </div>
                         
                         <div>
@@ -499,14 +536,19 @@
 
                     <!-- Новая активность -->
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 pt-6 pb-4 rounded-2xl border-2 border-dashed border-blue-200">
-                        <h3 class="text-xl font-semibold mb-4 text-gray-800"><span data-i18n="new_activity">➕ Новая активность</span></h3>
-                        <form id="new-activity-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-center placeholder:text-center" required>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center"><span data-i18n="new_activity">➕ Новая активность</span></h3>
+                        <form id="new-activity-form" class="space-y-4">
+                            <!-- Название активности (широкое) -->
+                            <div>
+                                <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-lg" required>
+                            </div>
+                            
+                            <!-- Выбор категории -->
                             <div class="relative">
                                 <div id="activity-category-wrapper" class="custom-dropdown">
                                     <input type="hidden" id="activity-category" value="general">
-                                    <button type="button" id="activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-left flex items-center gap-2 min-w-0">
-                                        <span id="activity-category-text" class="flex-1 min-w-0 break-words line-clamp-2">Общее</span>
+                                    <button type="button" id="activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-center flex items-center justify-center gap-2 min-w-0">
+                                        <span id="activity-category-text" class="flex-1 min-w-0 break-words line-clamp-2 text-center">Общее</span>
                                         <i class="fas fa-chevron-down text-gray-500 text-sm flex-shrink-0"></i>
                                     </button>
                                     <div id="activity-category-dropdown" class="hidden absolute z-50 min-w-full w-max max-w-md mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
@@ -514,11 +556,39 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="number" id="xp-per-hour" data-i18n-placeholder="xp_per_hour" placeholder="XP/час" value="60" class="p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all">
-                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                                <i class="fas fa-plus"></i>
-                                <span data-i18n="create">Создать</span>
-                            </button>
+                            
+                            <!-- Время и Количество -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Время (минуты) -->
+                                <div class="flex flex-col items-center justify-center">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 text-center" data-i18n="unit_time">Время (минуты)</label>
+                                    <select id="activity-unit-type" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-center">
+                                        <option value="time" data-i18n="unit_time">Время (минуты)</option>
+                                        <option value="quantity" data-i18n="unit_quantity">Количество (штуки)</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Количество (отцентрировано) -->
+                                <div class="flex flex-col items-center justify-center">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="unit_quantity">Количество</label>
+                                    <div id="activity-xp-input-container" class="w-full">
+                                        <div id="activity-xp-time" class="w-full">
+                                            <input type="number" id="xp-per-hour" data-i18n-placeholder="xp_per_hour" placeholder="XP/час" value="60" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all text-center">
+                                        </div>
+                                        <div id="activity-xp-quantity" class="w-full hidden">
+                                            <input type="number" id="xp-per-unit" data-i18n-placeholder="xp_per_unit" placeholder="XP/штука" value="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all text-center">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Кнопка Создать (красиво размещена) -->
+                            <div class="flex justify-center pt-2">
+                                <button type="submit" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 font-semibold text-lg min-w-[200px]">
+                                    <i class="fas fa-plus"></i>
+                                    <span data-i18n="create">Создать</span>
+                                </button>
+                            </div>
                         </form>
                         <p id="activity-message" class="text-sm mt-2 mb-0 hidden"></p>
                     </div>
@@ -609,11 +679,11 @@
                             </div>
                         </div>
 
-                        <div class="p-5 flex-1 flex flex-col overflow-hidden">
+                        <div class="p-5 flex-1 flex flex-col">
                             <!-- Список наград -->
                             <div class="mb-5 flex flex-col">
-                                <div id="rewards-list-visible" class="space-y-2 overflow-x-hidden pr-2 max-h-[300px] overflow-y-auto"></div>
-                                <div id="rewards-list-hidden" class="space-y-2 overflow-x-hidden pr-2 hidden max-h-[300px] overflow-y-auto"></div>
+                                <div id="rewards-list-visible" class="space-y-2 overflow-x-hidden pr-2"></div>
+                                <div id="rewards-list-hidden" class="space-y-2 overflow-x-hidden pr-2 hidden transition-all duration-300" style="max-height: 0; overflow: hidden;"></div>
                                 <button id="rewards-accordion-btn" onclick="toggleRewardsAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-amber-100 to-orange-100 hover:from-amber-200 hover:to-orange-200 text-amber-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
                                     <span class="accordion-text" data-i18n="show_all_rewards">Показать все награды</span>
                                     <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
@@ -666,7 +736,7 @@
                             <form id="new-reward-form" class="space-y-3">
                                 <div class="flex gap-2">
                                     <input type="text" id="reward-name" data-i18n-placeholder="reward_name" placeholder="Название награды"
-                                           class="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 placeholder-gray-400" required>
+                                           class="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 placeholder-gray-400 text-center placeholder:text-center" required>
                                     <input type="number" id="reward-cost" placeholder="XP" min="1" value="10"
                                            class="w-20 px-3 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 text-center font-medium" required>
                                 </div>
@@ -747,7 +817,7 @@
             </div>
             <form id="edit-activity-form" class="space-y-4">
                 <input type="hidden" id="edit-activity-id">
-                <input type="text" id="edit-activity-name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-left" required>
+                <input type="text" id="edit-activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-left" required>
                 <div class="relative">
                     <div id="edit-activity-category-wrapper" class="custom-dropdown">
                         <input type="hidden" id="edit-activity-category" value="general">
@@ -760,13 +830,26 @@
                         </div>
                     </div>
                 </div>
-                <input type="number" id="edit-xp-per-hour" placeholder="XP/час" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" min="1">
+                <div class="relative">
+                    <select id="edit-activity-unit-type" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white">
+                        <option value="time" data-i18n="unit_time">Время (минуты)</option>
+                        <option value="quantity" data-i18n="unit_quantity">Количество (штуки)</option>
+                    </select>
+                </div>
+                <div id="edit-activity-xp-input-container" class="space-y-4">
+                    <div id="edit-activity-xp-time">
+                        <input type="number" id="edit-xp-per-hour" data-i18n-placeholder="xp_per_hour" placeholder="XP/час" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" min="1">
+                    </div>
+                    <div id="edit-activity-xp-quantity" class="hidden">
+                        <input type="number" id="edit-xp-per-unit" data-i18n-placeholder="xp_per_unit" placeholder="XP/штука" value="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" min="0.1">
+                    </div>
+                </div>
                 <div class="flex gap-3 pt-2">
                     <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-save"></i> Сохранить
+                        <i class="fas fa-save"></i> <span data-i18n="save">Сохранить</span>
                     </button>
                     <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i> Отмена
+                        <i class="fas fa-times"></i> <span data-i18n="cancel">Отмена</span>
                     </button>
                 </div>
             </form>
@@ -807,26 +890,31 @@
         </div>
     </div>
 
-    <!-- Модальное окно ручного ввода времени -->
+    <!-- Модальное окно ручного ввода времени/количества -->
     <div id="manual-time-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeManualTimeModal()">
         <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">⏱️ Добавить время вручную</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="manual-modal-title" data-i18n="manual_time">⏱️ Добавить время вручную</h3>
                 <button onclick="closeManualTimeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <form id="manual-time-form" class="space-y-4">
                 <select id="manual-activity-select" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                    <option value="">Выберите активность</option>
+                    <option value="" data-i18n="select_activity_label">Выберите активность</option>
                 </select>
-                <input type="number" id="manual-minutes" placeholder="Минут" min="1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                <div id="manual-time-input-container">
+                    <input type="number" id="manual-minutes" data-i18n-placeholder="minutes_placeholder" placeholder="Минут" min="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                </div>
+                <div id="manual-quantity-input-container" class="hidden">
+                    <input type="number" id="manual-quantity" data-i18n-placeholder="quantity_placeholder" placeholder="Введите к-во" min="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
+                </div>
                 <div class="flex gap-3 pt-2">
                     <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-plus"></i> Добавить
+                        <i class="fas fa-plus"></i> <span data-i18n="add">Добавить</span>
                     </button>
                     <button type="button" onclick="closeManualTimeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i> Отмена
+                        <i class="fas fa-times"></i> <span data-i18n="cancel">Отмена</span>
                     </button>
                 </div>
                 <div id="manual-time-preview" class="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-xl hidden"></div>

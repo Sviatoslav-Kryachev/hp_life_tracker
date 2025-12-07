@@ -28,6 +28,9 @@ const translations = {
         "new_activity": "➕ Новая активность",
         "activity_name": "Название активности",
         "xp_per_hour": "XP/час",
+        "xp_per_unit": "XP/штука",
+        "unit_time": "Время (минуты)",
+        "unit_quantity": "Количество (штуки)",
         "create": "Создать",
         "edit": "Редактировать",
         "delete": "Удалить",
@@ -35,6 +38,13 @@ const translations = {
         "stop": "Стоп",
         "time": "Время",
         "sessions": "Сессий",
+        "manual_quantity": "Ручной ввод количества",
+        "minutes_placeholder": "Минут",
+        "quantity_placeholder": "Введите к-во",
+        "enter_quantity": "Введите количество",
+        "enter_minutes": "Введите минуты",
+        "error_adding": "Ошибка добавления",
+        "units": "штук",
         
         // Rewards
         "reward_name": "Название награды",
@@ -119,9 +129,16 @@ const translations = {
         "edit_goal": "✏️ Редактировать цель",
         "goal_title": "Название цели",
         "target_xp": "Целевое количество XP",
+        "target_quantity": "К-во для достижения",
+        "target_quantity_description": "Целевое количество (для активностей в штуках)",
+        "completion_bonus_xp": "Бонус XP за достижение цели",
+        "completion_bonus_xp_description": "Дополнительный бонус XP при достижении цели",
+        "enter_target_quantity": "Введите целевое количество",
         "description": "Описание (необязательно)",
         "deadline": "Дедлайн (необязательно)",
         "create_goal": "Создать цель",
+        "goal_completed_congratulations": "🎉 Поздравляем! Вы достигли цели!",
+        "goal_completed_bonus": "Бонус за достижение цели",
         "important": "Важно:",
         "goal_info_text": "Выберите активность из вашего списка. Цель будет отслеживать прогресс только по этой активности.",
         "select_activity_label": "Выберите активность",
@@ -162,6 +179,7 @@ const translations = {
         "calendar_stats": "Календарь активности",
         "category_stats": "Статистика по категориям",
         "add_category": "Добавить категорию",
+        "add": "Добавить",
         // Recommendations messages
         "rec_continue": "Вчера вы делали '{activity}' - продолжите серию! 🔥",
         "rec_reminder": "Вы {days} дней не занимались '{activity}' - время вернуться!",
@@ -294,6 +312,9 @@ const translations = {
         "new_activity": "➕ Нова активність",
         "activity_name": "Назва активності",
         "xp_per_hour": "XP/година",
+        "xp_per_unit": "XP/штука",
+        "unit_time": "Час (хвилини)",
+        "unit_quantity": "Кількість (штуки)",
         "create": "Створити",
         "edit": "Редагувати",
         "delete": "Видалити",
@@ -301,6 +322,13 @@ const translations = {
         "stop": "Стоп",
         "time": "Час",
         "sessions": "Сесій",
+        "manual_quantity": "Ручний ввід кількості",
+        "minutes_placeholder": "Хвилин",
+        "quantity_placeholder": "Введіть к-во",
+        "enter_quantity": "Введіть кількість",
+        "enter_minutes": "Введіть хвилини",
+        "error_adding": "Помилка додавання",
+        "units": "штук",
         
         // Rewards
         "reward_name": "Назва нагороди",
@@ -385,9 +413,16 @@ const translations = {
         "edit_goal": "✏️ Редагувати ціль",
         "goal_title": "Назва цілі",
         "target_xp": "Цільова кількість XP",
+        "target_quantity": "К-во для досягнення",
+        "target_quantity_description": "Цільова кількість (для активностей у штуках)",
+        "completion_bonus_xp": "Бонус XP за досягнення цілі",
+        "completion_bonus_xp_description": "Додатковий бонус XP при досягненні цілі",
+        "enter_target_quantity": "Введіть цільову кількість",
         "description": "Опис (необов'язково)",
         "deadline": "Дедлайн (необов'язково)",
         "create_goal": "Створити ціль",
+        "goal_completed_congratulations": "🎉 Вітаємо! Ви досягли цілі!",
+        "goal_completed_bonus": "Бонус за досягнення цілі",
         "important": "Важливо:",
         "goal_info_text": "Виберіть активність зі свого списку. Ціль буде відстежувати прогрес тільки за цією активністю.",
         "select_activity_label": "Виберіть активність",
@@ -428,6 +463,7 @@ const translations = {
         "calendar_stats": "Календар активності",
         "category_stats": "Статистика за категоріями",
         "add_category": "Додати категорію",
+        "add": "Додати",
         // Recommendations messages
         "rec_continue": "Вчора ви робили '{activity}' - продовжте серію! 🔥",
         "rec_reminder": "Ви {days} днів не займалися '{activity}' - час повернутися!",
@@ -561,6 +597,9 @@ const translations = {
         "new_activity": "➕ Neue Aktivität",
         "activity_name": "Aktivitätsname",
         "xp_per_hour": "XP/Stunde",
+        "xp_per_unit": "XP/Stück",
+        "unit_time": "Zeit (Minuten)",
+        "unit_quantity": "Menge (Stücke)",
         "create": "Erstellen",
         "edit": "Bearbeiten",
         "delete": "Löschen",
@@ -568,6 +607,13 @@ const translations = {
         "stop": "Stop",
         "time": "Zeit",
         "sessions": "Sitzungen",
+        "manual_quantity": "Manuelle Mengeneingabe",
+        "minutes_placeholder": "Minuten",
+        "quantity_placeholder": "Menge eingeben",
+        "enter_quantity": "Geben Sie die Menge ein",
+        "enter_minutes": "Geben Sie die Minuten ein",
+        "error_adding": "Fehler beim Hinzufügen",
+        "units": "Stücke",
         
         // Rewards
         "reward_name": "Belohnungsname",
@@ -652,9 +698,16 @@ const translations = {
         "edit_goal": "✏️ Ziel bearbeiten",
         "goal_title": "Zielname",
         "target_xp": "Ziel-XP-Menge",
+        "target_quantity": "Menge zum Erreichen",
+        "target_quantity_description": "Zielmenge (für Aktivitäten in Stücken)",
+        "completion_bonus_xp": "Bonus-XP für Zielerreichung",
+        "completion_bonus_xp_description": "Zusätzlicher Bonus-XP beim Erreichen des Ziels",
+        "enter_target_quantity": "Geben Sie die Zielmenge ein",
         "description": "Beschreibung (optional)",
         "deadline": "Frist (optional)",
         "create_goal": "Ziel erstellen",
+        "goal_completed_congratulations": "🎉 Glückwunsch! Sie haben das Ziel erreicht!",
+        "goal_completed_bonus": "Bonus für Zielerreichung",
         "important": "Wichtig:",
         "goal_info_text": "Wählen Sie eine Aktivität aus Ihrer Liste. Das Ziel verfolgt nur den Fortschritt dieser Aktivität.",
         "select_activity_label": "Aktivität auswählen",
@@ -828,6 +881,9 @@ const translations = {
         "new_activity": "➕ New Activity",
         "activity_name": "Activity Name",
         "xp_per_hour": "XP/hour",
+        "xp_per_unit": "XP/piece",
+        "unit_time": "Time (minutes)",
+        "unit_quantity": "Quantity (pieces)",
         "create": "Create",
         "edit": "Edit",
         "delete": "Delete",
@@ -835,6 +891,13 @@ const translations = {
         "stop": "Stop",
         "time": "Time",
         "sessions": "Sessions",
+        "manual_quantity": "Manual quantity entry",
+        "minutes_placeholder": "Minutes",
+        "quantity_placeholder": "Enter quantity",
+        "enter_quantity": "Enter quantity",
+        "enter_minutes": "Enter minutes",
+        "error_adding": "Error adding",
+        "units": "pieces",
         
         // Rewards
         "reward_name": "Reward Name",
@@ -919,9 +982,16 @@ const translations = {
         "edit_goal": "✏️ Edit Goal",
         "goal_title": "Goal Title",
         "target_xp": "Target XP Amount",
+        "target_quantity": "Quantity to achieve",
+        "target_quantity_description": "Target quantity (for activities in pieces)",
+        "completion_bonus_xp": "Bonus XP for goal completion",
+        "completion_bonus_xp_description": "Additional bonus XP when achieving the goal",
+        "enter_target_quantity": "Enter target quantity",
         "description": "Description (optional)",
         "deadline": "Deadline (optional)",
         "create_goal": "Create Goal",
+        "goal_completed_congratulations": "🎉 Congratulations! You achieved the goal!",
+        "goal_completed_bonus": "Bonus for goal completion",
         "important": "Important:",
         "goal_info_text": "Select an activity from your list. The goal will track progress only for this activity.",
         "select_activity_label": "Select Activity",
@@ -962,6 +1032,7 @@ const translations = {
         "calendar_stats": "Activity Calendar",
         "category_stats": "Category Statistics",
         "add_category": "Add Category",
+        "add": "Add",
         // Recommendations messages
         "rec_continue": "Yesterday you did '{activity}' - continue the streak! 🔥",
         "rec_reminder": "You haven't practiced '{activity}' for {days} days - time to return!",
@@ -2014,7 +2085,7 @@ async function showDayDetails(date) {
             `;
         }
         
-        // Расходы
+        // Расходы (только реальные траты, бонусы уже в заработках)
         if (data.spendings && data.spendings.length > 0) {
             html += `
                 <div>
@@ -2034,7 +2105,7 @@ async function showDayDetails(date) {
                                             </div>
                                         ` : ''}
                                     </div>
-                                    <div class="text-red-600 font-bold">-${spending.xp_spent} XP</div>
+                                    <div class="text-red-600 font-bold">-${Math.abs(spending.xp_spent)} XP</div>
                                 </div>
                             </div>
                         `).join('')}
@@ -2278,12 +2349,25 @@ function toggleRewardsAccordion() {
         // Устанавливаем реальную высоту для плавной анимации
         const height = rewardsListHidden.scrollHeight;
         rewardsListHidden.style.maxHeight = height + 'px';
+        rewardsListHidden.style.overflow = 'visible';
+        // После анимации убираем ограничение и добавляем скролл если нужно
+        setTimeout(() => {
+            if (rewardsListHidden && !rewardsListHidden.classList.contains('hidden')) {
+                rewardsListHidden.style.maxHeight = 'none';
+                // Если контент очень длинный, добавляем скролл
+                if (rewardsListHidden.scrollHeight > 600) {
+                    rewardsListHidden.style.maxHeight = '600px';
+                    rewardsListHidden.style.overflowY = 'auto';
+                }
+            }
+        }, 300);
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'true');
     } else {
         // Скрываем элементы
         rewardsListHidden.style.maxHeight = '0px';
+        rewardsListHidden.style.overflow = 'hidden';
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'false');
@@ -2309,11 +2393,24 @@ function updateRewardsAccordionButton() {
         rewardsListHidden.classList.remove('hidden');
         const height = rewardsListHidden.scrollHeight;
         rewardsListHidden.style.maxHeight = height + 'px';
+        rewardsListHidden.style.overflow = 'visible';
+        // После небольшой задержки убираем ограничение
+        setTimeout(() => {
+            if (rewardsListHidden && !rewardsListHidden.classList.contains('hidden')) {
+                rewardsListHidden.style.maxHeight = 'none';
+                // Если контент очень длинный, добавляем скролл
+                if (rewardsListHidden.scrollHeight > 600) {
+                    rewardsListHidden.style.maxHeight = '600px';
+                    rewardsListHidden.style.overflowY = 'auto';
+                }
+            }
+        }, 100);
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_rewards');
     } else {
         rewardsListHidden.classList.add('hidden');
         rewardsListHidden.style.maxHeight = '0px';
+        rewardsListHidden.style.overflow = 'hidden';
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_rewards');
     }
@@ -2513,8 +2610,18 @@ async function loadActiveTimers() {
 
 function renderActivityCard(activity) {
     const div = document.createElement("div");
-    div.className = "activity-card p-4 mb-3 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3";
+    div.className = "activity-card p-4 mb-3 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3 cursor-move";
     div.setAttribute("data-activity-id", activity.id);
+    div.draggable = true;
+    div.setAttribute("draggable", "true");
+    
+    // Добавляем обработчики drag and drop
+    div.addEventListener('dragstart', handleDragStart);
+    div.addEventListener('dragover', handleDragOver);
+    div.addEventListener('drop', handleDrop);
+    div.addEventListener('dragend', handleDragEnd);
+    div.addEventListener('dragenter', handleDragEnter);
+    div.addEventListener('dragleave', handleDragLeave);
 
     // Создаем объект с названиями категорий
     const categoryNames = {
@@ -2536,6 +2643,9 @@ function renderActivityCard(activity) {
     const category = activity.category || "general";
     const categoryName = categoryNames[category] || category;
     
+    // Определяем тип единицы измерения
+    const unitType = activity.unit_type || 'time';
+    
     const left = document.createElement("div");
     left.className = "flex-grow";
     left.innerHTML = `
@@ -2543,38 +2653,45 @@ function renderActivityCard(activity) {
             <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
             <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">${categoryName}</span>
         </div>
-        <div class="text-sm text-gray-500">${activity.xp_per_hour} ${t('xp_per_hour')}</div>
+        <div class="text-sm text-gray-500">${unitType === 'quantity' ? (activity.xp_per_unit || 1) + ' ' + t('xp_per_unit') : (activity.xp_per_hour || 60) + ' ' + t('xp_per_hour')}</div>
     `;
 
-    // Timer button - проверяем, есть ли активный таймер
+    // Timer button - показываем только для активностей типа "time"
     const timerBtn = document.createElement("button");
-    const isActive = activeTimers.has(activity.id);
     
-    if (isActive) {
-        // Если таймер активен, отображаем его в активном состоянии
-        const timerInfo = activeTimers.get(activity.id);
-        const elapsedMs = Date.now() - timerInfo.startTime;
-        const elapsedSeconds = Math.floor(elapsedMs / 1000);
-        const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, "0");
-        const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
-        const xpPerSecond = activity.xp_per_hour / 3600;
-        const earnedXP = Math.round(elapsedSeconds * xpPerSecond);
-        
-        timerBtn.className = "timer-btn px-6 py-2 rounded-xl text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-2 transition-all duration-300";
-        timerBtn.innerHTML = `<i class="fas fa-stop text-red-500"></i> <span id="timer-${activity.id}">${minutes}:${seconds} (+${earnedXP} XP)</span>`;
+    // Для активностей типа "quantity" не показываем таймер
+    if (unitType === 'quantity') {
+        timerBtn.style.display = 'none';
     } else {
-        timerBtn.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2";
-        timerBtn.innerHTML = `<i class="fas fa-play text-green-500"></i> ${t('start')}`;
+        const isActive = activeTimers.has(activity.id);
+        
+        if (isActive) {
+            // Если таймер активен, отображаем его в активном состоянии
+            const timerInfo = activeTimers.get(activity.id);
+            const elapsedMs = Date.now() - timerInfo.startTime;
+            const elapsedSeconds = Math.floor(elapsedMs / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, "0");
+            const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
+            const xpPerSecond = (activity.xp_per_hour || 60) / 3600;
+            const earnedXP = Math.round(elapsedSeconds * xpPerSecond);
+            
+            timerBtn.className = "timer-btn px-6 py-2 rounded-xl text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-2 transition-all duration-300";
+            timerBtn.innerHTML = `<i class="fas fa-stop text-red-500"></i> <span id="timer-${activity.id}">${minutes}:${seconds} (+${earnedXP} XP)</span>`;
+        } else {
+            timerBtn.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2";
+            timerBtn.innerHTML = `<i class="fas fa-play text-green-500"></i> ${t('start')}`;
+        }
+        
+        timerBtn.dataset.activityId = activity.id;
+        timerBtn.addEventListener("click", (e) => toggleTimer(activity.id, e.currentTarget, activity));
     }
-    
-    timerBtn.dataset.activityId = activity.id;
-    timerBtn.addEventListener("click", (e) => toggleTimer(activity.id, e.currentTarget, activity));
 
-    // Manual time button
+    // Manual time/quantity button
     const manualTimeBtn = document.createElement("button");
     manualTimeBtn.className = "manual-time-btn p-2 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
     manualTimeBtn.innerHTML = '<i class="fas fa-clock"></i>';
-    manualTimeBtn.title = t('manual_time');
+    // Устанавливаем подсказку в зависимости от типа активности
+    manualTimeBtn.title = unitType === 'quantity' ? t('manual_quantity') : t('manual_time');
     manualTimeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         openManualTimeModal(activity.id);
@@ -2600,6 +2717,14 @@ function renderActivityCard(activity) {
         deleteActivity(activity.id, div);
     });
 
+    // Иконка для перетаскивания
+    const dragHandle = document.createElement("div");
+    dragHandle.className = "drag-handle p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing mr-2 flex-shrink-0";
+    dragHandle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
+    dragHandle.title = "Перетащите для изменения порядка";
+    dragHandle.addEventListener("mousedown", (e) => e.stopPropagation());
+    
+    div.appendChild(dragHandle);
     div.appendChild(left);
     div.appendChild(timerBtn);
     div.appendChild(manualTimeBtn);
@@ -2608,11 +2733,117 @@ function renderActivityCard(activity) {
     activitiesList.appendChild(div);
 }
 
+// ============= DRAG AND DROP FOR ACTIVITIES =============
+let draggedElement = null;
+let draggedOverElement = null;
+
+function handleDragStart(e) {
+    draggedElement = this;
+    this.style.opacity = '0.5';
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDragEnter(e) {
+    if (this !== draggedElement) {
+        this.classList.add('drag-over');
+        draggedOverElement = this;
+    }
+}
+
+function handleDragLeave(e) {
+    this.classList.remove('drag-over');
+    if (draggedOverElement === this) {
+        draggedOverElement = null;
+    }
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+    
+    if (draggedElement !== this) {
+        const activitiesList = document.getElementById('activities-list');
+        const allCards = Array.from(activitiesList.querySelectorAll('.activity-card'));
+        const draggedIndex = allCards.indexOf(draggedElement);
+        const targetIndex = allCards.indexOf(this);
+        
+        if (draggedIndex < targetIndex) {
+            activitiesList.insertBefore(draggedElement, this.nextSibling);
+        } else {
+            activitiesList.insertBefore(draggedElement, this);
+        }
+        
+        // Обновляем порядок на сервере
+        updateActivitiesOrder();
+    }
+    
+    this.classList.remove('drag-over');
+    return false;
+}
+
+function handleDragEnd(e) {
+    this.style.opacity = '';
+    const allCards = document.querySelectorAll('.activity-card');
+    allCards.forEach(card => {
+        card.classList.remove('drag-over');
+    });
+    draggedElement = null;
+    draggedOverElement = null;
+}
+
+async function updateActivitiesOrder() {
+    const activitiesList = document.getElementById('activities-list');
+    const allCards = Array.from(activitiesList.querySelectorAll('.activity-card'));
+    const activityIds = allCards.map(card => parseInt(card.getAttribute('data-activity-id')));
+    
+    try {
+        const res = await fetch(`${API_BASE}/activities/reorder`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ activity_ids: activityIds })
+        });
+        
+        if (!res.ok) {
+            console.error("Failed to update activities order");
+            // Восстанавливаем порядок из сервера при ошибке
+            loadActivities();
+        }
+    } catch (e) {
+        console.error("Error updating activities order:", e);
+        // Восстанавливаем порядок из сервера при ошибке
+        loadActivities();
+    }
+}
+
 async function createActivity() {
     const name = activityNameInput.value.trim();
-    const xp = xpPerHourInput ? Number(xpPerHourInput.value) || 60 : 60;
     const categoryEl = document.getElementById("activity-category");
     const category = categoryEl ? (categoryEl.value || "general") : "general";
+    const unitTypeEl = document.getElementById("activity-unit-type");
+    const unitType = unitTypeEl ? unitTypeEl.value : "time";
+    
+    let xpPerHour = 60;
+    let xpPerUnit = null;
+    
+    if (unitType === "time") {
+        xpPerHour = xpPerHourInput ? Number(xpPerHourInput.value) || 60 : 60;
+    } else {
+        const xpPerUnitInput = document.getElementById("xp-per-unit");
+        xpPerUnit = xpPerUnitInput ? Number(xpPerUnitInput.value) || 1 : 1;
+    }
     
     if (!name) {
         showActivityMessage("Введите название активности", "error");
@@ -2627,13 +2858,21 @@ async function createActivity() {
     }
     
     try {
+        const activityData = {
+            name,
+            category: category,
+            unit_type: unitType,
+            xp_per_hour: unitType === "time" ? xpPerHour : null,
+            xp_per_unit: unitType === "quantity" ? xpPerUnit : null
+        };
+        
         const res = await fetch(`${API_BASE}/activities/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`
             },
-            body: JSON.stringify({ name, xp_per_hour: xp, category: category })
+            body: JSON.stringify(activityData)
         });
         
         if (!res.ok) {
@@ -2645,6 +2884,10 @@ async function createActivity() {
         const created = await res.json();
         activityNameInput.value = "";
         if (xpPerHourInput) xpPerHourInput.value = "60";
+        const xpPerUnitInput = document.getElementById("xp-per-unit");
+        if (xpPerUnitInput) xpPerUnitInput.value = "1";
+        if (unitTypeEl) unitTypeEl.value = "time";
+        updateActivityXPInputs();
         allActivities.push(created);
         renderActivityCard(created);
         showActivityMessage(`✅ "${created.name}" создана!`, "success");
@@ -2660,7 +2903,28 @@ function openEditModal(activity) {
     
     document.getElementById("edit-activity-id").value = activity.id;
     document.getElementById("edit-activity-name").value = activity.name;
-    document.getElementById("edit-xp-per-hour").value = activity.xp_per_hour;
+    
+    // Устанавливаем тип единицы измерения
+    const unitType = activity.unit_type || 'time';
+    const unitTypeEl = document.getElementById("edit-activity-unit-type");
+    if (unitTypeEl) {
+        unitTypeEl.value = unitType;
+        updateEditActivityXPInputs(); // Обновляем поля XP
+    }
+    
+    // Устанавливаем значения XP в зависимости от типа
+    if (unitType === 'quantity') {
+        const xpPerUnitEl = document.getElementById("edit-xp-per-unit");
+        if (xpPerUnitEl) {
+            xpPerUnitEl.value = activity.xp_per_unit || 1;
+        }
+    } else {
+        const xpPerHourEl = document.getElementById("edit-xp-per-hour");
+        if (xpPerHourEl) {
+            xpPerHourEl.value = activity.xp_per_hour || 60;
+        }
+    }
+    
     const categoryEl = document.getElementById("edit-activity-category");
     const categoryText = document.getElementById("edit-activity-category-text");
     if (categoryEl && categoryText) {
@@ -2678,7 +2942,33 @@ function openEditModal(activity) {
             }
         }, 100);
     }
+    
+    // Применяем переводы
+    applyTranslations();
+    
+    // Обновляем поля XP при открытии
+    updateEditActivityXPInputs();
+    
     document.getElementById("edit-activity-modal").classList.remove("hidden");
+}
+
+// Функция для переключения полей XP в модальном окне редактирования
+function updateEditActivityXPInputs() {
+    const unitTypeEl = document.getElementById("edit-activity-unit-type");
+    const xpTimeContainer = document.getElementById("edit-activity-xp-time");
+    const xpQuantityContainer = document.getElementById("edit-activity-xp-quantity");
+    
+    if (!unitTypeEl) return;
+    
+    const unitType = unitTypeEl.value;
+    
+    if (unitType === "quantity") {
+        xpTimeContainer.classList.add("hidden");
+        xpQuantityContainer.classList.remove("hidden");
+    } else {
+        xpTimeContainer.classList.remove("hidden");
+        xpQuantityContainer.classList.add("hidden");
+    }
 }
 
 function closeEditModal() {
@@ -2689,9 +2979,20 @@ function closeEditModal() {
 async function updateActivity() {
     const id = document.getElementById("edit-activity-id").value;
     const name = document.getElementById("edit-activity-name").value.trim();
-    const xpPerHour = Number(document.getElementById("edit-xp-per-hour").value) || 60;
     const categoryEl = document.getElementById("edit-activity-category");
     const category = categoryEl ? categoryEl.value || "general" : "general";
+    const unitTypeEl = document.getElementById("edit-activity-unit-type");
+    const unitType = unitTypeEl ? unitTypeEl.value : "time";
+    
+    let xpPerHour = null;
+    let xpPerUnit = null;
+    
+    if (unitType === "time") {
+        xpPerHour = Number(document.getElementById("edit-xp-per-hour").value) || 60;
+    } else {
+        const xpPerUnitInput = document.getElementById("edit-xp-per-unit");
+        xpPerUnit = xpPerUnitInput ? Number(xpPerUnitInput.value) || 1 : 1;
+    }
 
     if (!name) {
         alert(t('enter_activity_name'));
@@ -2699,13 +3000,21 @@ async function updateActivity() {
     }
 
     try {
+        const activityData = {
+            name,
+            category: category,
+            unit_type: unitType,
+            xp_per_hour: unitType === "time" ? xpPerHour : null,
+            xp_per_unit: unitType === "quantity" ? xpPerUnit : null
+        };
+        
         const res = await fetch(`${API_BASE}/activities/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`
             },
-            body: JSON.stringify({ name, xp_per_hour: xpPerHour, category: category })
+            body: JSON.stringify(activityData)
         });
 
         if (!res.ok) {
@@ -2865,6 +3174,7 @@ async function stopTimer(activityId, button) {
         loadTodayStats(); // Обновляем статистику
         loadWeekCalendar(); // Обновляем календарь
         loadStreak(); // Обновляем streak
+        await loadGoals(); // Всегда обновляем список целей для проверки достижений
         
         let message = `✅ Таймер остановлен! Заработано ${Math.round(data.xp_earned)} XP`;
         if (data.streak_bonus && data.streak_bonus > 0) {
@@ -2872,7 +3182,6 @@ async function stopTimer(activityId, button) {
         }
         if (data.completed_goals && data.completed_goals.length > 0) {
             message += `\n🎯 Цель выполнена: ${data.completed_goals.join(", ")}`;
-            loadGoals(); // Обновляем список целей
         }
         alert(message);
     } catch (e) {
@@ -2882,20 +3191,57 @@ async function stopTimer(activityId, button) {
 }
 
 
-// ============= MANUAL TIME =============
+// ============= MANUAL TIME/QUANTITY =============
 function openManualTimeModal(activityId) {
     const select = document.getElementById("manual-activity-select");
     select.innerHTML = `<option value="">${t('select_activity_label')}</option>`;
     allActivities.forEach(activity => {
         const option = document.createElement("option");
         option.value = activity.id;
-        option.textContent = `${activity.name} (${activity.xp_per_hour} ${t('xp_per_hour')})`;
+        const unitType = activity.unit_type || 'time';
+        if (unitType === 'quantity') {
+            option.textContent = `${activity.name} (${activity.xp_per_unit || 1} ${t('xp_per_unit')})`;
+        } else {
+            option.textContent = `${activity.name} (${activity.xp_per_hour} ${t('xp_per_hour')})`;
+        }
         select.appendChild(option);
     });
     select.value = activityId;
+    
+    // Обновляем интерфейс в зависимости от типа активности
+    updateManualModalUI(activityId);
+    
     document.getElementById("manual-minutes").value = "";
+    document.getElementById("manual-quantity").value = "";
     document.getElementById("manual-time-preview").classList.add("hidden");
     document.getElementById("manual-time-modal").classList.remove("hidden");
+}
+
+function updateManualModalUI(activityId) {
+    const activity = allActivities.find(a => a.id == activityId);
+    const unitType = activity ? (activity.unit_type || 'time') : 'time';
+    const titleEl = document.getElementById("manual-modal-title");
+    const timeContainer = document.getElementById("manual-time-input-container");
+    const quantityContainer = document.getElementById("manual-quantity-input-container");
+    const timeInput = document.getElementById("manual-minutes");
+    const quantityInput = document.getElementById("manual-quantity");
+    
+    if (unitType === 'quantity') {
+        titleEl.textContent = `📊 ${t('manual_quantity')}`;
+        titleEl.setAttribute('data-i18n', 'manual_quantity');
+        timeContainer.classList.add('hidden');
+        quantityContainer.classList.remove('hidden');
+        timeInput.removeAttribute('required');
+        quantityInput.setAttribute('required', 'required');
+    } else {
+        titleEl.textContent = `⏱️ ${t('manual_time')}`;
+        titleEl.setAttribute('data-i18n', 'manual_time');
+        timeContainer.classList.remove('hidden');
+        quantityContainer.classList.add('hidden');
+        quantityInput.removeAttribute('required');
+        timeInput.setAttribute('required', 'required');
+    }
+    applyTranslations();
 }
 
 function closeManualTimeModal() {
@@ -2903,27 +3249,59 @@ function closeManualTimeModal() {
 }
 
 function updateManualPreview(activityId) {
-    const minutes = document.getElementById("manual-minutes").value;
+    const activity = allActivities.find(a => a.id == activityId);
+    if (!activity) return;
+    
+    const unitType = activity.unit_type || 'time';
     const preview = document.getElementById("manual-time-preview");
-    if (activityId && minutes) {
-        const activity = allActivities.find(a => a.id == activityId);
-        if (activity) {
+    
+    if (unitType === 'quantity') {
+        const quantity = document.getElementById("manual-quantity").value;
+        if (activityId && quantity) {
+            const xp = Math.round(quantity * (activity.xp_per_unit || 1));
+            preview.textContent = `+${xp} XP`;
+            preview.classList.remove("hidden");
+        } else {
+            preview.classList.add("hidden");
+        }
+    } else {
+        const minutes = document.getElementById("manual-minutes").value;
+        if (activityId && minutes) {
             const xp = Math.round((minutes / 60) * activity.xp_per_hour);
             preview.textContent = `+${xp} XP`;
             preview.classList.remove("hidden");
+        } else {
+            preview.classList.add("hidden");
         }
-    } else {
-        preview.classList.add("hidden");
     }
 }
 
 async function addManualTime() {
     const activityId = document.getElementById("manual-activity-select").value;
-    const minutes = Number(document.getElementById("manual-minutes").value);
+    const activity = allActivities.find(a => a.id == activityId);
     
-    if (!activityId || !minutes || minutes < 1) {
-        alert("Выберите активность и укажите минуты");
+    if (!activityId || !activity) {
+        alert(t('select_activity_label'));
         return;
+    }
+    
+    const unitType = activity.unit_type || 'time';
+    let requestData = { activity_id: Number(activityId) };
+    
+    if (unitType === 'quantity') {
+        const quantity = Number(document.getElementById("manual-quantity").value);
+        if (!quantity || quantity < 1) {
+            alert(t('enter_quantity'));
+            return;
+        }
+        requestData.quantity = quantity;
+    } else {
+        const minutes = Number(document.getElementById("manual-minutes").value);
+        if (!minutes || minutes < 1) {
+            alert(t('enter_minutes'));
+            return;
+        }
+        requestData.minutes = minutes;
     }
     
     try {
@@ -2933,22 +3311,30 @@ async function addManualTime() {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`
             },
-            body: JSON.stringify({ activity_id: Number(activityId), minutes })
+            body: JSON.stringify(requestData)
         });
         
         if (!res.ok) {
             const error = await res.json();
-            alert(error.detail || "Ошибка добавления времени");
+            alert(error.detail || t('error_adding'));
             return;
         }
         
         const data = await res.json();
         closeManualTimeModal();
         await loadWallet();
-        showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${minutes} мин!`, "success");
+        await loadHistory();
+        await loadGoals(); // Обновляем цели для проверки достижений
+        if (unitType === 'quantity') {
+            const quantity = Number(document.getElementById("manual-quantity").value);
+            showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${quantity} ${t('units')}!`, "success");
+        } else {
+            const minutes = Number(document.getElementById("manual-minutes").value);
+            showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${minutes} ${t('minutes_short')}!`, "success");
+        }
     } catch (e) {
         console.error("Error:", e);
-        alert("Ошибка сети");
+        alert(t('network_error'));
     }
 }
 
@@ -3474,6 +3860,13 @@ window.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             createActivity();
         });
+        
+        // Обработчик изменения типа единицы измерения
+        const unitTypeEl = document.getElementById("activity-unit-type");
+        if (unitTypeEl) {
+            unitTypeEl.addEventListener("change", updateActivityXPInputs);
+            updateActivityXPInputs(); // Инициализация при загрузке
+        }
     }
 
     // Reward form
@@ -3497,7 +3890,13 @@ window.addEventListener("DOMContentLoaded", () => {
             updateManualPreview(activityId);
         });
         
+        document.getElementById("manual-quantity").addEventListener("input", () => {
+            const activityId = document.getElementById("manual-activity-select").value;
+            updateManualPreview(activityId);
+        });
+        
         document.getElementById("manual-activity-select").addEventListener("change", (e) => {
+            updateManualModalUI(e.target.value);
             updateManualPreview(e.target.value);
         });
     }
@@ -3509,6 +3908,12 @@ window.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             await updateActivity();
         });
+        
+        // Обработчик изменения типа единицы измерения в модальном окне редактирования
+        const editUnitTypeEl = document.getElementById("edit-activity-unit-type");
+        if (editUnitTypeEl) {
+            editUnitTypeEl.addEventListener("change", updateEditActivityXPInputs);
+        }
     }
 
     // Edit reward form
@@ -4606,7 +5011,7 @@ function createDropdownOption(value, name, isCustom, categoryData, selectId) {
     option.dataset.isCustom = isCustom ? 'true' : 'false';
     
     const leftPart = document.createElement('div');
-    leftPart.className = 'flex-1 min-w-0 pr-2';
+    leftPart.className = 'flex-1 min-w-0 pr-2 text-center';
     leftPart.textContent = name;
     leftPart.style.wordBreak = 'break-word';
     
@@ -4614,6 +5019,9 @@ function createDropdownOption(value, name, isCustom, categoryData, selectId) {
     
     // Категория "Общее" - захардкоженная, без кнопок редактирования и удаления
     if (value === 'general') {
+        // Для категории "Общее" центрируем полностью
+        option.className = 'px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-center group min-w-0';
+        leftPart.className = 'text-center';
         // Для категории "Общее" не добавляем кнопки, но добавляем обработчик клика для выбора
         option.onclick = (e) => {
             e.stopPropagation();
@@ -5089,10 +5497,63 @@ async function loadGoals() {
             return (a.name || a.title || '').localeCompare(b.name || b.title || '');
         });
         
+        // Проверяем, есть ли новые достигнутые цели для поздравления
+        // Используем localStorage для отслеживания уже показанных уведомлений
+        const shownNotificationsKey = 'shown_goal_notifications';
+        let shownNotifications = JSON.parse(localStorage.getItem(shownNotificationsKey) || '{}');
+        
+        // Очищаем старые записи (старше 7 дней)
+        const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        Object.keys(shownNotifications).forEach(key => {
+            if (shownNotifications[key] < sevenDaysAgo) {
+                delete shownNotifications[key];
+            }
+        });
+        
+        const newlyCompletedGoals = data.filter(goal => {
+            if (goal.is_completed === 1 && goal.completed_at) {
+                // Создаем уникальный ключ для этой цели с датой достижения
+                const goalKey = `goal_${goal.id}`;
+                const completedTimestamp = new Date(goal.completed_at).getTime();
+                
+                // Проверяем, не показывали ли мы уже уведомление для этой цели
+                if (shownNotifications[goalKey] && shownNotifications[goalKey] >= completedTimestamp) {
+                    return false; // Уже показывали для этой версии достижения
+                }
+                
+                // Проверяем, была ли цель достигнута недавно (в последние 24 часа)
+                const now = Date.now();
+                const timeDiff = now - completedTimestamp;
+                
+                // Показываем уведомление, если цель достигнута в последние 24 часа
+                if (timeDiff < 86400000) { // 24 часа = 86400000 миллисекунд
+                    // Сохраняем timestamp достижения для этой цели
+                    shownNotifications[goalKey] = completedTimestamp;
+                    localStorage.setItem(shownNotificationsKey, JSON.stringify(shownNotifications));
+                    return true;
+                }
+            }
+            return false;
+        });
+        
+        // Показываем поздравление для новых достигнутых целей
+        newlyCompletedGoals.forEach(goal => {
+            const goalTitle = goal.title || (goal.activity_name ? `"${goal.activity_name}"` : 'цели');
+            const bonusText = goal.completion_bonus_xp > 0 
+                ? ` Бонус: +${Math.round(goal.completion_bonus_xp)} XP!` 
+                : '';
+            const message = `🎉 Поздравляем! Цель "${goalTitle}" достигнута!${bonusText} Прокрутите к разделу "Мои цели" чтобы увидеть прогресс.`;
+            showNotification(message, 'success');
+        });
+        
         listEl.innerHTML = data.map(goal => {
             const progressPercent = goal.target_xp > 0 ? Math.min((goal.current_xp / goal.target_xp) * 100, 100) : 0;
             const isCompleted = goal.is_completed === 1;
             const daysLeft = goal.target_date ? Math.ceil((new Date(goal.target_date) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+            
+            // Определяем активность для проверки типа
+            const activity = goal.activity_id ? allActivities.find(a => a.id == goal.activity_id) : null;
+            const showQuantity = activity && activity.unit_type === 'quantity' && goal.target_quantity;
             
             return `
                 <div class="p-2 md:p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg md:rounded-xl border-2 ${isCompleted ? 'border-green-400 bg-green-50' : 'border-purple-300'} hover:shadow-md transition-all">
@@ -5108,6 +5569,12 @@ async function loadGoals() {
                                     <span class="text-[10px] md:text-xs text-purple-700 font-medium">${goal.activity_name}</span>
                                 </div>
                             ` : ''}
+                            ${showQuantity ? `
+                                <div class="flex items-center gap-1 mb-0.5 md:mb-1">
+                                    <i class="fas fa-hashtag text-purple-600 text-[10px] md:text-xs"></i>
+                                    <span class="text-[10px] md:text-xs text-purple-700 font-medium">${Math.round(goal.current_quantity || 0)} / ${Math.round(goal.target_quantity)} ${t('units')}</span>
+                                </div>
+                            ` : ''}
                             ${goal.target_date ? `
                                 <div class="flex items-center gap-1 mb-0.5 md:mb-1">
                                     <i class="fas fa-calendar text-gray-500 text-[10px] md:text-xs"></i>
@@ -5120,10 +5587,10 @@ async function loadGoals() {
                         </div>
                         <div class="flex gap-0.5 md:gap-1 flex-shrink-0 ml-1 md:ml-2">
                             ${!isCompleted ? `
-                                <button onclick="editGoal(${goal.id})" class="w-5 h-5 md:w-6 md:h-6 rounded bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center transition-all" title="Редактировать">
+                                <button onclick="editGoal(${goal.id})" class="w-5 h-5 md:w-6 md:h-6 rounded bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center transition-all" title="${t('edit')}">
                                     <i class="fas fa-edit text-[9px] md:text-[10px]"></i>
                                 </button>
-                                <button onclick="deleteGoal(${goal.id})" class="w-5 h-5 md:w-6 md:h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition-all" title="Удалить">
+                                <button onclick="deleteGoal(${goal.id})" class="w-5 h-5 md:w-6 md:h-6 rounded bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition-all" title="${t('delete')}">
                                     <i class="fas fa-trash text-[9px] md:text-[10px]"></i>
                                 </button>
                             ` : ''}
@@ -5157,10 +5624,34 @@ function showCreateGoalModal() {
     document.getElementById("create-goal-modal").classList.remove("hidden");
     // Очищаем форму
     document.getElementById("create-goal-form").reset();
+    // Скрываем поле количества и переключатель по умолчанию
+    const quantityContainer = document.getElementById("goal-quantity-container");
+    const modeSelector = document.getElementById("goal-mode-selector");
+    const xpContainer = document.getElementById("goal-xp-container");
+    if (quantityContainer) {
+        quantityContainer.classList.add("hidden");
+    }
+    if (modeSelector) {
+        modeSelector.classList.add("hidden");
+    }
+    if (xpContainer) {
+        xpContainer.classList.remove("hidden");
+        const xpInput = document.getElementById("goal-target-xp");
+        if (xpInput) xpInput.required = true;
+    }
     // Загружаем список активностей для выбора (после очистки формы)
     loadActivitiesForGoal();
     // Применяем переводы для всех элементов в модальном окне
     applyTranslations();
+    
+    // Добавляем обработчик изменения активности
+    const activitySelect = document.getElementById("goal-activity");
+    if (activitySelect) {
+        // Удаляем старый обработчик если есть
+        const newSelect = activitySelect.cloneNode(true);
+        activitySelect.parentNode.replaceChild(newSelect, activitySelect);
+        newSelect.addEventListener('change', updateGoalFormForActivity);
+    }
     
     // Добавляем обработчик клика на календарь для обновления языка
     const dateInput = document.getElementById('goal-target-date');
@@ -5258,11 +5749,40 @@ async function editGoal(goalId) {
         document.getElementById("goal-description").value = goal.description || "";
         document.getElementById("goal-target-xp").value = goal.target_xp;
         document.getElementById("goal-target-date").value = goal.target_date ? new Date(goal.target_date).toISOString().split('T')[0] : "";
+        const targetQuantityEl = document.getElementById("goal-target-quantity");
+        if (targetQuantityEl) {
+            targetQuantityEl.value = goal.target_quantity || "";
+        }
+        const completionBonusEl = document.getElementById("goal-completion-bonus");
+        if (completionBonusEl) {
+            completionBonusEl.value = goal.completion_bonus_xp || 0;
+        }
         
         // Загружаем активности и выбираем нужную
         await loadActivitiesForGoal();
         if (goal.activity_id) {
             document.getElementById("goal-activity").value = goal.activity_id;
+            updateGoalFormForActivity(); // Обновляем форму в зависимости от типа активности
+            
+            // Для активностей в штуках определяем режим цели
+            const activity = allActivities.find(a => a.id == goal.activity_id);
+            if (activity && activity.unit_type === 'quantity') {
+                // Если есть target_quantity, значит режим "по количеству"
+                if (goal.target_quantity && goal.target_quantity > 0) {
+                    const quantityMode = document.querySelector('input[name="goal-mode"][value="quantity"]');
+                    if (quantityMode) {
+                        quantityMode.checked = true;
+                        updateGoalModeDisplay('quantity');
+                    }
+                } else {
+                    // Иначе режим "по XP"
+                    const xpMode = document.querySelector('input[name="goal-mode"][value="xp"]');
+                    if (xpMode) {
+                        xpMode.checked = true;
+                        updateGoalModeDisplay('xp');
+                    }
+                }
+            }
         }
         
         // Обновляем lang атрибут для календаря
@@ -5343,12 +5863,128 @@ async function loadActivitiesForGoal() {
         data.forEach(activity => {
             const option = document.createElement("option");
             option.value = activity.id;
-            option.textContent = `${activity.name} (${activity.xp_per_hour} ${t('xp_per_hour')})`;
+            const unitType = activity.unit_type || 'time';
+            if (unitType === 'quantity') {
+                option.textContent = `${activity.name} (${activity.xp_per_unit || 1} ${t('xp_per_unit')})`;
+            } else {
+                option.textContent = `${activity.name} (${activity.xp_per_hour} ${t('xp_per_hour')})`;
+            }
             select.appendChild(option);
         });
+        
+        // Обновляем форму при изменении активности
+        select.addEventListener('change', updateGoalFormForActivity);
     } catch (e) {
         console.error("Error loading activities for goal:", e);
         alert("Ошибка загрузки активностей: " + e.message);
+    }
+}
+
+// Функция для переключения полей XP в зависимости от типа единицы измерения
+function updateActivityXPInputs() {
+    const unitTypeEl = document.getElementById("activity-unit-type");
+    const xpTimeContainer = document.getElementById("activity-xp-time");
+    const xpQuantityContainer = document.getElementById("activity-xp-quantity");
+    
+    if (!unitTypeEl) return;
+    
+    const unitType = unitTypeEl.value;
+    
+    if (unitType === "quantity") {
+        xpTimeContainer.classList.add("hidden");
+        xpQuantityContainer.classList.remove("hidden");
+    } else {
+        xpTimeContainer.classList.remove("hidden");
+        xpQuantityContainer.classList.add("hidden");
+    }
+}
+
+// Функция для обновления формы цели в зависимости от типа активности
+function updateGoalFormForActivity() {
+    const activityId = document.getElementById("goal-activity").value;
+    const quantityContainer = document.getElementById("goal-quantity-container");
+    const xpContainer = document.getElementById("goal-xp-container");
+    const modeSelector = document.getElementById("goal-mode-selector");
+    
+    if (!activityId) {
+        if (modeSelector) modeSelector.classList.add("hidden");
+        if (quantityContainer) quantityContainer.classList.add("hidden");
+        if (xpContainer) {
+            xpContainer.classList.remove("hidden");
+            const xpInput = document.getElementById("goal-target-xp");
+            if (xpInput) xpInput.required = true;
+        }
+        return;
+    }
+    
+    const activity = allActivities.find(a => a.id == activityId);
+    if (activity && activity.unit_type === 'quantity') {
+        // Для активностей в штуках показываем переключатель
+        if (modeSelector) modeSelector.classList.remove("hidden");
+        
+        // Устанавливаем обработчики для переключателя режима
+        setupGoalModeSelector();
+        
+        // По умолчанию выбираем режим "количество"
+        const quantityMode = document.querySelector('input[name="goal-mode"][value="quantity"]');
+        if (quantityMode) {
+            quantityMode.checked = true;
+            updateGoalModeDisplay('quantity');
+        }
+    } else {
+        // Для активностей во времени скрываем переключатель и поле количества
+        if (modeSelector) modeSelector.classList.add("hidden");
+        if (quantityContainer) quantityContainer.classList.add("hidden");
+        if (xpContainer) {
+            xpContainer.classList.remove("hidden");
+            const xpInput = document.getElementById("goal-target-xp");
+            if (xpInput) xpInput.required = true;
+        }
+    }
+}
+
+// Функция для настройки переключателя режима цели
+function setupGoalModeSelector() {
+    const modeInputs = document.querySelectorAll('input[name="goal-mode"]');
+    modeInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            updateGoalModeDisplay(this.value);
+        });
+    });
+}
+
+// Функция для обновления отображения в зависимости от выбранного режима
+function updateGoalModeDisplay(mode) {
+    const quantityContainer = document.getElementById("goal-quantity-container");
+    const xpContainer = document.getElementById("goal-xp-container");
+    const quantityInput = document.getElementById("goal-target-quantity");
+    const xpInput = document.getElementById("goal-target-xp");
+    const modeOptions = document.querySelectorAll('.goal-mode-option');
+    
+    // Обновляем визуальное выделение выбранного режима
+    modeOptions.forEach(option => {
+        const radio = option.querySelector('input[type="radio"]');
+        if (radio.value === mode) {
+            option.classList.remove('border-gray-200');
+            option.classList.add('border-purple-500', 'bg-purple-50');
+        } else {
+            option.classList.remove('border-purple-500', 'bg-purple-50');
+            option.classList.add('border-gray-200');
+        }
+    });
+    
+    if (mode === 'quantity') {
+        // Режим "по количеству" - показываем поле количества, скрываем XP
+        if (quantityContainer) quantityContainer.classList.remove("hidden");
+        if (xpContainer) xpContainer.classList.add("hidden");
+        if (quantityInput) quantityInput.required = true;
+        if (xpInput) xpInput.required = false;
+    } else {
+        // Режим "по XP" - показываем поле XP, скрываем количество
+        if (quantityContainer) quantityContainer.classList.add("hidden");
+        if (xpContainer) xpContainer.classList.remove("hidden");
+        if (quantityInput) quantityInput.required = false;
+        if (xpInput) xpInput.required = true;
     }
 }
 
@@ -5356,18 +5992,61 @@ async function createGoal() {
     const goalId = document.getElementById("edit-goal-id").value;
     const title = document.getElementById("goal-title").value.trim();
     const description = document.getElementById("goal-description").value.trim();
-    const targetXp = parseFloat(document.getElementById("goal-target-xp").value);
     const activityId = document.getElementById("goal-activity").value;
     const targetDate = document.getElementById("goal-target-date").value;
+    const targetQuantityEl = document.getElementById("goal-target-quantity");
+    const targetXpEl = document.getElementById("goal-target-xp");
+    const completionBonusEl = document.getElementById("goal-completion-bonus");
+    const completionBonus = completionBonusEl ? parseFloat(completionBonusEl.value) || 0 : 0;
     
-    if (!title || !targetXp || targetXp <= 0) {
-        alert(t('fill_title_and_xp'));
-        return;
-    }
+    // Название цели теперь необязательно
+    // if (!title) {
+    //     alert(t('fill_title_and_xp'));
+    //     return;
+    // }
     
     if (!activityId) {
         alert(t('select_activity_for_goal'));
         return;
+    }
+    
+    // Определяем режим цели для активностей в штуках
+    const activity = allActivities.find(a => a.id == activityId);
+    let targetXp = null;
+    let targetQuantity = null;
+    
+    if (activity && activity.unit_type === 'quantity') {
+        // Для активностей в штуках проверяем выбранный режим
+        const selectedMode = document.querySelector('input[name="goal-mode"]:checked');
+        if (selectedMode && selectedMode.value === 'quantity') {
+            // Режим "по количеству"
+            targetQuantity = targetQuantityEl ? parseFloat(targetQuantityEl.value) : null;
+            if (!targetQuantity || targetQuantity <= 0) {
+        alert(t('enter_target_quantity'));
+        return;
+            }
+            // Вычисляем target_xp на основе количества (если нужно)
+            if (activity.xp_per_unit && activity.xp_per_unit > 0) {
+                targetXp = targetQuantity * activity.xp_per_unit;
+            } else {
+                targetXp = targetQuantity; // Fallback
+            }
+        } else {
+            // Режим "по XP"
+            targetXp = targetXpEl ? parseFloat(targetXpEl.value) : null;
+            if (!targetXp || targetXp <= 0) {
+                alert(t('fill_title_and_xp'));
+                return;
+            }
+            // target_quantity не устанавливаем
+        }
+    } else {
+        // Для активностей во времени всегда используем target_xp
+        targetXp = targetXpEl ? parseFloat(targetXpEl.value) : null;
+        if (!targetXp || targetXp <= 0) {
+            alert(t('fill_title_and_xp'));
+            return;
+        }
     }
     
     try {
@@ -5384,6 +6063,8 @@ async function createGoal() {
                     title,
                     description: description || null,
                     target_xp: targetXp,
+                    target_quantity: targetQuantity || null,
+                    completion_bonus_xp: completionBonus,
                     activity_id: activityId ? parseInt(activityId) : null,
                     target_date: targetDate ? new Date(targetDate).toISOString() : null
                 })
@@ -5409,6 +6090,8 @@ async function createGoal() {
                     title,
                     description: description || null,
                     target_xp: targetXp,
+                    target_quantity: targetQuantity || null,
+                    completion_bonus_xp: completionBonus,
                     activity_id: activityId ? parseInt(activityId) : null,
                     target_date: targetDate ? new Date(targetDate).toISOString() : null
                 })

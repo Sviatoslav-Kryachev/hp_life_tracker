@@ -172,6 +172,14 @@ select {
     background-size: 1.5em 1.5em;
 }
 
+/* Убираем стандартную иконку браузера для селекта типа единицы измерения */
+#activity-unit-type,
+#edit-activity-unit-type {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
 /* Сдвиг иконки левее на 15-20px от правого края */
 #goal-activity,
 #manual-activity-select {
@@ -245,4 +253,40 @@ select {
         height: auto !important;
         align-self: start;
     }
+}
+
+/* Стили для drag and drop активностей */
+.activity-card.drag-over {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
+
+.activity-card[draggable="true"] {
+    transition: opacity 0.2s ease;
+}
+
+.drag-handle {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.drag-handle:active {
+    cursor: grabbing !important;
+}
+
+/* Стили для переключателя режима цели */
+.goal-mode-option {
+    transition: all 0.2s ease;
+}
+
+.goal-mode-option input[type="radio"]:checked + div {
+    color: #9333ea;
+}
+
+.goal-mode-option:hover {
+    transform: translateY(-1px);
 }
