@@ -2515,6 +2515,9 @@ async function loadActivities() {
         await loadActiveTimers();
         
         data.forEach(renderActivityCard);
+        
+        // Инициализируем SortableJS для drag and drop
+        initActivitiesSortable();
     } catch (e) {
         console.error("Error loading activities", e);
         const activitiesListEl = document.getElementById('activities-list');
@@ -2612,16 +2615,7 @@ function renderActivityCard(activity) {
     const div = document.createElement("div");
     div.className = "activity-card p-4 mb-3 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3 cursor-move";
     div.setAttribute("data-activity-id", activity.id);
-    div.draggable = true;
-    div.setAttribute("draggable", "true");
-    
-    // Добавляем обработчики drag and drop
-    div.addEventListener('dragstart', handleDragStart);
-    div.addEventListener('dragover', handleDragOver);
-    div.addEventListener('drop', handleDrop);
-    div.addEventListener('dragend', handleDragEnd);
-    div.addEventListener('dragenter', handleDragEnter);
-    div.addEventListener('dragleave', handleDragLeave);
+    div.style.userSelect = 'none'; // Предотвращаем выделение текста при перетаскивании
 
     // Создаем объект с названиями категорий
     const categoryNames = {
@@ -2647,7 +2641,8 @@ function renderActivityCard(activity) {
     const unitType = activity.unit_type || 'time';
     
     const left = document.createElement("div");
-    left.className = "flex-grow";
+    left.className = "flex-grow cursor-move";
+    left.draggable = false;
     left.innerHTML = `
         <div class="flex items-center gap-2 mb-1">
             <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
@@ -2655,9 +2650,17 @@ function renderActivityCard(activity) {
         </div>
         <div class="text-sm text-gray-500">${unitType === 'quantity' ? (activity.xp_per_unit || 1) + ' ' + t('xp_per_unit') : (activity.xp_per_hour || 60) + ' ' + t('xp_per_hour')}</div>
     `;
+    // При клике на левую часть тоже можно начинать drag
+    left.addEventListener("mousedown", (e) => {
+        // Разрешаем drag только если клик не на кнопке
+        if (!e.target.closest('button')) {
+            // Не блокируем событие, чтобы drag работал
+        }
+    });
 
     // Timer button - показываем только для активностей типа "time"
     const timerBtn = document.createElement("button");
+    timerBtn.draggable = false;
     
     // Для активностей типа "quantity" не показываем таймер
     if (unitType === 'quantity') {
@@ -2683,46 +2686,59 @@ function renderActivityCard(activity) {
         }
         
         timerBtn.dataset.activityId = activity.id;
-        timerBtn.addEventListener("click", (e) => toggleTimer(activity.id, e.currentTarget, activity));
+        timerBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleTimer(activity.id, e.currentTarget, activity);
+        });
+        timerBtn.addEventListener("mousedown", (e) => e.stopPropagation());
     }
 
     // Manual time/quantity button
     const manualTimeBtn = document.createElement("button");
     manualTimeBtn.className = "manual-time-btn p-2 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
     manualTimeBtn.innerHTML = '<i class="fas fa-clock"></i>';
+    manualTimeBtn.draggable = false;
     // Устанавливаем подсказку в зависимости от типа активности
     manualTimeBtn.title = unitType === 'quantity' ? t('manual_quantity') : t('manual_time');
     manualTimeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         openManualTimeModal(activity.id);
     });
+    manualTimeBtn.addEventListener("mousedown", (e) => e.stopPropagation());
 
     // Edit button
     const editBtn = document.createElement("button");
     editBtn.className = "edit-btn p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
     editBtn.innerHTML = '<i class="fas fa-edit"></i>';
     editBtn.title = t('edit');
+    editBtn.draggable = false;
     editBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         openEditModal(activity);
     });
+    editBtn.addEventListener("mousedown", (e) => e.stopPropagation());
 
     // Delete button
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
     deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
     deleteBtn.title = t('delete');
+    deleteBtn.draggable = false;
     deleteBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         deleteActivity(activity.id, div);
     });
+    deleteBtn.addEventListener("mousedown", (e) => e.stopPropagation());
 
     // Иконка для перетаскивания
     const dragHandle = document.createElement("div");
-    dragHandle.className = "drag-handle p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing mr-2 flex-shrink-0";
-    dragHandle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
+    dragHandle.className = "drag-handle p-2 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing mr-2 flex-shrink-0 flex items-center justify-center";
+    dragHandle.innerHTML = '<i class="fas fa-grip-vertical text-lg"></i>';
     dragHandle.title = "Перетащите для изменения порядка";
-    dragHandle.addEventListener("mousedown", (e) => e.stopPropagation());
+    dragHandle.draggable = false;
+    dragHandle.style.userSelect = 'none';
+    dragHandle.style.webkitUserSelect = 'none';
+    dragHandle.style.pointerEvents = 'auto';
     
     div.appendChild(dragHandle);
     div.appendChild(left);
@@ -2733,72 +2749,57 @@ function renderActivityCard(activity) {
     activitiesList.appendChild(div);
 }
 
-// ============= DRAG AND DROP FOR ACTIVITIES =============
-let draggedElement = null;
-let draggedOverElement = null;
+// ============= DRAG AND DROP FOR ACTIVITIES (SortableJS) =============
+let activitiesSortable = null;
 
-function handleDragStart(e) {
-    draggedElement = this;
-    this.style.opacity = '0.5';
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', this.innerHTML);
-}
-
-function handleDragOver(e) {
-    if (e.preventDefault) {
-        e.preventDefault();
-    }
-    e.dataTransfer.dropEffect = 'move';
-    return false;
-}
-
-function handleDragEnter(e) {
-    if (this !== draggedElement) {
-        this.classList.add('drag-over');
-        draggedOverElement = this;
-    }
-}
-
-function handleDragLeave(e) {
-    this.classList.remove('drag-over');
-    if (draggedOverElement === this) {
-        draggedOverElement = null;
-    }
-}
-
-function handleDrop(e) {
-    if (e.stopPropagation) {
-        e.stopPropagation();
+function initActivitiesSortable() {
+    const activitiesList = document.getElementById('activities-list');
+    if (!activitiesList) {
+        console.warn('Activities list element not found');
+        return;
     }
     
-    if (draggedElement !== this) {
-        const activitiesList = document.getElementById('activities-list');
-        const allCards = Array.from(activitiesList.querySelectorAll('.activity-card'));
-        const draggedIndex = allCards.indexOf(draggedElement);
-        const targetIndex = allCards.indexOf(this);
-        
-        if (draggedIndex < targetIndex) {
-            activitiesList.insertBefore(draggedElement, this.nextSibling);
-        } else {
-            activitiesList.insertBefore(draggedElement, this);
-        }
-        
-        // Обновляем порядок на сервере
-        updateActivitiesOrder();
+    if (typeof Sortable === 'undefined') {
+        console.error('SortableJS library not loaded! Check if script is included in HTML.');
+        return;
     }
     
-    this.classList.remove('drag-over');
-    return false;
-}
-
-function handleDragEnd(e) {
-    this.style.opacity = '';
-    const allCards = document.querySelectorAll('.activity-card');
-    allCards.forEach(card => {
-        card.classList.remove('drag-over');
-    });
-    draggedElement = null;
-    draggedOverElement = null;
+    // Уничтожаем предыдущий экземпляр если есть
+    if (activitiesSortable) {
+        activitiesSortable.destroy();
+        activitiesSortable = null;
+    }
+    
+    // Инициализируем SortableJS
+    try {
+        activitiesSortable = new Sortable(activitiesList, {
+            animation: 200,
+            // Убираем handle, чтобы можно было перетаскивать с любой части карточки
+            // handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            fallbackOnBody: true,
+            swapThreshold: 0.65,
+            forceFallback: true, // Используем fallback для лучшей совместимости
+            filter: 'button, .timer-btn, .edit-btn, .delete-btn, .manual-time-btn, i.fa-play, i.fa-stop, i.fa-edit, i.fa-trash, i.fa-clock', // Исключаем кнопки из drag
+            preventOnFilter: true,
+            draggable: '.activity-card', // Указываем, какие элементы можно перетаскивать
+            onStart: function(evt) {
+                console.log('Drag started from index:', evt.oldIndex);
+            },
+            onEnd: function(evt) {
+                console.log('Drag ended, old index:', evt.oldIndex, 'new index:', evt.newIndex);
+                // Обновляем порядок на сервере после завершения перетаскивания
+                if (evt.oldIndex !== evt.newIndex && evt.newIndex !== undefined) {
+                    updateActivitiesOrder();
+                }
+            }
+        });
+        console.log('SortableJS initialized successfully');
+    } catch (e) {
+        console.error('Error initializing SortableJS:', e);
+    }
 }
 
 async function updateActivitiesOrder() {

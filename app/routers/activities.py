@@ -1,6 +1,7 @@
 # app/routers/activities.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from pydantic import BaseModel
 from typing import List
 from app.utils.database import get_db
@@ -16,7 +17,18 @@ async def get_activities(
     current_user: User = Depends(get_current_user)
 ):
     """Получить все активности текущего пользователя"""
-    activities = db.query(Activity).filter(Activity.user_id == current_user.id).order_by(Activity.display_order.asc(), Activity.id.asc()).all()
+    try:
+        # Пытаемся использовать display_order, если поле существует
+        if hasattr(Activity, 'display_order'):
+            activities = db.query(Activity).filter(Activity.user_id == current_user.id).order_by(Activity.display_order.asc(), Activity.id.asc()).all()
+        else:
+            # Если поле еще не существует, сортируем только по ID
+            activities = db.query(Activity).filter(Activity.user_id == current_user.id).order_by(Activity.id.asc()).all()
+    except Exception as e:
+        # Если ошибка при сортировке по display_order, используем сортировку по ID
+        print(f"Error ordering by display_order: {e}")
+        activities = db.query(Activity).filter(Activity.user_id == current_user.id).order_by(Activity.id.asc()).all()
+    
     # Обеспечиваем значения по умолчанию для новых полей
     result = []
     for activity in activities:
@@ -45,6 +57,17 @@ async def create_activity(
     # Устанавливаем category по умолчанию если не передано
     if 'category' not in activity_data or not activity_data.get('category'):
         activity_data['category'] = 'general'
+    
+    # Устанавливаем display_order если не передано (ставим в конец списка)
+    if 'display_order' not in activity_data and hasattr(Activity, 'display_order'):
+        try:
+            max_order = db.query(func.max(Activity.display_order)).filter(
+                Activity.user_id == current_user.id
+            ).scalar() or 0
+            activity_data['display_order'] = max_order + 1
+        except Exception:
+            # Если поле еще не существует, не устанавливаем его
+            pass
     
     activity = Activity(user_id=current_user.id, **activity_data)
     db.add(activity)
@@ -112,6 +135,10 @@ async def reorder_activities(
     current_user: User = Depends(get_current_user)
 ):
     """Обновить порядок активностей"""
+    # Проверяем, существует ли поле display_order
+    if not hasattr(Activity, 'display_order'):
+        return {"message": "Поле display_order еще не создано. Примените миграцию базы данных."}
+    
     activity_ids = request.activity_ids
     
     # Проверяем, что все активности принадлежат пользователю
