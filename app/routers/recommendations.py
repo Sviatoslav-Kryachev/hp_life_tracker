@@ -105,3 +105,4 @@ async def get_recommendations(
         "recommendations": recommendations[:5]  # Топ-5 рекомендаций
     }
 
+

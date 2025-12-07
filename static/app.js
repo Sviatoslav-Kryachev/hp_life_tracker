@@ -45,7 +45,63 @@ const activitiesList = document.getElementById("activities-list");
 const newActivityForm = document.getElementById("new-activity-form");
 const balanceSpan = document.getElementById("balance");
 const levelSpan = document.getElementById("level");
-const rewardsList = document.getElementById("rewards-list");
+// Элементы будут инициализированы при первом использовании
+let rewardsListVisible, rewardsListHidden, rewardsAccordionBtn;
+let historyListVisible, historyListHidden, historyAccordionBtn;
+
+function getRewardsElements() {
+    // Всегда переинициализируем, чтобы убедиться, что элементы найдены
+    const appSection = document.getElementById("app-section");
+    if (!appSection || appSection.classList.contains("hidden")) {
+        // Секция скрыта, элементы недоступны
+        rewardsListVisible = null;
+        rewardsListHidden = null;
+        rewardsAccordionBtn = null;
+        return;
+    }
+    
+    rewardsListVisible = document.getElementById("rewards-list-visible");
+    rewardsListHidden = document.getElementById("rewards-list-hidden");
+    rewardsAccordionBtn = document.getElementById("rewards-accordion-btn");
+    
+    // Дополнительная проверка через querySelector
+    if (!rewardsListVisible) {
+        rewardsListVisible = document.querySelector("#rewards-list-visible");
+    }
+    if (!rewardsListHidden) {
+        rewardsListHidden = document.querySelector("#rewards-list-hidden");
+    }
+    if (!rewardsAccordionBtn) {
+        rewardsAccordionBtn = document.querySelector("#rewards-accordion-btn");
+    }
+}
+
+function getHistoryElements() {
+    // Всегда переинициализируем, чтобы убедиться, что элементы найдены
+    const appSection = document.getElementById("app-section");
+    if (!appSection || appSection.classList.contains("hidden")) {
+        // Секция скрыта, элементы недоступны
+        historyListVisible = null;
+        historyListHidden = null;
+        historyAccordionBtn = null;
+        return;
+    }
+    
+    historyListVisible = document.getElementById("history-list-visible");
+    historyListHidden = document.getElementById("history-list-hidden");
+    historyAccordionBtn = document.getElementById("history-accordion-btn");
+    
+    // Дополнительная проверка через querySelector
+    if (!historyListVisible) {
+        historyListVisible = document.querySelector("#history-list-visible");
+    }
+    if (!historyListHidden) {
+        historyListHidden = document.querySelector("#history-list-hidden");
+    }
+    if (!historyAccordionBtn) {
+        historyAccordionBtn = document.querySelector("#history-accordion-btn");
+    }
+}
 const rewardMessage = document.getElementById("reward-message");
 const newRewardForm = document.getElementById("new-reward-form");
 const rewardNameInput = document.getElementById("reward-name");
@@ -188,15 +244,27 @@ function showAuth() {
 function showApp() {
     authSection.classList.add("hidden");
     appSection.classList.remove("hidden");
-    loadWallet();
-    loadActivities();
-    loadRewards();
-    loadTodayStats();
-    loadWeekCalendar();
-    loadStreak();
-    loadRecommendations();
-    loadGoals();
-    loadHistory(); // Автоматически загружаем историю
+    
+    // Сбрасываем кэш элементов, чтобы они переинициализировались
+    rewardsListVisible = null;
+    rewardsListHidden = null;
+    rewardsAccordionBtn = null;
+    historyListVisible = null;
+    historyListHidden = null;
+    historyAccordionBtn = null;
+    
+    // Небольшая задержка, чтобы DOM успел обновиться
+    setTimeout(() => {
+        loadWallet();
+        loadActivities();
+        loadRewards();
+        loadTodayStats();
+        loadWeekCalendar();
+        loadStreak();
+        loadRecommendations();
+        loadGoals();
+        loadHistory(); // Автоматически загружаем историю
+    }, 50);
 }
 
 async function checkAuth() {
@@ -624,50 +692,205 @@ function toggleHistory() {
     }
 }
 
+function renderHistoryItem(item) {
+    const isEarn = item.type === 'earn';
+    const date = new Date(item.date);
+    const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    
+    return `
+        <div class="flex items-center justify-between p-2.5 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:bg-opacity-80">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isEarn ? 'bg-emerald-500' : 'bg-red-500'}">
+                    <i class="fas ${isEarn ? 'fa-arrow-up' : 'fa-arrow-down'} text-white text-xs"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <div class="font-medium text-gray-800 text-sm truncate">${item.description}</div>
+                    <div class="text-xs text-gray-500">${dateStr} в ${timeStr}${item.duration_minutes ? ` • ${Math.round(item.duration_minutes)} мин` : ''}</div>
+                </div>
+            </div>
+            <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0 ml-2">
+                ${isEarn ? '+' : '-'}${Math.round(item.amount)} XP
+            </div>
+        </div>
+    `;
+}
+
 async function loadHistory() {
     try {
+        // Инициализируем элементы каждый раз
+        getHistoryElements();
+        
+        // Если элементы не найдены, пробуем еще раз через небольшую задержку
+        if (!historyListVisible || !historyListHidden || !historyAccordionBtn) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            getHistoryElements();
+        }
+        
         const res = await fetch(`${API_BASE}/xp/full-history?limit=30`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         if (!res.ok) return;
         const data = await res.json();
         
-        const listEl = document.getElementById('history-list');
-        if (!listEl) return;
-        
-        if (data.length === 0) {
-            listEl.innerHTML = '<div class="text-center text-gray-400 py-4">История пуста</div>';
+        if (!historyListVisible || !historyListHidden) {
+            console.error("History elements not found", { historyListVisible, historyListHidden });
             return;
         }
         
-        listEl.innerHTML = data.map(item => {
-            const isEarn = item.type === 'earn';
-            const date = new Date(item.date);
-            const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-            const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-            
-            return `
-                <div class="flex items-center justify-between p-2.5 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:bg-opacity-80">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isEarn ? 'bg-emerald-500' : 'bg-red-500'}">
-                            <i class="fas ${isEarn ? 'fa-arrow-up' : 'fa-arrow-down'} text-white text-xs"></i>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <div class="font-medium text-gray-800 text-sm truncate">${item.description}</div>
-                            <div class="text-xs text-gray-500">${dateStr} в ${timeStr}${item.duration_minutes ? ` • ${Math.round(item.duration_minutes)} мин` : ''}</div>
-                        </div>
-                    </div>
-                    <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0 ml-2">
-                        ${isEarn ? '+' : '-'}${Math.round(item.amount)} XP
-                    </div>
-                </div>
-            `;
-        }).join('');
+        historyListVisible.innerHTML = '';
+        historyListHidden.innerHTML = '';
+        
+        if (data.length === 0) {
+            historyListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">История пуста</div>';
+            historyAccordionBtn.classList.add('hidden');
+            return;
+        }
+        
+        const visibleHistory = data.slice(0, 4);
+        const hiddenHistory = data.slice(4);
+        
+        visibleHistory.forEach(item => {
+            historyListVisible.innerHTML += renderHistoryItem(item);
+        });
+        
+        if (hiddenHistory.length > 0) {
+            hiddenHistory.forEach(item => {
+                historyListHidden.innerHTML += renderHistoryItem(item);
+            });
+            historyAccordionBtn.classList.remove('hidden');
+            // Загружаем состояние аккордеона из localStorage после добавления элементов
+            setTimeout(() => {
+                updateHistoryAccordionButton();
+            }, 0);
+        } else {
+            historyAccordionBtn.classList.add('hidden');
+        }
     } catch (e) {
         console.error("Error loading history", e);
     }
 }
 
+// ============= ACCORDION FUNCTIONS =============
+function toggleRewardsAccordion() {
+    getRewardsElements();
+    if (!rewardsListHidden || !rewardsAccordionBtn) {
+        console.error("Rewards accordion elements not found");
+        return;
+    }
+    
+    const isHidden = rewardsListHidden.classList.contains('hidden');
+    const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
+    const text = rewardsAccordionBtn.querySelector('.accordion-text');
+    
+    if (!icon || !text) return;
+    
+    if (isHidden) {
+        // Показываем скрытые элементы
+        rewardsListHidden.classList.remove('hidden');
+        // Устанавливаем реальную высоту для плавной анимации
+        const height = rewardsListHidden.scrollHeight;
+        rewardsListHidden.style.maxHeight = height + 'px';
+        icon.style.transform = 'rotate(180deg)';
+        text.textContent = 'Скрыть награды';
+        localStorage.setItem('rewardsAccordionExpanded', 'true');
+    } else {
+        // Скрываем элементы
+        rewardsListHidden.style.maxHeight = '0px';
+        icon.style.transform = 'rotate(0deg)';
+        text.textContent = 'Показать все награды';
+        localStorage.setItem('rewardsAccordionExpanded', 'false');
+        setTimeout(() => {
+            if (rewardsListHidden && rewardsListHidden.style.maxHeight === '0px') {
+                rewardsListHidden.classList.add('hidden');
+            }
+        }, 400);
+    }
+}
+
+function updateRewardsAccordionButton() {
+    getRewardsElements();
+    if (!rewardsListHidden || !rewardsAccordionBtn) return;
+    
+    const isExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
+    const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
+    const text = rewardsAccordionBtn.querySelector('.accordion-text');
+    
+    if (!icon || !text) return;
+    
+    if (isExpanded) {
+        rewardsListHidden.classList.remove('hidden');
+        const height = rewardsListHidden.scrollHeight;
+        rewardsListHidden.style.maxHeight = height + 'px';
+        icon.style.transform = 'rotate(180deg)';
+        text.textContent = 'Скрыть награды';
+    } else {
+        rewardsListHidden.classList.add('hidden');
+        rewardsListHidden.style.maxHeight = '0px';
+        icon.style.transform = 'rotate(0deg)';
+        text.textContent = 'Показать все награды';
+    }
+}
+
+function toggleHistoryAccordion() {
+    getHistoryElements();
+    if (!historyListHidden || !historyAccordionBtn) {
+        console.error("History accordion elements not found");
+        return;
+    }
+    
+    const isHidden = historyListHidden.classList.contains('hidden');
+    const icon = historyAccordionBtn.querySelector('.accordion-icon');
+    const text = historyAccordionBtn.querySelector('.accordion-text');
+    
+    if (!icon || !text) return;
+    
+    if (isHidden) {
+        // Показываем скрытые элементы
+        historyListHidden.classList.remove('hidden');
+        // Устанавливаем реальную высоту для плавной анимации
+        const height = historyListHidden.scrollHeight;
+        historyListHidden.style.maxHeight = height + 'px';
+        icon.style.transform = 'rotate(180deg)';
+        text.textContent = 'Скрыть историю';
+        localStorage.setItem('historyAccordionExpanded', 'true');
+    } else {
+        // Скрываем элементы
+        historyListHidden.style.maxHeight = '0px';
+        icon.style.transform = 'rotate(0deg)';
+        text.textContent = 'Показать всю историю';
+        localStorage.setItem('historyAccordionExpanded', 'false');
+        setTimeout(() => {
+            if (historyListHidden && historyListHidden.style.maxHeight === '0px') {
+                historyListHidden.classList.add('hidden');
+            }
+        }, 400);
+    }
+}
+
+function updateHistoryAccordionButton() {
+    getHistoryElements();
+    if (!historyListHidden || !historyAccordionBtn) return;
+    
+    const isExpanded = localStorage.getItem('historyAccordionExpanded') === 'true';
+    const icon = historyAccordionBtn.querySelector('.accordion-icon');
+    const text = historyAccordionBtn.querySelector('.accordion-text');
+    
+    if (!icon || !text) return;
+    
+    if (isExpanded) {
+        historyListHidden.classList.remove('hidden');
+        const height = historyListHidden.scrollHeight;
+        historyListHidden.style.maxHeight = height + 'px';
+        icon.style.transform = 'rotate(180deg)';
+        text.textContent = 'Скрыть историю';
+    } else {
+        historyListHidden.classList.add('hidden');
+        historyListHidden.style.maxHeight = '0px';
+        icon.style.transform = 'rotate(0deg)';
+        text.textContent = 'Показать всю историю';
+    }
+}
 
 // ============= ACTIVITIES =============
 async function loadActivities() {
@@ -1105,6 +1328,25 @@ function detectBrand(name) {
 
 async function loadRewards() {
     try {
+        // Инициализируем элементы каждый раз, так как они могут быть в скрытой секции
+        getRewardsElements();
+        
+        // Если элементы не найдены, пробуем еще раз через небольшую задержку
+        if (!rewardsListVisible || !rewardsListHidden || !rewardsAccordionBtn) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            getRewardsElements();
+        }
+        
+        if (!rewardsListVisible || !rewardsListHidden || !rewardsAccordionBtn) {
+            console.error("Rewards elements not found", { 
+                rewardsListVisible, 
+                rewardsListHidden, 
+                rewardsAccordionBtn,
+                appSection: document.getElementById("app-section")?.classList.contains("hidden")
+            });
+            return;
+        }
+        
         const res = await fetch(`${API_BASE}/rewards/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
@@ -1113,8 +1355,86 @@ async function loadRewards() {
         
         const data = await res.json();
         allRewards = data;
-        rewardsList.innerHTML = "";
-        data.forEach(renderRewardCard);
+        
+        // Еще раз проверяем элементы перед использованием
+        if (!rewardsListVisible || !rewardsListHidden) {
+            console.error("Rewards elements lost after fetch, retrying...");
+            getRewardsElements();
+            if (!rewardsListVisible || !rewardsListHidden) {
+                console.error("Rewards elements still not found");
+                return;
+            }
+        }
+        
+        // Финальная проверка элементов перед использованием
+        getRewardsElements();
+        if (!rewardsListVisible || !rewardsListHidden) {
+            console.error("Rewards elements are null before innerHTML operations");
+            return;
+        }
+        
+        // Безопасно очищаем содержимое
+        try {
+            rewardsListVisible.innerHTML = "";
+            rewardsListHidden.innerHTML = "";
+        } catch (e) {
+            console.error("Error clearing rewards lists:", e);
+            return;
+        }
+        
+        if (data.length === 0) {
+            try {
+                rewardsListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Наград пока нет</div>';
+            } catch (e) {
+                console.error("Error setting empty rewards message:", e);
+            }
+            if (rewardsAccordionBtn) {
+                rewardsAccordionBtn.classList.add('hidden');
+            }
+            return;
+        }
+        
+        const visibleRewards = data.slice(0, 4);
+        const hiddenRewards = data.slice(4);
+        
+        // Проверяем элементы перед рендерингом
+        if (!rewardsListVisible) {
+            console.error("rewardsListVisible is null before rendering visible rewards");
+            return;
+        }
+        
+        visibleRewards.forEach(reward => {
+            const div = renderRewardCard(reward);
+            if (div && rewardsListVisible) {
+                rewardsListVisible.appendChild(div);
+            }
+        });
+        
+        if (hiddenRewards.length > 0) {
+            if (!rewardsListHidden) {
+                console.error("rewardsListHidden is null before rendering hidden rewards");
+                return;
+            }
+            
+            hiddenRewards.forEach(reward => {
+                const div = renderRewardCard(reward);
+                if (div && rewardsListHidden) {
+                    rewardsListHidden.appendChild(div);
+                }
+            });
+            
+            if (rewardsAccordionBtn) {
+                rewardsAccordionBtn.classList.remove('hidden');
+                // Загружаем состояние аккордеона из localStorage после добавления элементов
+                setTimeout(() => {
+                    updateRewardsAccordionButton();
+                }, 0);
+            }
+        } else {
+            if (rewardsAccordionBtn) {
+                rewardsAccordionBtn.classList.add('hidden');
+            }
+        }
     } catch (e) {
         console.error("Error loading rewards:", e);
     }
@@ -1198,7 +1518,7 @@ function renderRewardCard(reward) {
     mainSection.appendChild(btnContainer);
 
     div.appendChild(mainSection);
-    rewardsList.appendChild(div);
+    return div;
 }
 
 async function createReward() {
@@ -1301,7 +1621,11 @@ async function deleteReward(rewardId, cardElement) {
         cardElement.style.transition = "all 0.3s ease";
         cardElement.style.opacity = "0";
         cardElement.style.transform = "translateX(-20px)";
-        setTimeout(() => cardElement.remove(), 300);
+        setTimeout(() => {
+            cardElement.remove();
+            // Перезагружаем список наград для правильного распределения по видимым/скрытым
+            loadRewards();
+        }, 300);
         allRewards = allRewards.filter(r => r.id != rewardId);
         showRewardMessage("✅ Награда удалена!", "success");
     } catch (e) {
@@ -1337,19 +1661,30 @@ async function spendReward(rewardId) {
             rewardMessage.textContent = errorMsg;
             rewardMessage.classList.remove("text-gray-500");
             rewardMessage.classList.add("text-red-500");
+            showNotification(errorMsg, 'error');
             return;
         }
         
-        rewardMessage.textContent = `✅ ${data.reward} получена! Минус ${data.spent} XP. Баланс: ${Math.round(data.new_balance)} XP`;
+        // Успешная покупка
+        const successMsg = `✅ ${data.reward} получена! Минус ${data.spent} XP. Баланс: ${Math.round(data.new_balance)} XP`;
+        rewardMessage.textContent = successMsg;
         rewardMessage.classList.remove("text-gray-500");
         rewardMessage.classList.add("text-green-600");
+        
+        // Показываем уведомление
+        showNotification(`✅ Награда "${data.reward}" куплена! Потрачено ${data.spent} XP`, 'success');
+        
+        // Обновляем все данные
         await loadWallet();
+        await loadHistory(); // Обновляем историю транзакций
         loadTodayStats(); // Обновляем статистику
     } catch (e) {
         console.error("Error:", e);
-        rewardMessage.textContent = "Ошибка соединения. Проверьте сервер.";
+        const errorMsg = "Ошибка соединения. Проверьте сервер.";
+        rewardMessage.textContent = errorMsg;
         rewardMessage.classList.remove("text-gray-500");
         rewardMessage.classList.add("text-red-500");
+        showNotification(errorMsg, 'error');
     }
 }
 
@@ -1365,6 +1700,10 @@ function showRewardMessage(text, type) {
     setTimeout(() => rewardMessage.classList.add("hidden"), 4000);
 }
 
+// ============= GLOBAL FUNCTIONS FOR ONCLICK =============
+// Делаем функции глобальными для использования в onclick
+window.toggleRewardsAccordion = toggleRewardsAccordion;
+window.toggleHistoryAccordion = toggleHistoryAccordion;
 
 // ============= INITIALIZATION =============
 window.addEventListener("DOMContentLoaded", () => {
@@ -1640,33 +1979,45 @@ async function loadRecommendations() {
             let bgColor = "bg-blue-50";
             let borderColor = "border-blue-200";
             let textColor = "text-blue-700";
+            let iconBgColor = "bg-blue-100";
             
             if (rec.priority === "high") {
                 icon = "fas fa-fire";
                 bgColor = "bg-orange-50";
                 borderColor = "border-orange-300";
                 textColor = "text-orange-700";
+                iconBgColor = "bg-orange-100";
             } else if (rec.priority === "medium") {
                 icon = "fas fa-exclamation-circle";
                 bgColor = "bg-amber-50";
                 borderColor = "border-amber-200";
                 textColor = "text-amber-700";
+                iconBgColor = "bg-amber-100";
             }
+            
+            // Проверяем, начата ли активность (не начата = есть activity_id, но нет активного таймера)
+            const isNotStarted = rec.activity_id && !activeTimers.has(rec.activity_id);
+            const notStartedStyles = isNotStarted 
+                ? "border-2 border-dashed border-emerald-400 bg-gradient-to-r from-emerald-50/50 to-green-50/50 shadow-sm" 
+                : "";
             
             let actionBtn = '';
             if (rec.activity_id) {
-                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="Начать отслеживание">
-                    <i class="fas fa-play text-[9px] md:text-[10px]"></i>
+                actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-7 h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="Начать отслеживание">
+                    <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </button>`;
             }
             
             return `
-                <div class="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 rounded-lg ${bgColor} border ${borderColor} transition-all hover:scale-[1.01]">
-                    <div class="w-5 h-5 md:w-6 md:h-6 rounded ${bgColor} flex items-center justify-center flex-shrink-0">
-                        <i class="${icon} ${textColor} text-[10px] md:text-xs"></i>
+                <div class="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-xl ${bgColor} border ${borderColor} ${notStartedStyles} transition-all hover:shadow-md hover:border-opacity-80 group">
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <i class="fas fa-caret-right text-emerald-500 text-sm md:text-base"></i>
+                        <div class="w-7 h-7 md:w-8 md:h-8 rounded-lg ${iconBgColor} flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+                            <i class="${icon} ${textColor} text-xs md:text-sm"></i>
+                        </div>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="font-medium ${textColor} text-[10px] md:text-xs leading-tight">${rec.message}</div>
+                        <div class="font-medium ${textColor} text-xs md:text-sm leading-tight">${rec.message}</div>
                     </div>
                     ${actionBtn}
                 </div>
@@ -1789,18 +2140,48 @@ async function loadInviteCode() {
         const res = await fetch(`${API_BASE}/admin/invite-code`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+            if (res.status === 403) {
+                // Подопечный пытается получить invite код
+                hideAdminPanel();
+                showNotification('🚫 Доступ запрещён. Только администраторы могут просматривать админ-панель.', 'error');
+            }
+            return;
+        }
         const data = await res.json();
         
         const baseUrl = window.location.origin + window.location.pathname;
         const inviteLink = `${baseUrl}?invite=${data.invite_code}`;
-        document.getElementById("invite-link").value = inviteLink;
+        const inviteLinkInput = document.getElementById("invite-link");
+        if (inviteLinkInput) {
+            inviteLinkInput.value = inviteLink;
+        }
     } catch (e) {
         console.error("Error loading invite code:", e);
     }
 }
 
-function showAdminPanel() {
+async function showAdminPanel() {
+    // Добавляем обработчик клика при открытии
+    setTimeout(() => {
+        document.addEventListener('click', handleAdminPanelClickOutside);
+    }, 100);
+    // Проверяем права доступа перед открытием панели
+    try {
+        const res = await fetch(`${API_BASE}/admin/invite-code`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (!res.ok) {
+            // Подопечный пытается открыть админ-панель
+            showNotification('🚫 Доступ запрещён. Только администраторы могут просматривать админ-панель.', 'error');
+            return;
+        }
+    } catch (e) {
+        showNotification('🚫 Ошибка проверки прав доступа.', 'error');
+        return;
+    }
+    
     const adminPanel = document.getElementById("admin-panel");
     adminPanel.classList.remove("hidden");
     loadChildren();
@@ -1814,6 +2195,20 @@ function showAdminPanel() {
 
 function hideAdminPanel() {
     document.getElementById("admin-panel").classList.add("hidden");
+    // Удаляем обработчик клика при закрытии
+    document.removeEventListener('click', handleAdminPanelClickOutside);
+}
+
+function handleAdminPanelClickOutside(event) {
+    const adminPanel = document.getElementById("admin-panel");
+    if (!adminPanel || adminPanel.classList.contains("hidden")) {
+        return;
+    }
+    
+    // Проверяем, был ли клик вне панели
+    if (!adminPanel.contains(event.target) && !event.target.closest('#admin-btn')) {
+        hideAdminPanel();
+    }
 }
 
 function copyInviteLink() {
@@ -1840,7 +2235,15 @@ async function loadChildren() {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
         if (!res.ok) {
-            document.getElementById("children-list").innerHTML = '<div class="text-center text-gray-400 py-4">Ошибка загрузки</div>';
+            if (res.status === 403) {
+                // Подопечный пытается загрузить данные
+                document.getElementById("children-list").innerHTML = '<div class="text-center text-red-500 py-4">🚫 Доступ запрещён. Только администраторы могут просматривать подопечных.</div>';
+                // Скрываем панель, если подопечный каким-то образом её открыл
+                hideAdminPanel();
+                showNotification('🚫 Доступ запрещён. Только администраторы могут просматривать админ-панель.', 'error');
+            } else {
+                document.getElementById("children-list").innerHTML = '<div class="text-center text-gray-400 py-4">Ошибка загрузки</div>';
+            }
             return;
         }
         

@@ -27,3 +27,4 @@ if __name__ == "__main__":
     print("🤖 Запуск Telegram бота...")
     run_bot()
 
+

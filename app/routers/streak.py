@@ -137,3 +137,4 @@ async def update_streak_endpoint(
     """Обновить streak (вызывается после завершения активности)"""
     return update_streak(db, current_user.id)
 
+
