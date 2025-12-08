@@ -68,6 +68,8 @@ const translations = {
         "hide_history": "Скрыть историю",
         "show_all_rewards": "Показать все награды",
         "hide_rewards": "Скрыть награды",
+        "show_all_activities": "Показать все активности",
+        "hide_activities": "Скрыть активности",
         "earned": "Заработано",
         "spent": "Потрачено",
         "at_time": "в",
@@ -352,6 +354,8 @@ const translations = {
         "hide_history": "Приховати історію",
         "show_all_rewards": "Показати всі нагороди",
         "hide_rewards": "Приховати нагороди",
+        "show_all_activities": "Показати всі активності",
+        "hide_activities": "Приховати активності",
         "earned": "Зароблено",
         "spent": "Витрачено",
         "at_time": "о",
@@ -637,6 +641,8 @@ const translations = {
         "hide_history": "Verlauf ausblenden",
         "show_all_rewards": "Alle Belohnungen anzeigen",
         "hide_rewards": "Belohnungen ausblenden",
+        "show_all_activities": "Alle Aktivitäten anzeigen",
+        "hide_activities": "Aktivitäten ausblenden",
         "earned": "Verdient",
         "spent": "Ausgegeben",
         "at_time": "um",
@@ -921,6 +927,8 @@ const translations = {
         "hide_history": "Hide history",
         "show_all_rewards": "Show all rewards",
         "hide_rewards": "Hide rewards",
+        "show_all_activities": "Show all activities",
+        "hide_activities": "Hide activities",
         "earned": "Earned",
         "spent": "Spent",
         "at_time": "at",
@@ -1366,6 +1374,11 @@ let currentUser = null;
 // ============= APP STATE =============
 const activeTimers = new Map();
 let allActivities = [];
+let activitiesFilterState = {
+    sort: 'newest', // newest, oldest, name-asc, name-desc
+    category: 'all'
+};
+let activitiesAccordionExpanded = false; // По умолчанию свернут - показываем только первые 5 активностей
 let allRewards = [];
 
 // ============= DOM ELEMENTS =============
@@ -1373,13 +1386,14 @@ const authSection = document.getElementById("auth-section");
 const appSection = document.getElementById("app-section");
 const activityNameInput = document.getElementById("activity-name");
 const xpPerHourInput = document.getElementById("xp-per-hour");
-const activitiesList = document.getElementById("activities-list");
+// activitiesList больше не используется напрямую, используем activitiesListVisible и activitiesListHidden
 const newActivityForm = document.getElementById("new-activity-form");
 const balanceSpan = document.getElementById("balance");
 const levelSpan = document.getElementById("level");
 // Элементы будут инициализированы при первом использовании
 let rewardsListVisible, rewardsListHidden, rewardsAccordionBtn;
 let historyListVisible, historyListHidden, historyAccordionBtn;
+let activitiesListVisible, activitiesListHidden, activitiesAccordionBtn;
 
 function getRewardsElements() {
     // Всегда переинициализируем, чтобы убедиться, что элементы найдены
@@ -1584,6 +1598,9 @@ function showApp() {
     historyListVisible = null;
     historyListHidden = null;
     historyAccordionBtn = null;
+    activitiesListVisible = null;
+    activitiesListHidden = null;
+    activitiesAccordionBtn = null;
     
     // Небольшая задержка, чтобы DOM успел обновиться
     setTimeout(async () => {
@@ -1591,6 +1608,7 @@ function showApp() {
         // Сначала загружаем категории, чтобы они были доступны при отображении активностей
         await loadCategories();
         loadActivities(); // Теперь загружаем активности, когда категории уже загружены
+        initActivitiesFilters(); // Инициализируем фильтры и аккордеон
         loadRewards();
         loadTodayStats();
         loadWeekCalendar();
@@ -2169,13 +2187,15 @@ function toggleHistory() {
 
 function renderHistoryItem(item) {
     const isEarn = item.type === 'earn';
+    // Парсим дату - если она в формате ISO с timezone, JavaScript правильно её обработает
     const date = new Date(item.date);
     
     // Локализация даты и времени
     const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
     const locale = localeMap[currentLanguage] || 'ru-RU';
-    const timeStr = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-    const dateStr = date.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+    // Используем timeZone для правильного отображения Берлинского времени
+    const timeStr = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' });
+    const dateStr = date.toLocaleDateString(locale, { day: 'numeric', month: 'short', timeZone: 'Europe/Berlin' });
     
     return `
         <div class="flex items-center justify-between p-2.5 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:bg-opacity-80">
@@ -2184,7 +2204,7 @@ function renderHistoryItem(item) {
                     <i class="fas ${isEarn ? 'fa-arrow-up' : 'fa-arrow-down'} text-white text-xs"></i>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <div class="font-medium text-gray-800 text-sm truncate">${item.description}</div>
+                    <div class="font-medium text-gray-800 text-sm break-words">${item.description}</div>
                     <div class="text-xs text-gray-500">${dateStr} ${t('at_time')} ${timeStr}${item.duration_minutes ? ` • ${Math.round(item.duration_minutes)} ${t('min_short')}` : ''}</div>
                 </div>
             </div>
@@ -2226,8 +2246,14 @@ function filterHistoryByPeriod(data, period) {
     }
     
     return data.filter(item => {
-        const itemDate = new Date(item.date);
-        return itemDate >= startDate;
+        if (!item.date) return false;
+        try {
+            const itemDate = new Date(item.date);
+            return itemDate >= startDate;
+        } catch (e) {
+            console.warn('Invalid date in history item:', item.date);
+            return false;
+        }
     });
 }
 
@@ -2277,8 +2303,12 @@ async function loadHistory() {
         }
         
         // Увеличиваем лимит для получения достаточного количества данных для фильтрации
-        const res = await fetch(`${API_BASE}/xp/full-history?limit=1000`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+        // Добавляем timestamp для предотвращения кэширования
+        const res = await fetch(`${API_BASE}/xp/full-history?limit=1000&_t=${Date.now()}`, {
+            headers: { 
+                "Authorization": `Bearer ${authToken}`,
+                "Cache-Control": "no-cache"
+            }
         });
         
         if (!res.ok) {
@@ -2479,15 +2509,13 @@ function updateHistoryAccordionButton() {
 // ============= ACTIVITIES =============
 async function loadActivities() {
     try {
-        const activitiesListEl = document.getElementById('activities-list');
-        if (!activitiesListEl) {
-            console.warn("Activities list element not found");
-            return;
-        }
+        getActivitiesElements();
         
         if (!authToken) {
             console.error("No auth token available");
-            activitiesListEl.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            }
             return;
         }
         
@@ -2498,32 +2526,305 @@ async function loadActivities() {
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load activities:", res.status, res.statusText, errorText);
-            activitiesListEl.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+            }
             return;
         }
         
         const data = await res.json();
         allActivities = data;
-        activitiesListEl.innerHTML = "";
         
-        if (data.length === 0) {
-            activitiesListEl.innerHTML = '<div class="text-center text-gray-400 py-4">Нет активностей. Создайте первую активность!</div>';
-            return;
-        }
+        // Обновляем фильтр категорий
+        updateActivitiesCategoryFilter();
         
-        // Загружаем активные таймеры перед отрисовкой карточек (после заполнения allActivities)
-        await loadActiveTimers();
-        
-        data.forEach(renderActivityCard);
-        
-        // Инициализируем SortableJS для drag and drop
-        initActivitiesSortable();
+        // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
+        applyActivitiesFilters();
     } catch (e) {
         console.error("Error loading activities", e);
-        const activitiesListEl = document.getElementById('activities-list');
-        if (activitiesListEl) {
-            activitiesListEl.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+        getActivitiesElements();
+        if (activitiesListVisible) {
+            activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
         }
+    }
+}
+
+// Обновление фильтра категорий
+function updateActivitiesCategoryFilter() {
+    const categoryFilter = document.getElementById('activities-category-filter');
+    if (!categoryFilter) return;
+    
+    // Сохраняем текущее значение
+    const currentValue = categoryFilter.value;
+    
+    // Очищаем опции (кроме "Все категории")
+    categoryFilter.innerHTML = '<option value="all">⬆️ Все категории</option>';
+    
+    // Получаем уникальные категории из активностей
+    const categories = new Set();
+    allActivities.forEach(activity => {
+        const category = activity.category || 'general';
+        categories.add(category);
+    });
+    
+    // Создаем объект с названиями категорий
+    const categoryNames = {
+        "general": t('category_general'),
+        "study": t('category_study'),
+        "sport": t('category_sport'),
+        "hobby": t('category_hobby'),
+        "work": t('category_work'),
+        "health": t('category_health')
+    };
+    
+    // Добавляем пользовательские категории
+    if (allCategories.custom) {
+        allCategories.custom.forEach(customCat => {
+            categoryNames[customCat.id] = customCat.name;
+        });
+    }
+    
+    // Сортируем категории по названию
+    const sortedCategories = Array.from(categories).sort((a, b) => {
+        const nameA = categoryNames[a] || a;
+        const nameB = categoryNames[b] || b;
+        return nameA.localeCompare(nameB);
+    });
+    
+    // Добавляем опции
+    sortedCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = categoryNames[category] || category;
+        categoryFilter.appendChild(option);
+    });
+    
+    
+    // Восстанавливаем значение, если оно все еще существует
+    if (currentValue && Array.from(categoryFilter.options).some(opt => opt.value === currentValue)) {
+        categoryFilter.value = currentValue;
+    }
+}
+
+// Получение элементов аккордеона активностей
+function getActivitiesElements() {
+    if (!activitiesListVisible) {
+        activitiesListVisible = document.getElementById("activities-list-visible");
+    }
+    if (!activitiesListHidden) {
+        activitiesListHidden = document.getElementById("activities-list-hidden");
+    }
+    if (!activitiesAccordionBtn) {
+        activitiesAccordionBtn = document.getElementById("activities-accordion-btn");
+    }
+    
+    // Если элементы не найдены, пробуем через querySelector
+    if (!activitiesListVisible) {
+        activitiesListVisible = document.querySelector("#activities-list-visible");
+    }
+    if (!activitiesListHidden) {
+        activitiesListHidden = document.querySelector("#activities-list-hidden");
+    }
+    if (!activitiesAccordionBtn) {
+        activitiesAccordionBtn = document.querySelector("#activities-accordion-btn");
+    }
+}
+
+// Применение фильтров и сортировки
+function applyActivitiesFilters() {
+    getActivitiesElements();
+    
+    if (!activitiesListVisible || !activitiesListHidden) return;
+    
+    // Очищаем списки
+    activitiesListVisible.innerHTML = "";
+    activitiesListHidden.innerHTML = "";
+    
+    if (allActivities.length === 0) {
+        activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Нет активностей. Создайте первую активность!</div>';
+        if (activitiesAccordionBtn) activitiesAccordionBtn.classList.add('hidden');
+        return;
+    }
+    
+    // Фильтруем по категории
+    let filtered = allActivities;
+    if (activitiesFilterState.category !== 'all') {
+        filtered = allActivities.filter(activity => {
+            const category = activity.category || 'general';
+            return category === activitiesFilterState.category;
+        });
+    }
+    
+    // Сортируем
+    filtered = [...filtered]; // Копируем массив
+    switch (activitiesFilterState.sort) {
+        case 'newest':
+            filtered.sort((a, b) => {
+                const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
+                const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
+                return dateB - dateA; // Новые сначала
+            });
+            break;
+        case 'oldest':
+            filtered.sort((a, b) => {
+                const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
+                const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
+                return dateA - dateB; // Старые сначала
+            });
+            break;
+        case 'name-asc':
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case 'name-desc':
+            filtered.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+    }
+    
+    // Отрисовываем отфильтрованные активности
+    filtered.forEach((activity, index) => {
+        const card = renderActivityCard(activity);
+        if (index < 5) {
+            // Первые 5 в видимый список
+            activitiesListVisible.appendChild(card);
+        } else {
+            // Остальные в скрытый список
+            activitiesListHidden.appendChild(card);
+        }
+    });
+    
+    // Показываем/скрываем кнопку аккордеона
+    if (activitiesAccordionBtn) {
+        if (filtered.length > 5) {
+            activitiesAccordionBtn.classList.remove('hidden');
+            updateActivitiesAccordionButton();
+        } else {
+            activitiesAccordionBtn.classList.add('hidden');
+        }
+    }
+    
+    // Загружаем активные таймеры перед инициализацией SortableJS
+    loadActiveTimers().then(() => {
+        // Инициализируем SortableJS для drag and drop
+        initActivitiesSortable();
+    });
+}
+
+// Функции аккордеона для активностей
+function toggleActivitiesAccordion() {
+    getActivitiesElements();
+    if (!activitiesListHidden || !activitiesAccordionBtn) {
+        console.error("Activities accordion elements not found");
+        return;
+    }
+    
+    const isHidden = activitiesListHidden.classList.contains('hidden');
+    const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
+    const text = activitiesAccordionBtn.querySelector('.accordion-text');
+    
+    if (!icon || !text) return;
+    
+    if (isHidden) {
+        // Показываем скрытые элементы
+        activitiesListHidden.classList.remove('hidden');
+        // Устанавливаем реальную высоту для плавной анимации
+        const height = activitiesListHidden.scrollHeight;
+        activitiesListHidden.style.maxHeight = height + 'px';
+        activitiesListHidden.style.overflow = 'visible';
+        // После анимации убираем ограничение - контент будет скроллиться вместе со страницей
+        setTimeout(() => {
+            if (activitiesListHidden && !activitiesListHidden.classList.contains('hidden')) {
+                activitiesListHidden.style.maxHeight = 'none';
+                activitiesListHidden.style.overflow = 'visible';
+            }
+        }, 300);
+        icon.style.transform = 'rotate(180deg)';
+        text.textContent = t('hide_activities');
+        localStorage.setItem('activitiesAccordionExpanded', 'true');
+    } else {
+        // Скрываем элементы
+        activitiesListHidden.style.maxHeight = '0px';
+        activitiesListHidden.style.overflow = 'hidden';
+        icon.style.transform = 'rotate(0deg)';
+        text.textContent = t('show_all_activities');
+        localStorage.setItem('activitiesAccordionExpanded', 'false');
+        setTimeout(() => {
+            if (activitiesListHidden && activitiesListHidden.style.maxHeight === '0px') {
+                activitiesListHidden.classList.add('hidden');
+            }
+        }, 400);
+    }
+}
+
+function updateActivitiesAccordionButton() {
+    getActivitiesElements();
+    if (!activitiesListHidden || !activitiesAccordionBtn) return;
+    
+    const isExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true';
+    const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
+    const text = activitiesAccordionBtn.querySelector('.accordion-text');
+    
+    if (!icon || !text) return;
+    
+    if (isExpanded) {
+        activitiesListHidden.classList.remove('hidden');
+        const height = activitiesListHidden.scrollHeight;
+        activitiesListHidden.style.maxHeight = height + 'px';
+        activitiesListHidden.style.overflow = 'visible';
+        // После небольшой задержки убираем ограничение - контент будет скроллиться вместе со страницей
+        setTimeout(() => {
+            if (activitiesListHidden && !activitiesListHidden.classList.contains('hidden')) {
+                activitiesListHidden.style.maxHeight = 'none';
+                activitiesListHidden.style.overflow = 'visible';
+            }
+        }, 100);
+        icon.style.transform = 'rotate(180deg)';
+        text.textContent = t('hide_activities');
+    } else {
+        activitiesListHidden.classList.add('hidden');
+        activitiesListHidden.style.maxHeight = '0px';
+        activitiesListHidden.style.overflow = 'hidden';
+        icon.style.transform = 'rotate(0deg)';
+        text.textContent = t('show_all_activities');
+    }
+}
+
+// Инициализация фильтров и аккордеона для активностей
+function initActivitiesFilters() {
+    // Аккордеон будет инициализирован динамически в applyActivitiesFilters
+    
+    // Сортировка
+    const sortSelect = document.getElementById('activities-sort');
+    if (sortSelect) {
+        
+        sortSelect.value = activitiesFilterState.sort;
+        sortSelect.addEventListener('change', (e) => {
+            activitiesFilterState.sort = e.target.value;
+            applyActivitiesFilters();
+        });
+    }
+    
+    // Фильтр по категории
+    const categoryFilter = document.getElementById('activities-category-filter');
+    if (categoryFilter) {
+        categoryFilter.value = activitiesFilterState.category;
+        categoryFilter.addEventListener('change', (e) => {
+            activitiesFilterState.category = e.target.value;
+            applyActivitiesFilters();
+        });
+    }
+    
+    // Кнопка сброса фильтров
+    const resetBtn = document.getElementById('activities-reset-filters');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            activitiesFilterState.sort = 'newest';
+            activitiesFilterState.category = 'all';
+            
+            if (sortSelect) sortSelect.value = 'newest';
+            if (categoryFilter) categoryFilter.value = 'all';
+            
+            applyActivitiesFilters();
+        });
     }
 }
 
@@ -2613,7 +2914,7 @@ async function loadActiveTimers() {
 
 function renderActivityCard(activity) {
     const div = document.createElement("div");
-    div.className = "activity-card p-4 mb-3 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3 cursor-move";
+    div.className = "activity-card p-4 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3 cursor-move";
     div.setAttribute("data-activity-id", activity.id);
     div.style.userSelect = 'none'; // Предотвращаем выделение текста при перетаскивании
 
@@ -2746,7 +3047,8 @@ function renderActivityCard(activity) {
     div.appendChild(manualTimeBtn);
     div.appendChild(editBtn);
     div.appendChild(deleteBtn);
-    activitiesList.appendChild(div);
+    // Возвращаем элемент вместо добавления напрямую
+    return div;
 }
 
 // ============= DRAG AND DROP FOR ACTIVITIES (SortableJS) =============
@@ -2890,7 +3192,8 @@ async function createActivity() {
         if (unitTypeEl) unitTypeEl.value = "time";
         updateActivityXPInputs();
         allActivities.push(created);
-        renderActivityCard(created);
+        updateActivitiesCategoryFilter();
+        applyActivitiesFilters();
         showActivityMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {
         console.error("Error:", e);
@@ -3050,8 +3353,12 @@ async function deleteActivity(activityId, cardElement) {
         cardElement.style.transition = "all 0.3s ease";
         cardElement.style.opacity = "0";
         cardElement.style.transform = "translateX(-20px)";
-        setTimeout(() => cardElement.remove(), 300);
-        allActivities = allActivities.filter(a => a.id != activityId);
+        setTimeout(() => {
+            cardElement.remove();
+            allActivities = allActivities.filter(a => a.id != activityId);
+            updateActivitiesCategoryFilter();
+            applyActivitiesFilters();
+        }, 300);
     } catch (e) {
         console.error("Error:", e);
         alert("Ошибка сети");
@@ -3791,8 +4098,12 @@ async function spendReward(rewardId) {
         
         // Обновляем все данные
         await loadWallet();
-        await loadHistory(); // Обновляем историю транзакций
         loadTodayStats(); // Обновляем статистику
+        
+        // Небольшая задержка перед обновлением истории, чтобы сервер успел обработать транзакцию
+        setTimeout(async () => {
+            await loadHistory(); // Обновляем историю транзакций
+        }, 300);
     } catch (e) {
         console.error("Error:", e);
         const errorMsg = t('connection_error');
@@ -4097,15 +4408,17 @@ async function loadStreak() {
 // ============= RECOMMENDATIONS =============
 async function loadRecommendations() {
     try {
-        const listEl = document.getElementById('recommendations-list');
-        if (!listEl) {
-            console.warn("Recommendations list element not found");
+        const listVisible = document.getElementById('recommendations-list-visible');
+        const listHidden = document.getElementById('recommendations-list-hidden');
+        
+        if (!listVisible || !listHidden) {
+            console.warn("Recommendations list elements not found");
             return;
         }
         
         if (!authToken) {
             console.error("No auth token available");
-            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
+            listVisible.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
             return;
         }
         
@@ -4116,14 +4429,14 @@ async function loadRecommendations() {
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load recommendations:", res.status, res.statusText, errorText);
-            listEl.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${t('error_loading_recommendations')}</div>`;
+            listVisible.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${t('error_loading_recommendations')}</div>`;
             return;
         }
         
         const data = await res.json();
         
         if (!data.recommendations || data.recommendations.length === 0) {
-            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('no_recommendations')}</div>`;
+            listVisible.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('no_recommendations')}</div>`;
             return;
         }
         
@@ -4156,7 +4469,16 @@ async function loadRecommendations() {
             didToday: r.minutes_today !== undefined && r.minutes_today !== null && Number(r.minutes_today) > 0
         })));
         
-        listEl.innerHTML = sortedRecommendations.map(rec => {
+        // Разделяем рекомендации на видимые (первые 3) и скрытые (остальные)
+        const visibleRecommendations = sortedRecommendations.slice(0, 3);
+        const hiddenRecommendations = sortedRecommendations.slice(3);
+        
+        // Очищаем списки
+        listVisible.innerHTML = '';
+        listHidden.innerHTML = '';
+        
+        // Функция для рендеринга одной рекомендации
+        const renderRecommendation = (rec) => {
             let icon = "fas fa-lightbulb";
             let bgColor = "bg-blue-50";
             let borderColor = "border-blue-200";
@@ -4222,7 +4544,17 @@ async function loadRecommendations() {
                     ${actionBtn}
                 </div>
             `;
-        }).join('');
+        };
+        
+        // Рендерим видимые рекомендации (первые 3)
+        visibleRecommendations.forEach(rec => {
+            listVisible.innerHTML += renderRecommendation(rec);
+        });
+        
+        // Рендерим скрытые рекомендации (остальные)
+        hiddenRecommendations.forEach(rec => {
+            listHidden.innerHTML += renderRecommendation(rec);
+        });
     } catch (e) {
         console.error("Error loading recommendations", e);
     }

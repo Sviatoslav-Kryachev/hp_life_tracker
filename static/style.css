@@ -103,13 +103,15 @@ html {
 
 /* Accordion animations */
 #rewards-list-hidden,
-#history-list-hidden {
+#history-list-hidden,
+#activities-list-hidden {
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in-out;
-    overflow: hidden;
+    overflow: visible;
 }
 
 #rewards-list-hidden.hidden,
-#history-list-hidden.hidden {
+#history-list-hidden.hidden,
+#activities-list-hidden.hidden {
     max-height: 0 !important;
     opacity: 0;
 }
@@ -160,6 +162,7 @@ select {
     background-size: 1.5em 1.5em;
     padding-right: 2.5rem;
 }
+
 
 /* Убираем стандартную иконку браузера для админ селекта категорий */
 #admin-category-filter {
@@ -311,4 +314,15 @@ select {
 
 .goal-mode-option:hover {
     transform: translateY(-1px);
+}
+
+/* Убираем стандартную стрелку для селектов с кастомной иконкой */
+#activities-sort,
+#activities-category-filter {
+    background-image: none !important;
+    background: none !important;
+    padding-right: 2.5rem !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
 }

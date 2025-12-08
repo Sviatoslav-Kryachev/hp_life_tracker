@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
+import pytz
 from app.utils.database import get_db
 from app.utils.auth import get_current_user
 from app.models.base import XPWallet, ActivityLog, User, RewardPurchase, TimerLog, Activity
@@ -417,15 +418,53 @@ async def get_full_history(
     
     for purchase in spendings:
         # Если xp_spent отрицательный, это заработок (например, бонус за достижение цели)
-        # Если положительный, это трата (покупка награды)
-        is_earn = purchase.xp_spent < 0
+        # Также если описание содержит "Достижение цели" или начинается с "🎯", это всегда заработок
+        # (для совместимости со старыми транзакциями, которые могли быть созданы с положительным значением)
+        reward_name = purchase.reward_name or ""
+        # КРИТИЧНО: Если описание содержит "🎯" в любом месте - это всегда достижение цели (заработок)
+        # Это должно работать даже для старых транзакций с пустым описанием после "🎯 Достижение цели:"
+        is_goal_achievement = False
+        if reward_name and "🎯" in reward_name:
+            is_goal_achievement = True
+        elif reward_name:
+            reward_name_lower = reward_name.lower()
+            reward_name_stripped = reward_name.strip()
+            # Проверяем разными способами для надежности
+            is_goal_achievement = (
+                "достижение цели" in reward_name_lower or 
+                reward_name.startswith("🎯") or
+                "🎯" in reward_name or
+                reward_name_stripped == "🎯 Достижение цели:" or  # Для старых транзакций
+                reward_name_stripped.startswith("🎯 Достижение цели") or  # Любое описание, начинающееся с этого
+                reward_name_stripped == "🎯 Достижение цели"  # Без двоеточия
+            )
+        
+        # Всегда считаем транзакции достижения цели как заработок
+        # Если xp_spent отрицательный - это точно заработок
+        # Если описание содержит "🎯" или "Достижение цели" - это тоже заработок
+        is_earn = purchase.xp_spent < 0 or is_goal_achievement
         amount = abs(purchase.xp_spent)  # Используем абсолютное значение для отображения
+        
+        # Конвертируем время в Берлинское время для отображения
+        # purchased_at сохраняется в UTC (без timezone), поэтому считаем что это UTC
+        berlin_tz = pytz.timezone('Europe/Berlin')
+        if purchase.purchased_at:
+            # Если время без timezone, считаем что это UTC
+            if purchase.purchased_at.tzinfo is None:
+                purchased_at_utc = pytz.UTC.localize(purchase.purchased_at)
+            else:
+                purchased_at_utc = purchase.purchased_at
+            # Конвертируем в Берлинское время
+            purchased_at_berlin = purchased_at_utc.astimezone(berlin_tz)
+            date_iso = purchased_at_berlin.isoformat()
+        else:
+            date_iso = purchase.purchased_at.isoformat() if purchase.purchased_at else None
         
         history.append({
             "type": "earn" if is_earn else "spend",
             "description": purchase.reward_name,
             "amount": round(amount, 1),
-            "date": purchase.purchased_at.isoformat(),
+            "date": date_iso,
             "duration_minutes": None
         })
     

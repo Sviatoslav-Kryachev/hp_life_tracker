@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime
 from typing import List
+import pytz
 
 from app.models.base import Goal, Activity, ActivityLog, XPWallet, RewardPurchase
 from app.schemas.goal import GoalCreate, GoalUpdate, GoalOut
@@ -12,6 +13,102 @@ from app.utils.auth import get_current_user
 from app.models.base import User
 
 router = APIRouter(prefix="/goals", tags=["goals"])
+
+# Берлинское время (Europe/Berlin)
+BERLIN_TZ = pytz.timezone('Europe/Berlin')
+
+def get_berlin_time():
+    """Получить текущее время по Берлинскому времени, конвертированное в UTC для сохранения в БД"""
+    berlin_time = datetime.now(BERLIN_TZ)
+    # Конвертируем в UTC для сохранения в БД (SQLAlchemy сохранит как UTC)
+    return berlin_time.astimezone(pytz.UTC).replace(tzinfo=None)
+
+
+def format_goal_achievement_description(db: Session, goal):
+    """Формирует описание достижения цели для истории транзакций"""
+    # Получаем название активности, если есть
+    activity_name = None
+    if goal.activity_id:
+        activity = db.query(Activity).filter(Activity.id == goal.activity_id).first()
+        if activity:
+            activity_name = activity.name
+    
+    # Определяем название цели: если есть title (комментарий), используем его, иначе название активности
+    goal_name = goal.title if goal.title else (activity_name if activity_name else "Цель")
+    
+    # Формируем описание с прогрессом
+    # Проверяем, есть ли целевое количество и оно больше 0
+    if goal.target_quantity is not None and goal.target_quantity > 0:
+        # Цель по количеству
+        current_qty = int(goal.current_quantity) if goal.current_quantity and goal.current_quantity > 0 else int(goal.target_quantity)
+        target_qty = int(goal.target_quantity)
+        progress_text = f"{current_qty} / {target_qty} штук"
+    else:
+        # Цель по XP
+        current_xp = int(goal.current_xp) if goal.current_xp and goal.current_xp > 0 else int(goal.target_xp)
+        target_xp = int(goal.target_xp)
+        progress_text = f"{current_xp} / {target_xp} XP"
+    
+    # Добавляем дату дедлайна, если она есть
+    deadline_text = ""
+    if goal.target_date:
+        # Конвертируем в Берлинское время для форматирования
+        if goal.target_date.tzinfo is None:
+            # Если дата без timezone, считаем что это UTC
+            target_date_utc = pytz.UTC.localize(goal.target_date)
+        else:
+            target_date_utc = goal.target_date
+        
+        # Конвертируем в Берлинское время
+        target_date_berlin = target_date_utc.astimezone(BERLIN_TZ)
+        # Форматируем дату в формате ДД.ММ.ГГГГ
+        deadline_text = f" до {target_date_berlin.strftime('%d.%m.%Y')}"
+    
+    # Убеждаемся, что описание не пустое и содержит все необходимые данные
+    # Проверяем, что goal_name не пустой
+    if not goal_name or goal_name.strip() == "":
+        goal_name = "Цель"  # Fallback значение
+    
+    # Убеждаемся, что progress_text не пустой
+    if not progress_text or progress_text.strip() == "":
+        # Если progress_text пустой, формируем его заново
+        if goal.target_quantity is not None and goal.target_quantity > 0:
+            current_qty = int(goal.current_quantity) if goal.current_quantity else int(goal.target_quantity)
+            target_qty = int(goal.target_quantity)
+            progress_text = f"{current_qty} / {target_qty} штук"
+        else:
+            current_xp = int(goal.current_xp) if goal.current_xp else int(goal.target_xp)
+            target_xp = int(goal.target_xp)
+            progress_text = f"{current_xp} / {target_xp} XP"
+    
+    # Формируем описание - убеждаемся, что все части не пустые
+    # Если goal_name пустой, используем "Цель"
+    if not goal_name or goal_name.strip() == "":
+        goal_name = "Цель"
+    
+    # Если progress_text пустой, формируем его заново
+    if not progress_text or progress_text.strip() == "":
+        if goal.target_quantity is not None and goal.target_quantity > 0:
+            current_qty = int(goal.current_quantity) if goal.current_quantity else int(goal.target_quantity)
+            target_qty = int(goal.target_quantity)
+            progress_text = f"{current_qty} / {target_qty} штук"
+        else:
+            current_xp = int(goal.current_xp) if goal.current_xp else int(goal.target_xp)
+            target_xp = int(goal.target_xp)
+            progress_text = f"{current_xp} / {target_xp} XP"
+    
+    # Формируем описание - гарантируем, что оно не пустое
+    description = f"🎯 Достижение цели: {goal_name} ({progress_text}){deadline_text}"
+    
+    # Дополнительная проверка - если описание все еще пустое или содержит только "🎯 Достижение цели:", добавляем информацию
+    if description.strip() == "🎯 Достижение цели:" or description.strip() == "🎯 Достижение цели: ()":
+        # Если описание пустое, добавляем хотя бы базовую информацию
+        if goal.target_quantity is not None and goal.target_quantity > 0:
+            description = f"🎯 Достижение цели: {goal_name} ({int(goal.target_quantity)} / {int(goal.target_quantity)} штук){deadline_text}"
+        else:
+            description = f"🎯 Достижение цели: {goal_name} ({int(goal.target_xp)} / {int(goal.target_xp)} XP){deadline_text}"
+    
+    return description
 
 
 def update_goal_progress(db: Session, goal):
@@ -51,8 +148,9 @@ def update_goal_progress(db: Session, goal):
         # Проверяем, выполнена ли цель по количеству
         if goal.current_quantity >= goal.target_quantity and goal.is_completed == 0:
             goal.is_completed = 1
-            goal.completed_at = datetime.utcnow()
+            goal.completed_at = get_berlin_time()
             goal.current_xp = goal.target_xp  # Устанавливаем на максимум
+            goal.current_quantity = goal.target_quantity  # Устанавливаем на максимум для правильного отображения
             
             # Начисляем бонус XP за достижение цели
             bonus_xp = goal.completion_bonus_xp or 0.0
@@ -65,15 +163,15 @@ def update_goal_progress(db: Session, goal):
                     # Повышение уровня
                     if wallet.total_earned >= wallet.level * 1000:
                         wallet.level += 1
-                
-                # Добавляем запись в историю транзакций
-                purchase = RewardPurchase(
-                    user_id=goal.user_id,
-                    reward_name=f"🎯 Достижение цели: {goal.title}",
-                    xp_spent=-bonus_xp,  # Отрицательное значение означает заработок
-                    purchased_at=datetime.utcnow()
-                )
-                db.add(purchase)
+                    
+                    # Добавляем запись в историю транзакций только если кошелек найден
+                    purchase = RewardPurchase(
+                        user_id=goal.user_id,
+                        reward_name=format_goal_achievement_description(db, goal),
+                        xp_spent=-bonus_xp,  # Отрицательное значение означает заработок
+                        purchased_at=get_berlin_time()
+                    )
+                    db.add(purchase)
     else:
         # Для активностей во времени или целей без количества
         # Если цель привязана к активности, считаем XP только от неё
@@ -95,7 +193,8 @@ def update_goal_progress(db: Session, goal):
         # Проверяем, выполнена ли цель
         if goal.current_xp >= goal.target_xp and goal.is_completed == 0:
             goal.is_completed = 1
-            goal.completed_at = datetime.utcnow()
+            goal.completed_at = get_berlin_time()
+            goal.current_xp = goal.target_xp  # Устанавливаем на максимум для правильного отображения
             
             # Начисляем бонус XP за достижение цели
             bonus_xp = goal.completion_bonus_xp or 0.0
@@ -108,15 +207,15 @@ def update_goal_progress(db: Session, goal):
                     # Повышение уровня
                     if wallet.total_earned >= wallet.level * 1000:
                         wallet.level += 1
-                
-                # Добавляем запись в историю транзакций
-                purchase = RewardPurchase(
-                    user_id=goal.user_id,
-                    reward_name=f"🎯 Достижение цели: {goal.title}",
-                    xp_spent=-bonus_xp,  # Отрицательное значение означает заработок
-                    purchased_at=datetime.utcnow()
-                )
-                db.add(purchase)
+                    
+                    # Добавляем запись в историю транзакций только если кошелек найден
+                    purchase = RewardPurchase(
+                        user_id=goal.user_id,
+                        reward_name=format_goal_achievement_description(db, goal),
+                        xp_spent=-bonus_xp,  # Отрицательное значение означает заработок
+                        purchased_at=get_berlin_time()
+                    )
+                    db.add(purchase)
     
     db.commit()
     db.refresh(goal)
@@ -308,8 +407,12 @@ async def complete_goal(
         raise HTTPException(status_code=400, detail="Цель уже выполнена")
     
     goal.is_completed = 1
-    goal.completed_at = datetime.utcnow()
+    goal.completed_at = get_berlin_time()
     goal.current_xp = goal.target_xp  # Устанавливаем на максимум
+    
+    # Если цель по количеству, устанавливаем текущее количество на целевое
+    if goal.target_quantity:
+        goal.current_quantity = goal.target_quantity
     
     # Начисляем бонус XP за достижение цели
     bonus_xp = goal.completion_bonus_xp or 0.0
@@ -321,15 +424,15 @@ async def complete_goal(
             # Повышение уровня
             if wallet.total_earned >= wallet.level * 1000:
                 wallet.level += 1
-        
-        # Добавляем запись в историю транзакций
-        purchase = RewardPurchase(
-            user_id=current_user.id,
-            reward_name=f"🎯 Достижение цели: {goal.title}",
-            xp_spent=-bonus_xp,  # Отрицательное значение означает заработок
-            purchased_at=datetime.utcnow()
-        )
-        db.add(purchase)
+            
+            # Добавляем запись в историю транзакций только если кошелек найден
+            purchase = RewardPurchase(
+                user_id=current_user.id,
+                reward_name=format_goal_achievement_description(db, goal),
+                xp_spent=-bonus_xp,  # Отрицательное значение означает заработок
+                purchased_at=get_berlin_time()
+            )
+            db.add(purchase)
     
     db.commit()
     db.refresh(goal)
