@@ -523,7 +523,7 @@
             </div>
 
             <!-- Основной контент: Активности + Боковая панель -->
-            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
+            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
                 <!-- Активности (основной контент, 2/3 ширины) -->
                 <div id="activities" class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl border border-white/50 scroll-mt-20 md:scroll-mt-24">
                     <!-- Заголовок -->
@@ -708,13 +708,66 @@
                             <div id="recommendations-list-hidden" class="space-y-2 hidden"></div>
                         </div>
                     </div>
+
+                    <!-- История транзакций -->
+                    <div id="history" class="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col scroll-mt-20 md:scroll-mt-24">
+                        <!-- Заголовок с градиентом -->
+                        <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center flex-shrink-0">
+                            <div class="flex items-start gap-2 md:gap-3">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-history text-white text-lg md:text-xl"></i>
+                                </div>
+                                <div class="flex flex-col -mt-1 md:-mt-0.5">
+                                    <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="transaction_history">История транзакций</span></h2>
+                                    <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="all_xp_operations">Все операции с XP</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 flex flex-col">
+                            <!-- Фильтр периода -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-filter text-indigo-600 mr-1"></i>
+                                    <span data-i18n="filter_period">Период</span>
+                                </label>
+                                <div class="flex flex-wrap gap-2">
+                                    <button onclick="setHistoryPeriod('today')" id="history-period-today" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-indigo-500 text-white font-medium transition-all hover:bg-indigo-600">
+                                        <span data-i18n="today">Сегодня</span>
+                                    </button>
+                                    <button onclick="setHistoryPeriod('week')" id="history-period-week" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                        <span data-i18n="week">Неделя</span>
+                                    </button>
+                                    <button onclick="setHistoryPeriod('month')" id="history-period-month" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                        <span data-i18n="month">Месяц</span>
+                                    </button>
+                                    <button onclick="setHistoryPeriod('year')" id="history-period-year" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                        <span data-i18n="year">Год</span>
+                                    </button>
+                                    <button onclick="setHistoryPeriod('all')" id="history-period-all" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                        <span data-i18n="all">Все</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Список истории -->
+                            <div class="flex flex-col mb-3">
+                                <div id="history-list-container" class="overflow-x-hidden pr-2 relative">
+                                    <div id="history-list-visible" class="space-y-2 history-fixed"></div>
+                                    <div id="history-list-hidden" class="space-y-2 hidden"></div>
+                                </div>
+                                <button id="history-accordion-btn" onclick="toggleHistoryAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group flex-shrink-0">
+                                    <span class="accordion-text" data-i18n="show_all_history">Показать всю историю</span>
+                                    <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Награды и История (2/3 и 1/3) -->
-            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
-                <!-- Награды -->
-                <div id="rewards" class="lg:col-span-2 relative scroll-mt-20 md:scroll-mt-24">
+            <!-- Награды -->
+            <div class="mb-4 md:mb-6">
+                <div id="rewards" class="relative scroll-mt-20 md:scroll-mt-24">
                     <!-- Декоративные элементы -->
                     <div class="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-3xl opacity-30"></div>
                     <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full blur-3xl opacity-20"></div>
@@ -799,60 +852,6 @@
                                     <span data-i18n="create_reward">Создать награду</span>
                                 </button>
                             </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- История транзакций -->
-                <div id="history" class="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col scroll-mt-20 md:scroll-mt-24 lg:self-start">
-                    <!-- Заголовок с градиентом -->
-                    <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center flex-shrink-0">
-                        <div class="flex items-start gap-2 md:gap-3">
-                            <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-history text-white text-lg md:text-xl"></i>
-                            </div>
-                            <div class="flex flex-col -mt-1 md:-mt-0.5">
-                                <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="transaction_history">История транзакций</span></h2>
-                                <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="all_xp_operations">Все операции с XP</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-5 flex flex-col">
-                        <!-- Фильтр периода -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-filter text-indigo-600 mr-1"></i>
-                                <span data-i18n="filter_period">Период</span>
-                            </label>
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="setHistoryPeriod('today')" id="history-period-today" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-indigo-500 text-white font-medium transition-all hover:bg-indigo-600">
-                                    <span data-i18n="today">Сегодня</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('week')" id="history-period-week" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="week">Неделя</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('month')" id="history-period-month" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="month">Месяц</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('year')" id="history-period-year" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="year">Год</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('all')" id="history-period-all" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="all">Все</span>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Список истории -->
-                        <div class="flex flex-col mb-3">
-                            <div class="overflow-x-hidden pr-2">
-                                <div id="history-list-visible" class="space-y-2"></div>
-                                <div id="history-list-hidden" class="space-y-2 hidden"></div>
-                            </div>
-                            <button id="history-accordion-btn" onclick="toggleHistoryAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group flex-shrink-0">
-                                <span class="accordion-text" data-i18n="show_all_history">Показать всю историю</span>
-                                <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -2338,9 +2338,30 @@ async function loadHistory() {
         const visibleHistory = filteredData.slice(0, 4);
         const hiddenHistory = filteredData.slice(4);
         
+        const historyContainer = document.getElementById('history-list-container');
+        const historyBlock = document.getElementById('history');
+        
         visibleHistory.forEach(item => {
             historyListVisible.innerHTML += renderHistoryItem(item);
         });
+        
+        // Применяем fixed позиционирование по умолчанию (если аккордеон закрыт)
+        const isExpanded = localStorage.getItem('historyAccordionExpanded') === 'true';
+        if (!isExpanded) {
+            if (historyListVisible) {
+                historyListVisible.classList.add('history-fixed');
+            }
+            if (historyBlock) {
+                historyBlock.classList.remove('history-expanded');
+            }
+        } else {
+            if (historyListVisible) {
+                historyListVisible.classList.remove('history-fixed');
+            }
+            if (historyBlock) {
+                historyBlock.classList.add('history-expanded');
+            }
+        }
         
         if (hiddenHistory.length > 0) {
             hiddenHistory.forEach(item => {
@@ -2353,6 +2374,13 @@ async function loadHistory() {
             }, 0);
         } else {
             historyAccordionBtn.classList.add('hidden');
+            // Если нет скрытых элементов, убираем fixed позиционирование
+            if (historyListVisible) {
+                historyListVisible.classList.remove('history-fixed');
+            }
+            if (historyBlock) {
+                historyBlock.classList.remove('history-expanded');
+            }
         }
     } catch (e) {
         console.error("Error loading history", e);
@@ -2453,6 +2481,13 @@ function toggleHistoryAccordion() {
         return;
     }
     
+    const historyContainer = document.getElementById('history-list-container');
+    const historyBlock = document.getElementById('history');
+    if (!historyContainer || !historyBlock) {
+        console.error("History container or block not found");
+        return;
+    }
+    
     const isHidden = historyListHidden.classList.contains('hidden');
     const icon = historyAccordionBtn.querySelector('.accordion-icon');
     const text = historyAccordionBtn.querySelector('.accordion-text');
@@ -2462,15 +2497,31 @@ function toggleHistoryAccordion() {
     if (isHidden) {
         // Показываем скрытые элементы
         historyListHidden.classList.remove('hidden');
-        // Устанавливаем реальную высоту для плавной анимации
-        const height = historyListHidden.scrollHeight;
-        historyListHidden.style.maxHeight = height + 'px';
+        historyListHidden.style.maxHeight = 'none';
+        historyListHidden.style.overflow = 'visible';
+        
+        // Убираем fixed позиционирование с первых 4 транзакций - все элементы становятся обычными скроллируемыми
+        if (historyListVisible) {
+            historyListVisible.classList.remove('history-fixed');
+        }
+        // Фиксируем весь блок истории
+        historyBlock.classList.add('history-expanded');
+        
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
         localStorage.setItem('historyAccordionExpanded', 'true');
     } else {
         // Скрываем элементы
         historyListHidden.style.maxHeight = '0px';
+        historyListHidden.style.overflow = 'hidden';
+        
+        // Возвращаем fixed позиционирование для первых 4 транзакций
+        if (historyListVisible) {
+            historyListVisible.classList.add('history-fixed');
+        }
+        // Убираем фиксацию всего блока истории
+        historyBlock.classList.remove('history-expanded');
+        
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');
         localStorage.setItem('historyAccordionExpanded', 'false');
@@ -2486,6 +2537,10 @@ function updateHistoryAccordionButton() {
     getHistoryElements();
     if (!historyListHidden || !historyAccordionBtn) return;
     
+    const historyContainer = document.getElementById('history-list-container');
+    const historyBlock = document.getElementById('history');
+    if (!historyContainer || !historyBlock) return;
+    
     const isExpanded = localStorage.getItem('historyAccordionExpanded') === 'true';
     const icon = historyAccordionBtn.querySelector('.accordion-icon');
     const text = historyAccordionBtn.querySelector('.accordion-text');
@@ -2494,13 +2549,30 @@ function updateHistoryAccordionButton() {
     
     if (isExpanded) {
         historyListHidden.classList.remove('hidden');
-        const height = historyListHidden.scrollHeight;
-        historyListHidden.style.maxHeight = height + 'px';
+        historyListHidden.style.maxHeight = 'none';
+        historyListHidden.style.overflow = 'visible';
+        
+        // Убираем fixed позиционирование - все элементы становятся обычными скроллируемыми
+        if (historyListVisible) {
+            historyListVisible.classList.remove('history-fixed');
+        }
+        // Фиксируем весь блок истории
+        historyBlock.classList.add('history-expanded');
+        
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
     } else {
         historyListHidden.classList.add('hidden');
         historyListHidden.style.maxHeight = '0px';
+        historyListHidden.style.overflow = 'hidden';
+        
+        // Возвращаем fixed позиционирование для первых 4 транзакций
+        if (historyListVisible) {
+            historyListVisible.classList.add('history-fixed');
+        }
+        // Убираем фиксацию всего блока истории
+        historyBlock.classList.remove('history-expanded');
+        
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');
     }
@@ -2558,7 +2630,7 @@ function updateActivitiesCategoryFilter() {
     const currentValue = categoryFilter.value;
     
     // Очищаем опции (кроме "Все категории")
-    categoryFilter.innerHTML = '<option value="all">⬆️ Все категории</option>';
+    categoryFilter.innerHTML = '<option value="all">📂 Все категории</option>';
     
     // Получаем уникальные категории из активностей
     const categories = new Set();

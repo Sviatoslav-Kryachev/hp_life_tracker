@@ -116,6 +116,74 @@ html {
     opacity: 0;
 }
 
+/* Fixed/sticky позиционирование для первых 4 транзакций истории (когда аккордеон закрыт) */
+#history-list-container {
+    position: relative;
+}
+
+#history-list-visible.history-fixed {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#history-list-visible.history-fixed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1), transparent);
+}
+
+#history-list-visible:not(.history-fixed) {
+    position: relative;
+    z-index: 1;
+}
+
+/* Когда аккордеон открыт - блок истории фиксированной высоты со скроллом */
+#history.history-expanded {
+    position: sticky;
+    top: 20px;
+    z-index: 20;
+}
+
+#history.history-expanded > div.p-5 {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Фиксированная высота контейнера списка (примерно на 5 транзакций) */
+#history.history-expanded #history-list-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 500px;
+    height: 500px;
+}
+
+/* Когда аккордеон открыт, убираем sticky позиционирование с первых 4 транзакций */
+#history.history-expanded #history-list-visible {
+    position: relative !important;
+    top: auto !important;
+    background: transparent !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    z-index: 1 !important;
+}
+
+#history.history-expanded #history-list-visible::after {
+    display: none !important;
+}
+
+#history.history-expanded #history-list-hidden {
+    position: relative !important;
+}
+
 /* Ensure equal height for columns */
 @media (min-width: 1024px) {
     .grid.lg\:grid-cols-2 {
@@ -138,8 +206,8 @@ html {
     }
     
     /* Блоки Награды и История не должны растягиваться друг под друга */
-    .grid.lg\:grid-cols-3.lg\:items-start > #rewards,
-    .grid.lg\:grid-cols-3.lg\:items-start > #history {
+    .grid.lg\:grid-cols-3 > #rewards,
+    .grid.lg\:grid-cols-3 > #history {
         height: auto !important;
         align-self: start;
     }
@@ -151,6 +219,12 @@ html {
     
     #rewards > div > div {
         flex: none !important;
+    }
+    
+    /* Блок История должен быть независим от блока Награды */
+    #history {
+        align-self: flex-start;
+        position: relative;
     }
 }
 
