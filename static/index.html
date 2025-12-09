@@ -14,7 +14,7 @@
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
     
     <!-- AUTH SECTION (показывается когда не залогинен) -->
-    <div id="auth-section" class="hidden min-h-screen flex items-center justify-center p-4">
+    <div id="auth-section" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white/90 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50">
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
@@ -523,9 +523,9 @@
             </div>
 
             <!-- Основной контент: Активности + Боковая панель -->
-            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
+            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
                 <!-- Активности (основной контент, 2/3 ширины) -->
-                <div id="activities" class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl border border-white/50 scroll-mt-20 md:scroll-mt-24">
+                <div id="activities" class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl pt-4 px-4 pb-4 md:pt-8 md:px-8 md:pb-4 shadow-2xl border border-white/50 scroll-mt-20 md:scroll-mt-24">
                     <!-- Заголовок -->
                     <div class="flex justify-between items-center mb-4 md:mb-6">
                         <h2 class="text-xl md:text-3xl font-bold text-gray-800">
@@ -578,8 +578,10 @@
 
                         <!-- Список активностей -->
                         <div class="mb-6 flex flex-col">
-                            <div id="activities-list-visible" class="space-y-4 mb-4"></div>
-                            <div id="activities-list-hidden" class="space-y-4 hidden transition-all duration-300" style="max-height: 0; overflow: hidden;"></div>
+                            <div id="activities-list-container" class="space-y-4">
+                                <div id="activities-list-visible" class="space-y-4"></div>
+                                <div id="activities-list-hidden" class="space-y-4 hidden"></div>
+                            </div>
                             <button id="activities-accordion-btn" onclick="toggleActivitiesAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-indigo-100 hover:from-blue-200 hover:to-indigo-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
                                 <span class="accordion-text" data-i18n="show_all_activities">Показать все активности</span>
                                 <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
@@ -588,7 +590,7 @@
                     </div>
 
                     <!-- Новая активность -->
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 pt-6 pb-4 rounded-2xl border-2 border-dashed border-blue-200">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 pt-6 pb-5 rounded-2xl border-2 border-dashed border-blue-200" style="margin-bottom: 0;">
                         <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center"><span data-i18n="new_activity">➕ Новая активность</span></h3>
                         <form id="new-activity-form" class="space-y-4">
                             <!-- Название активности (широкое) -->
@@ -643,7 +645,7 @@
                                 </button>
                             </div>
                         </form>
-                        <p id="activity-message" class="text-sm mt-2 mb-0 hidden"></p>
+                        <p id="activity-message" class="text-sm mt-4 mb-0 hidden"></p>
                     </div>
                 </div>
 
@@ -709,151 +711,153 @@
                         </div>
                     </div>
 
-                    <!-- История транзакций -->
-                    <div id="history" class="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col scroll-mt-20 md:scroll-mt-24">
-                        <!-- Заголовок с градиентом -->
-                        <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center flex-shrink-0">
-                            <div class="flex items-start gap-2 md:gap-3">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-history text-white text-lg md:text-xl"></i>
-                                </div>
-                                <div class="flex flex-col -mt-1 md:-mt-0.5">
-                                    <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="transaction_history">История транзакций</span></h2>
-                                    <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="all_xp_operations">Все операции с XP</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-5 flex flex-col">
-                            <!-- Фильтр периода -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-filter text-indigo-600 mr-1"></i>
-                                    <span data-i18n="filter_period">Период</span>
-                                </label>
-                                <div class="flex flex-wrap gap-2">
-                                    <button onclick="setHistoryPeriod('today')" id="history-period-today" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-indigo-500 text-white font-medium transition-all hover:bg-indigo-600">
-                                        <span data-i18n="today">Сегодня</span>
-                                    </button>
-                                    <button onclick="setHistoryPeriod('week')" id="history-period-week" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                        <span data-i18n="week">Неделя</span>
-                                    </button>
-                                    <button onclick="setHistoryPeriod('month')" id="history-period-month" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                        <span data-i18n="month">Месяц</span>
-                                    </button>
-                                    <button onclick="setHistoryPeriod('year')" id="history-period-year" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                        <span data-i18n="year">Год</span>
-                                    </button>
-                                    <button onclick="setHistoryPeriod('all')" id="history-period-all" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                        <span data-i18n="all">Все</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- Список истории -->
-                            <div class="flex flex-col mb-3">
-                                <div id="history-list-container" class="overflow-x-hidden pr-2 relative">
-                                    <div id="history-list-visible" class="space-y-2 history-fixed"></div>
-                                    <div id="history-list-hidden" class="space-y-2 hidden"></div>
-                                </div>
-                                <button id="history-accordion-btn" onclick="toggleHistoryAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group flex-shrink-0">
-                                    <span class="accordion-text" data-i18n="show_all_history">Показать всю историю</span>
-                                    <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <!-- Награды -->
-            <div class="mb-4 md:mb-6">
-                <div id="rewards" class="relative scroll-mt-20 md:scroll-mt-24">
+            <!-- Награды и История транзакций (общий контейнер) -->
+            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
+                <!-- Награды (левая колонка, ширина как у Активностей - 2/3) -->
+                <div id="rewards" class="lg:col-span-2 relative scroll-mt-20 md:scroll-mt-24 bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col">
                     <!-- Декоративные элементы -->
                     <div class="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-3xl opacity-30"></div>
                     <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full blur-3xl opacity-20"></div>
-                    
-                    <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col">
-                        <!-- Заголовок с градиентом -->
-                        <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center">
-                            <div class="flex items-start gap-2 md:gap-3">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-crown text-white text-lg md:text-xl"></i>
-                                </div>
-                                <div class="flex flex-col -mt-1 md:-mt-0.5">
-                                    <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="rewards">Награды</span></h2>
-                                    <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="spend_xp">Потрать XP на удовольствия</span></p>
-                                </div>
+                    <!-- Заголовок с градиентом -->
+                    <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center">
+                        <div class="flex items-start gap-2 md:gap-3">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-crown text-white text-lg md:text-xl"></i>
                             </div>
-                        </div>
-
-                        <div class="p-5 flex-1 flex flex-col">
-                            <!-- Список наград -->
-                            <div class="mb-5 flex flex-col">
-                                <div id="rewards-list-visible" class="space-y-2 overflow-x-hidden pr-2"></div>
-                                <div id="rewards-list-hidden" class="space-y-2 overflow-x-hidden pr-2 hidden transition-all duration-300" style="max-height: 0; overflow: hidden;"></div>
-                                <button id="rewards-accordion-btn" onclick="toggleRewardsAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-amber-100 to-orange-100 hover:from-amber-200 hover:to-orange-200 text-amber-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
-                                    <span class="accordion-text" data-i18n="show_all_rewards">Показать все награды</span>
-                                    <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
-                                </button>
+                            <div class="flex flex-col -mt-1 md:-mt-0.5">
+                                <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="rewards">Награды</span></h2>
+                                <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="spend_xp">Потрать XP на удовольствия</span></p>
                             </div>
-                            
-                            <!-- Сообщение -->
-                            <p id="reward-message" class="text-sm mb-4 hidden p-3 rounded-xl"></p>
-
-                            <!-- Быстрые награды -->
-                            <div class="mb-5">
-                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-3 font-semibold flex items-center gap-2">
-                                    <i class="fas fa-bolt text-amber-400"></i> <span data-i18n="quick_select">Быстрый выбор</span>
-                                </p>
-                                <div class="grid grid-cols-6 gap-2" id="preset-rewards">
-                                    <button type="button" onclick="selectPreset('mcdonalds')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all duration-300" title="McDonald's">
-                                        <div class="w-9 h-9 mx-auto rounded-xl bg-red-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-red-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                            <span class="text-yellow-400 font-black text-base">M</span>
-                                        </div>
-                                    </button>
-                                    <button type="button" onclick="selectPreset('youtube')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all duration-300" title="YouTube">
-                                        <div class="w-9 h-9 mx-auto rounded-xl bg-red-600 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-red-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                            <i class="fab fa-youtube text-white"></i>
-                                        </div>
-                                    </button>
-                                    <button type="button" onclick="selectPreset('gaming')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-purple-50 transition-all duration-300" title="Игры">
-                                        <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-purple-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                            <i class="fas fa-gamepad text-white"></i>
-                                        </div>
-                                    </button>
-                                    <button type="button" onclick="selectPreset('netflix')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-300" title="Netflix">
-                                        <div class="w-9 h-9 mx-auto rounded-xl bg-black flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-gray-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                            <span class="text-red-600 font-black text-sm">N</span>
-                                        </div>
-                                    </button>
-                                    <button type="button" onclick="selectPreset('coffee')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-green-50 transition-all duration-300" title="Кофе">
-                                        <div class="w-9 h-9 mx-auto rounded-xl bg-green-700 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-green-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                            <i class="fas fa-coffee text-white"></i>
-                                        </div>
-                                    </button>
-                                    <button type="button" onclick="selectPreset('custom')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-amber-50 transition-all duration-300" data-i18n-title="custom_reward">
-                                        <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-amber-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                            <i class="fas fa-plus text-white"></i>
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Форма создания награды -->
-                            <form id="new-reward-form" class="space-y-3">
-                                <div class="flex gap-2">
-                                    <input type="text" id="reward-name" data-i18n-placeholder="reward_name" placeholder="Название награды"
-                                           class="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 placeholder-gray-400 text-center placeholder:text-center" required>
-                                    <input type="number" id="reward-cost" placeholder="XP" min="1" value="10"
-                                           class="w-20 px-3 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 text-center font-medium" required>
-                                </div>
-                                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white py-3.5 px-6 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
-                                    <i class="fas fa-sparkles"></i>
-                                    <span data-i18n="create_reward">Создать награду</span>
-                                </button>
-                            </form>
                         </div>
                     </div>
+
+                    <div class="p-5 flex-1 flex flex-col">
+                        <!-- Список наград -->
+                        <div class="mb-5 flex flex-col">
+                            <div id="rewards-list-container" class="space-y-2">
+                                <div id="rewards-list-visible" class="space-y-2 overflow-x-hidden pr-2"></div>
+                                <div id="rewards-list-hidden" class="space-y-2 overflow-x-hidden pr-2 hidden"></div>
+                            </div>
+                            <button id="rewards-accordion-btn" onclick="toggleRewardsAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-amber-100 to-orange-100 hover:from-amber-200 hover:to-orange-200 text-amber-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
+                                <span class="accordion-text" data-i18n="show_all_rewards">Показать все награды</span>
+                                <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Сообщение -->
+                        <p id="reward-message" class="text-sm mb-4 hidden p-3 rounded-xl"></p>
+
+                        <!-- Быстрые награды -->
+                        <div class="mb-5">
+                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-3 font-semibold flex items-center gap-2">
+                                <i class="fas fa-bolt text-amber-400"></i> <span data-i18n="quick_select">Быстрый выбор</span>
+                            </p>
+                            <div class="grid grid-cols-6 gap-2" id="preset-rewards">
+                                <button type="button" onclick="selectPreset('mcdonalds')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all duration-300" title="McDonald's">
+                                    <div class="w-9 h-9 mx-auto rounded-xl bg-red-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-red-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
+                                        <span class="text-yellow-400 font-black text-base">M</span>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="selectPreset('youtube')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all duration-300" title="YouTube">
+                                    <div class="w-9 h-9 mx-auto rounded-xl bg-red-600 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-red-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
+                                        <i class="fab fa-youtube text-white"></i>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="selectPreset('gaming')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-purple-50 transition-all duration-300" title="Игры">
+                                    <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-purple-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
+                                        <i class="fas fa-gamepad text-white"></i>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="selectPreset('netflix')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-300" title="Netflix">
+                                    <div class="w-9 h-9 mx-auto rounded-xl bg-black flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-gray-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
+                                        <span class="text-red-600 font-black text-sm">N</span>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="selectPreset('coffee')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-green-50 transition-all duration-300" title="Кофе">
+                                    <div class="w-9 h-9 mx-auto rounded-xl bg-green-700 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-green-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
+                                        <i class="fas fa-coffee text-white"></i>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="selectPreset('custom')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-amber-50 transition-all duration-300" data-i18n-title="custom_reward">
+                                    <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-amber-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
+                                        <i class="fas fa-plus text-white"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Форма создания награды -->
+                        <form id="new-reward-form" class="space-y-3">
+                            <div class="flex gap-2">
+                                <input type="text" id="reward-name" data-i18n-placeholder="reward_name" placeholder="Название награды"
+                                       class="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 placeholder-gray-400 text-center placeholder:text-center" required>
+                                <input type="number" id="reward-cost" placeholder="XP" min="1" value="10"
+                                   class="w-20 px-3 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 text-center font-medium" required>
+                            </div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white py-3.5 px-6 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
+                                <i class="fas fa-sparkles"></i>
+                                <span data-i18n="create_reward">Создать награду</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- История транзакций (правая колонка, ширина как у правых блоков - 1/3) -->
+                <div id="history" class="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col scroll-mt-20 md:scroll-mt-24">
+                    <!-- Заголовок с градиентом -->
+                    <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center flex-shrink-0">
+                        <div class="flex items-start gap-2 md:gap-3">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-history text-white text-lg md:text-xl"></i>
+                            </div>
+                            <div class="flex flex-col -mt-1 md:-mt-0.5">
+                                <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="transaction_history">История транзакций</span></h2>
+                                <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="all_xp_operations">Все операции с XP</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 flex flex-col">
+                        <!-- Фильтр периода -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-filter text-indigo-600 mr-1"></i>
+                                <span data-i18n="filter_period">Период</span>
+                            </label>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setHistoryPeriod('today')" id="history-period-today" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-indigo-500 text-white font-medium transition-all hover:bg-indigo-600">
+                                    <span data-i18n="today">Сегодня</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('week')" id="history-period-week" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="week">Неделя</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('month')" id="history-period-month" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="month">Месяц</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('year')" id="history-period-year" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="year">Год</span>
+                                </button>
+                                <button onclick="setHistoryPeriod('all')" id="history-period-all" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
+                                    <span data-i18n="all">Все</span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Список истории -->
+                        <div class="flex flex-col mb-3">
+                            <div id="history-list-container" class="overflow-x-hidden pr-2 relative">
+                                <div id="history-list-visible" class="space-y-2 history-fixed"></div>
+                                <div id="history-list-hidden" class="space-y-2 hidden"></div>
+                            </div>
+                            <button id="history-accordion-btn" onclick="toggleHistoryAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group flex-shrink-0">
+                                <span class="accordion-text" data-i18n="show_all_history">Показать всю историю</span>
+                                <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -1170,6 +1174,6 @@
         </div>
     </footer>
 
-    <script src="app.js?v=27"></script>
+    <script src="app.js?v=39"></script>
 </body>
 </html>

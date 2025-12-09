@@ -1382,14 +1382,18 @@ let activitiesAccordionExpanded = false; // По умолчанию сверну
 let allRewards = [];
 
 // ============= DOM ELEMENTS =============
-const authSection = document.getElementById("auth-section");
-const appSection = document.getElementById("app-section");
-const activityNameInput = document.getElementById("activity-name");
-const xpPerHourInput = document.getElementById("xp-per-hour");
-// activitiesList больше не используется напрямую, используем activitiesListVisible и activitiesListHidden
-const newActivityForm = document.getElementById("new-activity-form");
-const balanceSpan = document.getElementById("balance");
-const levelSpan = document.getElementById("level");
+let authSection, appSection, activityNameInput, xpPerHourInput, newActivityForm, balanceSpan, levelSpan;
+
+// Инициализация DOM элементов после загрузки страницы
+function initDOMElements() {
+    authSection = document.getElementById("auth-section");
+    appSection = document.getElementById("app-section");
+    activityNameInput = document.getElementById("activity-name");
+    xpPerHourInput = document.getElementById("xp-per-hour");
+    newActivityForm = document.getElementById("new-activity-form");
+    balanceSpan = document.getElementById("balance");
+    levelSpan = document.getElementById("level");
+}
 // Элементы будут инициализированы при первом использовании
 let rewardsListVisible, rewardsListHidden, rewardsAccordionBtn;
 let historyListVisible, historyListHidden, historyAccordionBtn;
@@ -1475,27 +1479,96 @@ function showRegisterForm() {
 
 async function login(email, password) {
     try {
+        // Очищаем предыдущие ошибки
+        const errorEl = document.getElementById("login-error");
+        if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.classList.add("hidden");
+        }
+        
+        // Проверяем, что поля заполнены
+        if (!email || !password) {
+            if (errorEl) {
+                errorEl.textContent = "Пожалуйста, заполните все поля";
+                errorEl.classList.remove("hidden");
+            }
+            return;
+        }
+        
+        // Убираем возможные пробелы в начале и конце
+        email = email.trim();
+        password = password.trim();
+        
+        console.log("Attempting login with email:", email);
+        console.log("Password length:", password.length);
+        
         const res = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
         });
         
+        console.log("Login response status:", res.status, res.statusText);
+        
         if (!res.ok) {
-            const error = await res.json();
-            throw new Error(error.detail || "Ошибка входа");
+            let errorMessage = "Ошибка входа";
+            try {
+                const error = await res.json();
+                errorMessage = error.detail || errorMessage;
+            } catch (parseError) {
+                // Если не удалось распарсить JSON, используем статус
+                if (res.status === 401) {
+                    errorMessage = "Неверный email или пароль";
+                } else if (res.status === 404) {
+                    errorMessage = "Сервер не найден. Проверьте подключение.";
+                } else {
+                    errorMessage = `Ошибка ${res.status}: ${res.statusText}`;
+                }
+            }
+            
+            if (errorEl) {
+                errorEl.textContent = errorMessage;
+                errorEl.classList.remove("hidden");
+            } else {
+                alert(errorMessage);
+            }
+            return;
         }
         
         const data = await res.json();
+        if (!data.access_token) {
+            if (errorEl) {
+                errorEl.textContent = "Ошибка: токен не получен";
+                errorEl.classList.remove("hidden");
+            }
+            return;
+        }
+        
         authToken = data.access_token;
         localStorage.setItem('token', authToken);
         
         await loadCurrentUser();
         showApp();
         
-    } catch (e) {
-        document.getElementById("login-error").textContent = e.message;
-        document.getElementById("login-error").classList.remove("hidden");
+        } catch (e) {
+        console.error("Login error:", e);
+        const errorEl = document.getElementById("login-error");
+        const errorMessage = e.message || "Произошла ошибка при входе. Проверьте подключение к интернету.";
+        
+        if (errorEl) {
+            errorEl.textContent = errorMessage;
+            errorEl.classList.remove("hidden");
+        } else {
+            alert(errorMessage);
+        }
+        
+        // Дополнительное логирование для отладки
+        console.error("Login failed:", {
+            email: email,
+            passwordLength: password ? password.length : 0,
+            error: e.message,
+            stack: e.stack
+        });
     }
 }
 
@@ -1583,13 +1656,19 @@ function logout() {
 }
 
 function showAuth() {
-    authSection.classList.remove("hidden");
-    appSection.classList.add("hidden");
+    if (!authSection || !appSection) {
+        initDOMElements();
+    }
+    if (authSection) authSection.classList.remove("hidden");
+    if (appSection) appSection.classList.add("hidden");
 }
 
 function showApp() {
-    authSection.classList.add("hidden");
-    appSection.classList.remove("hidden");
+    if (!authSection || !appSection) {
+        initDOMElements();
+    }
+    if (authSection) authSection.classList.add("hidden");
+    if (appSection) appSection.classList.remove("hidden");
     
     // Сбрасываем кэш элементов, чтобы они переинициализировались
     rewardsListVisible = null;
@@ -1632,12 +1711,19 @@ function showApp() {
 }
 
 async function checkAuth() {
+    // Убеждаемся, что элементы инициализированы
+    if (!authSection || !appSection) {
+        initDOMElements();
+    }
+    
     // Сразу скрываем auth-section если есть токен, чтобы избежать мигания
-    if (authToken) {
+    if (authToken && authSection && appSection) {
         authSection.classList.add("hidden");
         appSection.classList.remove("hidden");
     } else {
-        showAuth();
+        if (authSection && appSection) {
+            showAuth();
+        }
         return;
     }
     
@@ -2351,15 +2437,15 @@ async function loadHistory() {
             if (historyListVisible) {
                 historyListVisible.classList.add('history-fixed');
             }
-            if (historyBlock) {
-                historyBlock.classList.remove('history-expanded');
+            if (historyContainer) {
+                historyContainer.classList.remove('history-expanded');
             }
         } else {
             if (historyListVisible) {
                 historyListVisible.classList.remove('history-fixed');
             }
-            if (historyBlock) {
-                historyBlock.classList.add('history-expanded');
+            if (historyContainer) {
+                historyContainer.classList.add('history-expanded');
             }
         }
         
@@ -2375,11 +2461,12 @@ async function loadHistory() {
         } else {
             historyAccordionBtn.classList.add('hidden');
             // Если нет скрытых элементов, убираем fixed позиционирование
+            const historyContainer = document.getElementById('history-list-container');
             if (historyListVisible) {
                 historyListVisible.classList.remove('history-fixed');
             }
-            if (historyBlock) {
-                historyBlock.classList.remove('history-expanded');
+            if (historyContainer) {
+                historyContainer.classList.remove('history-expanded');
             }
         }
     } catch (e) {
@@ -2390,56 +2477,82 @@ async function loadHistory() {
 // ============= ACCORDION FUNCTIONS =============
 function toggleRewardsAccordion() {
     getRewardsElements();
-    if (!rewardsListHidden || !rewardsAccordionBtn) {
+    const rewardsContainer = document.getElementById('rewards-list-container');
+    if (!rewardsListHidden || !rewardsAccordionBtn || !rewardsContainer) {
         console.error("Rewards accordion elements not found");
         return;
     }
     
-    const isHidden = rewardsListHidden.classList.contains('hidden');
+    const isExpanded = rewardsContainer.classList.contains('rewards-expanded');
     const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
     const text = rewardsAccordionBtn.querySelector('.accordion-text');
     
     if (!icon || !text) return;
     
-    if (isHidden) {
-        // Показываем скрытые элементы
+    if (!isExpanded) {
+        // Открываем аккордеон - перемещаем все награды в hidden и делаем контейнер скроллируемым
+        // Сначала перемещаем все награды из visible в hidden
+        while (rewardsListVisible && rewardsListVisible.firstChild) {
+            rewardsListHidden.appendChild(rewardsListVisible.firstChild);
+        }
+        
+        // Показываем hidden и применяем стили для скролла
         rewardsListHidden.classList.remove('hidden');
-        // Устанавливаем реальную высоту для плавной анимации
-        const height = rewardsListHidden.scrollHeight;
-        rewardsListHidden.style.maxHeight = height + 'px';
-        rewardsListHidden.style.overflow = 'visible';
-        // После анимации убираем ограничение и добавляем скролл если нужно
-        setTimeout(() => {
-            if (rewardsListHidden && !rewardsListHidden.classList.contains('hidden')) {
-                rewardsListHidden.style.maxHeight = 'none';
-                // Если контент очень длинный, добавляем скролл
-                if (rewardsListHidden.scrollHeight > 600) {
-                    rewardsListHidden.style.maxHeight = '600px';
-                    rewardsListHidden.style.overflowY = 'auto';
+        rewardsContainer.classList.add('rewards-expanded');
+        
+        // Динамически рассчитываем высоту для ровно 4 наград
+        requestAnimationFrame(() => {
+            if (rewardsContainer && rewardsListHidden.children.length > 0) {
+                // Получаем высоту первой награды
+                const firstCard = rewardsListHidden.children[0];
+                if (firstCard) {
+                    const cardHeight = firstCard.offsetHeight;
+                    const gap = 8; // space-y-2 = 0.5rem = 8px
+                    // Высота для 4 наград: 4 карточки + 3 промежутка
+                    const calculatedHeight = (cardHeight * 4) + (gap * 3);
+                    rewardsContainer.style.maxHeight = calculatedHeight + 'px';
+                    rewardsContainer.style.transition = 'max-height 300ms ease';
                 }
+                // Убеждаемся, что скролл начинается с начала
+                rewardsContainer.scrollTop = 0;
             }
-        }, 300);
+        });
+        
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'true');
     } else {
-        // Скрываем элементы
-        rewardsListHidden.style.maxHeight = '0px';
-        rewardsListHidden.style.overflow = 'hidden';
+        // Закрываем аккордеон - возвращаем первые 4-5 в visible, остальные в hidden
+        const allCards = Array.from(rewardsListHidden.children);
+        
+        // Очищаем оба списка
+        if (rewardsListVisible) rewardsListVisible.innerHTML = "";
+        rewardsListHidden.innerHTML = "";
+        
+        // Распределяем: первые 4-5 в visible, остальные в hidden
+        allCards.forEach((card, index) => {
+            if (index < 4 && rewardsListVisible) {
+                rewardsListVisible.appendChild(card);
+            } else {
+                rewardsListHidden.appendChild(card);
+            }
+        });
+        
+        // Убираем класс expanded и скрываем hidden
+        rewardsContainer.classList.remove('rewards-expanded');
+        rewardsContainer.style.maxHeight = ''; // Сбрасываем динамическую высоту
+        rewardsListHidden.classList.add('hidden');
+        
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'false');
-        setTimeout(() => {
-            if (rewardsListHidden && rewardsListHidden.style.maxHeight === '0px') {
-                rewardsListHidden.classList.add('hidden');
-            }
-        }, 400);
     }
 }
 
 function updateRewardsAccordionButton() {
     getRewardsElements();
-    if (!rewardsListHidden || !rewardsAccordionBtn) return;
+    const rewardsContainer = document.getElementById('rewards-list-container');
+    if (!rewardsListHidden || !rewardsAccordionBtn || !rewardsContainer) return;
     
     const isExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
     const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
@@ -2448,27 +2561,48 @@ function updateRewardsAccordionButton() {
     if (!icon || !text) return;
     
     if (isExpanded) {
+        // Открываем аккордеон - перемещаем все награды в hidden и делаем контейнер скроллируемым
+        while (rewardsListVisible && rewardsListVisible.firstChild) {
+            rewardsListHidden.appendChild(rewardsListVisible.firstChild);
+        }
+        
         rewardsListHidden.classList.remove('hidden');
-        const height = rewardsListHidden.scrollHeight;
-        rewardsListHidden.style.maxHeight = height + 'px';
-        rewardsListHidden.style.overflow = 'visible';
-        // После небольшой задержки убираем ограничение
-        setTimeout(() => {
-            if (rewardsListHidden && !rewardsListHidden.classList.contains('hidden')) {
-                rewardsListHidden.style.maxHeight = 'none';
-                // Если контент очень длинный, добавляем скролл
-                if (rewardsListHidden.scrollHeight > 600) {
-                    rewardsListHidden.style.maxHeight = '600px';
-                    rewardsListHidden.style.overflowY = 'auto';
+        rewardsContainer.classList.add('rewards-expanded');
+        
+        // Динамически рассчитываем высоту для ровно 4-5 наград
+        requestAnimationFrame(() => {
+            if (rewardsContainer && rewardsListHidden.children.length > 0) {
+                const firstCard = rewardsListHidden.children[0];
+                if (firstCard) {
+                    const cardHeight = firstCard.offsetHeight;
+                    const gap = 8; // space-y-2 = 0.5rem = 8px
+                    const calculatedHeight = (cardHeight * 4) + (gap * 3);
+                    rewardsContainer.style.maxHeight = calculatedHeight + 'px';
                 }
+                rewardsContainer.scrollTop = 0;
             }
-        }, 100);
+        });
+        
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_rewards');
     } else {
+        // Закрываем аккордеон - возвращаем первые 4-5 в visible, остальные в hidden
+        const allCards = Array.from(rewardsListHidden.children);
+        if (rewardsListVisible) rewardsListVisible.innerHTML = "";
+        rewardsListHidden.innerHTML = "";
+        
+        allCards.forEach((card, index) => {
+            if (index < 4 && rewardsListVisible) {
+                rewardsListVisible.appendChild(card);
+            } else {
+                rewardsListHidden.appendChild(card);
+            }
+        });
+        
+        rewardsContainer.classList.remove('rewards-expanded');
+        rewardsContainer.style.maxHeight = '';
         rewardsListHidden.classList.add('hidden');
-        rewardsListHidden.style.maxHeight = '0px';
-        rewardsListHidden.style.overflow = 'hidden';
+        
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_rewards');
     }
@@ -2476,70 +2610,87 @@ function updateRewardsAccordionButton() {
 
 function toggleHistoryAccordion() {
     getHistoryElements();
-    if (!historyListHidden || !historyAccordionBtn) {
+    const historyContainer = document.getElementById('history-list-container');
+    if (!historyListHidden || !historyAccordionBtn || !historyContainer) {
         console.error("History accordion elements not found");
         return;
     }
     
-    const historyContainer = document.getElementById('history-list-container');
-    const historyBlock = document.getElementById('history');
-    if (!historyContainer || !historyBlock) {
-        console.error("History container or block not found");
-        return;
-    }
-    
-    const isHidden = historyListHidden.classList.contains('hidden');
+    const isExpanded = historyContainer.classList.contains('history-expanded');
     const icon = historyAccordionBtn.querySelector('.accordion-icon');
     const text = historyAccordionBtn.querySelector('.accordion-text');
     
     if (!icon || !text) return;
     
-    if (isHidden) {
-        // Показываем скрытые элементы
-        historyListHidden.classList.remove('hidden');
-        historyListHidden.style.maxHeight = 'none';
-        historyListHidden.style.overflow = 'visible';
+    if (!isExpanded) {
+        // Открываем аккордеон - перемещаем все транзакции в hidden и делаем контейнер скроллируемым
+        while (historyListVisible && historyListVisible.firstChild) {
+            historyListHidden.appendChild(historyListVisible.firstChild);
+        }
         
-        // Убираем fixed позиционирование с первых 4 транзакций - все элементы становятся обычными скроллируемыми
+        // Показываем hidden и применяем стили для скролла
+        historyListHidden.classList.remove('hidden');
+        historyContainer.classList.add('history-expanded');
+        
+        // Убираем fixed позиционирование
         if (historyListVisible) {
             historyListVisible.classList.remove('history-fixed');
         }
-        // Фиксируем весь блок истории
-        historyBlock.classList.add('history-expanded');
+        
+        // Динамически рассчитываем высоту для ровно 4 транзакций
+        requestAnimationFrame(() => {
+            if (historyContainer && historyListHidden.children.length > 0) {
+                const firstItem = historyListHidden.children[0];
+                if (firstItem) {
+                    const itemHeight = firstItem.offsetHeight;
+                    const gap = 8; // space-y-2 = 0.5rem = 8px
+                    const calculatedHeight = (itemHeight * 4) + (gap * 3);
+                    historyContainer.style.maxHeight = calculatedHeight + 'px';
+                    historyContainer.style.transition = 'max-height 300ms ease';
+                }
+                historyContainer.scrollTop = 0;
+            }
+        });
         
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
         localStorage.setItem('historyAccordionExpanded', 'true');
     } else {
-        // Скрываем элементы
-        historyListHidden.style.maxHeight = '0px';
-        historyListHidden.style.overflow = 'hidden';
+        // Закрываем аккордеон - возвращаем первые 4 в visible, остальные в hidden
+        const allItems = Array.from(historyListHidden.children);
+        
+        if (historyListVisible) historyListVisible.innerHTML = "";
+        historyListHidden.innerHTML = "";
+        
+        // Распределяем: первые 4 в visible, остальные в hidden
+        allItems.forEach((item, index) => {
+            if (index < 4 && historyListVisible) {
+                historyListVisible.appendChild(item);
+            } else {
+                historyListHidden.appendChild(item);
+            }
+        });
+        
+        // Убираем класс expanded и скрываем hidden
+        historyContainer.classList.remove('history-expanded');
+        historyContainer.style.maxHeight = '';
+        historyListHidden.classList.add('hidden');
         
         // Возвращаем fixed позиционирование для первых 4 транзакций
         if (historyListVisible) {
             historyListVisible.classList.add('history-fixed');
         }
-        // Убираем фиксацию всего блока истории
-        historyBlock.classList.remove('history-expanded');
         
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');
         localStorage.setItem('historyAccordionExpanded', 'false');
-        setTimeout(() => {
-            if (historyListHidden && historyListHidden.style.maxHeight === '0px') {
-                historyListHidden.classList.add('hidden');
-            }
-        }, 400);
     }
 }
 
 function updateHistoryAccordionButton() {
     getHistoryElements();
-    if (!historyListHidden || !historyAccordionBtn) return;
-    
     const historyContainer = document.getElementById('history-list-container');
-    const historyBlock = document.getElementById('history');
-    if (!historyContainer || !historyBlock) return;
+    if (!historyListHidden || !historyAccordionBtn || !historyContainer) return;
     
     const isExpanded = localStorage.getItem('historyAccordionExpanded') === 'true';
     const icon = historyAccordionBtn.querySelector('.accordion-icon');
@@ -2548,30 +2699,58 @@ function updateHistoryAccordionButton() {
     if (!icon || !text) return;
     
     if (isExpanded) {
-        historyListHidden.classList.remove('hidden');
-        historyListHidden.style.maxHeight = 'none';
-        historyListHidden.style.overflow = 'visible';
+        // Открываем аккордеон - перемещаем все транзакции в hidden и делаем контейнер скроллируемым
+        while (historyListVisible && historyListVisible.firstChild) {
+            historyListHidden.appendChild(historyListVisible.firstChild);
+        }
         
-        // Убираем fixed позиционирование - все элементы становятся обычными скроллируемыми
+        historyListHidden.classList.remove('hidden');
+        historyContainer.classList.add('history-expanded');
+        
+        // Убираем fixed позиционирование
         if (historyListVisible) {
             historyListVisible.classList.remove('history-fixed');
         }
-        // Фиксируем весь блок истории
-        historyBlock.classList.add('history-expanded');
+        
+        // Динамически рассчитываем высоту для ровно 4 транзакций
+        requestAnimationFrame(() => {
+            if (historyContainer && historyListHidden.children.length > 0) {
+                const firstItem = historyListHidden.children[0];
+                if (firstItem) {
+                    const itemHeight = firstItem.offsetHeight;
+                    const gap = 8; // space-y-2 = 0.5rem = 8px
+                    const calculatedHeight = (itemHeight * 4) + (gap * 3);
+                    historyContainer.style.maxHeight = calculatedHeight + 'px';
+                    historyContainer.style.transition = 'max-height 300ms ease';
+                }
+                historyContainer.scrollTop = 0;
+            }
+        });
         
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
     } else {
+        // Закрываем аккордеон - возвращаем первые 4 в visible, остальные в hidden
+        const allItems = Array.from(historyListHidden.children);
+        if (historyListVisible) historyListVisible.innerHTML = "";
+        historyListHidden.innerHTML = "";
+        
+        allItems.forEach((item, index) => {
+            if (index < 4 && historyListVisible) {
+                historyListVisible.appendChild(item);
+            } else {
+                historyListHidden.appendChild(item);
+            }
+        });
+        
+        historyContainer.classList.remove('history-expanded');
+        historyContainer.style.maxHeight = '';
         historyListHidden.classList.add('hidden');
-        historyListHidden.style.maxHeight = '0px';
-        historyListHidden.style.overflow = 'hidden';
         
         // Возвращаем fixed позиционирование для первых 4 транзакций
         if (historyListVisible) {
             historyListVisible.classList.add('history-fixed');
         }
-        // Убираем фиксацию всего блока истории
-        historyBlock.classList.remove('history-expanded');
         
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');
@@ -2706,7 +2885,8 @@ function getActivitiesElements() {
 function applyActivitiesFilters() {
     getActivitiesElements();
     
-    if (!activitiesListVisible || !activitiesListHidden) return;
+    const activitiesContainer = document.getElementById('activities-list-container');
+    if (!activitiesListVisible || !activitiesListHidden || !activitiesContainer) return;
     
     // Очищаем списки
     activitiesListVisible.innerHTML = "";
@@ -2715,9 +2895,9 @@ function applyActivitiesFilters() {
     if (allActivities.length === 0) {
         activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Нет активностей. Создайте первую активность!</div>';
         if (activitiesAccordionBtn) activitiesAccordionBtn.classList.add('hidden');
-        return;
-    }
-    
+            return;
+        }
+        
     // Фильтруем по категории
     let filtered = allActivities;
     if (activitiesFilterState.category !== 'all') {
@@ -2752,15 +2932,23 @@ function applyActivitiesFilters() {
             break;
     }
     
+    // Проверяем, открыт ли аккордеон (из localStorage или класса контейнера)
+    const isAccordionExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true' || 
+                                 (activitiesContainer && activitiesContainer.classList.contains('activities-expanded'));
+    
     // Отрисовываем отфильтрованные активности
     filtered.forEach((activity, index) => {
         const card = renderActivityCard(activity);
-        if (index < 5) {
-            // Первые 5 в видимый список
-            activitiesListVisible.appendChild(card);
-        } else {
-            // Остальные в скрытый список
+        if (isAccordionExpanded) {
+            // Если аккордеон открыт - все активности в hidden контейнер
             activitiesListHidden.appendChild(card);
+        } else {
+            // Если аккордеон закрыт - первые 5 в visible, остальные в hidden
+            if (index < 5) {
+                activitiesListVisible.appendChild(card);
+            } else {
+                activitiesListHidden.appendChild(card);
+            }
         }
     });
     
@@ -2784,52 +2972,95 @@ function applyActivitiesFilters() {
 // Функции аккордеона для активностей
 function toggleActivitiesAccordion() {
     getActivitiesElements();
-    if (!activitiesListHidden || !activitiesAccordionBtn) {
+    const activitiesContainer = document.getElementById('activities-list-container');
+    if (!activitiesListHidden || !activitiesAccordionBtn || !activitiesContainer) {
         console.error("Activities accordion elements not found");
         return;
     }
     
-    const isHidden = activitiesListHidden.classList.contains('hidden');
+    const isExpanded = activitiesContainer.classList.contains('activities-expanded');
     const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
     const text = activitiesAccordionBtn.querySelector('.accordion-text');
     
     if (!icon || !text) return;
     
-    if (isHidden) {
-        // Показываем скрытые элементы
+    if (!isExpanded) {
+        // Открываем аккордеон - перемещаем все активности в hidden и делаем контейнер скроллируемым
+        // Сначала перемещаем все активности из visible в hidden (включая первые 5)
+        while (activitiesListVisible.firstChild) {
+            activitiesListHidden.appendChild(activitiesListVisible.firstChild);
+        }
+        
+        // Показываем hidden и применяем стили для скролла
         activitiesListHidden.classList.remove('hidden');
-        // Устанавливаем реальную высоту для плавной анимации
-        const height = activitiesListHidden.scrollHeight;
-        activitiesListHidden.style.maxHeight = height + 'px';
-        activitiesListHidden.style.overflow = 'visible';
-        // После анимации убираем ограничение - контент будет скроллиться вместе со страницей
-        setTimeout(() => {
-            if (activitiesListHidden && !activitiesListHidden.classList.contains('hidden')) {
-                activitiesListHidden.style.maxHeight = 'none';
-                activitiesListHidden.style.overflow = 'visible';
+        activitiesContainer.classList.add('activities-expanded');
+        
+        // Динамически рассчитываем высоту для ровно 4 активностей
+        requestAnimationFrame(() => {
+            if (activitiesContainer && activitiesListHidden.children.length > 0) {
+                // Получаем высоту первой активности
+                const firstCard = activitiesListHidden.children[0];
+                if (firstCard) {
+                    const cardHeight = firstCard.offsetHeight;
+                    const gap = 16; // space-y-4 = 1rem = 16px
+                    // Высота для 4 активностей: 4 карточки + 3 промежутка
+                    const calculatedHeight = (cardHeight * 4) + (gap * 3);
+                    activitiesContainer.style.maxHeight = calculatedHeight + 'px';
+                }
+                // Убеждаемся, что скролл начинается с начала (первые 4 видны сразу)
+                activitiesContainer.scrollTop = 0;
             }
-        }, 300);
+        });
+        
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_activities');
         localStorage.setItem('activitiesAccordionExpanded', 'true');
+        
+        // Переинициализируем SortableJS для нового контейнера
+        setTimeout(() => {
+            loadActiveTimers().then(() => {
+                initActivitiesSortable();
+            });
+        }, 100);
     } else {
-        // Скрываем элементы
-        activitiesListHidden.style.maxHeight = '0px';
-        activitiesListHidden.style.overflow = 'hidden';
+        // Закрываем аккордеон - возвращаем первые 5 в visible, остальные в hidden
+        const allCards = Array.from(activitiesListHidden.children);
+        
+        // Очищаем оба списка
+        activitiesListVisible.innerHTML = "";
+        activitiesListHidden.innerHTML = "";
+        
+        // Распределяем: первые 5 в visible, остальные в hidden
+        allCards.forEach((card, index) => {
+            if (index < 5) {
+                activitiesListVisible.appendChild(card);
+            } else {
+                activitiesListHidden.appendChild(card);
+            }
+        });
+        
+        // Убираем класс expanded и скрываем hidden
+        activitiesContainer.classList.remove('activities-expanded');
+        activitiesContainer.style.maxHeight = ''; // Сбрасываем динамическую высоту
+        activitiesListHidden.classList.add('hidden');
+        
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_activities');
         localStorage.setItem('activitiesAccordionExpanded', 'false');
+        
+        // Переинициализируем SortableJS для нового контейнера
         setTimeout(() => {
-            if (activitiesListHidden && activitiesListHidden.style.maxHeight === '0px') {
-                activitiesListHidden.classList.add('hidden');
-            }
-        }, 400);
+            loadActiveTimers().then(() => {
+                initActivitiesSortable();
+            });
+        }, 100);
     }
 }
 
 function updateActivitiesAccordionButton() {
     getActivitiesElements();
-    if (!activitiesListHidden || !activitiesAccordionBtn) return;
+    const activitiesContainer = document.getElementById('activities-list-container');
+    if (!activitiesListHidden || !activitiesAccordionBtn || !activitiesContainer) return;
     
     const isExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true';
     const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
@@ -2838,23 +3069,64 @@ function updateActivitiesAccordionButton() {
     if (!icon || !text) return;
     
     if (isExpanded) {
+        // Открываем аккордеон - перемещаем все активности в hidden и делаем контейнер скроллируемым
+        // Сначала перемещаем все активности из visible в hidden (включая первые 5)
+        while (activitiesListVisible.firstChild) {
+            activitiesListHidden.appendChild(activitiesListVisible.firstChild);
+        }
+        
+        // Показываем hidden и применяем стили для скролла
         activitiesListHidden.classList.remove('hidden');
-        const height = activitiesListHidden.scrollHeight;
-        activitiesListHidden.style.maxHeight = height + 'px';
-        activitiesListHidden.style.overflow = 'visible';
-        // После небольшой задержки убираем ограничение - контент будет скроллиться вместе со страницей
-        setTimeout(() => {
-            if (activitiesListHidden && !activitiesListHidden.classList.contains('hidden')) {
-                activitiesListHidden.style.maxHeight = 'none';
-                activitiesListHidden.style.overflow = 'visible';
+        activitiesContainer.classList.add('activities-expanded');
+        
+        // Динамически рассчитываем высоту для ровно 4 активностей
+        requestAnimationFrame(() => {
+            if (activitiesContainer && activitiesListHidden.children.length > 0) {
+                // Получаем высоту первой активности
+                const firstCard = activitiesListHidden.children[0];
+                if (firstCard) {
+                    const cardHeight = firstCard.offsetHeight;
+                    const gap = 16; // space-y-4 = 1rem = 16px
+                    // Высота для 4 активностей: 4 карточки + 3 промежутка
+                    const calculatedHeight = (cardHeight * 4) + (gap * 3);
+                    activitiesContainer.style.maxHeight = calculatedHeight + 'px';
+                }
+                // Убеждаемся, что скролл начинается с начала (первые 4 видны сразу)
+                activitiesContainer.scrollTop = 0;
             }
-        }, 100);
+        });
+        
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_activities');
+        
+        // Переинициализируем SortableJS для нового контейнера
+        setTimeout(() => {
+            loadActiveTimers().then(() => {
+                initActivitiesSortable();
+            });
+        }, 100);
     } else {
+        // Закрываем аккордеон - возвращаем первые 5 в visible, остальные в hidden
+        const allCards = Array.from(activitiesListHidden.children);
+        
+        // Очищаем оба списка
+        activitiesListVisible.innerHTML = "";
+        activitiesListHidden.innerHTML = "";
+        
+        // Распределяем: первые 5 в visible, остальные в hidden
+        allCards.forEach((card, index) => {
+            if (index < 5) {
+                activitiesListVisible.appendChild(card);
+            } else {
+                activitiesListHidden.appendChild(card);
+            }
+        });
+        
+        // Убираем класс expanded и скрываем hidden
+        activitiesContainer.classList.remove('activities-expanded');
+        activitiesContainer.style.maxHeight = ''; // Сбрасываем динамическую высоту
         activitiesListHidden.classList.add('hidden');
-        activitiesListHidden.style.maxHeight = '0px';
-        activitiesListHidden.style.overflow = 'hidden';
+        
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_activities');
     }
@@ -3427,7 +3699,7 @@ async function deleteActivity(activityId, cardElement) {
         cardElement.style.transform = "translateX(-20px)";
         setTimeout(() => {
             cardElement.remove();
-            allActivities = allActivities.filter(a => a.id != activityId);
+        allActivities = allActivities.filter(a => a.id != activityId);
             updateActivitiesCategoryFilter();
             applyActivitiesFilters();
         }, 300);
@@ -4202,41 +4474,106 @@ function showRewardMessage(text, type) {
 // Делаем функции глобальными для использования в onclick
 window.toggleRewardsAccordion = toggleRewardsAccordion;
 window.toggleHistoryAccordion = toggleHistoryAccordion;
+window.showForgotPassword = showForgotPassword;
+window.closeForgotPassword = closeForgotPassword;
+window.requestResetCode = requestResetCode;
+window.resetPassword = resetPassword;
 
 // ============= INITIALIZATION =============
 window.addEventListener("DOMContentLoaded", () => {
-    // Сразу проверяем токен и скрываем auth-section если он есть
-    if (authToken) {
-        authSection.classList.add("hidden");
-        appSection.classList.remove("hidden");
-    }
-    // Check auth on load
-    checkAuth();
-
-    // Login form
-    document.getElementById("login-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const email = document.getElementById("login-email").value;
-        const password = document.getElementById("login-password").value;
-        login(email, password);
-    });
-
-    // Register form
-    document.getElementById("register-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const email = document.getElementById("register-email").value;
-        const username = document.getElementById("register-username").value;
-        const password = document.getElementById("register-password").value;
-        const passwordConfirm = document.getElementById("register-password-confirm").value;
+    try {
+        // Инициализируем DOM элементы
+        initDOMElements();
         
-        if (password !== passwordConfirm) {
-            document.getElementById("register-error").textContent = "Пароли не совпадают";
-            document.getElementById("register-error").classList.remove("hidden");
+        // Убеждаемся, что элементы найдены
+        if (!authSection || !appSection) {
+            console.error("Critical: authSection or appSection not found!");
+            // Показываем auth-section по умолчанию, если элементы не найдены
+            const authEl = document.getElementById("auth-section");
+            const appEl = document.getElementById("app-section");
+            if (authEl) authEl.classList.remove("hidden");
+            if (appEl) appEl.classList.add("hidden");
             return;
         }
         
-        register(email, username, password);
-    });
+        // Сразу проверяем токен и скрываем auth-section если он есть
+        if (authToken) {
+            authSection.classList.add("hidden");
+            appSection.classList.remove("hidden");
+        } else {
+            // Если токена нет, показываем auth-section
+            authSection.classList.remove("hidden");
+            appSection.classList.add("hidden");
+        }
+        // Check auth on load
+        checkAuth();
+    } catch (error) {
+        console.error("Error during page initialization:", error);
+        // В случае ошибки показываем auth-section
+        const authEl = document.getElementById("auth-section");
+        const appEl = document.getElementById("app-section");
+        if (authEl) authEl.classList.remove("hidden");
+        if (appEl) appEl.classList.add("hidden");
+    }
+
+    // Login form
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const emailInput = document.getElementById("login-email");
+            const passwordInput = document.getElementById("login-password");
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            
+            if (!emailInput || !passwordInput) {
+                console.error("Login form inputs not found");
+                return;
+            }
+            
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            
+            // Отключаем кнопку во время загрузки
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Вход...';
+                
+                try {
+                    await login(email, password);
+                } finally {
+                    // Включаем кнопку обратно
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } else {
+                await login(email, password);
+            }
+        });
+    }
+
+    // Register form
+    const registerForm = document.getElementById("register-form");
+    if (registerForm) {
+        registerForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const email = document.getElementById("register-email").value;
+            const username = document.getElementById("register-username").value;
+            const password = document.getElementById("register-password").value;
+            const passwordConfirm = document.getElementById("register-password-confirm").value;
+            
+            if (password !== passwordConfirm) {
+                const errorEl = document.getElementById("register-error");
+                if (errorEl) {
+                    errorEl.textContent = "Пароли не совпадают";
+                    errorEl.classList.remove("hidden");
+                }
+                return;
+            }
+            
+            register(email, username, password);
+        });
+    }
 
     // Activity form
     if (newActivityForm) {
@@ -4323,10 +4660,25 @@ window.addEventListener("DOMContentLoaded", () => {
 let resetCodeEmail = null;
 
 function showForgotPassword() {
-    document.getElementById("forgot-password-modal").classList.remove("hidden");
-    document.getElementById("forgot-step1").classList.remove("hidden");
-    document.getElementById("forgot-step2").classList.add("hidden");
-    resetCodeEmail = null;
+    try {
+        const modal = document.getElementById("forgot-password-modal");
+        const step1 = document.getElementById("forgot-step1");
+        const step2 = document.getElementById("forgot-step2");
+        
+        if (!modal || !step1 || !step2) {
+            console.error("Forgot password modal elements not found");
+            alert("Ошибка: элементы формы восстановления пароля не найдены");
+            return;
+        }
+        
+        modal.classList.remove("hidden");
+        step1.classList.remove("hidden");
+        step2.classList.add("hidden");
+        resetCodeEmail = null;
+    } catch (e) {
+        console.error("Error showing forgot password modal:", e);
+        alert("Ошибка при открытии формы восстановления пароля");
+    }
 }
 
 function closeForgotPassword() {

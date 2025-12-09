@@ -80,9 +80,22 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login", response_model=Token)
 def login(form_data: UserCreate, db: Session = Depends(get_db)):
     """Вход в систему"""
-    user = db.query(User).filter(User.email == form_data.email).first()
+    # Убираем пробелы в начале и конце email
+    email = form_data.email.strip().lower() if form_data.email else ""
     
-    if not user or not verify_password(form_data.password, user.password_hash):
+    user = db.query(User).filter(User.email == email).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверный email или пароль",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Проверяем пароль (убираем пробелы в начале и конце)
+    password = form_data.password.strip() if form_data.password else ""
+    
+    if not verify_password(password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Неверный email или пароль",

@@ -48,86 +48,141 @@ body {
 }
 
 /* Плавные переходы */
-input:focus {
-    outline: none;
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
 }
 
-button {
-    cursor: pointer;
-}
 
-/* Скроллбар */
-::-webkit-scrollbar {
-    width: 6px;
-}
 
-::-webkit-scrollbar-track {
-    background: transparent;
-}
 
-::-webkit-scrollbar-thumb {
-    background: rgba(156, 163, 175, 0.4);
-    border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(156, 163, 175, 0.6);
-}
-
-/* Тонкий скроллбар для блоков целей и рекомендаций */
-#goals-list::-webkit-scrollbar,
-#recommendations-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-#goals-list::-webkit-scrollbar-thumb,
-#recommendations-list::-webkit-scrollbar-thumb {
-    background: rgba(156, 163, 175, 0.3);
-    border-radius: 2px;
-}
-
-#goals-list::-webkit-scrollbar-thumb:hover,
-#recommendations-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(156, 163, 175, 0.5);
-}
-
-/* Fixed header spacing */
-#app-section {
-    padding-top: 0;
-}
-
-/* Smooth scroll */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Accordion animations */
-#rewards-list-hidden,
-#history-list-hidden,
-#activities-list-hidden {
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in-out;
-    overflow: visible;
-}
-
-#rewards-list-hidden.hidden,
-#history-list-hidden.hidden,
-#activities-list-hidden.hidden {
-    max-height: 0 !important;
-    opacity: 0;
-}
-
-/* Fixed/sticky позиционирование для первых 4 транзакций истории (когда аккордеон закрыт) */
+#rewards-list-container,
 #history-list-container {
     position: relative;
 }
 
+/* Когда аккордеон наград открыт - контейнер становится скроллируемым */
+#rewards-list-container.rewards-expanded {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    transition: max-height 300ms ease;
+}
+
+/* При открытом аккордеоне наград скрываем visible и показываем hidden */
+#rewards-list-container.rewards-expanded #rewards-list-visible {
+    display: none !important;
+}
+
+#rewards-list-container.rewards-expanded #rewards-list-hidden {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: relative !important;
+}
+
+/* Убираем fixed позиционирование при открытом аккордеоне наград */
+#rewards-list-container.rewards-expanded .reward-card {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+}
+
+/* Когда аккордеон истории открыт - контейнер становится скроллируемым */
+#history-list-container.history-expanded {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    transition: max-height 300ms ease;
+}
+
+/* При открытом аккордеоне истории скрываем visible и показываем hidden */
+#history-list-container.history-expanded #history-list-visible {
+    display: none !important;
+    position: relative !important;
+    top: auto !important;
+    background: transparent !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    z-index: 1 !important;
+}
+
+#history-list-container.history-expanded #history-list-visible::after {
+    display: none !important;
+}
+
+#history-list-container.history-expanded #history-list-hidden {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: relative !important;
+}
+
+/* Убираем sticky позиционирование при открытом аккордеоне истории */
+#history-list-container.history-expanded .history-fixed {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+    background: transparent !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#rewards-list-hidden,
+#history-list-hidden {
+    overflow: visible;
+}
+
+/* Умный аккордеон для активностей с ограниченной высотой и скроллом */
+#activities-list-container {
+    position: relative;
+}
+
+#activities-list-hidden {
+    overflow-x: hidden;
+    max-height: 0;
+    overflow-y: hidden;
+}
+
+/* Когда аккордеон открыт - весь контейнер становится скроллируемым */
+#activities-list-container.activities-expanded {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+#activities-list-container.activities-expanded #activities-list-visible {
+    display: none !important;
+}
+
+#activities-list-container.activities-expanded #activities-list-hidden {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: relative !important;
+}
+
+#activities-list-container.activities-expanded .activity-card {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+}
+
+/* Убираем дублирующиеся стрелки в выпадающих списках */
+#activities-sort,
+#activities-category-filter {
+    background-image: none !important;
+    background: none !important;
+    padding-right: 1.75rem !important;
+    appearance: none !important;
+}
+
+/* Fixed/sticky позиционирование для первых 4 транзакций истории (когда аккордеон закрыт) */
 #history-list-visible.history-fixed {
     position: sticky;
     top: 0;
     z-index: 10;
     background: white;
-    padding-bottom: 0.5rem;
-    margin-bottom: 0.5rem;
+    padding-bottom: 8px;
+    margin-bottom: 0;
 }
 
 #history-list-visible.history-fixed::after {
@@ -136,37 +191,35 @@ html {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1), transparent);
+    height: 20px;
+    background: linear-gradient(to bottom, transparent, white);
+    pointer-events: none;
 }
 
-#history-list-visible:not(.history-fixed) {
+#history-list-container {
     position: relative;
-    z-index: 1;
 }
 
-/* Когда аккордеон открыт - блок истории фиксированной высоты со скроллом */
 #history.history-expanded {
     position: sticky;
-    top: 20px;
-    z-index: 20;
+    top: 80px;
+    z-index: 30;
+    align-self: flex-start;
+    width: 100%;
 }
 
 #history.history-expanded > div.p-5 {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: auto;
 }
 
-/* Фиксированная высота контейнера списка (примерно на 5 транзакций) */
 #history.history-expanded #history-list-container {
     overflow-y: auto;
-    overflow-x: hidden;
     max-height: 500px;
-    height: 500px;
+    flex: 1;
 }
 
-/* Когда аккордеон открыт, убираем sticky позиционирование с первых 4 транзакций */
 #history.history-expanded #history-list-visible {
     position: relative !important;
     top: auto !important;
@@ -181,222 +234,8 @@ html {
 }
 
 #history.history-expanded #history-list-hidden {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
     position: relative !important;
-}
-
-/* Ensure equal height for columns */
-@media (min-width: 1024px) {
-    .grid.lg\:grid-cols-2 {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        align-items: stretch;
-    }
-    
-    .grid.lg\:grid-cols-2 > div {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    
-    .grid.lg\:grid-cols-2 > div > div {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    }
-    
-    /* Блоки Награды и История не должны растягиваться друг под друга */
-    .grid.lg\:grid-cols-3 > #rewards,
-    .grid.lg\:grid-cols-3 > #history {
-        height: auto !important;
-        align-self: start;
-    }
-    
-    #rewards > div,
-    #history {
-        height: auto !important;
-    }
-    
-    #rewards > div > div {
-        flex: none !important;
-    }
-    
-    /* Блок История должен быть независим от блока Награды */
-    #history {
-        align-self: flex-start;
-        position: relative;
-    }
-}
-
-/* Сдвиг иконки выпадающего списка (chevron) влево для всех селектов */
-select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-    background-position: right 0.5rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
-}
-
-
-/* Убираем стандартную иконку браузера для админ селекта категорий */
-#admin-category-filter {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-    background-position: right 0.5rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-}
-
-/* Убираем стандартную иконку браузера для селекта типа единицы измерения */
-#activity-unit-type,
-#edit-activity-unit-type {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-/* Сдвиг иконки левее на 15-20px от правого края */
-#goal-activity,
-#manual-activity-select {
-    background-position: right 1.25rem center;
-}
-
-/* Кастомный dropdown для категорий */
-.custom-dropdown {
-    position: relative;
-}
-
-.custom-dropdown button {
-    cursor: pointer;
-}
-
-.custom-dropdown button i {
-    transition: transform 0.2s;
-}
-
-.custom-dropdown button i.rotate-180 {
-    transform: rotate(180deg);
-}
-
-/* Стили для инпутов с длинными плейсхолдерами */
-#activity-name {
-    min-height: 3.5rem;
-    text-align: center;
-    display: block;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-#edit-activity-name {
-    min-height: 3.5rem;
-    text-align: left;
-    display: block;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-#activity-name::placeholder {
-    text-align: center;
-    line-height: 1.5;
-    opacity: 0.6;
-}
-
-#edit-activity-name::placeholder {
-    text-align: left;
-    line-height: 1.5;
-    opacity: 0.6;
-}
-
-/* Убираем лишнее пространство в блоке "Новая активность" */
-#new-activity-form {
-    margin-bottom: 0;
-}
-
-#activity-message {
-    margin-bottom: 0;
-}
-
-/* Блок "Новая активность" не должен растягиваться */
-#activities > div:last-child {
-    height: auto;
-    min-height: auto;
-}
-
-/* Блок "Активности" не должен растягиваться по высоте боковой панели */
-@media (min-width: 1024px) {
-    .grid.lg\:grid-cols-3.lg\:items-start > #activities {
-        height: auto !important;
-        align-self: start;
-    }
-}
-
-/* Стили для drag and drop активностей (SortableJS) */
-.sortable-ghost {
-    opacity: 0.4;
-    background-color: #e0e7ff !important;
-    border-color: #3b82f6 !important;
-}
-
-.sortable-chosen {
-    cursor: grabbing !important;
-    transform: scale(0.98);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
-}
-
-.sortable-drag {
-    opacity: 0.8;
-    transform: rotate(2deg);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-}
-
-.activity-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.drag-handle {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    cursor: grab;
-}
-
-.drag-handle:active {
-    cursor: grabbing !important;
-}
-
-/* Placeholder для SortableJS */
-.activity-card-placeholder {
-    border: 2px dashed #3b82f6 !important;
-    background-color: rgba(59, 130, 246, 0.1) !important;
-    border-radius: 0.75rem;
-    margin-bottom: 0.75rem;
-    height: auto;
-    min-height: 60px;
-}
-
-/* Стили для переключателя режима цели */
-.goal-mode-option {
-    transition: all 0.2s ease;
-}
-
-.goal-mode-option input[type="radio"]:checked + div {
-    color: #9333ea;
-}
-
-.goal-mode-option:hover {
-    transform: translateY(-1px);
-}
-
-/* Убираем стандартную стрелку для селектов с кастомной иконкой */
-#activities-sort,
-#activities-category-filter {
-    background-image: none !important;
-    background: none !important;
-    padding-right: 2.5rem !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
 }
