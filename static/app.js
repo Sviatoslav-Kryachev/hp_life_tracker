@@ -2305,25 +2305,72 @@ function renderHistoryItem(item) {
 function filterHistoryByPeriod(data, period) {
     if (!data || data.length === 0) return [];
     
+    // Получаем сегодняшнюю дату в Берлинском времени
+    // Используем Intl.DateTimeFormat для надежного получения даты в нужном timezone
+    const berlinFormatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Europe/Berlin',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+    
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayBerlinStr = berlinFormatter.format(now); // Формат YYYY-MM-DD
+    
+    // Для периода "today" просто сравниваем строки дат
+    if (period === 'today') {
+        const filtered = data.filter(item => {
+            if (!item.date) return false;
+            try {
+                // Парсим дату из ISO строки
+                const itemDate = new Date(item.date);
+                // Проверяем, что дата валидна
+                if (isNaN(itemDate.getTime())) {
+                    console.warn('Invalid date:', item.date);
+                    return false;
+                }
+                // Получаем дату в Берлинском времени
+                const itemBerlinStr = berlinFormatter.format(itemDate);
+                // Сравниваем строки дат напрямую
+                const matches = itemBerlinStr === todayBerlinStr;
+                return matches;
+            } catch (e) {
+                console.warn('Invalid date in history item:', item.date, e);
+                return false;
+            }
+        });
+        console.log('Today filter:', { 
+            period, 
+            todayBerlinStr, 
+            totalItems: data.length, 
+            filteredCount: filtered.length,
+            sampleDates: data.slice(0, 3).map(item => ({ 
+                date: item.date, 
+                formatted: item.date ? berlinFormatter.format(new Date(item.date)) : 'N/A' 
+            }))
+        });
+        return filtered;
+    }
+    
+    // Для других периодов используем сравнение дат
+    const [todayYear, todayMonth, todayDay] = todayBerlinStr.split('-').map(Number);
+    
+    // Создаем начало сегодняшнего дня в локальном времени для сравнения
+    const todayStart = new Date(todayYear, todayMonth - 1, todayDay, 0, 0, 0, 0);
     
     let startDate;
     
     switch (period) {
-        case 'today':
-            startDate = new Date(today);
-            break;
         case 'week':
-            startDate = new Date(today);
+            startDate = new Date(todayStart);
             startDate.setDate(startDate.getDate() - 7);
             break;
         case 'month':
-            startDate = new Date(today);
+            startDate = new Date(todayStart);
             startDate.setMonth(startDate.getMonth() - 1);
             break;
         case 'year':
-            startDate = new Date(today);
+            startDate = new Date(todayStart);
             startDate.setFullYear(startDate.getFullYear() - 1);
             break;
         case 'all':
@@ -2337,7 +2384,7 @@ function filterHistoryByPeriod(data, period) {
             const itemDate = new Date(item.date);
             return itemDate >= startDate;
         } catch (e) {
-            console.warn('Invalid date in history item:', item.date);
+            console.warn('Invalid date in history item:', item.date, e);
             return false;
         }
     });
@@ -2345,6 +2392,7 @@ function filterHistoryByPeriod(data, period) {
 
 // Функция для установки периода фильтра
 function setHistoryPeriod(period) {
+    console.log('Setting history period:', period);
     historyPeriod = period;
     
     // Обновляем стили кнопок
@@ -2359,7 +2407,7 @@ function setHistoryPeriod(period) {
         activeBtn.classList.add('bg-indigo-500', 'text-white');
     }
     
-    // Перезагружаем историю с фильтром
+    // Перезагружаем историю с фильтром (принудительно, без кэша)
     loadHistory();
 }
 
@@ -2390,11 +2438,15 @@ async function loadHistory() {
         
         // Увеличиваем лимит для получения достаточного количества данных для фильтрации
         // Добавляем timestamp для предотвращения кэширования
-        const res = await fetch(`${API_BASE}/xp/full-history?limit=1000&_t=${Date.now()}`, {
+        const cacheBuster = Date.now();
+        const res = await fetch(`${API_BASE}/xp/full-history?limit=1000&_t=${cacheBuster}`, {
             headers: { 
                 "Authorization": `Bearer ${authToken}`,
-                "Cache-Control": "no-cache"
-            }
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            },
+            cache: 'no-store'
         });
         
         if (!res.ok) {
@@ -2410,7 +2462,9 @@ async function loadHistory() {
         const allData = await res.json();
         
         // Фильтруем данные по выбранному периоду
+        console.log('Filtering history:', { period: historyPeriod, totalItems: allData.length });
         const filteredData = filterHistoryByPeriod(allData, historyPeriod);
+        console.log('Filtered history:', { period: historyPeriod, filteredItems: filteredData.length });
         
         historyListVisible.innerHTML = '';
         historyListHidden.innerHTML = '';
