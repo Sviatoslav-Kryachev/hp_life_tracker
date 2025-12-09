@@ -89,10 +89,13 @@ body {
 }
 
 /* Когда аккордеон истории открыт - контейнер становится скроллируемым */
+/* Этот стиль применяется когда класс history-expanded на контейнере */
 #history-list-container.history-expanded {
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    transition: max-height 300ms ease;
+    flex: 1 1 0;
+    min-height: 0;
+    /* Контейнер заполняет доступное пространство через flex, не расширяется вниз */
 }
 
 /* При открытом аккордеоне истории скрываем visible и показываем hidden */
@@ -175,58 +178,48 @@ body {
     appearance: none !important;
 }
 
-/* Fixed/sticky позиционирование для первых 4 транзакций истории (когда аккордеон закрыт) */
-#history-list-visible.history-fixed {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: white;
-    padding-bottom: 8px;
-    margin-bottom: 0;
-}
-
-#history-list-visible.history-fixed::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: linear-gradient(to bottom, transparent, white);
-    pointer-events: none;
+/* Убрали sticky позиционирование - все элементы обычные */
+#history-list-visible {
+    position: relative;
 }
 
 #history-list-container {
     position: relative;
+    /* Контейнер должен заполнять доступное пространство */
+    display: flex;
+    flex-direction: column;
+    /* Всегда скроллится при переполнении, заполняет доступное пространство */
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1 1 0;
+    min-height: 0;
 }
 
 #history.history-expanded {
-    position: sticky;
-    top: 80px;
-    z-index: 30;
-    align-self: flex-start;
-    width: 100%;
+    /* Убрали position: sticky чтобы блок не прыгал вверх */
 }
 
 #history.history-expanded > div.p-5 {
     display: flex;
     flex-direction: column;
-    height: auto;
+    flex: 1;
+    min-height: 0;
 }
 
+/* При раскрытии аккордеона контейнер списка становится скроллируемым */
+/* Контейнер остается в пределах своего размера, не расширяется вниз */
 #history.history-expanded #history-list-container {
     overflow-y: auto;
-    max-height: 500px;
-    flex: 1;
+    overflow-x: hidden;
+    flex: 1 1 0;
+    min-height: 0;
+    /* Контейнер заполняет доступное пространство через flex, не расширяется вниз */
 }
 
+/* Все элементы списка обычные, без sticky */
+/* При раскрытии visible скрывается, все элементы в hidden */
 #history.history-expanded #history-list-visible {
-    position: relative !important;
-    top: auto !important;
-    background: transparent !important;
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-    z-index: 1 !important;
+    display: none !important;
 }
 
 #history.history-expanded #history-list-visible::after {
@@ -235,7 +228,5 @@ body {
 
 #history.history-expanded #history-list-hidden {
     display: block !important;
-    max-height: none !important;
-    overflow: visible !important;
     position: relative !important;
 }

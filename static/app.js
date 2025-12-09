@@ -2632,25 +2632,19 @@ function toggleHistoryAccordion() {
         historyListHidden.classList.remove('hidden');
         historyContainer.classList.add('history-expanded');
         
-        // Убираем fixed позиционирование
+        // Убираем fixed позиционирование (больше не используется)
         if (historyListVisible) {
             historyListVisible.classList.remove('history-fixed');
         }
         
-        // Динамически рассчитываем высоту для ровно 4 транзакций
-        requestAnimationFrame(() => {
-            if (historyContainer && historyListHidden.children.length > 0) {
-                const firstItem = historyListHidden.children[0];
-                if (firstItem) {
-                    const itemHeight = firstItem.offsetHeight;
-                    const gap = 8; // space-y-2 = 0.5rem = 8px
-                    const calculatedHeight = (itemHeight * 4) + (gap * 3);
-                    historyContainer.style.maxHeight = calculatedHeight + 'px';
-                    historyContainer.style.transition = 'max-height 300ms ease';
-                }
-                historyContainer.scrollTop = 0;
-            }
-        });
+        // Применяем класс expanded к блоку history для правильного скролла
+        const historyBlock = document.getElementById('history');
+        if (historyBlock) {
+            historyBlock.classList.add('history-expanded');
+        }
+        
+        // Контейнер будет скроллируемым автоматически через CSS
+        // Не скроллим наверх, сохраняем текущую позицию
         
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
@@ -2676,10 +2670,14 @@ function toggleHistoryAccordion() {
         historyContainer.style.maxHeight = '';
         historyListHidden.classList.add('hidden');
         
-        // Возвращаем fixed позиционирование для первых 4 транзакций
-        if (historyListVisible) {
-            historyListVisible.classList.add('history-fixed');
+        // Убираем класс expanded с блока history
+        const historyBlock = document.getElementById('history');
+        if (historyBlock) {
+            historyBlock.classList.remove('history-expanded');
         }
+        
+        // Больше не используем fixed позиционирование
+        // Все элементы обычные
         
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');
@@ -2712,20 +2710,14 @@ function updateHistoryAccordionButton() {
             historyListVisible.classList.remove('history-fixed');
         }
         
-        // Динамически рассчитываем высоту для ровно 4 транзакций
-        requestAnimationFrame(() => {
-            if (historyContainer && historyListHidden.children.length > 0) {
-                const firstItem = historyListHidden.children[0];
-                if (firstItem) {
-                    const itemHeight = firstItem.offsetHeight;
-                    const gap = 8; // space-y-2 = 0.5rem = 8px
-                    const calculatedHeight = (itemHeight * 4) + (gap * 3);
-                    historyContainer.style.maxHeight = calculatedHeight + 'px';
-                    historyContainer.style.transition = 'max-height 300ms ease';
-                }
-                historyContainer.scrollTop = 0;
-            }
-        });
+        // Применяем класс expanded к блоку history для правильного скролла
+        const historyBlock = document.getElementById('history');
+        if (historyBlock) {
+            historyBlock.classList.add('history-expanded');
+        }
+        
+        // Убираем scrollTop = 0 чтобы не скроллить наверх
+        // Контейнер будет скроллируемым автоматически через CSS
         
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
@@ -2747,10 +2739,14 @@ function updateHistoryAccordionButton() {
         historyContainer.style.maxHeight = '';
         historyListHidden.classList.add('hidden');
         
-        // Возвращаем fixed позиционирование для первых 4 транзакций
-        if (historyListVisible) {
-            historyListVisible.classList.add('history-fixed');
+        // Убираем класс expanded с блока history
+        const historyBlock = document.getElementById('history');
+        if (historyBlock) {
+            historyBlock.classList.remove('history-expanded');
         }
+        
+        // Больше не используем fixed позиционирование
+        // Все элементы обычные
         
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');

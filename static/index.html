@@ -846,12 +846,12 @@
                             </div>
                         </div>
                         <!-- Список истории -->
-                        <div class="flex flex-col flex-1 min-h-0 mb-3">
+                        <div class="flex flex-col flex-1 min-h-0">
                             <div id="history-list-container" class="overflow-x-hidden pr-2 relative flex-1 min-h-0">
-                                <div id="history-list-visible" class="space-y-2 history-fixed"></div>
+                                <div id="history-list-visible" class="space-y-2"></div>
                                 <div id="history-list-hidden" class="space-y-2 hidden"></div>
                             </div>
-                            <button id="history-accordion-btn" onclick="toggleHistoryAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group flex-shrink-0">
+                            <button id="history-accordion-btn" onclick="toggleHistoryAccordion()" class="hidden mt-3 mb-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group flex-shrink-0">
                                 <span class="accordion-text" data-i18n="show_all_history">Показать всю историю</span>
                                 <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
                             </button>
