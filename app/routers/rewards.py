@@ -16,9 +16,10 @@ async def get_rewards(
 ):
     """Получить все награды (и общие, и пользователя)"""
     # Возвращаем награды пользователя + общие (user_id = None)
+    # Сортируем по ID по возрастанию: старые сверху, новые внизу
     rewards = db.query(Reward).filter(
         (Reward.user_id == current_user.id) | (Reward.user_id == None)
-    ).all()
+    ).order_by(Reward.id.asc()).all()
     return rewards
 
 

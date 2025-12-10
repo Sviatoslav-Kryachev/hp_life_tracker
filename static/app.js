@@ -4286,7 +4286,21 @@ async function loadRewards() {
         }
 
         const data = await res.json();
-        allRewards = data;
+        
+        // Сортируем награды: старые сверху (по возрастанию ID), новые внизу
+        // Сначала разделяем на общие (user_id === null) и пользовательские
+        // Затем сортируем каждую группу по ID
+        const sortedData = [...data].sort((a, b) => {
+            const idA = a.id || 0;
+            const idB = b.id || 0;
+            // Сортировка по возрастанию ID (старые сверху, новые внизу)
+            return idA - idB;
+        });
+        
+        allRewards = sortedData;
+        
+        // Логируем для отладки
+        console.log('Rewards loaded and sorted:', sortedData.map(r => ({ id: r.id, name: r.name })));
 
         // Еще раз проверяем элементы перед использованием
         if (!rewardsListVisible || !rewardsListHidden) {
@@ -4314,7 +4328,7 @@ async function loadRewards() {
             return;
         }
 
-        if (data.length === 0) {
+        if (sortedData.length === 0) {
             try {
                 rewardsListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Наград пока нет</div>';
             } catch (e) {
@@ -4326,8 +4340,8 @@ async function loadRewards() {
             return;
         }
 
-        const visibleRewards = data.slice(0, 4);
-        const hiddenRewards = data.slice(4);
+        const visibleRewards = sortedData.slice(0, 4);
+        const hiddenRewards = sortedData.slice(4);
 
         // Проверяем элементы перед рендерингом
         if (!rewardsListVisible) {
@@ -4377,6 +4391,7 @@ function renderRewardCard(reward) {
 
     const div = document.createElement("div");
     div.className = `reward-card group relative p-4 rounded-lg bg-gradient-to-r from-gray-50 to-white border-2 ${brand.borderColor} hover:shadow-md hover:border-opacity-80 transition-all duration-200 w-full max-w-full overflow-hidden`;
+    div.setAttribute('data-reward-id', reward.id); // Добавляем ID для поиска
 
     // Основная структура: всё в одной строке, кнопки по центру по высоте
     const mainSection = document.createElement("div");
@@ -4492,6 +4507,58 @@ async function createReward() {
         
         // Перезагружаем список наград для обновления UI
         await loadRewards();
+        
+        // Если новая награда попала в скрытый список (больше 4 наград), открываем аккордеон
+        getRewardsElements();
+        if (allRewards.length > 4 && rewardsAccordionBtn && rewardsListHidden) {
+            // Проверяем, что новая награда действительно в скрытом списке
+            const newRewardElement = document.querySelector(`[data-reward-id="${created.id}"]`);
+            const newRewardInHidden = newRewardElement && rewardsListHidden.contains(newRewardElement);
+            
+            if (newRewardInHidden) {
+                // Открываем аккордеон, если он закрыт
+                const isExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
+                if (!isExpanded && rewardsListHidden.classList.contains('hidden')) {
+                    toggleRewardsAccordion();
+                }
+                
+                // Прокручиваем к новой награде
+                setTimeout(() => {
+                    if (newRewardElement) {
+                        newRewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        // Подсвечиваем новую награду
+                        newRewardElement.style.transition = 'background-color 0.3s';
+                        newRewardElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                        setTimeout(() => {
+                            newRewardElement.style.backgroundColor = '';
+                        }, 2000);
+                    }
+                }, 200);
+            } else if (newRewardElement) {
+                // Если награда в видимом списке, просто подсвечиваем её
+                setTimeout(() => {
+                    newRewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    newRewardElement.style.transition = 'background-color 0.3s';
+                    newRewardElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                    setTimeout(() => {
+                        newRewardElement.style.backgroundColor = '';
+                    }, 2000);
+                }, 100);
+            }
+        } else if (allRewards.length <= 4) {
+            // Если наград 4 или меньше, новая награда в видимом списке - подсвечиваем её
+            setTimeout(() => {
+                const newRewardElement = document.querySelector(`[data-reward-id="${created.id}"]`);
+                if (newRewardElement) {
+                    newRewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    newRewardElement.style.transition = 'background-color 0.3s';
+                    newRewardElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                    setTimeout(() => {
+                        newRewardElement.style.backgroundColor = '';
+                    }, 2000);
+                }
+            }, 100);
+        }
         
         showRewardMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {
