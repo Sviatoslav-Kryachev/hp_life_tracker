@@ -962,9 +962,14 @@
                 </button>
             </div>
             <form id="manual-time-form" class="space-y-4">
-                <select id="manual-activity-select" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                    <option value="" data-i18n="select_activity_label">Выберите активность</option>
-                </select>
+                <div class="relative">
+                    <select id="manual-activity-select" class="w-full p-4 pr-10 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all bg-white appearance-none" required>
+                        <option value="" data-i18n="select_activity_label">Выберите активность</option>
+                    </select>
+                    <div class="absolute right-5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+                    </div>
+                </div>
                 <div id="manual-time-input-container">
                     <input type="number" id="manual-minutes" data-i18n-placeholder="minutes_placeholder" placeholder="Минут" min="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
                 </div>
@@ -1033,7 +1038,7 @@
                             </button>
                         </li>
                         <li>
-                            <a href="#activities" onclick="document.getElementById('manual-time-modal')?.classList.remove('hidden')"
+                            <a href="#activities" onclick="openManualTimeModal()"
                                class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2">
                                 <i class="fas fa-clock text-xs"></i><span data-i18n="timer">Таймер</span>
                             </a>
@@ -1083,7 +1088,7 @@
                     </h3>
                     <ul class="space-y-2">
                         <li>
-                            <button onclick="document.getElementById('manual-time-modal')?.classList.remove('hidden')"
+                            <button onclick="openManualTimeModal()"
                                     class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2">
                                 <i class="fas fa-clock text-xs"></i><span data-i18n="manual_time">Ручной ввод времени</span>
                             </button>

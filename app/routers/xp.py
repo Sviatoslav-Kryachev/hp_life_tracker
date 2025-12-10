@@ -468,8 +468,9 @@ async def get_full_history(
             "duration_minutes": None
         })
     
-    # Сортируем по дате
-    history.sort(key=lambda x: x["date"], reverse=True)
+    # Сортируем по дате (самые новые сверху)
+    # Используем безопасную сортировку с обработкой None значений
+    history.sort(key=lambda x: x["date"] if x.get("date") else "", reverse=True)
     
     return history[:limit]
 

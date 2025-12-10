@@ -2463,8 +2463,37 @@ async function loadHistory() {
 
         // Фильтруем данные по выбранному периоду
         console.log('Filtering history:', { period: historyPeriod, totalItems: allData.length });
-        const filteredData = filterHistoryByPeriod(allData, historyPeriod);
+        let filteredData = filterHistoryByPeriod(allData, historyPeriod);
         console.log('Filtered history:', { period: historyPeriod, filteredItems: filteredData.length });
+
+        // Сортируем по дате: самые новые сверху (по убыванию даты)
+        // Используем стабильную сортировку с timestamp
+        filteredData.sort((a, b) => {
+            // Безопасный парсинг дат
+            let timestampA = 0;
+            let timestampB = 0;
+            
+            try {
+                if (a.date) {
+                    const dateA = new Date(a.date);
+                    timestampA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+                }
+                if (b.date) {
+                    const dateB = new Date(b.date);
+                    timestampB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+                }
+            } catch (e) {
+                console.warn('Error parsing dates:', e, a.date, b.date);
+            }
+            
+            // Сортируем по убыванию timestamp (новые сверху)
+            // Если timestamps равны, используем amount для стабильности
+            if (timestampB !== timestampA) {
+                return timestampB - timestampA;
+            }
+            // Если даты равны, сортируем по amount (для стабильности)
+            return (b.amount || 0) - (a.amount || 0);
+        });
 
         historyListVisible.innerHTML = '';
         historyListHidden.innerHTML = '';
@@ -2481,8 +2510,11 @@ async function loadHistory() {
         const historyContainer = document.getElementById('history-list-container');
         const historyBlock = document.getElementById('history');
 
+        // Очищаем перед добавлением
+        historyListVisible.innerHTML = '';
         visibleHistory.forEach(item => {
-            historyListVisible.innerHTML += renderHistoryItem(item);
+            const itemHtml = renderHistoryItem(item);
+            historyListVisible.innerHTML += itemHtml;
         });
 
         // Применяем fixed позиционирование по умолчанию (если аккордеон закрыт)
@@ -2504,8 +2536,11 @@ async function loadHistory() {
         }
 
         if (hiddenHistory.length > 0) {
+            // Очищаем перед добавлением
+            historyListHidden.innerHTML = '';
             hiddenHistory.forEach(item => {
-                historyListHidden.innerHTML += renderHistoryItem(item);
+                const itemHtml = renderHistoryItem(item);
+                historyListHidden.innerHTML += itemHtml;
             });
             historyAccordionBtn.classList.remove('hidden');
             // Загружаем состояние аккордеона из localStorage после добавления элементов
@@ -2835,6 +2870,8 @@ async function loadActivities() {
 
         const data = await res.json();
         allActivities = data;
+        
+        console.log("Activities loaded:", allActivities.length, allActivities);
 
         // Обновляем фильтр категорий
         updateActivitiesCategoryFilter();
@@ -3894,29 +3931,92 @@ async function stopTimer(activityId, button) {
 
 
 // ============= MANUAL TIME/QUANTITY =============
-function openManualTimeModal(activityId) {
+async function openManualTimeModal(activityId) {
     const select = document.getElementById("manual-activity-select");
-    select.innerHTML = `<option value="">${t('select_activity_label')}</option>`;
-    allActivities.forEach(activity => {
-        const option = document.createElement("option");
-        option.value = activity.id;
-        const unitType = activity.unit_type || 'time';
-        if (unitType === 'quantity') {
-            option.textContent = `${activity.name} (${activity.xp_per_unit || 1} ${t('xp_per_unit')})`;
-        } else {
-            option.textContent = `${activity.name} (${activity.xp_per_hour} ${t('xp_per_hour')})`;
+    if (!select) {
+        console.error("manual-activity-select not found");
+        return;
+    }
+    
+    // Если активности не загружены, загружаем их
+    if (!allActivities || allActivities.length === 0) {
+        console.log("Activities not loaded, loading...");
+        try {
+            await loadActivities();
+            // Дополнительная проверка после загрузки
+            if (!allActivities || allActivities.length === 0) {
+                console.warn("Activities still empty after load, retrying...");
+                await new Promise(resolve => setTimeout(resolve, 200));
+                await loadActivities();
+            }
+        } catch (e) {
+            console.error("Error loading activities:", e);
         }
+    }
+    
+    console.log("All activities for dropdown:", allActivities?.length || 0, allActivities);
+    
+    select.innerHTML = `<option value="">${t('select_activity_label')}</option>`;
+    
+    if (allActivities && allActivities.length > 0) {
+        // Фильтруем активности: показываем только те, у которых тип единицы измерения - "time" (время)
+        const timeActivities = allActivities.filter(activity => {
+            if (!activity || !activity.name) {
+                return false;
+            }
+            const unitType = activity.unit_type || 'time';
+            // Показываем только активности с типом "time" (время), исключаем "quantity" (количество)
+            return unitType === 'time';
+        });
+        
+        console.log(`Adding ${timeActivities.length} time-based activities to dropdown (filtered from ${allActivities.length} total)`);
+        
+        if (timeActivities.length === 0) {
+            // Если нет активностей с типом "time", показываем сообщение
+            const option = document.createElement("option");
+            option.value = "";
+            option.textContent = "Нет активностей с типом 'Время'. Создайте активность с типом 'Время (минуты)'.";
+            option.disabled = true;
+            select.appendChild(option);
+        } else {
+            timeActivities.forEach(activity => {
+                const option = document.createElement("option");
+                option.value = activity.id;
+                option.textContent = `${activity.name} (${activity.xp_per_hour || 60} ${t('xp_per_hour')})`;
+                select.appendChild(option);
+            });
+        }
+    } else {
+        console.warn("No activities found");
+        // Если активностей нет, показываем сообщение
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "Нет активностей. Создайте активность сначала.";
+        option.disabled = true;
         select.appendChild(option);
-    });
-    select.value = activityId;
+    }
+    
+    if (activityId) {
+        select.value = activityId;
+    }
 
     // Обновляем интерфейс в зависимости от типа активности
-    updateManualModalUI(activityId);
+    if (activityId) {
+        updateManualModalUI(activityId);
+    }
 
-    document.getElementById("manual-minutes").value = "";
-    document.getElementById("manual-quantity").value = "";
-    document.getElementById("manual-time-preview").classList.add("hidden");
-    document.getElementById("manual-time-modal").classList.remove("hidden");
+    const minutesInput = document.getElementById("manual-minutes");
+    const quantityInput = document.getElementById("manual-quantity");
+    const previewEl = document.getElementById("manual-time-preview");
+    
+    if (minutesInput) minutesInput.value = "";
+    if (quantityInput) quantityInput.value = "";
+    if (previewEl) previewEl.classList.add("hidden");
+    
+    const modal = document.getElementById("manual-time-modal");
+    if (modal) {
+        modal.classList.remove("hidden");
+    }
 }
 
 function updateManualModalUI(activityId) {
@@ -4528,6 +4628,8 @@ window.showForgotPassword = showForgotPassword;
 window.closeForgotPassword = closeForgotPassword;
 window.requestResetCode = requestResetCode;
 window.resetPassword = resetPassword;
+window.openManualTimeModal = openManualTimeModal;
+window.closeManualTimeModal = closeManualTimeModal;
 
 // ============= INITIALIZATION =============
 window.addEventListener("DOMContentLoaded", () => {
