@@ -1906,22 +1906,47 @@ async function loadCalendar(period = currentCalendarPeriod) {
         if (!containerEl) return;
 
         if (period === 'week') {
-            // Маппинг индексов дней недели (0=Пн, 6=Вс) на ключи переводов
+            // Маппинг дней недели на ключи переводов
             const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+            
+            // Маппинг русских сокращений на индексы (Пн=0, Вт=1, ..., Вс=6)
+            const dayNameToIndex = {
+                'Пн': 0, 'Вт': 1, 'Ср': 2, 'Чт': 3, 'Пт': 4, 'Сб': 5, 'Вс': 6
+            };
 
             containerEl.innerHTML = `
                 <div class="flex justify-between gap-0.5 md:gap-1" id="week-calendar">
                     ${data.map((day, index) => {
-                        const isToday = index === 6;
                         const hasActivity = day.earned > 0 || day.spent > 0;
                         const intensity = Math.min(day.earned / 100, 1);
                         const todayDate = new Date();
-                        const dayDate = new Date(day.date);
+                        // Парсим дату правильно, учитывая что она в формате YYYY-MM-DD
+                        const [year, month, dayNum] = day.date.split('-').map(Number);
+                        const dayDate = new Date(year, month - 1, dayNum, 12, 0, 0);
                         const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
 
+                        // Определяем день недели из данных сервера или вычисляем из даты
+                        let dayIndex = dayNameToIndex[day.day_name];
+                        if (dayIndex === undefined) {
+                            // Если не нашли по названию, вычисляем из даты
+                            // JavaScript: 0=Вс, 1=Пн, ..., 6=Сб
+                            // Нужно: 0=Пн, 1=Вт, ..., 6=Вс
+                            const jsDay = dayDate.getDay();
+                            dayIndex = jsDay === 0 ? 6 : jsDay - 1; // Конвертируем в формат Пн=0, Вс=6
+                        }
+                        
                         // Получаем локализованное название дня недели
-                        const dayKey = dayKeys[index];
+                        const dayKey = dayKeys[dayIndex];
                         const localizedDayName = dayKey ? t(dayKey) : day.day_name;
+                        
+                        // Логируем для отладки
+                        console.log(`Week day ${index}:`, {
+                            date: day.date,
+                            dayName: day.day_name,
+                            dayIndex: dayIndex,
+                            localizedName: localizedDayName,
+                            parsedDate: dayDate.toDateString()
+                        });
 
                         return `
                             <div class="flex flex-col items-center cursor-pointer ${isTodayDate ? 'scale-110' : ''}"
@@ -2118,8 +2143,9 @@ async function showDayDetails(date) {
 
         const data = await res.json();
 
-        // Используем дату из ответа сервера, если она есть, иначе используем переданную дату
-        const dateToDisplay = data.date || formattedDate;
+        // ВСЕГДА используем переданную дату для отображения, чтобы избежать проблем с часовыми поясами
+        // Сервер может вернуть дату в другом формате или с учетом часового пояса
+        const dateToDisplay = formattedDate;
         
         // Парсим дату из строки YYYY-MM-DD напрямую, без проблем с часовыми поясами
         const [year, month, day] = dateToDisplay.split('-').map(Number);
@@ -2127,6 +2153,11 @@ async function showDayDetails(date) {
         // Создаем дату в локальном времени для правильного определения дня недели
         // Используем полдень, чтобы избежать проблем с переходом через полночь
         const dateObj = new Date(year, month - 1, day, 12, 0, 0);
+        
+        // Проверяем, что дата парсится правильно
+        if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
+            console.warn("Date parsing mismatch:", { year, month, day, parsed: dateObj });
+        }
 
         // Для украинского языка используем правильный падеж (именительный)
         let formattedDateDisplay;
@@ -3516,7 +3547,8 @@ function renderActivityCard(activity) {
     manualTimeBtn.title = unitType === 'quantity' ? t('manual_quantity') : t('manual_time');
     manualTimeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        openManualTimeModal(activity.id);
+        // Открываем модальное окно из блока активностей - показываем все активности
+        openManualTimeModal(activity.id, false); // false = показывать все активности
     });
     manualTimeBtn.addEventListener("mousedown", (e) => e.stopPropagation());
 
@@ -4146,7 +4178,7 @@ async function stopTimer(activityId, button) {
 
 
 // ============= MANUAL TIME/QUANTITY =============
-async function openManualTimeModal(activityId) {
+async function openManualTimeModal(activityId, filterByTime = true) {
     const select = document.getElementById("manual-activity-select");
     if (!select) {
         console.error("manual-activity-select not found");
@@ -4171,33 +4203,64 @@ async function openManualTimeModal(activityId) {
     
     console.log("All activities for dropdown:", allActivities?.length || 0, allActivities);
     
-    select.innerHTML = `<option value="">${t('select_activity_label')}</option>`;
+    // Сохраняем опцию "Выберите активность" из HTML, если она есть, иначе создаем новую
+    const existingDefaultOption = select.querySelector('option[value=""]');
+    if (existingDefaultOption) {
+        // Очищаем все опции кроме дефолтной
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+        // Обновляем текст дефолтной опции
+        existingDefaultOption.textContent = t('select_activity_label');
+    } else {
+        // Если дефолтной опции нет, создаем её
+        select.innerHTML = `<option value="">${t('select_activity_label')}</option>`;
+    }
     
     if (allActivities && allActivities.length > 0) {
-        // Фильтруем активности: показываем только те, у которых тип единицы измерения - "time" (время)
-        const timeActivities = allActivities.filter(activity => {
-            if (!activity || !activity.name) {
-                return false;
-            }
-            const unitType = activity.unit_type || 'time';
-            // Показываем только активности с типом "time" (время), исключаем "quantity" (количество)
-            return unitType === 'time';
-        });
+        let activitiesToShow;
         
-        console.log(`Adding ${timeActivities.length} time-based activities to dropdown (filtered from ${allActivities.length} total)`);
+        if (filterByTime) {
+            // Фильтруем активности: показываем только те, у которых тип единицы измерения - "time" (время)
+            // Это для футера "Ручной ввод времени"
+            activitiesToShow = allActivities.filter(activity => {
+                if (!activity || !activity.name) {
+                    return false;
+                }
+                const unitType = activity.unit_type || 'time';
+                // Показываем только активности с типом "time" (время), исключаем "quantity" (количество)
+                return unitType === 'time';
+            });
+            
+            console.log(`Adding ${activitiesToShow.length} time-based activities to dropdown (filtered from ${allActivities.length} total)`);
+        } else {
+            // Показываем все активности - это для блока активностей
+            activitiesToShow = allActivities.filter(activity => {
+                return activity && activity.name;
+            });
+            
+            console.log(`Adding ${activitiesToShow.length} all activities to dropdown (from ${allActivities.length} total)`);
+        }
         
-        if (timeActivities.length === 0) {
-            // Если нет активностей с типом "time", показываем сообщение
+        if (activitiesToShow.length === 0) {
+            // Если нет активностей, показываем сообщение
             const option = document.createElement("option");
             option.value = "";
-            option.textContent = "Нет активностей с типом 'Время'. Создайте активность с типом 'Время (минуты)'.";
+            option.textContent = filterByTime 
+                ? "Нет активностей с типом 'Время'. Создайте активность с типом 'Время (минуты)'."
+                : "Нет активностей. Создайте активность сначала.";
             option.disabled = true;
             select.appendChild(option);
         } else {
-            timeActivities.forEach(activity => {
+            activitiesToShow.forEach(activity => {
                 const option = document.createElement("option");
                 option.value = activity.id;
-                option.textContent = `${activity.name} (${activity.xp_per_hour || 60} ${t('xp_per_hour')})`;
+                const unitType = activity.unit_type || 'time';
+                if (unitType === 'quantity') {
+                    option.textContent = `${activity.name} (${activity.xp_per_unit || 1} ${t('xp_per_unit')})`;
+                } else {
+                    option.textContent = `${activity.name} (${activity.xp_per_hour || 60} ${t('xp_per_hour')})`;
+                }
                 select.appendChild(option);
             });
         }
@@ -4211,13 +4274,37 @@ async function openManualTimeModal(activityId) {
         select.appendChild(option);
     }
     
+    // Устанавливаем выбранную активность, если она передана
     if (activityId) {
         select.value = activityId;
-    }
-
-    // Обновляем интерфейс в зависимости от типа активности
-    if (activityId) {
+        // Обновляем интерфейс в зависимости от типа активности
         updateManualModalUI(activityId);
+    } else {
+        // Если активность не передана, устанавливаем заголовок в зависимости от источника
+        const titleEl = document.getElementById("manual-modal-title");
+        if (filterByTime) {
+            // Из футера - "Ручной ввод времени"
+            titleEl.textContent = `⏱️ ${t('manual_time')}`;
+            titleEl.setAttribute('data-i18n', 'manual_time');
+            // Показываем поле времени, скрываем количество
+            const timeContainer = document.getElementById("manual-time-input-container");
+            const quantityContainer = document.getElementById("manual-quantity-input-container");
+            if (timeContainer) timeContainer.classList.remove('hidden');
+            if (quantityContainer) quantityContainer.classList.add('hidden');
+            // Обновляем плейсхолдер для времени
+            const timeInput = document.getElementById("manual-minutes");
+            if (timeInput) {
+                timeInput.placeholder = "Введите к-во времени";
+                timeInput.setAttribute('required', 'required');
+            }
+            const quantityInput = document.getElementById("manual-quantity");
+            if (quantityInput) quantityInput.removeAttribute('required');
+        } else {
+            // Из блока активностей - заголовок будет установлен при выборе активности
+            titleEl.textContent = `📊 ${t('manual_quantity')}`;
+            titleEl.setAttribute('data-i18n', 'manual_quantity');
+        }
+        applyTranslations();
     }
 
     const minutesInput = document.getElementById("manual-minutes");

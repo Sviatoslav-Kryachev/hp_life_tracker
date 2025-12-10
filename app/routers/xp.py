@@ -98,13 +98,17 @@ async def get_xp_history(
     for log in logs:
         # Безопасно получаем название активности
         activity_name = "Неизвестная активность"
-        if log.activity:
-            activity_name = log.activity.name
-        elif log.activity_id:
-            # Если активность не загружена, пытаемся получить её из базы
-            activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
-            if activity:
-                activity_name = activity.name
+        try:
+            if log.activity and hasattr(log.activity, 'name') and log.activity.name:
+                activity_name = log.activity.name
+            elif log.activity_id:
+                # Если активность не загружена, пытаемся получить её из базы
+                activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
+                if activity and hasattr(activity, 'name') and activity.name:
+                    activity_name = activity.name
+        except (AttributeError, TypeError) as e:
+            print(f"Error getting activity name for log {log.id}: {e}")
+            activity_name = "Неизвестная активность"
         
         result.append({
             "id": log.id,
@@ -170,35 +174,51 @@ async def get_week_stats(
     current_user: User = Depends(get_current_user)
 ):
     """Статистика за неделю (для календаря)"""
-    today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    # Используем Берлинское время для правильного определения текущего дня
+    berlin_tz = pytz.timezone('Europe/Berlin')
+    now_berlin = datetime.now(berlin_tz)
+    today = now_berlin.replace(hour=0, minute=0, second=0, microsecond=0)
     
-    # Получаем данные по дням
+    # Определяем понедельник текущей недели
+    # weekday() возвращает: 0=Пн, 1=Вт, ..., 6=Вс
+    days_since_monday = today.weekday()
+    monday = today - timedelta(days=days_since_monday)
+    
+    # Получаем данные по дням недели (от понедельника до воскресенья)
     daily_stats = []
     for i in range(7):
-        day_start = today - timedelta(days=6-i)
+        day_start = monday + timedelta(days=i)
         day_end = day_start + timedelta(days=1)
+        
+        # Конвертируем в UTC для запросов к БД (данные в БД хранятся в UTC)
+        day_start_utc = day_start.astimezone(pytz.UTC).replace(tzinfo=None)
+        day_end_utc = day_end.astimezone(pytz.UTC).replace(tzinfo=None)
         
         earned = db.query(func.sum(ActivityLog.xp_earned)).filter(
             ActivityLog.user_id == current_user.id,
-            ActivityLog.end_time >= day_start,
-            ActivityLog.end_time < day_end
+            ActivityLog.end_time >= day_start_utc,
+            ActivityLog.end_time < day_end_utc
         ).scalar() or 0
         
         spent = db.query(func.sum(RewardPurchase.xp_spent)).filter(
             RewardPurchase.user_id == current_user.id,
-            RewardPurchase.purchased_at >= day_start,
-            RewardPurchase.purchased_at < day_end
+            RewardPurchase.purchased_at >= day_start_utc,
+            RewardPurchase.purchased_at < day_end_utc
         ).scalar() or 0
         
         time_mins = db.query(func.sum(ActivityLog.duration_minutes)).filter(
             ActivityLog.user_id == current_user.id,
-            ActivityLog.end_time >= day_start,
-            ActivityLog.end_time < day_end
+            ActivityLog.end_time >= day_start_utc,
+            ActivityLog.end_time < day_end_utc
         ).scalar() or 0
         
+        # Используем дату в Берлинском времени для отображения
+        day_date_str = day_start.strftime("%Y-%m-%d")
+        day_weekday = day_start.weekday()  # 0=Пн, 1=Вт, ..., 6=Вс
+        
         daily_stats.append({
-            "date": day_start.strftime("%Y-%m-%d"),
-            "day_name": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"][day_start.weekday()],
+            "date": day_date_str,
+            "day_name": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"][day_weekday],
             "earned": round(earned, 1),
             "spent": round(spent, 1),
             "time_minutes": round(time_mins, 1)
@@ -375,7 +395,7 @@ async def get_day_details(
     # Добавляем бонусы за достижение целей как заработки
     for purchase in bonus_earnings:
         earnings_details.append({
-            "activity_name": purchase.reward_name,
+            "activity_name": purchase.reward_name or "Бонус",
             "xp_earned": round(abs(purchase.xp_spent), 1),
             "duration_minutes": None,
             "time": purchase.purchased_at.isoformat() if purchase.purchased_at else None
@@ -388,7 +408,7 @@ async def get_day_details(
     spendings_details = []
     for purchase in spendings:
         spendings_details.append({
-            "reward_name": purchase.reward_name,
+            "reward_name": purchase.reward_name or "Неизвестная награда",
             "xp_spent": round(purchase.xp_spent, 1),
             "time": purchase.purchased_at.isoformat() if purchase.purchased_at else None
         })
@@ -434,13 +454,17 @@ async def get_full_history(
         if log.end_time:
             # Безопасно получаем название активности
             activity_name = "Неизвестная активность"
-            if log.activity:
-                activity_name = log.activity.name
-            elif log.activity_id:
-                # Если активность не загружена, пытаемся получить её из базы
-                activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
-                if activity:
-                    activity_name = activity.name
+            try:
+                if log.activity and hasattr(log.activity, 'name') and log.activity.name:
+                    activity_name = log.activity.name
+                elif log.activity_id:
+                    # Если активность не загружена, пытаемся получить её из базы
+                    activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
+                    if activity and hasattr(activity, 'name') and activity.name:
+                        activity_name = activity.name
+            except (AttributeError, TypeError) as e:
+                print(f"Error getting activity name for log {log.id}: {e}")
+                activity_name = "Неизвестная активность"
             
             history.append({
                 "type": "earn",
@@ -498,7 +522,7 @@ async def get_full_history(
         
         history.append({
             "type": "earn" if is_earn else "spend",
-            "description": purchase.reward_name,
+            "description": purchase.reward_name or "Неизвестная награда",
             "amount": round(amount, 1),
             "date": date_iso,
             "duration_minutes": None,
