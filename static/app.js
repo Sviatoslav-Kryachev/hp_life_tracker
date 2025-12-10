@@ -2068,38 +2068,79 @@ async function showDayDetails(date) {
         const titleEl = document.getElementById('day-details-title');
         const contentEl = document.getElementById('day-details-content');
 
+        if (!modal || !titleEl || !contentEl) {
+            console.error("Day details modal elements not found");
+            return;
+        }
+
         modal.classList.remove('hidden');
         contentEl.innerHTML = `<div class="text-center text-gray-400 py-4">${t('loading')}</div>`;
 
-        const res = await fetch(`${API_BASE}/xp/day/${date}`, {
+        // Убеждаемся, что дата в правильном формате YYYY-MM-DD
+        let formattedDate = date;
+        if (date instanceof Date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            formattedDate = `${year}-${month}-${day}`;
+        } else if (typeof date === 'string') {
+            // Проверяем формат даты
+            const dateMatch = date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+            if (!dateMatch) {
+                console.error("Invalid date format:", date);
+                contentEl.innerHTML = `<div class="text-center text-red-400 py-4">Неверный формат даты: ${date}</div>`;
+                return;
+            }
+            formattedDate = dateMatch[0]; // Берем только часть YYYY-MM-DD
+        }
+
+        console.log("Loading day details for date:", formattedDate);
+
+        const res = await fetch(`${API_BASE}/xp/day/${formattedDate}`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
 
         if (!res.ok) {
-            contentEl.innerHTML = `<div class="text-center text-red-400 py-4">${t('error_loading_data')}</div>`;
+            const errorText = await res.text();
+            console.error("Failed to load day details:", res.status, res.statusText, errorText, "Date:", formattedDate);
+            let errorMessage = t('error_loading_data');
+            try {
+                const errorJson = JSON.parse(errorText);
+                if (errorJson.detail) {
+                    errorMessage = errorJson.detail;
+                }
+            } catch (e) {
+                // Если не JSON, используем стандартное сообщение
+            }
+            contentEl.innerHTML = `<div class="text-center text-red-400 py-4">${errorMessage}</div>`;
             return;
         }
 
         const data = await res.json();
 
-        // Форматируем дату
-        const dateObj = new Date(date);
+        // Используем дату из ответа сервера, если она есть, иначе используем переданную дату
+        const dateToDisplay = data.date || formattedDate;
+        
+        // Парсим дату из строки YYYY-MM-DD напрямую, без проблем с часовыми поясами
+        const [year, month, day] = dateToDisplay.split('-').map(Number);
+        
+        // Создаем дату в локальном времени для правильного определения дня недели
+        // Используем полдень, чтобы избежать проблем с переходом через полночь
+        const dateObj = new Date(year, month - 1, day, 12, 0, 0);
 
         // Для украинского языка используем правильный падеж (именительный)
-        let formattedDate;
+        let formattedDateDisplay;
         if (currentLanguage === 'uk') {
             const weekdays = ['неділя', 'понеділок', 'вівторок', 'середа', 'четвер', 'п\'ятниця', 'субота'];
             const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
                            'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
             const weekday = weekdays[dateObj.getDay()];
-            const month = months[dateObj.getMonth()];
-            const day = dateObj.getDate();
-            const year = dateObj.getFullYear();
-            formattedDate = `${weekday}, ${day} ${month} ${year}`;
+            const monthName = months[dateObj.getMonth()];
+            formattedDateDisplay = `${weekday}, ${day} ${monthName} ${year}`;
         } else {
             const localeMap = { 'ru': 'ru-RU', 'de': 'de-DE', 'en': 'en-US' };
             const locale = localeMap[currentLanguage] || 'ru-RU';
-            formattedDate = dateObj.toLocaleDateString(locale, {
+            formattedDateDisplay = dateObj.toLocaleDateString(locale, {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -2107,7 +2148,18 @@ async function showDayDetails(date) {
             });
         }
 
-        titleEl.textContent = `📅 ${formattedDate}`;
+        titleEl.textContent = `📅 ${formattedDateDisplay}`;
+        
+        // Логируем для отладки
+        console.log("Displaying day details:", {
+            receivedDate: formattedDate,
+            serverDate: data.date,
+            dateToDisplay: dateToDisplay,
+            parsedDate: { year, month, day },
+            dateObj: dateObj,
+            dayOfWeek: dateObj.getDay(),
+            formattedDisplay: formattedDateDisplay
+        });
 
         // Форматируем время
         const formatTime = (timeStr) => {
@@ -3056,6 +3108,14 @@ function applyActivitiesFilters() {
         case 'name-desc':
             filtered.sort((a, b) => b.name.localeCompare(a.name));
             break;
+        default:
+            // По умолчанию: старые сверху (по возрастанию ID), новые внизу
+            filtered.sort((a, b) => {
+                const idA = a.id || 0;
+                const idB = b.id || 0;
+                return idA - idB; // Сортировка по возрастанию ID (старые сверху)
+            });
+            break;
     }
 
     // Проверяем, открыт ли аккордеон (из localStorage или класса контейнера)
@@ -3088,11 +3148,9 @@ function applyActivitiesFilters() {
         }
     }
 
-    // Загружаем активные таймеры перед инициализацией SortableJS
-    loadActiveTimers().then(() => {
-        // Инициализируем SortableJS для drag and drop
-        initActivitiesSortable();
-    });
+    // Загружаем активные таймеры
+    loadActiveTimers();
+    // Drag and drop отключен - используем только сортировку через фильтры
 }
 
 // Функции аккордеона для активностей
@@ -3142,11 +3200,9 @@ function toggleActivitiesAccordion() {
         text.textContent = t('hide_activities');
         localStorage.setItem('activitiesAccordionExpanded', 'true');
 
-        // Переинициализируем SortableJS для нового контейнера
+        // Загружаем активные таймеры
         setTimeout(() => {
-            loadActiveTimers().then(() => {
-                initActivitiesSortable();
-            });
+            loadActiveTimers();
         }, 100);
     } else {
         // Закрываем аккордеон - возвращаем первые 5 в visible, остальные в hidden
@@ -3174,11 +3230,9 @@ function toggleActivitiesAccordion() {
         text.textContent = t('show_all_activities');
         localStorage.setItem('activitiesAccordionExpanded', 'false');
 
-        // Переинициализируем SortableJS для нового контейнера
+        // Загружаем активные таймеры
         setTimeout(() => {
-            loadActiveTimers().then(() => {
-                initActivitiesSortable();
-            });
+            loadActiveTimers();
         }, 100);
     }
 }
@@ -3225,11 +3279,9 @@ function updateActivitiesAccordionButton() {
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_activities');
 
-        // Переинициализируем SortableJS для нового контейнера
+        // Загружаем активные таймеры
         setTimeout(() => {
-            loadActiveTimers().then(() => {
-                initActivitiesSortable();
-            });
+            loadActiveTimers();
         }, 100);
     } else {
         // Закрываем аккордеон - возвращаем первые 5 в visible, остальные в hidden
@@ -3384,9 +3436,8 @@ async function loadActiveTimers() {
 
 function renderActivityCard(activity) {
     const div = document.createElement("div");
-    div.className = "activity-card p-4 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3 cursor-move";
+    div.className = "activity-card p-4 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3";
     div.setAttribute("data-activity-id", activity.id);
-    div.style.userSelect = 'none'; // Предотвращаем выделение текста при перетаскивании
 
     // Создаем объект с названиями категорий
     const categoryNames = {
@@ -3412,8 +3463,7 @@ function renderActivityCard(activity) {
     const unitType = activity.unit_type || 'time';
 
     const left = document.createElement("div");
-    left.className = "flex-grow cursor-move";
-    left.draggable = false;
+    left.className = "flex-grow";
     left.innerHTML = `
         <div class="flex items-center gap-2 mb-1">
             <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
@@ -3421,13 +3471,6 @@ function renderActivityCard(activity) {
         </div>
         <div class="text-sm text-gray-500">${unitType === 'quantity' ? (activity.xp_per_unit || 1) + ' ' + t('xp_per_unit') : (activity.xp_per_hour || 60) + ' ' + t('xp_per_hour')}</div>
     `;
-    // При клике на левую часть тоже можно начинать drag
-    left.addEventListener("mousedown", (e) => {
-        // Разрешаем drag только если клик не на кнопке
-        if (!e.target.closest('button')) {
-            // Не блокируем событие, чтобы drag работал
-        }
-    });
 
     // Timer button - показываем только для активностей типа "time"
     const timerBtn = document.createElement("button");
@@ -3501,17 +3544,7 @@ function renderActivityCard(activity) {
     });
     deleteBtn.addEventListener("mousedown", (e) => e.stopPropagation());
 
-    // Иконка для перетаскивания
-    const dragHandle = document.createElement("div");
-    dragHandle.className = "drag-handle p-2 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing mr-2 flex-shrink-0 flex items-center justify-center";
-    dragHandle.innerHTML = '<i class="fas fa-grip-vertical text-lg"></i>';
-    dragHandle.title = "Перетащите для изменения порядка";
-    dragHandle.draggable = false;
-    dragHandle.style.userSelect = 'none';
-    dragHandle.style.webkitUserSelect = 'none';
-    dragHandle.style.pointerEvents = 'auto';
-
-    div.appendChild(dragHandle);
+    // Иконка перетаскивания удалена - используем только сортировку через фильтры
     div.appendChild(left);
     div.appendChild(timerBtn);
     div.appendChild(manualTimeBtn);
@@ -3525,9 +3558,11 @@ function renderActivityCard(activity) {
 let activitiesSortable = null;
 
 function initActivitiesSortable() {
-    const activitiesList = document.getElementById('activities-list');
-    if (!activitiesList) {
-        console.warn('Activities list element not found');
+    getActivitiesElements();
+    
+    // Проверяем наличие обоих списков
+    if (!activitiesListVisible || !activitiesListHidden) {
+        console.warn('Activities list elements not found');
         return;
     }
 
@@ -3536,47 +3571,78 @@ function initActivitiesSortable() {
         return;
     }
 
-    // Уничтожаем предыдущий экземпляр если есть
+    // Уничтожаем предыдущие экземпляры если есть
     if (activitiesSortable) {
-        activitiesSortable.destroy();
+        if (Array.isArray(activitiesSortable)) {
+            activitiesSortable.forEach(sortable => sortable.destroy());
+        } else {
+            activitiesSortable.destroy();
+        }
         activitiesSortable = null;
     }
 
-    // Инициализируем SortableJS
+    // Инициализируем SortableJS на обоих списках с общей группой для перетаскивания между ними
     try {
-        activitiesSortable = new Sortable(activitiesList, {
+        const commonGroup = 'activities-group';
+        
+        // Инициализируем на видимом списке
+        const sortableVisible = new Sortable(activitiesListVisible, {
+            group: commonGroup,
             animation: 200,
-            // Убираем handle, чтобы можно было перетаскивать с любой части карточки
-            // handle: '.drag-handle',
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
             dragClass: 'sortable-drag',
             fallbackOnBody: true,
             swapThreshold: 0.65,
-            forceFallback: true, // Используем fallback для лучшей совместимости
-            filter: 'button, .timer-btn, .edit-btn, .delete-btn, .manual-time-btn, i.fa-play, i.fa-stop, i.fa-edit, i.fa-trash, i.fa-clock', // Исключаем кнопки из drag
+            forceFallback: true,
+            filter: 'button, .timer-btn, .edit-btn, .delete-btn, .manual-time-btn, i.fa-play, i.fa-stop, i.fa-edit, i.fa-trash, i.fa-clock',
             preventOnFilter: true,
-            draggable: '.activity-card', // Указываем, какие элементы можно перетаскивать
-            onStart: function(evt) {
-                console.log('Drag started from index:', evt.oldIndex);
-            },
+            draggable: '.activity-card',
             onEnd: function(evt) {
-                console.log('Drag ended, old index:', evt.oldIndex, 'new index:', evt.newIndex);
-                // Обновляем порядок на сервере после завершения перетаскивания
                 if (evt.oldIndex !== evt.newIndex && evt.newIndex !== undefined) {
                     updateActivitiesOrder();
                 }
             }
         });
-        console.log('SortableJS initialized successfully');
+        
+        // Инициализируем на скрытом списке
+        const sortableHidden = new Sortable(activitiesListHidden, {
+            group: commonGroup,
+            animation: 200,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            fallbackOnBody: true,
+            swapThreshold: 0.65,
+            forceFallback: true,
+            filter: 'button, .timer-btn, .edit-btn, .delete-btn, .manual-time-btn, i.fa-play, i.fa-stop, i.fa-edit, i.fa-trash, i.fa-clock',
+            preventOnFilter: true,
+            draggable: '.activity-card',
+            onEnd: function(evt) {
+                if (evt.oldIndex !== evt.newIndex && evt.newIndex !== undefined) {
+                    updateActivitiesOrder();
+                }
+            }
+        });
+        
+        // Сохраняем оба экземпляра
+        activitiesSortable = [sortableVisible, sortableHidden];
+        console.log('SortableJS initialized successfully on both lists');
     } catch (e) {
         console.error('Error initializing SortableJS:', e);
     }
 }
 
 async function updateActivitiesOrder() {
-    const activitiesList = document.getElementById('activities-list');
-    const allCards = Array.from(activitiesList.querySelectorAll('.activity-card'));
+    // Получаем все карточки из обоих списков (visible и hidden)
+    getActivitiesElements();
+    const allCards = [];
+    if (activitiesListVisible) {
+        allCards.push(...Array.from(activitiesListVisible.querySelectorAll('.activity-card')));
+    }
+    if (activitiesListHidden) {
+        allCards.push(...Array.from(activitiesListHidden.querySelectorAll('.activity-card')));
+    }
     const activityIds = allCards.map(card => parseInt(card.getAttribute('data-activity-id')));
 
     try {
@@ -3664,6 +3730,61 @@ async function createActivity() {
         allActivities.push(created);
         updateActivitiesCategoryFilter();
         applyActivitiesFilters();
+        
+        // Если новая активность попала в скрытый список (больше 5 активностей), открываем аккордеон
+        getActivitiesElements();
+        const activitiesContainer = document.getElementById('activities-list-container');
+        if (allActivities.length > 5 && activitiesAccordionBtn && activitiesListHidden && activitiesContainer) {
+            // Проверяем, что новая активность действительно в скрытом списке
+            const newActivityElement = document.querySelector(`[data-activity-id="${created.id}"]`);
+            const newActivityInHidden = newActivityElement && activitiesListHidden.contains(newActivityElement);
+            
+            if (newActivityInHidden) {
+                // Открываем аккордеон, если он закрыт
+                const isExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true' ||
+                                   activitiesContainer.classList.contains('activities-expanded');
+                if (!isExpanded && activitiesListHidden.classList.contains('hidden')) {
+                    toggleActivitiesAccordion();
+                }
+                
+                // Прокручиваем к новой активности
+                setTimeout(() => {
+                    if (newActivityElement) {
+                        newActivityElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        // Подсвечиваем новую активность
+                        newActivityElement.style.transition = 'background-color 0.3s';
+                        newActivityElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                        setTimeout(() => {
+                            newActivityElement.style.backgroundColor = '';
+                        }, 2000);
+                    }
+                }, 200);
+            } else if (newActivityElement) {
+                // Если активность в видимом списке, просто подсвечиваем её
+                setTimeout(() => {
+                    newActivityElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    newActivityElement.style.transition = 'background-color 0.3s';
+                    newActivityElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                    setTimeout(() => {
+                        newActivityElement.style.backgroundColor = '';
+                    }, 2000);
+                }, 100);
+            }
+        } else if (allActivities.length <= 5) {
+            // Если активностей 5 или меньше, новая активность в видимом списке - подсвечиваем её
+            setTimeout(() => {
+                const newActivityElement = document.querySelector(`[data-activity-id="${created.id}"]`);
+                if (newActivityElement) {
+                    newActivityElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    newActivityElement.style.transition = 'background-color 0.3s';
+                    newActivityElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                    setTimeout(() => {
+                        newActivityElement.style.backgroundColor = '';
+                    }, 2000);
+                }
+            }, 100);
+        }
+        
         showActivityMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {
         console.error("Error:", e);
@@ -3797,8 +3918,63 @@ async function updateActivity() {
             return;
         }
 
+        const updatedActivity = await res.json();
+        const activityId = parseInt(id);
+        
+        // Обновляем данные активности в массиве
+        const activityIndex = allActivities.findIndex(a => a.id === activityId);
+        if (activityIndex !== -1) {
+            allActivities[activityIndex] = updatedActivity;
+        }
+        
+        // Обновляем фильтр категорий, если категория изменилась
+        updateActivitiesCategoryFilter();
+        
+        // Находим карточку активности в DOM и обновляем только её содержимое
+        const activityCard = document.querySelector(`[data-activity-id="${activityId}"]`);
+        if (activityCard) {
+            // Обновляем название
+            const nameElement = activityCard.querySelector('.text-lg.font-semibold');
+            if (nameElement) {
+                nameElement.textContent = updatedActivity.name;
+            }
+            
+            // Обновляем категорию
+            const categoryBadge = activityCard.querySelector('.px-2.py-0\\.5');
+            if (categoryBadge) {
+                const categoryNames = {
+                    "general": t('category_general'),
+                    "study": t('category_study'),
+                    "sport": t('category_sport'),
+                    "hobby": t('category_hobby'),
+                    "work": t('category_work'),
+                    "health": t('category_health')
+                };
+                if (allCategories.custom) {
+                    allCategories.custom.forEach(customCat => {
+                        categoryNames[customCat.id] = customCat.name;
+                    });
+                }
+                const category = updatedActivity.category || "general";
+                const categoryName = categoryNames[category] || category;
+                categoryBadge.textContent = categoryName;
+            }
+            
+            // Обновляем XP информацию
+            const xpInfo = activityCard.querySelector('.text-sm.text-gray-500');
+            if (xpInfo) {
+                const unitType = updatedActivity.unit_type || 'time';
+                xpInfo.textContent = unitType === 'quantity' 
+                    ? (updatedActivity.xp_per_unit || 1) + ' ' + t('xp_per_unit')
+                    : (updatedActivity.xp_per_hour || 60) + ' ' + t('xp_per_hour');
+            }
+        } else {
+            // Если карточка не найдена (например, из-за фильтра), просто обновляем данные
+            // и применяем фильтры без полной перезагрузки
+            applyActivitiesFilters();
+        }
+        
         closeEditModal();
-        await loadActivities();
         showActivityMessage(`✅ ${t('activity_updated')}`, "success");
     } catch (e) {
         console.error("Error:", e);

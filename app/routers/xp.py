@@ -1,6 +1,6 @@
 # app/routers/xp.py
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from datetime import datetime, timedelta
 import pytz
@@ -59,7 +59,12 @@ async def earn_xp(
     if not wallet:
         raise HTTPException(status_code=404, detail="Кошелёк не найден")
     
-    xp = log.duration_minutes * (log.activity.xp_per_hour / 60)
+    # Безопасно получаем xp_per_hour
+    if not log.activity:
+        raise HTTPException(status_code=404, detail="Активность не найдена")
+    
+    xp_per_hour = log.activity.xp_per_hour or 60.0
+    xp = log.duration_minutes * (xp_per_hour / 60)
     wallet.balance += xp
     wallet.total_earned += xp
     log.xp_earned = xp
@@ -89,16 +94,27 @@ async def get_xp_history(
         ActivityLog.xp_earned > 0
     ).order_by(ActivityLog.end_time.desc()).limit(limit).all()
     
-    return [
-        {
+    result = []
+    for log in logs:
+        # Безопасно получаем название активности
+        activity_name = "Неизвестная активность"
+        if log.activity:
+            activity_name = log.activity.name
+        elif log.activity_id:
+            # Если активность не загружена, пытаемся получить её из базы
+            activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
+            if activity:
+                activity_name = activity.name
+        
+        result.append({
             "id": log.id,
-            "activity_name": log.activity.name,
+            "activity_name": activity_name,
             "duration_minutes": log.duration_minutes,
             "xp_earned": log.xp_earned,
             "date": log.end_time.isoformat() if log.end_time else None
-        }
-        for log in logs
-    ]
+        })
+    
+    return result
 
 
 @router.get("/today")
@@ -307,8 +323,8 @@ async def get_day_details(
     
     day_end = day_start + timedelta(days=1)
     
-    # Заработки за день
-    earnings = db.query(ActivityLog).filter(
+    # Заработки за день (загружаем активность вместе с логами)
+    earnings = db.query(ActivityLog).options(joinedload(ActivityLog.activity)).filter(
         ActivityLog.user_id == current_user.id,
         ActivityLog.end_time >= day_start,
         ActivityLog.end_time < day_end,
@@ -334,10 +350,25 @@ async def get_day_details(
     # Детали заработков (активности + бонусы)
     earnings_details = []
     for log in earnings:
+        # Безопасно получаем название активности
+        activity_name = "Неизвестная активность"
+        try:
+            if log.activity and hasattr(log.activity, 'name') and log.activity.name:
+                activity_name = log.activity.name
+            elif log.activity_id:
+                # Если активность не загружена, пытаемся получить её из базы
+                activity = db.query(Activity).filter(Activity.id == log.activity_id).first()
+                if activity and hasattr(activity, 'name') and activity.name:
+                    activity_name = activity.name
+        except (AttributeError, TypeError) as e:
+            # Если возникла ошибка при доступе к атрибутам, используем значение по умолчанию
+            print(f"Error getting activity name for log {log.id}: {e}")
+            activity_name = "Неизвестная активность"
+        
         earnings_details.append({
-            "activity_name": log.activity.name,
+            "activity_name": activity_name,
             "xp_earned": round(log.xp_earned, 1),
-            "duration_minutes": round(log.duration_minutes, 1),
+            "duration_minutes": round(log.duration_minutes, 1) if log.duration_minutes else 0,
             "time": log.end_time.isoformat() if log.end_time else None
         })
     
