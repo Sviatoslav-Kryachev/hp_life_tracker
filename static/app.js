@@ -12,7 +12,7 @@ const translations = {
         "admin_panel": "Админ-панель",
         "logout": "Выход",
         "telegram_bot": "Открыть Telegram бота",
-        
+
         // Auth
         "login": "Вход",
         "register": "Регистрация",
@@ -23,7 +23,7 @@ const translations = {
         "forgot_password": "Забыли пароль?",
         "enter": "Войти",
         "create_account": "Зарегистрироваться",
-        
+
         // Activities
         "new_activity": "➕ Новая активность",
         "activity_name": "Название активности",
@@ -45,7 +45,7 @@ const translations = {
         "enter_minutes": "Введите минуты",
         "error_adding": "Ошибка добавления",
         "units": "штук",
-        
+
         // Rewards
         "reward_name": "Название награды",
         "create_reward": "Создать награду",
@@ -60,7 +60,7 @@ const translations = {
         "reward_updated": "Награда обновлена!",
         "error_updating_reward": "Ошибка обновления",
         "enter_correct_name_cost": "Введите корректное название и стоимость",
-        
+
         // History
         "transaction_history": "История транзакций",
         "all_xp_operations": "Все операции с XP",
@@ -75,7 +75,7 @@ const translations = {
         "at_time": "в",
         "filter_period": "Период",
         "all": "Все",
-        
+
         // Stats
         "today": "Сегодня",
         "earned_xp": "Заработано XP",
@@ -124,7 +124,7 @@ const translations = {
         "category_hobby": "Хобби",
         "category_work": "Работа",
         "category_health": "Здоровье",
-        
+
         // Goals
         "my_goals": "Мои цели",
         "new_goal": "🎯 Новая цель",
@@ -153,7 +153,7 @@ const translations = {
         "date_format_placeholder": "дд.мм.гггг",
         "format_label": "Формат:",
         "save_changes": "Сохранить изменения",
-        
+
         // Common
         "save": "Сохранить",
         "cancel": "Отмена",
@@ -298,7 +298,7 @@ const translations = {
         "admin_panel": "Адмін-панель",
         "logout": "Вихід",
         "telegram_bot": "Відкрити Telegram бота",
-        
+
         // Auth
         "login": "Вхід",
         "register": "Реєстрація",
@@ -309,7 +309,7 @@ const translations = {
         "forgot_password": "Забули пароль?",
         "enter": "Увійти",
         "create_account": "Зареєструватися",
-        
+
         // Activities
         "new_activity": "➕ Нова активність",
         "activity_name": "Назва активності",
@@ -331,7 +331,7 @@ const translations = {
         "enter_minutes": "Введіть хвилини",
         "error_adding": "Помилка додавання",
         "units": "штук",
-        
+
         // Rewards
         "reward_name": "Назва нагороди",
         "create_reward": "Створити нагороду",
@@ -346,7 +346,7 @@ const translations = {
         "reward_updated": "Нагорода оновлена!",
         "error_updating_reward": "Помилка оновлення",
         "enter_correct_name_cost": "Введіть коректну назву та вартість",
-        
+
         // History
         "transaction_history": "Історія транзакцій",
         "all_xp_operations": "Всі операції з XP",
@@ -361,7 +361,7 @@ const translations = {
         "at_time": "о",
         "filter_period": "Період",
         "all": "Всі",
-        
+
         // Stats
         "today": "Сьогодні",
         "earned_xp": "Зароблено XP",
@@ -410,7 +410,7 @@ const translations = {
         "category_hobby": "Хобі",
         "category_work": "Робота",
         "category_health": "Здоров'я",
-        
+
         // Goals
         "my_goals": "Мої цілі",
         "new_goal": "🎯 Нова ціль",
@@ -439,7 +439,7 @@ const translations = {
         "date_format_placeholder": "дд.мм.рррр",
         "format_label": "Формат:",
         "save_changes": "Зберегти зміни",
-        
+
         // Common
         "save": "Зберегти",
         "cancel": "Скасувати",
@@ -585,7 +585,7 @@ const translations = {
         "admin_panel": "Admin-Panel",
         "logout": "Abmelden",
         "telegram_bot": "Telegram-Bot öffnen",
-        
+
         // Auth
         "login": "Anmelden",
         "register": "Registrieren",
@@ -596,7 +596,7 @@ const translations = {
         "forgot_password": "Passwort vergessen?",
         "enter": "Anmelden",
         "create_account": "Konto erstellen",
-        
+
         // Activities
         "new_activity": "➕ Neue Aktivität",
         "activity_name": "Aktivitätsname",
@@ -618,7 +618,7 @@ const translations = {
         "enter_minutes": "Geben Sie die Minuten ein",
         "error_adding": "Fehler beim Hinzufügen",
         "units": "Stücke",
-        
+
         // Rewards
         "reward_name": "Belohnungsname",
         "create_reward": "Belohnung erstellen",
@@ -633,7 +633,7 @@ const translations = {
         "reward_updated": "Belohnung aktualisiert!",
         "error_updating_reward": "Fehler beim Aktualisieren",
         "enter_correct_name_cost": "Geben Sie einen korrekten Namen und Kosten ein",
-        
+
         // History
         "transaction_history": "Transaktionsverlauf",
         "all_xp_operations": "Alle XP-Operationen",
@@ -648,7 +648,7 @@ const translations = {
         "at_time": "um",
         "filter_period": "Zeitraum",
         "all": "Alle",
-        
+
         // Stats
         "today": "Heute",
         "earned_xp": "Verdiente XP",
@@ -697,7 +697,7 @@ const translations = {
         "category_hobby": "Hobby",
         "category_work": "Arbeit",
         "category_health": "Gesundheit",
-        
+
         // Goals
         "my_goals": "Meine Ziele",
         "new_goal": "🎯 Neues Ziel",
@@ -726,7 +726,7 @@ const translations = {
         "date_format_placeholder": "tt.mm.jjjj",
         "format_label": "Format:",
         "save_changes": "Änderungen speichern",
-        
+
         // Common
         "save": "Speichern",
         "cancel": "Abbrechen",
@@ -871,7 +871,7 @@ const translations = {
         "admin_panel": "Admin Panel",
         "logout": "Logout",
         "telegram_bot": "Open Telegram Bot",
-        
+
         // Auth
         "login": "Login",
         "register": "Register",
@@ -882,7 +882,7 @@ const translations = {
         "forgot_password": "Forgot Password?",
         "enter": "Enter",
         "create_account": "Create Account",
-        
+
         // Activities
         "new_activity": "➕ New Activity",
         "activity_name": "Activity Name",
@@ -904,7 +904,7 @@ const translations = {
         "enter_minutes": "Enter minutes",
         "error_adding": "Error adding",
         "units": "pieces",
-        
+
         // Rewards
         "reward_name": "Reward Name",
         "create_reward": "Create Reward",
@@ -919,7 +919,7 @@ const translations = {
         "reward_updated": "Reward updated!",
         "error_updating_reward": "Error updating",
         "enter_correct_name_cost": "Enter correct name and cost",
-        
+
         // History
         "transaction_history": "Transaction History",
         "all_xp_operations": "All XP operations",
@@ -934,7 +934,7 @@ const translations = {
         "at_time": "at",
         "filter_period": "Period",
         "all": "All",
-        
+
         // Stats
         "today": "Today",
         "earned_xp": "Earned XP",
@@ -983,7 +983,7 @@ const translations = {
         "category_hobby": "Hobby",
         "category_work": "Work",
         "category_health": "Health",
-        
+
         // Goals
         "my_goals": "My Goals",
         "new_goal": "🎯 New Goal",
@@ -1012,7 +1012,7 @@ const translations = {
         "date_format_placeholder": "dd.mm.yyyy",
         "format_label": "Format:",
         "save_changes": "Save Changes",
-        
+
         // Common
         "save": "Save",
         "cancel": "Cancel",
@@ -1162,7 +1162,7 @@ function formatActivitiesCount(count) {
         // Украинский: 1 активність, 2-4 активності, 5+ активностів
         const lastDigit = count % 10;
         const lastTwoDigits = count % 100;
-        
+
         if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
             return `${count} активностів`;
         } else if (lastDigit === 1) {
@@ -1176,7 +1176,7 @@ function formatActivitiesCount(count) {
         // Русский: 1 активность, 2-4 активности, 5+ активностей
         const lastDigit = count % 10;
         const lastTwoDigits = count % 100;
-        
+
         if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
             return `${count} активностей`;
         } else if (lastDigit === 1) {
@@ -1222,7 +1222,7 @@ function changeLanguage(lang) {
         updateCategoryDropdown('activity-category'); // Обновляем дропдаун категорий для новой активности
         updateCategoryDropdown('edit-activity-category'); // Обновляем дропдаун категорий для редактирования активности
         updateAdminCategoryFilter();
-        
+
         // Если модальное окно статистики открыто, обновляем его
         const childStatsModal = document.getElementById("child-stats-modal");
         if (childStatsModal && !childStatsModal.classList.contains("hidden")) {
@@ -1242,13 +1242,13 @@ function applyTranslations() {
         const key = el.getAttribute('data-i18n');
         el.textContent = t(key);
     });
-    
+
     // Применяем переводы к placeholder'ам
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         el.placeholder = t(key);
     });
-    
+
     // Применяем переводы к title атрибутам
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
         const key = el.getAttribute('data-i18n-title');
@@ -1285,7 +1285,7 @@ function updateLanguageMenu() {
     if (activeCheckFooter) {
         activeCheckFooter.classList.remove('hidden');
     }
-    
+
     // Обновляем флажок в кнопке хедера
     const flagMap = {
         'ru': '🇷🇺',
@@ -1310,7 +1310,7 @@ document.addEventListener('click', (e) => {
     if (wrapper && menu && !wrapper.contains(e.target)) {
         closeLanguageMenu();
     }
-    
+
     // Закрываем меню языка в футере
     const footerMenu = document.getElementById('footer-language-menu');
     if (footerMenu && !footerMenu.contains(e.target) && !e.target.closest('button[onclick*="toggleLanguageMenu"]')) {
@@ -1345,7 +1345,7 @@ function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
     const btn = document.getElementById('mobile-menu-btn');
     const icon = btn.querySelector('i');
-    
+
     if (menu.classList.contains('hidden')) {
         menu.classList.remove('hidden');
         icon.classList.remove('fa-bars');
@@ -1361,7 +1361,7 @@ function closeMobileMenu() {
     const menu = document.getElementById('mobile-menu');
     const btn = document.getElementById('mobile-menu-btn');
     const icon = btn.querySelector('i');
-    
+
     menu.classList.add('hidden');
     icon.classList.remove('fa-times');
     icon.classList.add('fa-bars');
@@ -1409,11 +1409,11 @@ function getRewardsElements() {
         rewardsAccordionBtn = null;
         return;
     }
-    
+
     rewardsListVisible = document.getElementById("rewards-list-visible");
     rewardsListHidden = document.getElementById("rewards-list-hidden");
     rewardsAccordionBtn = document.getElementById("rewards-accordion-btn");
-    
+
     // Дополнительная проверка через querySelector
     if (!rewardsListVisible) {
         rewardsListVisible = document.querySelector("#rewards-list-visible");
@@ -1436,11 +1436,11 @@ function getHistoryElements() {
         historyAccordionBtn = null;
         return;
     }
-    
+
     historyListVisible = document.getElementById("history-list-visible");
     historyListHidden = document.getElementById("history-list-hidden");
     historyAccordionBtn = document.getElementById("history-accordion-btn");
-    
+
     // Дополнительная проверка через querySelector
     if (!historyListVisible) {
         historyListVisible = document.querySelector("#history-list-visible");
@@ -1485,7 +1485,7 @@ async function login(email, password) {
             errorEl.textContent = "";
             errorEl.classList.add("hidden");
         }
-        
+
         // Проверяем, что поля заполнены
         if (!email || !password) {
             if (errorEl) {
@@ -1494,22 +1494,22 @@ async function login(email, password) {
             }
             return;
         }
-        
+
         // Убираем возможные пробелы в начале и конце
         email = email.trim();
         password = password.trim();
-        
+
         console.log("Attempting login with email:", email);
         console.log("Password length:", password.length);
-        
+
         const res = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
         });
-        
+
         console.log("Login response status:", res.status, res.statusText);
-        
+
         if (!res.ok) {
             let errorMessage = "Ошибка входа";
             try {
@@ -1525,7 +1525,7 @@ async function login(email, password) {
                     errorMessage = `Ошибка ${res.status}: ${res.statusText}`;
                 }
             }
-            
+
             if (errorEl) {
                 errorEl.textContent = errorMessage;
                 errorEl.classList.remove("hidden");
@@ -1534,7 +1534,7 @@ async function login(email, password) {
             }
             return;
         }
-        
+
         const data = await res.json();
         if (!data.access_token) {
             if (errorEl) {
@@ -1543,25 +1543,25 @@ async function login(email, password) {
             }
             return;
         }
-        
+
         authToken = data.access_token;
         localStorage.setItem('token', authToken);
-        
+
         await loadCurrentUser();
         showApp();
-        
+
         } catch (e) {
         console.error("Login error:", e);
         const errorEl = document.getElementById("login-error");
         const errorMessage = e.message || "Произошла ошибка при входе. Проверьте подключение к интернету.";
-        
+
         if (errorEl) {
             errorEl.textContent = errorMessage;
             errorEl.classList.remove("hidden");
         } else {
             alert(errorMessage);
         }
-        
+
         // Дополнительное логирование для отладки
         console.error("Login failed:", {
             email: email,
@@ -1577,32 +1577,32 @@ async function register(email, username, password) {
         // Проверяем invite код из URL
         const urlParams = new URLSearchParams(window.location.search);
         const inviteCode = urlParams.get('invite');
-        
+
         const res = await fetch(`${API_BASE}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                email, 
-                password, 
+            body: JSON.stringify({
+                email,
+                password,
                 username: username || null,
                 invite_code: inviteCode || null
             })
         });
-        
+
         if (!res.ok) {
             const error = await res.json();
             throw new Error(error.detail || "Ошибка регистрации");
         }
-        
+
         document.getElementById("register-error").classList.add("hidden");
         document.getElementById("register-success").textContent = "✅ Регистрация успешна! Теперь войдите.";
         document.getElementById("register-success").classList.remove("hidden");
-        
+
         setTimeout(() => {
             showLoginForm();
             document.getElementById("login-email").value = email;
         }, 1500);
-        
+
     } catch (e) {
         document.getElementById("register-success").classList.add("hidden");
         document.getElementById("register-error").textContent = e.message;
@@ -1615,15 +1615,15 @@ async function loadCurrentUser() {
         const res = await fetch(`${API_BASE}/auth/me`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) throw new Error("Не удалось загрузить пользователя");
-        
+
         currentUser = await res.json();
         document.getElementById("user-info").textContent = currentUser.username || currentUser.email;
-        
+
         // Проверяем, является ли пользователь администратором
         checkAdminStatus();
-        
+
     } catch (e) {
         console.error("Error loading user:", e);
         logout();
@@ -1669,7 +1669,7 @@ function showApp() {
     }
     if (authSection) authSection.classList.add("hidden");
     if (appSection) appSection.classList.remove("hidden");
-    
+
     // Сбрасываем кэш элементов, чтобы они переинициализировались
     rewardsListVisible = null;
     rewardsListHidden = null;
@@ -1680,7 +1680,7 @@ function showApp() {
     activitiesListVisible = null;
     activitiesListHidden = null;
     activitiesAccordionBtn = null;
-    
+
     // Небольшая задержка, чтобы DOM успел обновиться
     setTimeout(async () => {
         loadWallet();
@@ -1701,7 +1701,7 @@ function showApp() {
             setHistoryPeriod(historyPeriod);
         }
         loadHistory(); // Автоматически загружаем историю
-        
+
         // Дополнительное обновление dropdown через небольшую задержку на случай, если элементы еще не готовы
         setTimeout(() => {
             updateCategoryDropdown('activity-category');
@@ -1715,7 +1715,7 @@ async function checkAuth() {
     if (!authSection || !appSection) {
         initDOMElements();
     }
-    
+
     // Сразу скрываем auth-section если есть токен, чтобы избежать мигания
     if (authToken && authSection && appSection) {
         authSection.classList.add("hidden");
@@ -1726,7 +1726,7 @@ async function checkAuth() {
         }
         return;
     }
-    
+
     try {
         await loadCurrentUser();
         showApp();
@@ -1746,24 +1746,24 @@ async function loadWallet() {
         const data = await res.json();
         balanceSpan.textContent = `${Math.round(data.balance)} XP`;
         levelSpan.textContent = data.level;
-        
+
         // Обновляем прогресс уровня
         const nextLevel = data.level + 1;
         const xpForCurrentLevel = (data.level - 1) * 1000;
         const xpForNextLevel = data.level * 1000;
         const currentProgress = data.total_earned - xpForCurrentLevel;
         const progressPercent = Math.min((currentProgress / 1000) * 100, 100);
-        
+
         const nextLevelEl = document.getElementById('next-level');
         const xpToNextEl = document.getElementById('xp-to-next');
         const levelProgressEl = document.getElementById('level-progress');
         const totalEarnedEl = document.getElementById('total-earned');
-        
+
         if (nextLevelEl) nextLevelEl.textContent = nextLevel;
         if (xpToNextEl) xpToNextEl.textContent = `${Math.round(currentProgress)}/${1000} XP`;
         if (levelProgressEl) levelProgressEl.style.width = `${progressPercent}%`;
         if (totalEarnedEl) totalEarnedEl.textContent = Math.round(data.total_earned);
-        
+
     } catch (e) {
         console.error("Error loading wallet", e);
     }
@@ -1777,12 +1777,12 @@ async function loadTodayStats() {
         });
         if (!res.ok) return;
         const data = await res.json();
-        
+
         const earnedEl = document.getElementById('today-earned');
         const spentEl = document.getElementById('today-spent');
         const sessionsEl = document.getElementById('today-sessions');
         const timeEl = document.getElementById('today-time');
-        
+
         if (earnedEl) earnedEl.textContent = Math.round(data.earned_today);
         if (spentEl) spentEl.textContent = Math.round(data.spent_today);
         if (sessionsEl) sessionsEl.textContent = data.sessions_today;
@@ -1806,31 +1806,31 @@ async function loadCategoryStats() {
             console.warn("Category stats element not found");
             return;
         }
-        
+
         if (!authToken) {
             console.error("No auth token available");
             categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Требуется авторизация</div>';
             return;
         }
-        
+
         const res = await fetch(`${API_BASE}/xp/category-stats?period=week`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load category stats:", res.status, res.statusText, errorText);
             categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Ошибка загрузки</div>';
             return;
         }
-        
+
         const data = await res.json();
-        
+
         if (!data.categories || data.categories.length === 0) {
             categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Нет данных по категориям</div>';
             return;
         }
-        
+
         const categoryNames = {
             "general": t('category_general'),
             "study": t('category_study'),
@@ -1839,14 +1839,14 @@ async function loadCategoryStats() {
             "work": t('category_work'),
             "health": t('category_health')
         };
-        
+
         // Добавляем пользовательские категории
         if (allCategories.custom) {
             allCategories.custom.forEach(customCat => {
                 categoryNames[customCat.id] = customCat.name;
             });
         }
-        
+
         categoryStatsEl.innerHTML = data.categories.map(cat => {
             const catName = categoryNames[cat.category] || cat.category;
             const percentage = data.total_xp > 0 ? (cat.total_xp / data.total_xp * 100) : 0;
@@ -1877,7 +1877,7 @@ let currentCalendarPeriod = 'week';
 
 function changeCalendarPeriod(period) {
     currentCalendarPeriod = period;
-    
+
     // Обновляем активную кнопку
     document.querySelectorAll('[id^="period-"]').forEach(btn => {
         btn.classList.remove('bg-indigo-500', 'text-white');
@@ -1888,7 +1888,7 @@ function changeCalendarPeriod(period) {
         activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
         activeBtn.classList.add('bg-indigo-500', 'text-white');
     }
-    
+
     // Загружаем календарь для выбранного периода
     loadCalendar(period);
 }
@@ -1901,14 +1901,14 @@ async function loadCalendar(period = currentCalendarPeriod) {
         });
         if (!res.ok) return;
         const data = await res.json();
-        
+
         const containerEl = document.getElementById('calendar-container');
         if (!containerEl) return;
-        
+
         if (period === 'week') {
             // Маппинг индексов дней недели (0=Пн, 6=Вс) на ключи переводов
             const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-            
+
             containerEl.innerHTML = `
                 <div class="flex justify-between gap-0.5 md:gap-1" id="week-calendar">
                     ${data.map((day, index) => {
@@ -1918,18 +1918,18 @@ async function loadCalendar(period = currentCalendarPeriod) {
                         const todayDate = new Date();
                         const dayDate = new Date(day.date);
                         const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
-                        
+
                         // Получаем локализованное название дня недели
                         const dayKey = dayKeys[index];
                         const localizedDayName = dayKey ? t(dayKey) : day.day_name;
-                        
+
                         return `
-                            <div class="flex flex-col items-center cursor-pointer ${isTodayDate ? 'scale-110' : ''}" 
+                            <div class="flex flex-col items-center cursor-pointer ${isTodayDate ? 'scale-110' : ''}"
                                  onclick="showDayDetails('${day.date}')"
                                  title="${t('click_for_details')}: ${day.earned} ${t('earned_xp')}, ${day.spent} ${t('spent_xp')}">
                                 <span class="text-xs text-gray-500 mb-1">${localizedDayName}</span>
                                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all hover:scale-110
-                                    ${isTodayDate ? 'bg-indigo-500 text-white ring-2 ring-indigo-300' : 
+                                    ${isTodayDate ? 'bg-indigo-500 text-white ring-2 ring-indigo-300' :
                                       hasActivity ? `bg-emerald-${Math.round(intensity * 4 + 1)}00 text-emerald-800` : 'bg-gray-100 text-gray-400'}">
                                     ${Math.round(day.earned)}
                                 </div>
@@ -1945,13 +1945,13 @@ async function loadCalendar(period = currentCalendarPeriod) {
             const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
             const daysInMonth = lastDay.getDate();
             const startDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Понедельник = 0
-            
+
             // Создаём карту данных по дням
             const dayDataMap = {};
             data.forEach(day => {
                 dayDataMap[day.day_number] = day;
             });
-            
+
             let calendarHTML = `
                 <div class="grid grid-cols-7 gap-1 mb-2">
                     <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('mon')}</div>
@@ -1964,12 +1964,12 @@ async function loadCalendar(period = currentCalendarPeriod) {
                 </div>
                 <div class="grid grid-cols-7 gap-1">
             `;
-            
+
             // Пустые ячейки до первого дня месяца
             for (let i = 0; i < startDayOfWeek; i++) {
                 calendarHTML += '<div class="aspect-square"></div>';
             }
-            
+
             // Дни месяца
             for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
                 const day = dayDataMap[dayNum] || { day_number: dayNum, earned: 0, spent: 0, date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}` };
@@ -1978,9 +1978,9 @@ async function loadCalendar(period = currentCalendarPeriod) {
                 const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
                 const hasActivity = day.earned > 0 || day.spent > 0;
                 const intensity = Math.min(day.earned / 200, 1);
-                
+
                 calendarHTML += `
-                    <div class="aspect-square flex flex-col items-center justify-center rounded-lg transition-all hover:bg-gray-50 cursor-pointer ${isTodayDate ? 'ring-2 ring-indigo-400 scale-105 bg-indigo-50' : ''}" 
+                    <div class="aspect-square flex flex-col items-center justify-center rounded-lg transition-all hover:bg-gray-50 cursor-pointer ${isTodayDate ? 'ring-2 ring-indigo-400 scale-105 bg-indigo-50' : ''}"
                          onclick="showDayDetails('${day.date}')"
                          title="${t('click_for_details')}: ${day.earned} ${t('earned_xp')}, ${day.spent} ${t('spent_xp')}">
                         <span class="text-[10px] font-medium ${isTodayDate ? 'text-indigo-600 font-bold' : 'text-gray-600'}">${dayNum}</span>
@@ -1990,20 +1990,20 @@ async function loadCalendar(period = currentCalendarPeriod) {
                     </div>
                 `;
             }
-            
+
             calendarHTML += '</div>';
             containerEl.innerHTML = calendarHTML;
         } else if (period === 'year') {
             // Календарь года - по месяцам
             const today = new Date();
             const currentYear = today.getFullYear();
-            
+
             // Маппинг номеров месяцев на ключи переводов
             const monthKeys = [
                 'month_jan', 'month_feb', 'month_mar', 'month_apr', 'month_may', 'month_jun',
                 'month_jul', 'month_aug', 'month_sep', 'month_oct', 'month_nov', 'month_dec'
             ];
-            
+
             containerEl.innerHTML = `
                 <div class="text-center mb-3">
                     <h4 class="text-sm font-bold text-gray-700">${currentYear}</h4>
@@ -2014,11 +2014,11 @@ async function loadCalendar(period = currentCalendarPeriod) {
                         const intensity = Math.min(month.earned / 2000, 1);
                         const today = new Date();
                         const isCurrentMonth = today.getMonth() + 1 === month.month;
-                        
+
                         // Получаем локализованное название месяца
                         const monthKey = monthKeys[month.month - 1];
                         const localizedMonthName = t(monthKey);
-                        
+
                         let bgColor = 'bg-gray-100';
                         let textColor = 'text-gray-400';
                         if (hasActivity) {
@@ -2036,9 +2036,9 @@ async function loadCalendar(period = currentCalendarPeriod) {
                                 textColor = 'text-emerald-800';
                             }
                         }
-                        
+
                         return `
-                            <div class="flex flex-col items-center p-2 rounded-lg transition-all hover:shadow-md cursor-pointer ${isCurrentMonth ? 'ring-2 ring-indigo-300' : ''}" 
+                            <div class="flex flex-col items-center p-2 rounded-lg transition-all hover:shadow-md cursor-pointer ${isCurrentMonth ? 'ring-2 ring-indigo-300' : ''}"
                                  onclick="showMonthDetails(${month.month})"
                                  title="${t('click_for_details')}: ${localizedMonthName} - ${month.earned} ${t('earned_xp')}, ${month.spent} ${t('spent_xp')}">
                                 <span class="text-xs font-semibold ${isCurrentMonth ? 'text-indigo-600' : 'text-gray-600'} mb-1">${localizedMonthName}</span>
@@ -2067,29 +2067,29 @@ async function showDayDetails(date) {
         const modal = document.getElementById('day-details-modal');
         const titleEl = document.getElementById('day-details-title');
         const contentEl = document.getElementById('day-details-content');
-        
+
         modal.classList.remove('hidden');
         contentEl.innerHTML = `<div class="text-center text-gray-400 py-4">${t('loading')}</div>`;
-        
+
         const res = await fetch(`${API_BASE}/xp/day/${date}`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             contentEl.innerHTML = `<div class="text-center text-red-400 py-4">${t('error_loading_data')}</div>`;
             return;
         }
-        
+
         const data = await res.json();
-        
+
         // Форматируем дату
         const dateObj = new Date(date);
-        
+
         // Для украинского языка используем правильный падеж (именительный)
         let formattedDate;
         if (currentLanguage === 'uk') {
             const weekdays = ['неділя', 'понеділок', 'вівторок', 'середа', 'четвер', 'п\'ятниця', 'субота'];
-            const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 
+            const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
                            'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
             const weekday = weekdays[dateObj.getDay()];
             const month = months[dateObj.getMonth()];
@@ -2099,16 +2099,16 @@ async function showDayDetails(date) {
         } else {
             const localeMap = { 'ru': 'ru-RU', 'de': 'de-DE', 'en': 'en-US' };
             const locale = localeMap[currentLanguage] || 'ru-RU';
-            formattedDate = dateObj.toLocaleDateString(locale, { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            formattedDate = dateObj.toLocaleDateString(locale, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
         }
-        
+
         titleEl.textContent = `📅 ${formattedDate}`;
-        
+
         // Форматируем время
         const formatTime = (timeStr) => {
             if (!timeStr) return '';
@@ -2117,7 +2117,7 @@ async function showDayDetails(date) {
             const locale = localeMap[currentLanguage] || 'ru-RU';
             return time.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
         };
-        
+
         // Форматируем длительность
         const formatDuration = (minutes) => {
             if (!minutes || minutes === 0) return '0м';
@@ -2128,7 +2128,7 @@ async function showDayDetails(date) {
             }
             return `${mins}м`;
         };
-        
+
         let html = `
             <div class="space-y-4">
                 <!-- Общая статистика -->
@@ -2153,7 +2153,7 @@ async function showDayDetails(date) {
                     </div>
                 </div>
         `;
-        
+
         // Заработки
         if (data.earnings && data.earnings.length > 0) {
             html += `
@@ -2188,7 +2188,7 @@ async function showDayDetails(date) {
                 </div>
             `;
         }
-        
+
         // Расходы (только реальные траты, бонусы уже в заработках)
         if (data.spendings && data.spendings.length > 0) {
             html += `
@@ -2217,24 +2217,24 @@ async function showDayDetails(date) {
                 </div>
             `;
         }
-        
+
         // Добавляем кнопку создания цели внизу
         html += `
             <div class="mt-4 pt-4 border-t border-gray-200">
-                <button onclick="showCreateGoalModal(); closeDayDetailsModal();" 
+                <button onclick="showCreateGoalModal(); closeDayDetailsModal();"
                         class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 px-6 rounded-xl font-medium transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
                     <i class="fas fa-bullseye"></i>
                     <span>${t('create_goal')}</span>
                 </button>
             </div>
         `;
-        
+
         html += '</div>';
         contentEl.innerHTML = html;
-        
+
     } catch (e) {
         console.error("Error loading day details:", e);
-        document.getElementById('day-details-content').innerHTML = 
+        document.getElementById('day-details-content').innerHTML =
             `<div class="text-center text-red-400 py-4">${t('error_loading_data')}</div>`;
     }
 }
@@ -2260,7 +2260,7 @@ function toggleHistory() {
     historyOpen = !historyOpen;
     const panel = document.getElementById('history-panel');
     const chevron = document.getElementById('history-chevron');
-    
+
     if (historyOpen) {
         panel.classList.remove('hidden');
         chevron.style.transform = 'rotate(180deg)';
@@ -2275,14 +2275,14 @@ function renderHistoryItem(item) {
     const isEarn = item.type === 'earn';
     // Парсим дату - если она в формате ISO с timezone, JavaScript правильно её обработает
     const date = new Date(item.date);
-    
+
     // Локализация даты и времени
     const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
     const locale = localeMap[currentLanguage] || 'ru-RU';
     // Используем timeZone для правильного отображения Берлинского времени
     const timeStr = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' });
     const dateStr = date.toLocaleDateString(locale, { day: 'numeric', month: 'short', timeZone: 'Europe/Berlin' });
-    
+
     return `
         <div class="flex items-center justify-between p-2.5 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:bg-opacity-80">
             <div class="flex items-center gap-2.5">
@@ -2304,7 +2304,7 @@ function renderHistoryItem(item) {
 // Функция для фильтрации истории по периоду
 function filterHistoryByPeriod(data, period) {
     if (!data || data.length === 0) return [];
-    
+
     // Получаем сегодняшнюю дату в Берлинском времени
     // Используем Intl.DateTimeFormat для надежного получения даты в нужном timezone
     const berlinFormatter = new Intl.DateTimeFormat('en-CA', {
@@ -2313,10 +2313,10 @@ function filterHistoryByPeriod(data, period) {
         month: '2-digit',
         day: '2-digit'
     });
-    
+
     const now = new Date();
     const todayBerlinStr = berlinFormatter.format(now); // Формат YYYY-MM-DD
-    
+
     // Для периода "today" просто сравниваем строки дат
     if (period === 'today') {
         const filtered = data.filter(item => {
@@ -2339,27 +2339,27 @@ function filterHistoryByPeriod(data, period) {
                 return false;
             }
         });
-        console.log('Today filter:', { 
-            period, 
-            todayBerlinStr, 
-            totalItems: data.length, 
+        console.log('Today filter:', {
+            period,
+            todayBerlinStr,
+            totalItems: data.length,
             filteredCount: filtered.length,
-            sampleDates: data.slice(0, 3).map(item => ({ 
-                date: item.date, 
-                formatted: item.date ? berlinFormatter.format(new Date(item.date)) : 'N/A' 
+            sampleDates: data.slice(0, 3).map(item => ({
+                date: item.date,
+                formatted: item.date ? berlinFormatter.format(new Date(item.date)) : 'N/A'
             }))
         });
         return filtered;
     }
-    
+
     // Для других периодов используем сравнение дат
     const [todayYear, todayMonth, todayDay] = todayBerlinStr.split('-').map(Number);
-    
+
     // Создаем начало сегодняшнего дня в локальном времени для сравнения
     const todayStart = new Date(todayYear, todayMonth - 1, todayDay, 0, 0, 0, 0);
-    
+
     let startDate;
-    
+
     switch (period) {
         case 'week':
             startDate = new Date(todayStart);
@@ -2377,7 +2377,7 @@ function filterHistoryByPeriod(data, period) {
         default:
             return data; // Возвращаем все данные без фильтрации
     }
-    
+
     return data.filter(item => {
         if (!item.date) return false;
         try {
@@ -2394,19 +2394,19 @@ function filterHistoryByPeriod(data, period) {
 function setHistoryPeriod(period) {
     console.log('Setting history period:', period);
     historyPeriod = period;
-    
+
     // Обновляем стили кнопок
     document.querySelectorAll('.history-period-btn').forEach(btn => {
         btn.classList.remove('bg-indigo-500', 'text-white');
         btn.classList.add('bg-gray-200', 'text-gray-700');
     });
-    
+
     const activeBtn = document.getElementById(`history-period-${period}`);
     if (activeBtn) {
         activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
         activeBtn.classList.add('bg-indigo-500', 'text-white');
     }
-    
+
     // Перезагружаем историю с фильтром (принудительно, без кэша)
     loadHistory();
 }
@@ -2415,18 +2415,18 @@ async function loadHistory() {
     try {
         // Инициализируем элементы каждый раз
         getHistoryElements();
-        
+
         // Если элементы не найдены, пробуем еще раз через небольшую задержку
         if (!historyListVisible || !historyListHidden || !historyAccordionBtn) {
             await new Promise(resolve => setTimeout(resolve, 100));
             getHistoryElements();
         }
-        
+
         if (!historyListVisible || !historyListHidden) {
             console.error("History elements not found", { historyListVisible, historyListHidden });
             return;
         }
-        
+
         if (!authToken) {
             console.error("No auth token available");
             if (historyListVisible) {
@@ -2435,12 +2435,12 @@ async function loadHistory() {
             if (historyAccordionBtn) historyAccordionBtn.classList.add('hidden');
             return;
         }
-        
+
         // Увеличиваем лимит для получения достаточного количества данных для фильтрации
         // Добавляем timestamp для предотвращения кэширования
         const cacheBuster = Date.now();
         const res = await fetch(`${API_BASE}/xp/full-history?limit=1000&_t=${cacheBuster}`, {
-            headers: { 
+            headers: {
                 "Authorization": `Bearer ${authToken}`,
                 "Cache-Control": "no-cache, no-store, must-revalidate",
                 "Pragma": "no-cache",
@@ -2448,7 +2448,7 @@ async function loadHistory() {
             },
             cache: 'no-store'
         });
-        
+
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load history:", res.status, res.statusText, errorText);
@@ -2458,33 +2458,33 @@ async function loadHistory() {
             if (historyAccordionBtn) historyAccordionBtn.classList.add('hidden');
             return;
         }
-        
+
         const allData = await res.json();
-        
+
         // Фильтруем данные по выбранному периоду
         console.log('Filtering history:', { period: historyPeriod, totalItems: allData.length });
         const filteredData = filterHistoryByPeriod(allData, historyPeriod);
         console.log('Filtered history:', { period: historyPeriod, filteredItems: filteredData.length });
-        
+
         historyListVisible.innerHTML = '';
         historyListHidden.innerHTML = '';
-        
+
         if (filteredData.length === 0) {
             historyListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">История пуста</div>';
             historyAccordionBtn.classList.add('hidden');
             return;
         }
-        
+
         const visibleHistory = filteredData.slice(0, 4);
         const hiddenHistory = filteredData.slice(4);
-        
+
         const historyContainer = document.getElementById('history-list-container');
         const historyBlock = document.getElementById('history');
-        
+
         visibleHistory.forEach(item => {
             historyListVisible.innerHTML += renderHistoryItem(item);
         });
-        
+
         // Применяем fixed позиционирование по умолчанию (если аккордеон закрыт)
         const isExpanded = localStorage.getItem('historyAccordionExpanded') === 'true';
         if (!isExpanded) {
@@ -2502,7 +2502,7 @@ async function loadHistory() {
                 historyContainer.classList.add('history-expanded');
             }
         }
-        
+
         if (hiddenHistory.length > 0) {
             hiddenHistory.forEach(item => {
                 historyListHidden.innerHTML += renderHistoryItem(item);
@@ -2536,24 +2536,24 @@ function toggleRewardsAccordion() {
         console.error("Rewards accordion elements not found");
         return;
     }
-    
+
     const isExpanded = rewardsContainer.classList.contains('rewards-expanded');
     const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
     const text = rewardsAccordionBtn.querySelector('.accordion-text');
-    
+
     if (!icon || !text) return;
-    
+
     if (!isExpanded) {
         // Открываем аккордеон - перемещаем все награды в hidden и делаем контейнер скроллируемым
         // Сначала перемещаем все награды из visible в hidden
         while (rewardsListVisible && rewardsListVisible.firstChild) {
             rewardsListHidden.appendChild(rewardsListVisible.firstChild);
         }
-        
+
         // Показываем hidden и применяем стили для скролла
         rewardsListHidden.classList.remove('hidden');
         rewardsContainer.classList.add('rewards-expanded');
-        
+
         // Динамически рассчитываем высоту для ровно 4 наград
         requestAnimationFrame(() => {
             if (rewardsContainer && rewardsListHidden.children.length > 0) {
@@ -2571,18 +2571,18 @@ function toggleRewardsAccordion() {
                 rewardsContainer.scrollTop = 0;
             }
         });
-        
+
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'true');
     } else {
         // Закрываем аккордеон - возвращаем первые 4-5 в visible, остальные в hidden
         const allCards = Array.from(rewardsListHidden.children);
-        
+
         // Очищаем оба списка
         if (rewardsListVisible) rewardsListVisible.innerHTML = "";
         rewardsListHidden.innerHTML = "";
-        
+
         // Распределяем: первые 4-5 в visible, остальные в hidden
         allCards.forEach((card, index) => {
             if (index < 4 && rewardsListVisible) {
@@ -2591,12 +2591,12 @@ function toggleRewardsAccordion() {
                 rewardsListHidden.appendChild(card);
             }
         });
-        
+
         // Убираем класс expanded и скрываем hidden
         rewardsContainer.classList.remove('rewards-expanded');
         rewardsContainer.style.maxHeight = ''; // Сбрасываем динамическую высоту
         rewardsListHidden.classList.add('hidden');
-        
+
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_rewards');
         localStorage.setItem('rewardsAccordionExpanded', 'false');
@@ -2607,22 +2607,22 @@ function updateRewardsAccordionButton() {
     getRewardsElements();
     const rewardsContainer = document.getElementById('rewards-list-container');
     if (!rewardsListHidden || !rewardsAccordionBtn || !rewardsContainer) return;
-    
+
     const isExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
     const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
     const text = rewardsAccordionBtn.querySelector('.accordion-text');
-    
+
     if (!icon || !text) return;
-    
+
     if (isExpanded) {
         // Открываем аккордеон - перемещаем все награды в hidden и делаем контейнер скроллируемым
         while (rewardsListVisible && rewardsListVisible.firstChild) {
             rewardsListHidden.appendChild(rewardsListVisible.firstChild);
         }
-        
+
         rewardsListHidden.classList.remove('hidden');
         rewardsContainer.classList.add('rewards-expanded');
-        
+
         // Динамически рассчитываем высоту для ровно 4-5 наград
         requestAnimationFrame(() => {
             if (rewardsContainer && rewardsListHidden.children.length > 0) {
@@ -2636,7 +2636,7 @@ function updateRewardsAccordionButton() {
                 rewardsContainer.scrollTop = 0;
             }
         });
-        
+
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_rewards');
     } else {
@@ -2644,7 +2644,7 @@ function updateRewardsAccordionButton() {
         const allCards = Array.from(rewardsListHidden.children);
         if (rewardsListVisible) rewardsListVisible.innerHTML = "";
         rewardsListHidden.innerHTML = "";
-        
+
         allCards.forEach((card, index) => {
             if (index < 4 && rewardsListVisible) {
                 rewardsListVisible.appendChild(card);
@@ -2652,11 +2652,11 @@ function updateRewardsAccordionButton() {
                 rewardsListHidden.appendChild(card);
             }
         });
-        
+
         rewardsContainer.classList.remove('rewards-expanded');
         rewardsContainer.style.maxHeight = '';
         rewardsListHidden.classList.add('hidden');
-        
+
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_rewards');
     }
@@ -2669,47 +2669,47 @@ function toggleHistoryAccordion() {
         console.error("History accordion elements not found");
         return;
     }
-    
+
     const isExpanded = historyContainer.classList.contains('history-expanded');
     const icon = historyAccordionBtn.querySelector('.accordion-icon');
     const text = historyAccordionBtn.querySelector('.accordion-text');
-    
+
     if (!icon || !text) return;
-    
+
     if (!isExpanded) {
         // Открываем аккордеон - перемещаем все транзакции в hidden и делаем контейнер скроллируемым
         while (historyListVisible && historyListVisible.firstChild) {
             historyListHidden.appendChild(historyListVisible.firstChild);
         }
-        
+
         // Показываем hidden и применяем стили для скролла
         historyListHidden.classList.remove('hidden');
         historyContainer.classList.add('history-expanded');
-        
+
         // Убираем fixed позиционирование (больше не используется)
         if (historyListVisible) {
             historyListVisible.classList.remove('history-fixed');
         }
-        
+
         // Применяем класс expanded к блоку history для правильного скролла
         const historyBlock = document.getElementById('history');
         if (historyBlock) {
             historyBlock.classList.add('history-expanded');
         }
-        
+
         // Контейнер будет скроллируемым автоматически через CSS
         // Не скроллим наверх, сохраняем текущую позицию
-        
+
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
         localStorage.setItem('historyAccordionExpanded', 'true');
     } else {
         // Закрываем аккордеон - возвращаем первые 4 в visible, остальные в hidden
         const allItems = Array.from(historyListHidden.children);
-        
+
         if (historyListVisible) historyListVisible.innerHTML = "";
         historyListHidden.innerHTML = "";
-        
+
         // Распределяем: первые 4 в visible, остальные в hidden
         allItems.forEach((item, index) => {
             if (index < 4 && historyListVisible) {
@@ -2718,21 +2718,21 @@ function toggleHistoryAccordion() {
                 historyListHidden.appendChild(item);
             }
         });
-        
+
         // Убираем класс expanded и скрываем hidden
         historyContainer.classList.remove('history-expanded');
         historyContainer.style.maxHeight = '';
         historyListHidden.classList.add('hidden');
-        
+
         // Убираем класс expanded с блока history
         const historyBlock = document.getElementById('history');
         if (historyBlock) {
             historyBlock.classList.remove('history-expanded');
         }
-        
+
         // Больше не используем fixed позиционирование
         // Все элементы обычные
-        
+
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');
         localStorage.setItem('historyAccordionExpanded', 'false');
@@ -2743,36 +2743,36 @@ function updateHistoryAccordionButton() {
     getHistoryElements();
     const historyContainer = document.getElementById('history-list-container');
     if (!historyListHidden || !historyAccordionBtn || !historyContainer) return;
-    
+
     const isExpanded = localStorage.getItem('historyAccordionExpanded') === 'true';
     const icon = historyAccordionBtn.querySelector('.accordion-icon');
     const text = historyAccordionBtn.querySelector('.accordion-text');
-    
+
     if (!icon || !text) return;
-    
+
     if (isExpanded) {
         // Открываем аккордеон - перемещаем все транзакции в hidden и делаем контейнер скроллируемым
         while (historyListVisible && historyListVisible.firstChild) {
             historyListHidden.appendChild(historyListVisible.firstChild);
         }
-        
+
         historyListHidden.classList.remove('hidden');
         historyContainer.classList.add('history-expanded');
-        
+
         // Убираем fixed позиционирование
         if (historyListVisible) {
             historyListVisible.classList.remove('history-fixed');
         }
-        
+
         // Применяем класс expanded к блоку history для правильного скролла
         const historyBlock = document.getElementById('history');
         if (historyBlock) {
             historyBlock.classList.add('history-expanded');
         }
-        
+
         // Убираем scrollTop = 0 чтобы не скроллить наверх
         // Контейнер будет скроллируемым автоматически через CSS
-        
+
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_history');
     } else {
@@ -2780,7 +2780,7 @@ function updateHistoryAccordionButton() {
         const allItems = Array.from(historyListHidden.children);
         if (historyListVisible) historyListVisible.innerHTML = "";
         historyListHidden.innerHTML = "";
-        
+
         allItems.forEach((item, index) => {
             if (index < 4 && historyListVisible) {
                 historyListVisible.appendChild(item);
@@ -2788,20 +2788,20 @@ function updateHistoryAccordionButton() {
                 historyListHidden.appendChild(item);
             }
         });
-        
+
         historyContainer.classList.remove('history-expanded');
         historyContainer.style.maxHeight = '';
         historyListHidden.classList.add('hidden');
-        
+
         // Убираем класс expanded с блока history
         const historyBlock = document.getElementById('history');
         if (historyBlock) {
             historyBlock.classList.remove('history-expanded');
         }
-        
+
         // Больше не используем fixed позиционирование
         // Все элементы обычные
-        
+
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_history');
     }
@@ -2811,7 +2811,7 @@ function updateHistoryAccordionButton() {
 async function loadActivities() {
     try {
         getActivitiesElements();
-        
+
         if (!authToken) {
             console.error("No auth token available");
             if (activitiesListVisible) {
@@ -2819,11 +2819,11 @@ async function loadActivities() {
             }
             return;
         }
-        
+
         const res = await fetch(`${API_BASE}/activities/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load activities:", res.status, res.statusText, errorText);
@@ -2832,13 +2832,13 @@ async function loadActivities() {
             }
             return;
         }
-        
+
         const data = await res.json();
         allActivities = data;
-        
+
         // Обновляем фильтр категорий
         updateActivitiesCategoryFilter();
-        
+
         // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
         applyActivitiesFilters();
     } catch (e) {
@@ -2854,20 +2854,20 @@ async function loadActivities() {
 function updateActivitiesCategoryFilter() {
     const categoryFilter = document.getElementById('activities-category-filter');
     if (!categoryFilter) return;
-    
+
     // Сохраняем текущее значение
     const currentValue = categoryFilter.value;
-    
+
     // Очищаем опции (кроме "Все категории")
     categoryFilter.innerHTML = '<option value="all">📂 Все категории</option>';
-    
+
     // Получаем уникальные категории из активностей
     const categories = new Set();
     allActivities.forEach(activity => {
         const category = activity.category || 'general';
         categories.add(category);
     });
-    
+
     // Создаем объект с названиями категорий
     const categoryNames = {
         "general": t('category_general'),
@@ -2877,21 +2877,21 @@ function updateActivitiesCategoryFilter() {
         "work": t('category_work'),
         "health": t('category_health')
     };
-    
+
     // Добавляем пользовательские категории
     if (allCategories.custom) {
         allCategories.custom.forEach(customCat => {
             categoryNames[customCat.id] = customCat.name;
         });
     }
-    
+
     // Сортируем категории по названию
     const sortedCategories = Array.from(categories).sort((a, b) => {
         const nameA = categoryNames[a] || a;
         const nameB = categoryNames[b] || b;
         return nameA.localeCompare(nameB);
     });
-    
+
     // Добавляем опции
     sortedCategories.forEach(category => {
         const option = document.createElement('option');
@@ -2899,8 +2899,8 @@ function updateActivitiesCategoryFilter() {
         option.textContent = categoryNames[category] || category;
         categoryFilter.appendChild(option);
     });
-    
-    
+
+
     // Восстанавливаем значение, если оно все еще существует
     if (currentValue && Array.from(categoryFilter.options).some(opt => opt.value === currentValue)) {
         categoryFilter.value = currentValue;
@@ -2918,7 +2918,7 @@ function getActivitiesElements() {
     if (!activitiesAccordionBtn) {
         activitiesAccordionBtn = document.getElementById("activities-accordion-btn");
     }
-    
+
     // Если элементы не найдены, пробуем через querySelector
     if (!activitiesListVisible) {
         activitiesListVisible = document.querySelector("#activities-list-visible");
@@ -2934,20 +2934,20 @@ function getActivitiesElements() {
 // Применение фильтров и сортировки
 function applyActivitiesFilters() {
     getActivitiesElements();
-    
+
     const activitiesContainer = document.getElementById('activities-list-container');
     if (!activitiesListVisible || !activitiesListHidden || !activitiesContainer) return;
-    
+
     // Очищаем списки
     activitiesListVisible.innerHTML = "";
     activitiesListHidden.innerHTML = "";
-    
+
     if (allActivities.length === 0) {
         activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Нет активностей. Создайте первую активность!</div>';
         if (activitiesAccordionBtn) activitiesAccordionBtn.classList.add('hidden');
             return;
         }
-        
+
     // Фильтруем по категории
     let filtered = allActivities;
     if (activitiesFilterState.category !== 'all') {
@@ -2956,7 +2956,7 @@ function applyActivitiesFilters() {
             return category === activitiesFilterState.category;
         });
     }
-    
+
     // Сортируем
     filtered = [...filtered]; // Копируем массив
     switch (activitiesFilterState.sort) {
@@ -2981,11 +2981,11 @@ function applyActivitiesFilters() {
             filtered.sort((a, b) => b.name.localeCompare(a.name));
             break;
     }
-    
+
     // Проверяем, открыт ли аккордеон (из localStorage или класса контейнера)
-    const isAccordionExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true' || 
+    const isAccordionExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true' ||
                                  (activitiesContainer && activitiesContainer.classList.contains('activities-expanded'));
-    
+
     // Отрисовываем отфильтрованные активности
     filtered.forEach((activity, index) => {
         const card = renderActivityCard(activity);
@@ -3001,7 +3001,7 @@ function applyActivitiesFilters() {
             }
         }
     });
-    
+
     // Показываем/скрываем кнопку аккордеона
     if (activitiesAccordionBtn) {
         if (filtered.length > 5) {
@@ -3011,7 +3011,7 @@ function applyActivitiesFilters() {
             activitiesAccordionBtn.classList.add('hidden');
         }
     }
-    
+
     // Загружаем активные таймеры перед инициализацией SortableJS
     loadActiveTimers().then(() => {
         // Инициализируем SortableJS для drag and drop
@@ -3027,24 +3027,24 @@ function toggleActivitiesAccordion() {
         console.error("Activities accordion elements not found");
         return;
     }
-    
+
     const isExpanded = activitiesContainer.classList.contains('activities-expanded');
     const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
     const text = activitiesAccordionBtn.querySelector('.accordion-text');
-    
+
     if (!icon || !text) return;
-    
+
     if (!isExpanded) {
         // Открываем аккордеон - перемещаем все активности в hidden и делаем контейнер скроллируемым
         // Сначала перемещаем все активности из visible в hidden (включая первые 5)
         while (activitiesListVisible.firstChild) {
             activitiesListHidden.appendChild(activitiesListVisible.firstChild);
         }
-        
+
         // Показываем hidden и применяем стили для скролла
         activitiesListHidden.classList.remove('hidden');
         activitiesContainer.classList.add('activities-expanded');
-        
+
         // Динамически рассчитываем высоту для ровно 4 активностей
         requestAnimationFrame(() => {
             if (activitiesContainer && activitiesListHidden.children.length > 0) {
@@ -3061,11 +3061,11 @@ function toggleActivitiesAccordion() {
                 activitiesContainer.scrollTop = 0;
             }
         });
-        
+
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_activities');
         localStorage.setItem('activitiesAccordionExpanded', 'true');
-        
+
         // Переинициализируем SortableJS для нового контейнера
         setTimeout(() => {
             loadActiveTimers().then(() => {
@@ -3075,11 +3075,11 @@ function toggleActivitiesAccordion() {
     } else {
         // Закрываем аккордеон - возвращаем первые 5 в visible, остальные в hidden
         const allCards = Array.from(activitiesListHidden.children);
-        
+
         // Очищаем оба списка
         activitiesListVisible.innerHTML = "";
         activitiesListHidden.innerHTML = "";
-        
+
         // Распределяем: первые 5 в visible, остальные в hidden
         allCards.forEach((card, index) => {
             if (index < 5) {
@@ -3088,16 +3088,16 @@ function toggleActivitiesAccordion() {
                 activitiesListHidden.appendChild(card);
             }
         });
-        
+
         // Убираем класс expanded и скрываем hidden
         activitiesContainer.classList.remove('activities-expanded');
         activitiesContainer.style.maxHeight = ''; // Сбрасываем динамическую высоту
         activitiesListHidden.classList.add('hidden');
-        
+
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_activities');
         localStorage.setItem('activitiesAccordionExpanded', 'false');
-        
+
         // Переинициализируем SortableJS для нового контейнера
         setTimeout(() => {
             loadActiveTimers().then(() => {
@@ -3111,24 +3111,24 @@ function updateActivitiesAccordionButton() {
     getActivitiesElements();
     const activitiesContainer = document.getElementById('activities-list-container');
     if (!activitiesListHidden || !activitiesAccordionBtn || !activitiesContainer) return;
-    
+
     const isExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true';
     const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
     const text = activitiesAccordionBtn.querySelector('.accordion-text');
-    
+
     if (!icon || !text) return;
-    
+
     if (isExpanded) {
         // Открываем аккордеон - перемещаем все активности в hidden и делаем контейнер скроллируемым
         // Сначала перемещаем все активности из visible в hidden (включая первые 5)
         while (activitiesListVisible.firstChild) {
             activitiesListHidden.appendChild(activitiesListVisible.firstChild);
         }
-        
+
         // Показываем hidden и применяем стили для скролла
         activitiesListHidden.classList.remove('hidden');
         activitiesContainer.classList.add('activities-expanded');
-        
+
         // Динамически рассчитываем высоту для ровно 4 активностей
         requestAnimationFrame(() => {
             if (activitiesContainer && activitiesListHidden.children.length > 0) {
@@ -3145,10 +3145,10 @@ function updateActivitiesAccordionButton() {
                 activitiesContainer.scrollTop = 0;
             }
         });
-        
+
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_activities');
-        
+
         // Переинициализируем SortableJS для нового контейнера
         setTimeout(() => {
             loadActiveTimers().then(() => {
@@ -3158,11 +3158,11 @@ function updateActivitiesAccordionButton() {
     } else {
         // Закрываем аккордеон - возвращаем первые 5 в visible, остальные в hidden
         const allCards = Array.from(activitiesListHidden.children);
-        
+
         // Очищаем оба списка
         activitiesListVisible.innerHTML = "";
         activitiesListHidden.innerHTML = "";
-        
+
         // Распределяем: первые 5 в visible, остальные в hidden
         allCards.forEach((card, index) => {
             if (index < 5) {
@@ -3171,12 +3171,12 @@ function updateActivitiesAccordionButton() {
                 activitiesListHidden.appendChild(card);
             }
         });
-        
+
         // Убираем класс expanded и скрываем hidden
         activitiesContainer.classList.remove('activities-expanded');
         activitiesContainer.style.maxHeight = ''; // Сбрасываем динамическую высоту
         activitiesListHidden.classList.add('hidden');
-        
+
         icon.style.transform = 'rotate(0deg)';
         text.textContent = t('show_all_activities');
     }
@@ -3185,18 +3185,18 @@ function updateActivitiesAccordionButton() {
 // Инициализация фильтров и аккордеона для активностей
 function initActivitiesFilters() {
     // Аккордеон будет инициализирован динамически в applyActivitiesFilters
-    
+
     // Сортировка
     const sortSelect = document.getElementById('activities-sort');
     if (sortSelect) {
-        
+
         sortSelect.value = activitiesFilterState.sort;
         sortSelect.addEventListener('change', (e) => {
             activitiesFilterState.sort = e.target.value;
             applyActivitiesFilters();
         });
     }
-    
+
     // Фильтр по категории
     const categoryFilter = document.getElementById('activities-category-filter');
     if (categoryFilter) {
@@ -3206,17 +3206,17 @@ function initActivitiesFilters() {
             applyActivitiesFilters();
         });
     }
-    
+
     // Кнопка сброса фильтров
     const resetBtn = document.getElementById('activities-reset-filters');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
             activitiesFilterState.sort = 'newest';
             activitiesFilterState.category = 'all';
-            
+
             if (sortSelect) sortSelect.value = 'newest';
             if (categoryFilter) categoryFilter.value = 'all';
-            
+
             applyActivitiesFilters();
         });
     }
@@ -3226,7 +3226,7 @@ function initActivitiesFilters() {
 async function loadActiveTimers() {
     try {
         if (!authToken) return;
-        
+
         // Сохраняем текущие активные таймеры перед загрузкой с сервера
         // Это нужно, чтобы не потерять локальное состояние при смене языка
         const existingTimers = new Map();
@@ -3238,18 +3238,18 @@ async function loadActiveTimers() {
                 activity: timerInfo.activity
             });
         });
-        
+
         const res = await fetch(`${API_BASE}/timer/active`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             console.warn("Failed to load active timers:", res.status);
             return;
         }
-        
+
         const activeTimersData = await res.json();
-        
+
         // Очищаем старые интервалы перед восстановлением
         activeTimers.forEach((timerInfo) => {
             if (timerInfo.intervalId) {
@@ -3257,15 +3257,15 @@ async function loadActiveTimers() {
             }
         });
         activeTimers.clear();
-        
+
         // Восстанавливаем активные таймеры
         activeTimersData.forEach(timerData => {
             const activity = allActivities.find(a => a.id === timerData.activity_id);
             if (!activity) return;
-            
+
             // Проверяем, есть ли уже активный таймер для этой активности
             const existingTimer = existingTimers.get(timerData.activity_id);
-            
+
             let startTime;
             if (existingTimer && existingTimer.logId === timerData.log_id) {
                 // Используем сохраненное локальное время, если это тот же таймер
@@ -3275,23 +3275,23 @@ async function loadActiveTimers() {
                 // Важно: сервер возвращает время в UTC, нужно правильно его парсить
                 const serverStartTime = new Date(timerData.start_time);
                 startTime = serverStartTime.getTime();
-                
+
                 // Проверяем, что время валидное
                 if (isNaN(startTime)) {
                     console.error("Invalid start_time from server:", timerData.start_time);
                     return;
                 }
             }
-            
+
             const timerInfo = {
                 logId: timerData.log_id,
                 startTime: startTime,
                 intervalId: null,
                 activity: activity
             };
-            
+
             activeTimers.set(timerData.activity_id, timerInfo);
-            
+
             // Запускаем обновление отображения таймера с правильным startTime
             const intervalId = setInterval(() => {
                 const timerInfo = activeTimers.get(timerData.activity_id);
@@ -3321,20 +3321,20 @@ function renderActivityCard(activity) {
         "work": t('category_work'),
         "health": t('category_health')
     };
-    
+
     // Добавляем пользовательские категории
     if (allCategories.custom) {
         allCategories.custom.forEach(customCat => {
             categoryNames[customCat.id] = customCat.name;
         });
     }
-    
+
     const category = activity.category || "general";
     const categoryName = categoryNames[category] || category;
-    
+
     // Определяем тип единицы измерения
     const unitType = activity.unit_type || 'time';
-    
+
     const left = document.createElement("div");
     left.className = "flex-grow cursor-move";
     left.draggable = false;
@@ -3356,13 +3356,13 @@ function renderActivityCard(activity) {
     // Timer button - показываем только для активностей типа "time"
     const timerBtn = document.createElement("button");
     timerBtn.draggable = false;
-    
+
     // Для активностей типа "quantity" не показываем таймер
     if (unitType === 'quantity') {
         timerBtn.style.display = 'none';
     } else {
         const isActive = activeTimers.has(activity.id);
-        
+
         if (isActive) {
             // Если таймер активен, отображаем его в активном состоянии
             const timerInfo = activeTimers.get(activity.id);
@@ -3372,14 +3372,14 @@ function renderActivityCard(activity) {
             const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
             const xpPerSecond = (activity.xp_per_hour || 60) / 3600;
             const earnedXP = Math.round(elapsedSeconds * xpPerSecond);
-            
+
             timerBtn.className = "timer-btn px-6 py-2 rounded-xl text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-2 transition-all duration-300";
             timerBtn.innerHTML = `<i class="fas fa-stop text-red-500"></i> <span id="timer-${activity.id}">${minutes}:${seconds} (+${earnedXP} XP)</span>`;
         } else {
             timerBtn.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2";
             timerBtn.innerHTML = `<i class="fas fa-play text-green-500"></i> ${t('start')}`;
         }
-        
+
         timerBtn.dataset.activityId = activity.id;
         timerBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -3434,7 +3434,7 @@ function renderActivityCard(activity) {
     dragHandle.style.userSelect = 'none';
     dragHandle.style.webkitUserSelect = 'none';
     dragHandle.style.pointerEvents = 'auto';
-    
+
     div.appendChild(dragHandle);
     div.appendChild(left);
     div.appendChild(timerBtn);
@@ -3454,18 +3454,18 @@ function initActivitiesSortable() {
         console.warn('Activities list element not found');
         return;
     }
-    
+
     if (typeof Sortable === 'undefined') {
         console.error('SortableJS library not loaded! Check if script is included in HTML.');
         return;
     }
-    
+
     // Уничтожаем предыдущий экземпляр если есть
     if (activitiesSortable) {
         activitiesSortable.destroy();
         activitiesSortable = null;
     }
-    
+
     // Инициализируем SortableJS
     try {
         activitiesSortable = new Sortable(activitiesList, {
@@ -3502,7 +3502,7 @@ async function updateActivitiesOrder() {
     const activitiesList = document.getElementById('activities-list');
     const allCards = Array.from(activitiesList.querySelectorAll('.activity-card'));
     const activityIds = allCards.map(card => parseInt(card.getAttribute('data-activity-id')));
-    
+
     try {
         const res = await fetch(`${API_BASE}/activities/reorder`, {
             method: "POST",
@@ -3512,7 +3512,7 @@ async function updateActivitiesOrder() {
             },
             body: JSON.stringify({ activity_ids: activityIds })
         });
-        
+
         if (!res.ok) {
             console.error("Failed to update activities order");
             // Восстанавливаем порядок из сервера при ошибке
@@ -3531,29 +3531,29 @@ async function createActivity() {
     const category = categoryEl ? (categoryEl.value || "general") : "general";
     const unitTypeEl = document.getElementById("activity-unit-type");
     const unitType = unitTypeEl ? unitTypeEl.value : "time";
-    
+
     let xpPerHour = 60;
     let xpPerUnit = null;
-    
+
     if (unitType === "time") {
         xpPerHour = xpPerHourInput ? Number(xpPerHourInput.value) || 60 : 60;
     } else {
         const xpPerUnitInput = document.getElementById("xp-per-unit");
         xpPerUnit = xpPerUnitInput ? Number(xpPerUnitInput.value) || 1 : 1;
     }
-    
+
     if (!name) {
         showActivityMessage("Введите название активности", "error");
         return;
     }
-    
+
     const duplicate = allActivities.find(a => a.name.toLowerCase() === name.toLowerCase());
     if (duplicate) {
         showActivityMessage(`❌ "${name}" уже существует!`, "error");
         activityNameInput.focus();
         return;
     }
-    
+
     try {
         const activityData = {
             name,
@@ -3562,7 +3562,7 @@ async function createActivity() {
             xp_per_hour: unitType === "time" ? xpPerHour : null,
             xp_per_unit: unitType === "quantity" ? xpPerUnit : null
         };
-        
+
         const res = await fetch(`${API_BASE}/activities/`, {
             method: "POST",
             headers: {
@@ -3571,13 +3571,13 @@ async function createActivity() {
             },
             body: JSON.stringify(activityData)
         });
-        
+
         if (!res.ok) {
             const error = await res.json();
             showActivityMessage(error.detail || "Ошибка создания", "error");
             return;
         }
-        
+
         const created = await res.json();
         activityNameInput.value = "";
         if (xpPerHourInput) xpPerHourInput.value = "60";
@@ -3598,10 +3598,10 @@ async function createActivity() {
 function openEditModal(activity) {
     // Обновляем dropdown категорий перед открытием модального окна
     updateCategoryDropdown('edit-activity-category');
-    
+
     document.getElementById("edit-activity-id").value = activity.id;
     document.getElementById("edit-activity-name").value = activity.name;
-    
+
     // Устанавливаем тип единицы измерения
     const unitType = activity.unit_type || 'time';
     const unitTypeEl = document.getElementById("edit-activity-unit-type");
@@ -3609,7 +3609,7 @@ function openEditModal(activity) {
         unitTypeEl.value = unitType;
         updateEditActivityXPInputs(); // Обновляем поля XP
     }
-    
+
     // Устанавливаем значения XP в зависимости от типа
     if (unitType === 'quantity') {
         const xpPerUnitEl = document.getElementById("edit-xp-per-unit");
@@ -3622,7 +3622,7 @@ function openEditModal(activity) {
             xpPerHourEl.value = activity.xp_per_hour || 60;
         }
     }
-    
+
     const categoryEl = document.getElementById("edit-activity-category");
     const categoryText = document.getElementById("edit-activity-category-text");
     if (categoryEl && categoryText) {
@@ -3640,13 +3640,13 @@ function openEditModal(activity) {
             }
         }, 100);
     }
-    
+
     // Применяем переводы
     applyTranslations();
-    
+
     // Обновляем поля XP при открытии
     updateEditActivityXPInputs();
-    
+
     document.getElementById("edit-activity-modal").classList.remove("hidden");
 }
 
@@ -3655,11 +3655,11 @@ function updateEditActivityXPInputs() {
     const unitTypeEl = document.getElementById("edit-activity-unit-type");
     const xpTimeContainer = document.getElementById("edit-activity-xp-time");
     const xpQuantityContainer = document.getElementById("edit-activity-xp-quantity");
-    
+
     if (!unitTypeEl) return;
-    
+
     const unitType = unitTypeEl.value;
-    
+
     if (unitType === "quantity") {
         xpTimeContainer.classList.add("hidden");
         xpQuantityContainer.classList.remove("hidden");
@@ -3681,10 +3681,10 @@ async function updateActivity() {
     const category = categoryEl ? categoryEl.value || "general" : "general";
     const unitTypeEl = document.getElementById("edit-activity-unit-type");
     const unitType = unitTypeEl ? unitTypeEl.value : "time";
-    
+
     let xpPerHour = null;
     let xpPerUnit = null;
-    
+
     if (unitType === "time") {
         xpPerHour = Number(document.getElementById("edit-xp-per-hour").value) || 60;
     } else {
@@ -3705,7 +3705,7 @@ async function updateActivity() {
             xp_per_hour: unitType === "time" ? xpPerHour : null,
             xp_per_unit: unitType === "quantity" ? xpPerUnit : null
         };
-        
+
         const res = await fetch(`${API_BASE}/activities/${id}`, {
             method: "PUT",
             headers: {
@@ -3732,18 +3732,18 @@ async function updateActivity() {
 
 async function deleteActivity(activityId, cardElement) {
     if (!confirm("Удалить активность?")) return;
-    
+
     try {
         const res = await fetch(`${API_BASE}/activities/${activityId}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             alert("Ошибка удаления");
             return;
         }
-        
+
         cardElement.style.transition = "all 0.3s ease";
         cardElement.style.opacity = "0";
         cardElement.style.transform = "translateX(-20px)";
@@ -3789,18 +3789,18 @@ async function startTimer(activityId, button, activity) {
                 "Authorization": `Bearer ${authToken}`
             }
         });
-        
+
         if (!res.ok) throw new Error(await res.text());
-        
+
         const data = await res.json();
         const logId = data.log_id;
         const startTime = Date.now();
         const timerInfo = { logId, startTime, intervalId: null, activity };
         activeTimers.set(activityId, timerInfo);
-        
+
         button.innerHTML = '<i class="fas fa-stop text-red-500"></i> <span id="timer-' + activityId + '">00:00</span>';
         button.className = "timer-btn px-6 py-2 rounded-xl text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-2 transition-all duration-300";
-        
+
         const intervalId = setInterval(() => {
             const timerInfo = activeTimers.get(activityId);
             if (timerInfo) {
@@ -3821,22 +3821,22 @@ function updateTimerDisplay(activityId, startTime, activity) {
         // Таймер был остановлен, не обновляем
         return;
     }
-    
+
     // Используем startTime из timerInfo, чтобы всегда иметь актуальное значение
     const actualStartTime = timerInfo.startTime;
     const elapsedMs = Date.now() - actualStartTime;
-    
+
     // Проверяем, что elapsedMs не отрицательное (на случай проблем с синхронизацией времени)
     if (elapsedMs < 0) {
         console.warn(`Negative elapsed time for activity ${activityId}, startTime: ${actualStartTime}, now: ${Date.now()}`);
         return;
     }
-    
+
     const elapsedSeconds = Math.floor(elapsedMs / 1000);
     const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, "0");
     const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
     const timerSpan = document.getElementById(`timer-${activityId}`);
-    
+
     if (timerSpan) {
         const xpPerSecond = activity.xp_per_hour / 3600;
         const earnedXP = Math.round(elapsedSeconds * xpPerSecond);
@@ -3850,11 +3850,11 @@ async function stopTimer(activityId, button) {
         alert("Таймер не запущен");
         return;
     }
-    
+
     if (timerInfo.intervalId) {
         clearInterval(timerInfo.intervalId);
     }
-    
+
     try {
         const res = await fetch(`${API_BASE}/timer/stop/${timerInfo.logId}`, {
             method: "POST",
@@ -3863,21 +3863,21 @@ async function stopTimer(activityId, button) {
                 "Authorization": `Bearer ${authToken}`
             }
         });
-        
+
         if (!res.ok) throw new Error(await res.text());
-        
+
         const data = await res.json();
         activeTimers.delete(activityId);
-        
+
         button.innerHTML = `<i class="fas fa-play text-green-500"></i> ${t('start')}`;
         button.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2 transition-all duration-300";
-        
+
         await loadWallet();
         loadTodayStats(); // Обновляем статистику
         loadWeekCalendar(); // Обновляем календарь
         loadStreak(); // Обновляем streak
         await loadGoals(); // Всегда обновляем список целей для проверки достижений
-        
+
         let message = `✅ Таймер остановлен! Заработано ${Math.round(data.xp_earned)} XP`;
         if (data.streak_bonus && data.streak_bonus > 0) {
             message += `\n🔥 Бонус за серию: +${data.streak_bonus} XP`;
@@ -3909,10 +3909,10 @@ function openManualTimeModal(activityId) {
         select.appendChild(option);
     });
     select.value = activityId;
-    
+
     // Обновляем интерфейс в зависимости от типа активности
     updateManualModalUI(activityId);
-    
+
     document.getElementById("manual-minutes").value = "";
     document.getElementById("manual-quantity").value = "";
     document.getElementById("manual-time-preview").classList.add("hidden");
@@ -3927,7 +3927,7 @@ function updateManualModalUI(activityId) {
     const quantityContainer = document.getElementById("manual-quantity-input-container");
     const timeInput = document.getElementById("manual-minutes");
     const quantityInput = document.getElementById("manual-quantity");
-    
+
     if (unitType === 'quantity') {
         titleEl.textContent = `📊 ${t('manual_quantity')}`;
         titleEl.setAttribute('data-i18n', 'manual_quantity');
@@ -3953,10 +3953,10 @@ function closeManualTimeModal() {
 function updateManualPreview(activityId) {
     const activity = allActivities.find(a => a.id == activityId);
     if (!activity) return;
-    
+
     const unitType = activity.unit_type || 'time';
     const preview = document.getElementById("manual-time-preview");
-    
+
     if (unitType === 'quantity') {
         const quantity = document.getElementById("manual-quantity").value;
         if (activityId && quantity) {
@@ -3981,15 +3981,15 @@ function updateManualPreview(activityId) {
 async function addManualTime() {
     const activityId = document.getElementById("manual-activity-select").value;
     const activity = allActivities.find(a => a.id == activityId);
-    
+
     if (!activityId || !activity) {
         alert(t('select_activity_label'));
         return;
     }
-    
+
     const unitType = activity.unit_type || 'time';
     let requestData = { activity_id: Number(activityId) };
-    
+
     if (unitType === 'quantity') {
         const quantity = Number(document.getElementById("manual-quantity").value);
         if (!quantity || quantity < 1) {
@@ -4005,7 +4005,7 @@ async function addManualTime() {
         }
         requestData.minutes = minutes;
     }
-    
+
     try {
         const res = await fetch(`${API_BASE}/timer/manual`, {
             method: "POST",
@@ -4015,13 +4015,13 @@ async function addManualTime() {
             },
             body: JSON.stringify(requestData)
         });
-        
+
         if (!res.ok) {
             const error = await res.json();
             alert(error.detail || t('error_adding'));
             return;
         }
-        
+
         const data = await res.json();
         closeManualTimeModal();
         await loadWallet();
@@ -4106,23 +4106,23 @@ async function loadRewards() {
     try {
         // Инициализируем элементы каждый раз, так как они могут быть в скрытой секции
         getRewardsElements();
-        
+
         // Если элементы не найдены, пробуем еще раз через небольшую задержку
         if (!rewardsListVisible || !rewardsListHidden || !rewardsAccordionBtn) {
             await new Promise(resolve => setTimeout(resolve, 100));
             getRewardsElements();
         }
-        
+
         if (!rewardsListVisible || !rewardsListHidden || !rewardsAccordionBtn) {
-            console.error("Rewards elements not found", { 
-                rewardsListVisible, 
-                rewardsListHidden, 
+            console.error("Rewards elements not found", {
+                rewardsListVisible,
+                rewardsListHidden,
                 rewardsAccordionBtn,
                 appSection: document.getElementById("app-section")?.classList.contains("hidden")
             });
             return;
         }
-        
+
         if (!authToken) {
             console.error("No auth token available");
             if (rewardsListVisible) {
@@ -4131,11 +4131,11 @@ async function loadRewards() {
             if (rewardsAccordionBtn) rewardsAccordionBtn.classList.add('hidden');
             return;
         }
-        
+
         const res = await fetch(`${API_BASE}/rewards/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load rewards:", res.status, res.statusText, errorText);
@@ -4145,10 +4145,10 @@ async function loadRewards() {
             if (rewardsAccordionBtn) rewardsAccordionBtn.classList.add('hidden');
             return;
         }
-        
+
         const data = await res.json();
         allRewards = data;
-        
+
         // Еще раз проверяем элементы перед использованием
         if (!rewardsListVisible || !rewardsListHidden) {
             console.error("Rewards elements lost after fetch, retrying...");
@@ -4158,14 +4158,14 @@ async function loadRewards() {
                 return;
             }
         }
-        
+
         // Финальная проверка элементов перед использованием
         getRewardsElements();
         if (!rewardsListVisible || !rewardsListHidden) {
             console.error("Rewards elements are null before innerHTML operations");
             return;
         }
-        
+
         // Безопасно очищаем содержимое
         try {
             rewardsListVisible.innerHTML = "";
@@ -4174,7 +4174,7 @@ async function loadRewards() {
             console.error("Error clearing rewards lists:", e);
             return;
         }
-        
+
         if (data.length === 0) {
             try {
                 rewardsListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Наград пока нет</div>';
@@ -4186,36 +4186,36 @@ async function loadRewards() {
             }
             return;
         }
-        
+
         const visibleRewards = data.slice(0, 4);
         const hiddenRewards = data.slice(4);
-        
+
         // Проверяем элементы перед рендерингом
         if (!rewardsListVisible) {
             console.error("rewardsListVisible is null before rendering visible rewards");
             return;
         }
-        
+
         visibleRewards.forEach(reward => {
             const div = renderRewardCard(reward);
             if (div && rewardsListVisible) {
                 rewardsListVisible.appendChild(div);
             }
         });
-        
+
         if (hiddenRewards.length > 0) {
             if (!rewardsListHidden) {
                 console.error("rewardsListHidden is null before rendering hidden rewards");
                 return;
             }
-            
+
             hiddenRewards.forEach(reward => {
                 const div = renderRewardCard(reward);
                 if (div && rewardsListHidden) {
                     rewardsListHidden.appendChild(div);
                 }
             });
-            
+
             if (rewardsAccordionBtn) {
                 rewardsAccordionBtn.classList.remove('hidden');
                 // Загружаем состояние аккордеона из localStorage после добавления элементов
@@ -4235,28 +4235,28 @@ async function loadRewards() {
 
 function renderRewardCard(reward) {
     const brand = detectBrand(reward.name);
-    
+
     const div = document.createElement("div");
     div.className = `reward-card group relative p-4 rounded-lg bg-gradient-to-r from-gray-50 to-white border-2 ${brand.borderColor} hover:shadow-md hover:border-opacity-80 transition-all duration-200 w-full max-w-full overflow-hidden`;
 
     // Основная структура: всё в одной строке, кнопки по центру по высоте
     const mainSection = document.createElement("div");
     mainSection.className = "flex items-center justify-between gap-4";
-    
+
     // Левая часть: иконка и название со стоимостью
     const leftSection = document.createElement("div");
     leftSection.className = "flex items-center gap-3 flex-1 min-w-0";
-    
+
     // Иконка бренда
     const icon = document.createElement("div");
     icon.className = `w-12 h-12 ${brand.bgColor} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200`;
-    
+
     if (brand.iconType === "text") {
         icon.innerHTML = `<span class="${brand.textColor} font-black text-lg">${brand.icon}</span>`;
     } else {
         icon.innerHTML = `<i class="${brand.icon} ${brand.textColor} text-lg"></i>`;
     }
-    
+
     // Название и стоимость
     const nameDiv = document.createElement("div");
     nameDiv.className = "flex-1 min-w-0";
@@ -4269,10 +4269,10 @@ function renderRewardCard(reward) {
             <span class="text-amber-700 text-xs font-bold">${reward.xp_cost} XP</span>
         </div>
     `;
-    
+
     leftSection.appendChild(icon);
     leftSection.appendChild(nameDiv);
-    
+
     // Правая часть: кнопки (выровнены по центру по высоте)
     const btnContainer = document.createElement("div");
     btnContainer.className = "flex items-center gap-2 flex-shrink-0";
@@ -4343,7 +4343,7 @@ async function createReward() {
         rewardNameInput.value = "";
         rewardCostInput.value = "10";
         allRewards.push(created);
-        
+
         // Добавляем награду в правильный список (visible или hidden)
         getRewardsElements();
         if (rewardsListVisible) {
@@ -4364,7 +4364,7 @@ async function createReward() {
                 }
             }
         }
-        
+
         showRewardMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {
         console.error("Error:", e);
@@ -4389,12 +4389,12 @@ async function updateReward() {
     const id = document.getElementById("edit-reward-id").value;
     const name = document.getElementById("edit-reward-name").value.trim();
     const xpCost = Number(document.getElementById("edit-reward-cost").value) || 0;
-    
+
     if (!name || xpCost <= 0) {
         alert(t('enter_correct_name_cost'));
         return;
     }
-    
+
     try {
         const res = await fetch(`${API_BASE}/rewards/${id}`, {
             method: "PUT",
@@ -4404,13 +4404,13 @@ async function updateReward() {
             },
             body: JSON.stringify({ name, xp_cost: xpCost })
         });
-        
+
         if (!res.ok) {
             const error = await res.json();
             alert(error.detail || t('error_updating_reward'));
             return;
         }
-        
+
         closeEditRewardModal();
         await loadRewards();
         showRewardMessage(`✅ ${t('reward_updated')}`, "success");
@@ -4422,18 +4422,18 @@ async function updateReward() {
 
 async function deleteReward(rewardId, cardElement) {
     if (!confirm("Удалить награду?")) return;
-    
+
     try {
         const res = await fetch(`${API_BASE}/rewards/${rewardId}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             alert("Ошибка удаления");
             return;
         }
-        
+
         cardElement.style.transition = "all 0.3s ease";
         cardElement.style.opacity = "0";
         cardElement.style.transform = "translateX(-20px)";
@@ -4452,11 +4452,11 @@ async function deleteReward(rewardId, cardElement) {
 
 async function spendReward(rewardId) {
     if (!rewardMessage) return;
-    
+
     rewardMessage.classList.remove("hidden", "text-red-500", "text-green-600");
     rewardMessage.classList.add("text-gray-500");
     rewardMessage.textContent = "Проверяем баланс...";
-    
+
     try {
         const res = await fetch(`${API_BASE}/rewards/spend/${rewardId}`, {
             method: "POST",
@@ -4465,9 +4465,9 @@ async function spendReward(rewardId) {
                 "Authorization": `Bearer ${authToken}`
             }
         });
-        
+
         const data = await res.json();
-        
+
         if (!res.ok) {
             let errorMsg = data.detail || "Не удалось потратить XP";
             // Проверяем, это блокировка из черного списка
@@ -4480,20 +4480,20 @@ async function spendReward(rewardId) {
             showNotification(errorMsg, 'error');
             return;
         }
-        
+
         // Успешная покупка
         const successMsg = `✅ ${t('reward_received').replace('{reward}', data.reward).replace('{spent}', data.spent).replace('{balance}', Math.round(data.new_balance))}`;
         rewardMessage.textContent = successMsg;
         rewardMessage.classList.remove("text-gray-500");
         rewardMessage.classList.add("text-green-600");
-        
+
         // Показываем уведомление
         showNotification(`✅ ${t('reward_purchased').replace('{reward}', data.reward).replace('{spent}', data.spent)}`, 'success');
-        
+
         // Обновляем все данные
         await loadWallet();
         loadTodayStats(); // Обновляем статистику
-        
+
         // Небольшая задержка перед обновлением истории, чтобы сервер успел обработать транзакцию
         setTimeout(async () => {
             await loadHistory(); // Обновляем историю транзакций
@@ -4534,7 +4534,7 @@ window.addEventListener("DOMContentLoaded", () => {
     try {
         // Инициализируем DOM элементы
         initDOMElements();
-        
+
         // Убеждаемся, что элементы найдены
         if (!authSection || !appSection) {
             console.error("Critical: authSection or appSection not found!");
@@ -4545,7 +4545,7 @@ window.addEventListener("DOMContentLoaded", () => {
             if (appEl) appEl.classList.add("hidden");
             return;
         }
-        
+
         // Сразу проверяем токен и скрываем auth-section если он есть
         if (authToken) {
             authSection.classList.add("hidden");
@@ -4574,21 +4574,21 @@ window.addEventListener("DOMContentLoaded", () => {
             const emailInput = document.getElementById("login-email");
             const passwordInput = document.getElementById("login-password");
             const submitBtn = loginForm.querySelector('button[type="submit"]');
-            
+
             if (!emailInput || !passwordInput) {
                 console.error("Login form inputs not found");
                 return;
             }
-            
+
             const email = emailInput.value;
             const password = passwordInput.value;
-            
+
             // Отключаем кнопку во время загрузки
             if (submitBtn) {
                 submitBtn.disabled = true;
                 const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Вход...';
-                
+
                 try {
                     await login(email, password);
                 } finally {
@@ -4611,7 +4611,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const username = document.getElementById("register-username").value;
             const password = document.getElementById("register-password").value;
             const passwordConfirm = document.getElementById("register-password-confirm").value;
-            
+
             if (password !== passwordConfirm) {
                 const errorEl = document.getElementById("register-error");
                 if (errorEl) {
@@ -4620,7 +4620,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
                 return;
             }
-            
+
             register(email, username, password);
         });
     }
@@ -4631,7 +4631,7 @@ window.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             createActivity();
         });
-        
+
         // Обработчик изменения типа единицы измерения
         const unitTypeEl = document.getElementById("activity-unit-type");
         if (unitTypeEl) {
@@ -4655,17 +4655,17 @@ window.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             await addManualTime();
         });
-        
+
         document.getElementById("manual-minutes").addEventListener("input", () => {
             const activityId = document.getElementById("manual-activity-select").value;
             updateManualPreview(activityId);
         });
-        
+
         document.getElementById("manual-quantity").addEventListener("input", () => {
             const activityId = document.getElementById("manual-activity-select").value;
             updateManualPreview(activityId);
         });
-        
+
         document.getElementById("manual-activity-select").addEventListener("change", (e) => {
             updateManualModalUI(e.target.value);
             updateManualPreview(e.target.value);
@@ -4679,7 +4679,7 @@ window.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             await updateActivity();
         });
-        
+
         // Обработчик изменения типа единицы измерения в модальном окне редактирования
         const editUnitTypeEl = document.getElementById("edit-activity-unit-type");
         if (editUnitTypeEl) {
@@ -4714,13 +4714,13 @@ function showForgotPassword() {
         const modal = document.getElementById("forgot-password-modal");
         const step1 = document.getElementById("forgot-step1");
         const step2 = document.getElementById("forgot-step2");
-        
+
         if (!modal || !step1 || !step2) {
             console.error("Forgot password modal elements not found");
             alert("Ошибка: элементы формы восстановления пароля не найдены");
             return;
         }
-        
+
         modal.classList.remove("hidden");
         step1.classList.remove("hidden");
         step2.classList.add("hidden");
@@ -4739,37 +4739,37 @@ function closeForgotPassword() {
 async function requestResetCode() {
     const email = document.getElementById("forgot-email").value.trim();
     const errorEl = document.getElementById("forgot-error1");
-    
+
     if (!email) {
         errorEl.textContent = "Введите email";
         errorEl.classList.remove("hidden");
         return;
     }
-    
+
     try {
         const res = await fetch(`${API_BASE}/auth/forgot-password`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
         });
-        
+
         const data = await res.json();
-        
+
         if (!res.ok) {
             throw new Error(data.detail || "Ошибка запроса");
         }
-        
+
         // Сохраняем email для следующего шага
         resetCodeEmail = email;
-        
+
         // Показываем код (только для разработки!)
         alert(`Код восстановления: ${data.code}\n\n(В продакшене код будет отправлен на email)`);
-        
+
         // Переходим ко второму шагу
         document.getElementById("forgot-step1").classList.add("hidden");
         document.getElementById("forgot-step2").classList.remove("hidden");
         errorEl.classList.add("hidden");
-        
+
     } catch (e) {
         errorEl.textContent = e.message;
         errorEl.classList.remove("hidden");
@@ -4782,34 +4782,34 @@ async function resetPassword() {
     const confirmPassword = document.getElementById("forgot-confirm-password").value;
     const errorEl = document.getElementById("forgot-error2");
     const successEl = document.getElementById("forgot-success");
-    
+
     errorEl.classList.add("hidden");
     successEl.classList.add("hidden");
-    
+
     if (!code || code.length !== 6) {
         errorEl.textContent = "Введите 6-значный код";
         errorEl.classList.remove("hidden");
         return;
     }
-    
+
     if (!newPassword || newPassword.length < 6) {
         errorEl.textContent = "Пароль должен быть минимум 6 символов";
         errorEl.classList.remove("hidden");
         return;
     }
-    
+
     if (newPassword !== confirmPassword) {
         errorEl.textContent = "Пароли не совпадают";
         errorEl.classList.remove("hidden");
         return;
     }
-    
+
     if (!resetCodeEmail) {
         errorEl.textContent = "Ошибка: email не найден";
         errorEl.classList.remove("hidden");
         return;
     }
-    
+
     try {
         const res = await fetch(`${API_BASE}/auth/reset-password`, {
             method: "POST",
@@ -4820,22 +4820,22 @@ async function resetPassword() {
                 new_password: newPassword
             })
         });
-        
+
         const data = await res.json();
-        
+
         if (!res.ok) {
             throw new Error(data.detail || "Ошибка сброса пароля");
         }
-        
+
         successEl.textContent = "✅ Пароль успешно изменён! Теперь войдите.";
         successEl.classList.remove("hidden");
-        
+
         setTimeout(() => {
             closeForgotPassword();
             showLoginForm();
             document.getElementById("login-email").value = resetCodeEmail;
         }, 2000);
-        
+
     } catch (e) {
         errorEl.textContent = e.message;
         errorEl.classList.remove("hidden");
@@ -4850,17 +4850,17 @@ async function loadStreak() {
         });
         if (!res.ok) return;
         const data = await res.json();
-        
+
         const countEl = document.getElementById('streak-count');
         const recordEl = document.getElementById('streak-record');
         const messageEl = document.getElementById('streak-message');
-        
+
         if (countEl) countEl.textContent = data.current_streak;
         if (recordEl) {
             const daysText = t('days');
             recordEl.innerHTML = `${data.longest_streak} <span data-i18n="days">${daysText}</span>`;
         }
-        
+
         if (messageEl) {
             if (data.current_streak === 0) {
                 messageEl.textContent = t('start_streak_message');
@@ -4884,36 +4884,36 @@ async function loadRecommendations() {
     try {
         const listVisible = document.getElementById('recommendations-list-visible');
         const listHidden = document.getElementById('recommendations-list-hidden');
-        
+
         if (!listVisible || !listHidden) {
             console.warn("Recommendations list elements not found");
             return;
         }
-        
+
         if (!authToken) {
             console.error("No auth token available");
             listVisible.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
             return;
         }
-        
+
         const res = await fetch(`${API_BASE}/recommendations/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load recommendations:", res.status, res.statusText, errorText);
             listVisible.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${t('error_loading_recommendations')}</div>`;
             return;
         }
-        
+
         const data = await res.json();
-        
+
         if (!data.recommendations || data.recommendations.length === 0) {
             listVisible.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('no_recommendations')}</div>`;
             return;
         }
-        
+
         // Сортируем рекомендации: сначала те, которые еще не делались сегодня
         // minutes_today === 0 или null/undefined означает "не делалось сегодня"
         // minutes_today > 0 означает "уже делалось сегодня"
@@ -4921,20 +4921,20 @@ async function loadRecommendations() {
             // Получаем значения minutes_today и конвертируем в число (может быть undefined, null, 0, или >0)
             const aMinutes = a.minutes_today !== undefined && a.minutes_today !== null ? Number(a.minutes_today) : null;
             const bMinutes = b.minutes_today !== undefined && b.minutes_today !== null ? Number(b.minutes_today) : null;
-            
+
             // Определяем, делалась ли активность сегодня (minutes_today > 0)
             // Если minutes_today === 0 или null/undefined, значит не делалось сегодня
             const aDidToday = aMinutes !== null && aMinutes > 0;
             const bDidToday = bMinutes !== null && bMinutes > 0;
-            
+
             // Если одна делалась сегодня (minutes_today > 0), а другая нет (0, null, undefined) - та, что не делалась, идет первой
             if (!aDidToday && bDidToday) return -1;
             if (aDidToday && !bDidToday) return 1;
-            
+
             // Если обе не делались или обе делались, сохраняем исходный порядок (по приоритету)
             return 0;
         });
-        
+
         // Отладочный вывод (можно удалить после проверки)
         console.log('Рекомендации после сортировки:', sortedRecommendations.map(r => ({
             name: r.activity_name,
@@ -4942,15 +4942,15 @@ async function loadRecommendations() {
             type: r.type,
             didToday: r.minutes_today !== undefined && r.minutes_today !== null && Number(r.minutes_today) > 0
         })));
-        
+
         // Разделяем рекомендации на видимые (первые 3) и скрытые (остальные)
         const visibleRecommendations = sortedRecommendations.slice(0, 3);
         const hiddenRecommendations = sortedRecommendations.slice(3);
-        
+
         // Очищаем списки
         listVisible.innerHTML = '';
         listHidden.innerHTML = '';
-        
+
         // Функция для рендеринга одной рекомендации
         const renderRecommendation = (rec) => {
             let icon = "fas fa-lightbulb";
@@ -4958,7 +4958,7 @@ async function loadRecommendations() {
             let borderColor = "border-blue-200";
             let textColor = "text-blue-700";
             let iconBgColor = "bg-blue-100";
-            
+
             if (rec.priority === "high") {
                 icon = "fas fa-fire";
                 bgColor = "bg-orange-50";
@@ -4972,7 +4972,7 @@ async function loadRecommendations() {
                 textColor = "text-amber-700";
                 iconBgColor = "bg-amber-100";
             }
-            
+
             // Генерируем локализованное сообщение на основе типа
             let localizedMessage = rec.message; // Fallback на оригинальное сообщение
             if (rec.type === "continue" && rec.activity_name) {
@@ -4990,20 +4990,20 @@ async function loadRecommendations() {
             } else if (rec.type === "info") {
                 localizedMessage = t('rec_info');
             }
-            
+
             // Проверяем, начата ли активность (не начата = есть activity_id, но нет активного таймера)
             const isNotStarted = rec.activity_id && !activeTimers.has(rec.activity_id);
-            const notStartedStyles = isNotStarted 
-                ? "border-2 border-dashed border-emerald-400 bg-gradient-to-r from-emerald-50/50 to-green-50/50 shadow-sm" 
+            const notStartedStyles = isNotStarted
+                ? "border-2 border-dashed border-emerald-400 bg-gradient-to-r from-emerald-50/50 to-green-50/50 shadow-sm"
                 : "";
-            
+
             let actionBtn = '';
             if (rec.activity_id) {
                 actionBtn = `<button onclick="startActivityFromRecommendation(${rec.activity_id})" class="ml-auto w-7 h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-all flex-shrink-0" title="${t('start_tracking')}">
                     <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </button>`;
             }
-            
+
             return `
                 <div class="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-xl ${bgColor} border ${borderColor} ${notStartedStyles} transition-all hover:shadow-md hover:border-opacity-80 group">
                     <div class="flex items-center gap-2 flex-shrink-0">
@@ -5019,12 +5019,12 @@ async function loadRecommendations() {
                 </div>
             `;
         };
-        
+
         // Рендерим видимые рекомендации (первые 3)
         visibleRecommendations.forEach(rec => {
             listVisible.innerHTML += renderRecommendation(rec);
         });
-        
+
         // Рендерим скрытые рекомендации (остальные)
         hiddenRecommendations.forEach(rec => {
             listHidden.innerHTML += renderRecommendation(rec);
@@ -5041,7 +5041,7 @@ async function startActivityFromRecommendation(activityId) {
         alert("Активность не найдена. Пожалуйста, обновите страницу.");
         return;
     }
-    
+
     // Проверяем, не запущен ли уже таймер для этой активности
     if (activeTimers.has(activityId)) {
         alert("Таймер уже запущен для этой активности! Прокрутите к разделу 'Активности' чтобы остановить его.");
@@ -5051,12 +5051,12 @@ async function startActivityFromRecommendation(activityId) {
         }, 100);
         return;
     }
-    
+
     // Находим кнопку старта для этой активности
     // Ищем по data-activity-id на кнопке или по родительскому элементу
     let startBtn = null;
     let activityCard = null;
-    
+
     // Вариант 1: ищем кнопку с data-activity-id
     const allTimerBtns = document.querySelectorAll('.timer-btn');
     for (const btn of allTimerBtns) {
@@ -5066,7 +5066,7 @@ async function startActivityFromRecommendation(activityId) {
             break;
         }
     }
-    
+
     // Вариант 2: ищем по родительскому элементу с data-activity-id
     if (!startBtn) {
         activityCard = document.querySelector(`[data-activity-id="${activityId}"]`);
@@ -5074,14 +5074,14 @@ async function startActivityFromRecommendation(activityId) {
             startBtn = activityCard.querySelector('.timer-btn');
         }
     }
-    
+
     if (startBtn && !startBtn.classList.contains('bg-red-100')) {
         // Если кнопка найдена и таймер не запущен, запускаем его
         startBtn.click();
-        
+
         // Показываем уведомление
         showNotification(`✅ ${t('activity_started').replace('{activity}', activity.name)}`, 'success');
-        
+
         // Прокручиваем к активностям для визуального подтверждения
         setTimeout(() => {
             document.getElementById('activities')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -5100,10 +5100,10 @@ async function startActivityFromRecommendation(activityId) {
         tempBtn.className = 'timer-btn';
         tempBtn.dataset.activityId = activityId;
         await toggleTimer(activityId, tempBtn, activity);
-        
+
         // Показываем уведомление
         showNotification(`✅ ${t('activity_started').replace('{activity}', activity.name)}`, 'success');
-        
+
         // Прокручиваем к активностям
         setTimeout(() => {
             document.getElementById('activities')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -5116,21 +5116,21 @@ function showNotification(message, type = 'info') {
     // Создаём элемент уведомления
     const notification = document.createElement('div');
     notification.className = `fixed top-24 right-4 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-0 ${
-        type === 'success' ? 'bg-green-500 text-white' : 
-        type === 'error' ? 'bg-red-500 text-white' : 
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
         'bg-blue-500 text-white'
     }`;
     notification.style.maxWidth = '400px';
     notification.style.zIndex = '9999'; // Высокий z-index, чтобы показываться поверх всех элементов
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     // Анимация появления
     setTimeout(() => {
         notification.style.opacity = '1';
     }, 10);
-    
+
     // Удаляем через 4 секунды
     setTimeout(() => {
         notification.style.opacity = '0';
@@ -5156,7 +5156,7 @@ async function loadInviteCode() {
             return;
         }
         const data = await res.json();
-        
+
         const baseUrl = window.location.origin + window.location.pathname;
         const inviteLink = `${baseUrl}?invite=${data.invite_code}`;
         const inviteLinkInput = document.getElementById("invite-link");
@@ -5178,7 +5178,7 @@ async function showAdminPanel() {
         const res = await fetch(`${API_BASE}/admin/invite-code`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             // Подопечный пытается открыть админ-панель
             showNotification(`🚫 ${t('access_denied')}`, 'error');
@@ -5188,13 +5188,13 @@ async function showAdminPanel() {
         showNotification(`🚫 ${t('error_checking_access')}`, 'error');
         return;
     }
-    
+
     const adminPanel = document.getElementById("admin-panel");
     adminPanel.classList.remove("hidden");
     updateAdminCategoryFilter();
     loadChildren();
     loadInviteCode();
-    
+
     // Прокручиваем к самому верху страницы, где находится админ-панель
     setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5212,7 +5212,7 @@ function handleAdminPanelClickOutside(event) {
     if (!adminPanel || adminPanel.classList.contains("hidden")) {
         return;
     }
-    
+
     // Проверяем, был ли клик вне панели
     if (!adminPanel.contains(event.target) && !event.target.closest('#admin-btn')) {
         hideAdminPanel();
@@ -5223,13 +5223,13 @@ function copyInviteLink() {
     const input = document.getElementById("invite-link");
     input.select();
     document.execCommand("copy");
-    
+
     const btn = event.target.closest("button");
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
     btn.classList.add("bg-green-500", "hover:bg-green-600");
     btn.classList.remove("bg-blue-500", "hover:bg-blue-600");
-    
+
     setTimeout(() => {
         btn.innerHTML = originalText;
         btn.classList.remove("bg-green-500", "hover:bg-green-600");
@@ -5254,15 +5254,15 @@ async function loadChildren() {
             }
             return;
         }
-        
+
         const children = await res.json();
         const listEl = document.getElementById("children-list");
-        
+
         if (children.length === 0) {
             listEl.innerHTML = `<div class="text-center text-gray-400 py-4">${t('no_children')}</div>`;
             return;
         }
-        
+
         listEl.innerHTML = children.map(child => `
             <div class="p-4 bg-white rounded-xl border border-gray-200 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between">
@@ -5270,7 +5270,7 @@ async function loadChildren() {
                         <div class="font-bold text-gray-800">${child.username}</div>
                         <div class="text-sm text-gray-500">${child.email}</div>
                     </div>
-                    <button onclick="showChildStats(${child.id}, '${child.username}')" 
+                    <button onclick="showChildStats(${child.id}, '${child.username}')"
                             class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all">
                         <i class="fas fa-chart-line mr-2"></i>${t('stats')}
                     </button>
@@ -5289,11 +5289,11 @@ async function showChildStats(childId, childName) {
     modal.setAttribute("data-child-id", childId); // Сохраняем childId для обновления при смене языка
     document.getElementById("child-stats-name").textContent = `${t('stats_for')} ${childName}`;
     document.getElementById("child-stats-content").innerHTML = `<div class="text-center text-gray-400 py-8">${t('loading')}</div>`;
-    
+
     try {
         const categoryFilter = document.getElementById('admin-category-filter');
         const selectedCategory = categoryFilter ? categoryFilter.value : '';
-        
+
         // Загружаем статистику
         const [statsRes, historyRes, activitiesRes, goalsRes, categoryStatsRes] = await Promise.all([
             fetch(`${API_BASE}/admin/child/${childId}/stats`, {
@@ -5312,15 +5312,15 @@ async function showChildStats(childId, childName) {
                 headers: { "Authorization": `Bearer ${authToken}` }
             })
         ]);
-        
+
         if (!statsRes.ok) throw new Error("Ошибка загрузки статистики");
-        
+
         const stats = await statsRes.json();
         const history = historyRes.ok ? await historyRes.json() : [];
         const activities = activitiesRes.ok ? await activitiesRes.json() : [];
         const goals = goalsRes.ok ? await goalsRes.json() : [];
         const categoryStats = categoryStatsRes.ok ? await categoryStatsRes.json() : { categories: [] };
-        
+
         const contentEl = document.getElementById("child-stats-content");
         contentEl.innerHTML = `
             <!-- Основная статистика -->
@@ -5344,7 +5344,7 @@ async function showChildStats(childId, childName) {
                     </div>
                 </div>
             </div>
-            
+
             <!-- Детальная статистика -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-gray-50 rounded-xl p-4">
@@ -5368,7 +5368,7 @@ async function showChildStats(childId, childName) {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-gray-50 rounded-xl p-4">
                     <h4 class="font-bold text-gray-800 mb-3">📅 ${t('today')}</h4>
                     <div class="space-y-2 text-sm">
@@ -5389,7 +5389,7 @@ async function showChildStats(childId, childName) {
                     </div>
                 </div>
             </div>
-            
+
             <!-- История -->
             <div class="mb-4">
                 <h4 class="font-bold text-gray-800 mb-3">📜 ${t('recent_transactions')}</h4>
@@ -5418,7 +5418,7 @@ async function showChildStats(childId, childName) {
                     }).join('') : `<div class="text-center text-gray-400 py-4">${t('history_empty')}</div>`}
                 </div>
             </div>
-            
+
             <!-- Статистика по категориям -->
             <div class="mb-4">
                 <h4 class="font-bold text-gray-800 mb-3">📊 ${t('category_stats_week')}</h4>
@@ -5432,14 +5432,14 @@ async function showChildStats(childId, childName) {
                             "work": t('category_work'),
                             "health": t('category_health')
                         };
-                        
+
                         // Добавляем пользовательские категории
                         if (allCategories.custom) {
                             allCategories.custom.forEach(customCat => {
                                 categoryNames[customCat.id] = customCat.name;
                             });
                         }
-                        
+
                         const catName = categoryNames[cat.category] || cat.category;
                         const percentage = categoryStats.total_xp > 0 ? (cat.total_xp / categoryStats.total_xp * 100) : 0;
                         return `
@@ -5457,7 +5457,7 @@ async function showChildStats(childId, childName) {
                     }).join('') : `<div class="text-center text-gray-400 py-4">${t('no_category_data')}</div>`}
                 </div>
             </div>
-            
+
             <!-- Активности -->
             <div class="mb-4">
                 <h4 class="font-bold text-gray-800 mb-3">🎯 ${t('activities')}</h4>
@@ -5471,14 +5471,14 @@ async function showChildStats(childId, childName) {
                             "work": t('category_work'),
                             "health": t('category_health')
                         };
-                        
+
                         // Добавляем пользовательские категории
                         if (allCategories.custom) {
                             allCategories.custom.forEach(customCat => {
                                 categoryNames[customCat.id] = customCat.name;
                             });
                         }
-                        
+
                         const category = act.category || "general";
                         const catName = categoryNames[category] || category;
                         return `
@@ -5491,7 +5491,7 @@ async function showChildStats(childId, childName) {
                     }).join('') : `<div class="text-gray-400 text-sm">${t('no_activities_text')}</div>`}
                 </div>
             </div>
-            
+
             <!-- Цели -->
             <div>
                 <h4 class="font-bold text-gray-800 mb-3">🎯 ${t('my_goals')}</h4>
@@ -5510,7 +5510,7 @@ async function showChildStats(childId, childName) {
                                     <span>${Math.round(progressPercent)}%</span>
                                 </div>
                                 <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ''}" 
+                                    <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ''}"
                                          style="width: ${progressPercent}%"></div>
                                 </div>
                             </div>
@@ -5532,23 +5532,23 @@ function closeChildStats() {
 function updateAdminCategoryFilter() {
     const filterSelect = document.getElementById('admin-category-filter');
     if (!filterSelect) return;
-    
+
     // Сохраняем текущее значение
     const currentValue = filterSelect.value;
-    
+
     // Очищаем селект
     filterSelect.innerHTML = '';
-    
+
     // Добавляем опцию "Все категории"
     const newAllOption = document.createElement('option');
     newAllOption.value = '';
     newAllOption.textContent = t('all_categories');
     filterSelect.appendChild(newAllOption);
-    
+
     // Используем те же данные, что и в updateCategoryDropdown - берем категории из allCategories
     // Стандартные категории (с fallback если еще не загружены)
-    const standardCats = allCategories.standard && allCategories.standard.length > 0 
-        ? allCategories.standard 
+    const standardCats = allCategories.standard && allCategories.standard.length > 0
+        ? allCategories.standard
         : [
             {id: "general", name: "Общее"},
             {id: "study", name: "Учеба"},
@@ -5557,7 +5557,7 @@ function updateAdminCategoryFilter() {
             {id: "work", name: "Работа"},
             {id: "health", name: "Здоровье"}
         ];
-    
+
     // Определяем, какие стандартные категории были заменены пользовательскими
     const replacedStandardCategories = new Set();
     if (allCategories.custom && allCategories.custom.length > 0) {
@@ -5567,7 +5567,7 @@ function updateAdminCategoryFilter() {
             }
         });
     }
-    
+
     // Добавляем стандартные категории, пропуская те, что были заменены пользовательскими
     standardCats.forEach(cat => {
         if (!replacedStandardCategories.has(cat.id)) {
@@ -5586,7 +5586,7 @@ function updateAdminCategoryFilter() {
             }
         }
     });
-    
+
     // Добавляем остальные пользовательские категории (которые не заменяют стандартные)
     const nonReplacementCustom = allCategories.custom?.filter(cat => !cat.replaced_standard_category) || [];
     if (nonReplacementCustom.length > 0) {
@@ -5597,7 +5597,7 @@ function updateAdminCategoryFilter() {
             filterSelect.appendChild(option);
         });
     }
-    
+
     // Восстанавливаем значение
     filterSelect.value = currentValue;
 }
@@ -5625,11 +5625,11 @@ async function loadCategories() {
             updateCategoryDropdown('edit-activity-category');
             return;
         }
-        
+
         const res = await fetch(`${API_BASE}/categories/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             console.error("Failed to load categories:", res.status);
             // Обновляем dropdown с базовыми категориями даже при ошибке
@@ -5637,25 +5637,25 @@ async function loadCategories() {
             updateCategoryDropdown('edit-activity-category');
             return;
         }
-        
+
         const data = await res.json();
         allCategories = data;
-        
+
         // Обновляем dropdown для создания активности
         updateCategoryDropdown('activity-category');
         // Обновляем dropdown для редактирования активности
         updateCategoryDropdown('edit-activity-category');
         // Обновляем селект категорий в админ панели
         updateAdminCategoryFilter();
-        
+
         // Кнопки действий больше не нужны, так как они теперь в dropdown
-        
+
         // Обновляем список категорий в модальном окне, если оно открыто
         const categoryModal = document.getElementById('category-modal');
         if (categoryModal && !categoryModal.classList.contains('hidden')) {
             renderCustomCategoriesList();
         }
-        
+
         // Перерисовываем активности, если они уже были загружены, чтобы обновить названия категорий
         if (allActivities && allActivities.length > 0) {
             const activitiesListEl = document.getElementById('activities-list');
@@ -5677,7 +5677,7 @@ function updateCategoryDropdown(selectId) {
     const button = document.getElementById(`${selectId}-button`);
     const textSpan = document.getElementById(`${selectId}-text`);
     const dropdown = document.getElementById(`${selectId}-dropdown`);
-    
+
     if (!hiddenInput || !button || !textSpan || !dropdown) {
         console.warn(`Custom dropdown elements for ${selectId} not found:`, {
             hiddenInput: !!hiddenInput,
@@ -5687,7 +5687,7 @@ function updateCategoryDropdown(selectId) {
         });
         return;
     }
-    
+
     // Устанавливаем "Общее" по умолчанию, если значение не установлено или пустое
     if (!hiddenInput.value || hiddenInput.value === '') {
         hiddenInput.value = 'general';
@@ -5696,15 +5696,15 @@ function updateCategoryDropdown(selectId) {
             textSpan.textContent = generalCat.name;
         }
     }
-    
+
     const currentValue = hiddenInput.value || 'general';
-    
+
     // Очищаем dropdown
     dropdown.innerHTML = '';
-    
+
     // Добавляем стандартные категории (с fallback если еще не загружены)
-    const standardCats = allCategories.standard && allCategories.standard.length > 0 
-        ? allCategories.standard 
+    const standardCats = allCategories.standard && allCategories.standard.length > 0
+        ? allCategories.standard
         : [
             {id: "general", name: "Общее"},
             {id: "study", name: "Учеба"},
@@ -5713,7 +5713,7 @@ function updateCategoryDropdown(selectId) {
             {id: "work", name: "Работа"},
             {id: "health", name: "Здоровье"}
         ];
-    
+
     // Определяем, какие стандартные категории были заменены пользовательскими
     const replacedStandardCategories = new Set();
     if (allCategories.custom && allCategories.custom.length > 0) {
@@ -5723,7 +5723,7 @@ function updateCategoryDropdown(selectId) {
             }
         });
     }
-    
+
     // Добавляем стандартные категории, пропуская те, что были заменены пользовательскими
     standardCats.forEach(cat => {
         // Пропускаем стандартные категории, которые были заменены пользовательскими
@@ -5740,7 +5740,7 @@ function updateCategoryDropdown(selectId) {
             }
         }
     });
-    
+
     // Добавляем остальные пользовательские категории (которые не заменяют стандартные)
     const nonReplacementCustom = allCategories.custom?.filter(cat => !cat.replaced_standard_category) || [];
     if (nonReplacementCustom.length > 0) {
@@ -5748,13 +5748,13 @@ function updateCategoryDropdown(selectId) {
         separator.className = 'px-4 py-2 text-gray-400 text-xs border-t border-gray-200';
         separator.textContent = '──────────';
         dropdown.appendChild(separator);
-        
+
         nonReplacementCustom.forEach(cat => {
             const option = createDropdownOption(cat.id, cat.name, true, cat, selectId);
             dropdown.appendChild(option);
         });
     }
-    
+
     // Всегда добавляем кнопку "Добавить категорию" в конец списка
     const addOption = document.createElement('div');
     addOption.className = 'px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-t border-gray-200';
@@ -5766,13 +5766,13 @@ function updateCategoryDropdown(selectId) {
         openCategoryModal();
     };
     dropdown.appendChild(addOption);
-    
+
     console.log(`Dropdown ${selectId} updated:`, {
         standardCats: standardCats.length,
         customCats: allCategories.custom?.length || 0,
         addOptionAdded: true
     });
-    
+
     // Обновляем отображаемый текст
     const selectedCat = [...standardCats, ...(allCategories.custom || [])].find(c => c.id === currentValue);
     if (selectedCat) {
@@ -5784,7 +5784,7 @@ function updateCategoryDropdown(selectId) {
         textSpan.textContent = generalCat ? generalCat.name : t('category_general');
         hiddenInput.value = 'general';
     }
-    
+
     // Обработчик открытия/закрытия dropdown
     if (!button._dropdownHandler) {
         button._dropdownHandler = (e) => {
@@ -5798,7 +5798,7 @@ function updateCategoryDropdown(selectId) {
         };
         button.addEventListener('click', button._dropdownHandler);
     }
-    
+
     // Закрываем dropdown при клике вне его
     if (!document._categoryDropdownHandler) {
         document._categoryDropdownHandler = (e) => {
@@ -5816,14 +5816,14 @@ function createDropdownOption(value, name, isCustom, categoryData, selectId) {
     option.className = 'px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between group min-w-0';
     option.dataset.value = value;
     option.dataset.isCustom = isCustom ? 'true' : 'false';
-    
+
     const leftPart = document.createElement('div');
     leftPart.className = 'flex-1 min-w-0 pr-2 text-center';
     leftPart.textContent = name;
     leftPart.style.wordBreak = 'break-word';
-    
+
     option.appendChild(leftPart);
-    
+
     // Категория "Общее" - захардкоженная, без кнопок редактирования и удаления
     if (value === 'general') {
         // Для категории "Общее" центрируем полностью
@@ -5836,12 +5836,12 @@ function createDropdownOption(value, name, isCustom, categoryData, selectId) {
         };
         return option;
     }
-    
+
     // Добавляем кнопки редактирования для всех остальных категорий
     const actions = document.createElement('div');
     // Для стандартных категорий уменьшаем gap между кнопками
     actions.className = isCustom ? 'flex items-center gap-1' : 'flex items-center gap-0.5';
-    
+
     // Кнопка редактирования - для всех категорий кроме "Общее"
     const editBtn = document.createElement('button');
     editBtn.type = 'button';
@@ -5861,9 +5861,9 @@ function createDropdownOption(value, name, isCustom, categoryData, selectId) {
             openCategoryModal(null, name, value);
         }
     };
-    
+
     actions.appendChild(editBtn);
-    
+
     // Кнопка удаления
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button';
@@ -5889,27 +5889,27 @@ function createDropdownOption(value, name, isCustom, categoryData, selectId) {
     }
     deleteBtn.innerHTML = '<i class="fas fa-trash text-xs"></i>';
     actions.appendChild(deleteBtn);
-    
+
     option.appendChild(actions);
-    
+
     // При клике на опцию выбираем её
     option.onclick = (e) => {
         if (e.target.closest('button')) return; // Игнорируем клики по кнопкам
         selectCategoryOption(selectId, value, name);
     };
-    
+
     return option;
 }
 
 function selectCategoryOption(selectId, value, name) {
     const hiddenInput = document.getElementById(selectId);
     const textSpan = document.getElementById(`${selectId}-text`);
-    
+
     if (hiddenInput && textSpan) {
         hiddenInput.value = value;
         textSpan.textContent = name;
         closeDropdown(selectId);
-        
+
         // Триггерим событие change для совместимости
         const event = new Event('change', { bubbles: true });
         hiddenInput.dispatchEvent(event);
@@ -5946,7 +5946,7 @@ function openCategoryModal(categoryId = null, categoryName = null, standardCateg
     const title = document.getElementById('category-modal-title');
     const nameInput = document.getElementById('category-name');
     const idInput = document.getElementById('category-id');
-    
+
     if (categoryId && categoryName) {
         // Редактирование пользовательской категории
         title.textContent = 'Редактировать категорию';
@@ -5970,10 +5970,10 @@ function openCategoryModal(categoryId = null, categoryName = null, standardCateg
         delete idInput.dataset.originalName;
         delete idInput.dataset.originalValue;
     }
-    
+
     // Загружаем список категорий
     renderCustomCategoriesList();
-    
+
     modal.classList.remove('hidden');
 }
 
@@ -5986,12 +5986,12 @@ async function saveCategory() {
     const nameInput = document.getElementById('category-name');
     const idInput = document.getElementById('category-id');
     const name = nameInput.value.trim();
-    
+
     if (!name) {
         alert('Введите название категории');
         return;
     }
-    
+
     try {
         let res;
         if (idInput.value) {
@@ -6009,12 +6009,12 @@ async function saveCategory() {
             // Создание новой категории или редактирование стандартной
             const originalName = idInput.dataset.originalName;
             const originalValue = idInput.dataset.originalValue; // ID стандартной категории (study, sport и т.д.)
-            
+
             if (originalName && originalValue) {
                 // Редактируем стандартную категорию
                 // Ищем существующую пользовательскую категорию с таким названием
                 const existingCategory = allCategories.custom?.find(cat => cat.name === originalName);
-                
+
                 if (existingCategory) {
                     // Если есть пользовательская категория с таким названием, редактируем её
                     const dbId = existingCategory.id.replace('custom_', '');
@@ -6034,7 +6034,7 @@ async function saveCategory() {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${authToken}`
                         },
-                        body: JSON.stringify({ 
+                        body: JSON.stringify({
                             name: name,
                             replace_standard_category: originalValue // ID стандартной категории для замены
                         })
@@ -6052,7 +6052,7 @@ async function saveCategory() {
                 });
             }
         }
-        
+
         if (!res.ok) {
             let errorMessage = 'Ошибка сохранения категории';
             try {
@@ -6065,7 +6065,7 @@ async function saveCategory() {
                     errorMessage = 'Категория с таким названием уже существует';
                 }
             }
-            
+
             // Показываем понятное сообщение пользователю
             if (errorMessage.includes('уже существует') || errorMessage.includes('already exists') || errorMessage.includes('duplicate')) {
                 showNotification('❌ Категория с таким названием уже существует!', 'error');
@@ -6076,28 +6076,28 @@ async function saveCategory() {
             }
             return;
         }
-        
+
         const newData = await res.json();
         await loadCategories();
         renderCustomCategoriesList(); // Обновляем список в модальном окне
-        
+
         // Если редактировали стандартную категорию, обновляем все активности
         const originalValue = idInput.dataset.originalValue;
         if (originalValue && newData.id) {
             // Обновляем все активности, которые используют старую стандартную категорию
             await loadActivities(); // Перезагружаем активности, чтобы они обновились с новой категорией
         }
-        
+
         // Обновляем dropdown категорий
         updateCategoryDropdown('activity-category');
         updateCategoryDropdown('edit-activity-category');
-        
+
         // Обновляем выбранную категорию в активных dropdown
         const activityCategory = document.getElementById('activity-category');
         const activityCategoryText = document.getElementById('activity-category-text');
         const editCategory = document.getElementById('edit-activity-category');
         const editCategoryText = document.getElementById('edit-activity-category-text');
-        
+
         // Если редактировали стандартную категорию, обновляем выбранную категорию на новую пользовательскую
         const originalName = idInput.dataset.originalName;
         if (originalValue && newData.id) {
@@ -6115,7 +6115,7 @@ async function saveCategory() {
                 }
             }
         }
-        
+
         // Если редактировали пользовательскую категорию, обновляем её значение
         if (idInput.value && newData.id) {
             if (activityCategory && activityCategoryText) {
@@ -6131,7 +6131,7 @@ async function saveCategory() {
                 }
             }
         }
-        
+
         // Автоматически выбираем сохраненную категорию в dropdown активности
         if (newData.id && activityCategory && activityCategoryText) {
             // Небольшая задержка, чтобы dropdown успел обновиться
@@ -6139,10 +6139,10 @@ async function saveCategory() {
                 selectCategoryOption('activity-category', newData.id, newData.name);
             }, 100);
         }
-        
+
         // Закрываем модальное окно после сохранения
         closeCategoryModal();
-        
+
         showNotification('✅ Категория сохранена!', 'success');
     } catch (e) {
         console.error('Error saving category:', e);
@@ -6154,27 +6154,27 @@ async function deleteCategory(categoryId) {
     if (!confirm('Удалить эту категорию? Активности с этой категорией будут переведены в "Общее".')) {
         return;
     }
-    
+
     try {
         const dbId = categoryId.replace('custom_', '');
         const res = await fetch(`${API_BASE}/categories/${dbId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             const error = await res.json();
             alert(error.detail || 'Ошибка удаления категории');
             return;
         }
-        
+
         await loadCategories();
         renderCustomCategoriesList(); // Обновляем список в модальном окне
-        
+
         // Обновляем кнопки действий
         updateCategoryActions('activity-category');
         updateCategoryActions('edit-activity-category');
-        
+
         showNotification('✅ Категория удалена!', 'success');
     } catch (e) {
         console.error('Error deleting category:', e);
@@ -6188,30 +6188,30 @@ function renderCustomCategoriesList() {
         console.warn('custom-categories-list container not found');
         return;
     }
-    
+
     if (!allCategories.custom || allCategories.custom.length === 0) {
         listContainer.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">У вас пока нет пользовательских категорий</div>';
         return;
     }
-    
+
     listContainer.innerHTML = allCategories.custom.map(cat => {
         const categoryName = (cat.name || 'Без названия').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         const categoryId = cat.id || `custom_${cat.db_id}`;
         const dbId = cat.db_id || categoryId.replace('custom_', '');
-        
+
         return `
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group">
                 <span class="font-medium text-gray-800 flex-1">${categoryName}</span>
                 <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                        onclick="event.stopPropagation(); openCategoryModal('${categoryId}', '${categoryName.replace(/&#39;/g, "'")}')" 
-                        class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" 
+                    <button
+                        onclick="event.stopPropagation(); openCategoryModal('${categoryId}', '${categoryName.replace(/&#39;/g, "'")}')"
+                        class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                         title="Редактировать категорию">
                         <i class="fas fa-pencil-alt text-sm"></i>
                     </button>
-                    <button 
-                        onclick="event.stopPropagation(); deleteCategory('${categoryId}')" 
-                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
+                    <button
+                        onclick="event.stopPropagation(); deleteCategory('${categoryId}')"
+                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                         title="Удалить категорию">
                         <i class="fas fa-trash text-sm"></i>
                     </button>
@@ -6253,41 +6253,41 @@ async function loadGoals() {
             console.warn("Goals list element not found");
             return;
         }
-        
+
         if (!authToken) {
             console.error("No auth token available");
             listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
             return;
         }
-        
+
         const res = await fetch(`${API_BASE}/goals/`, {
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) {
             const errorText = await res.text();
             console.error("Failed to load goals:", res.status, res.statusText, errorText);
             listEl.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${t('error_loading_goals')}</div>`;
             return;
         }
-        
+
         let data = await res.json();
-        
+
         if (data.length === 0) {
             listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('no_goals')}</div>`;
             return;
         }
-        
+
         // Маппинг локалей для форматирования дат
         const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
-        
+
         // Сортируем цели по дате достижения: ближайшие сверху, дальние снизу
         // Сначала невыполненные с датой (ближайшие сверху), затем невыполненные без даты, затем выполненные
         data.sort((a, b) => {
             // Выполненные цели в конец
             if (a.is_completed && !b.is_completed) return 1;
             if (!a.is_completed && b.is_completed) return -1;
-            
+
             // Если обе выполнены или обе не выполнены, сортируем по дате
             if (a.target_date && b.target_date) {
                 const dateA = new Date(a.target_date);
@@ -6295,20 +6295,20 @@ async function loadGoals() {
                 // Ближайшие даты сверху (меньшая дата = раньше = выше в списке)
                 return dateA - dateB;
             }
-            
+
             // Если у одной есть дата, а у другой нет - с датой выше (приоритет)
             if (a.target_date && !b.target_date) return -1;
             if (!a.target_date && b.target_date) return 1;
-            
+
             // Если обе без даты - по названию
             return (a.name || a.title || '').localeCompare(b.name || b.title || '');
         });
-        
+
         // Проверяем, есть ли новые достигнутые цели для поздравления
         // Используем localStorage для отслеживания уже показанных уведомлений
         const shownNotificationsKey = 'shown_goal_notifications';
         let shownNotifications = JSON.parse(localStorage.getItem(shownNotificationsKey) || '{}');
-        
+
         // Очищаем старые записи (старше 7 дней)
         const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
         Object.keys(shownNotifications).forEach(key => {
@@ -6316,22 +6316,22 @@ async function loadGoals() {
                 delete shownNotifications[key];
             }
         });
-        
+
         const newlyCompletedGoals = data.filter(goal => {
             if (goal.is_completed === 1 && goal.completed_at) {
                 // Создаем уникальный ключ для этой цели с датой достижения
                 const goalKey = `goal_${goal.id}`;
                 const completedTimestamp = new Date(goal.completed_at).getTime();
-                
+
                 // Проверяем, не показывали ли мы уже уведомление для этой цели
                 if (shownNotifications[goalKey] && shownNotifications[goalKey] >= completedTimestamp) {
                     return false; // Уже показывали для этой версии достижения
                 }
-                
+
                 // Проверяем, была ли цель достигнута недавно (в последние 24 часа)
                 const now = Date.now();
                 const timeDiff = now - completedTimestamp;
-                
+
                 // Показываем уведомление, если цель достигнута в последние 24 часа
                 if (timeDiff < 86400000) { // 24 часа = 86400000 миллисекунд
                     // Сохраняем timestamp достижения для этой цели
@@ -6342,26 +6342,26 @@ async function loadGoals() {
             }
             return false;
         });
-        
+
         // Показываем поздравление для новых достигнутых целей
         newlyCompletedGoals.forEach(goal => {
             const goalTitle = goal.title || (goal.activity_name ? `"${goal.activity_name}"` : 'цели');
-            const bonusText = goal.completion_bonus_xp > 0 
-                ? ` Бонус: +${Math.round(goal.completion_bonus_xp)} XP!` 
+            const bonusText = goal.completion_bonus_xp > 0
+                ? ` Бонус: +${Math.round(goal.completion_bonus_xp)} XP!`
                 : '';
             const message = `🎉 Поздравляем! Цель "${goalTitle}" достигнута!${bonusText} Прокрутите к разделу "Мои цели" чтобы увидеть прогресс.`;
             showNotification(message, 'success');
         });
-        
+
         listEl.innerHTML = data.map(goal => {
             const progressPercent = goal.target_xp > 0 ? Math.min((goal.current_xp / goal.target_xp) * 100, 100) : 0;
             const isCompleted = goal.is_completed === 1;
             const daysLeft = goal.target_date ? Math.ceil((new Date(goal.target_date) - new Date()) / (1000 * 60 * 60 * 24)) : null;
-            
+
             // Определяем активность для проверки типа
             const activity = goal.activity_id ? allActivities.find(a => a.id == goal.activity_id) : null;
             const showQuantity = activity && activity.unit_type === 'quantity' && goal.target_quantity;
-            
+
             return `
                 <div class="p-2 md:p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg md:rounded-xl border-2 ${isCompleted ? 'border-green-400 bg-green-50' : 'border-purple-300'} hover:shadow-md transition-all">
                     <div class="flex items-start justify-between mb-1.5 md:mb-2">
@@ -6386,7 +6386,7 @@ async function loadGoals() {
                                 <div class="flex items-center gap-1 mb-0.5 md:mb-1">
                                     <i class="fas fa-calendar text-gray-500 text-[10px] md:text-xs"></i>
                                     <span class="text-[9px] md:text-[10px] text-gray-600">
-                                        ${new Date(goal.target_date).toLocaleDateString(localeMap[currentLanguage] || 'ru-RU')} 
+                                        ${new Date(goal.target_date).toLocaleDateString(localeMap[currentLanguage] || 'ru-RU')}
                                         ${daysLeft !== null ? (daysLeft > 0 ? `(${daysLeft} ${t('days_short')})` : daysLeft === 0 ? `(${t('today_exclamation')})` : `(${t('overdue')})`) : ''}
                                     </span>
                                 </div>
@@ -6409,7 +6409,7 @@ async function loadGoals() {
                             <span class="font-bold text-purple-600">${Math.round(progressPercent)}%</span>
                         </div>
                         <div class="h-1.5 md:h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ''}" 
+                            <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ''}"
                                  style="width: ${progressPercent}%"></div>
                         </div>
                     </div>
@@ -6424,7 +6424,7 @@ async function loadGoals() {
 function showCreateGoalModal() {
     // Сначала обновляем lang атрибут для календаря ДО открытия модального окна
     updateDateInputLang();
-    
+
     document.getElementById("goal-modal-title").textContent = t('new_goal');
     document.getElementById("goal-submit-btn").innerHTML = `<i class="fas fa-check mr-2"></i>${t('create_goal_btn')}`;
     document.getElementById("edit-goal-id").value = "";
@@ -6450,7 +6450,7 @@ function showCreateGoalModal() {
     loadActivitiesForGoal();
     // Применяем переводы для всех элементов в модальном окне
     applyTranslations();
-    
+
     // Добавляем обработчик изменения активности
     const activitySelect = document.getElementById("goal-activity");
     if (activitySelect) {
@@ -6459,7 +6459,7 @@ function showCreateGoalModal() {
         activitySelect.parentNode.replaceChild(newSelect, activitySelect);
         newSelect.addEventListener('change', updateGoalFormForActivity);
     }
-    
+
     // Добавляем обработчик клика на календарь для обновления языка
     const dateInput = document.getElementById('goal-target-date');
     if (dateInput) {
@@ -6470,7 +6470,7 @@ function showCreateGoalModal() {
         dateInput.addEventListener('focus', updateDateInputLang);
         dateInput.addEventListener('click', updateDateInputLang);
     }
-    
+
     // Повторно обновляем lang после небольшой задержки для гарантии
     setTimeout(() => {
         updateDateInputLang();
@@ -6488,27 +6488,27 @@ function updateDateInputLang() {
     const dateInput = document.getElementById('goal-target-date');
     const goalModal = document.getElementById('create-goal-modal');
     const goalForm = document.getElementById('create-goal-form');
-    
+
     // Используем полные коды локалей для правильной локализации date picker
-    const langMap = { 
-        'ru': 'ru-RU', 
-        'uk': 'uk-UA', 
-        'de': 'de-DE', 
-        'en': 'en-US' 
+    const langMap = {
+        'ru': 'ru-RU',
+        'uk': 'uk-UA',
+        'de': 'de-DE',
+        'en': 'en-US'
     };
     const locale = langMap[currentLanguage] || 'ru-RU';
     const shortLang = currentLanguage || 'ru';
-    
+
     // Обновляем lang на HTML элементе для глобальной локализации
     if (document.documentElement) {
         document.documentElement.setAttribute('lang', shortLang);
     }
-    
+
     if (dateInput) {
         // Устанавливаем lang атрибут на input и всех родительских элементах
         dateInput.setAttribute('lang', locale);
         dateInput.setAttribute('xml:lang', locale);
-        
+
         // Также устанавливаем атрибут для родительских элементов
         if (goalModal) {
             goalModal.setAttribute('lang', locale);
@@ -6519,7 +6519,7 @@ function updateDateInputLang() {
             goalForm.setAttribute('xml:lang', locale);
         }
     }
-    
+
     // Обновляем текст описания с форматом даты
     const deadlineDesc = document.getElementById('deadline-description-text');
     if (deadlineDesc) {
@@ -6539,17 +6539,17 @@ async function editGoal(goalId) {
         }
         const goals = await res.json();
         const goal = goals.find(g => g.id === goalId);
-        
+
         if (!goal) {
             alert(t('goal_not_found'));
             return;
         }
-        
+
         if (goal.is_completed === 1) {
             alert(t('cannot_edit_completed'));
             return;
         }
-        
+
         // Заполняем форму данными цели
         document.getElementById("edit-goal-id").value = goal.id;
         document.getElementById("goal-title").value = goal.title;
@@ -6564,13 +6564,13 @@ async function editGoal(goalId) {
         if (completionBonusEl) {
             completionBonusEl.value = goal.completion_bonus_xp || 0;
         }
-        
+
         // Загружаем активности и выбираем нужную
         await loadActivitiesForGoal();
         if (goal.activity_id) {
             document.getElementById("goal-activity").value = goal.activity_id;
             updateGoalFormForActivity(); // Обновляем форму в зависимости от типа активности
-            
+
             // Для активностей в штуках определяем режим цели
             const activity = allActivities.find(a => a.id == goal.activity_id);
             if (activity && activity.unit_type === 'quantity') {
@@ -6591,20 +6591,20 @@ async function editGoal(goalId) {
                 }
             }
         }
-        
+
         // Обновляем lang атрибут для календаря
         updateDateInputLang();
-        
+
         // Обновляем lang атрибут для календаря ДО открытия модального окна
         updateDateInputLang();
-        
+
         // Меняем заголовок и кнопку
         document.getElementById("goal-modal-title").textContent = t('edit_goal');
         document.getElementById("goal-submit-btn").innerHTML = `<i class="fas fa-save mr-2"></i>${t('save_changes')}`;
-        
+
         // Применяем переводы для всех элементов в модальном окне
         applyTranslations();
-        
+
         // Добавляем обработчик клика на календарь для обновления языка
         const dateInput = document.getElementById('goal-target-date');
         if (dateInput) {
@@ -6615,12 +6615,12 @@ async function editGoal(goalId) {
             dateInput.addEventListener('focus', updateDateInputLang);
             dateInput.addEventListener('click', updateDateInputLang);
         }
-        
+
         // Повторно обновляем lang после небольшой задержки для гарантии
         setTimeout(() => {
             updateDateInputLang();
         }, 100);
-        
+
         // Открываем модальное окно
         document.getElementById("create-goal-modal").classList.remove("hidden");
     } catch (e) {
@@ -6639,13 +6639,13 @@ async function loadActivitiesForGoal() {
             return;
         }
         const data = await res.json();
-        
+
         const select = document.getElementById("goal-activity");
         if (!select) {
             console.error("goal-activity select not found");
             return;
         }
-        
+
         const loadingOption = select.querySelector('option[value=""]');
         if (loadingOption) {
             loadingOption.textContent = t('loading_activities');
@@ -6657,7 +6657,7 @@ async function loadActivitiesForGoal() {
             option.setAttribute('data-i18n', 'loading_activities');
             select.appendChild(option);
         }
-        
+
         if (data.length === 0) {
             const option = document.createElement("option");
             option.value = "";
@@ -6666,7 +6666,7 @@ async function loadActivitiesForGoal() {
             select.appendChild(option);
             return;
         }
-        
+
         data.forEach(activity => {
             const option = document.createElement("option");
             option.value = activity.id;
@@ -6678,7 +6678,7 @@ async function loadActivitiesForGoal() {
             }
             select.appendChild(option);
         });
-        
+
         // Обновляем форму при изменении активности
         select.addEventListener('change', updateGoalFormForActivity);
     } catch (e) {
@@ -6692,11 +6692,11 @@ function updateActivityXPInputs() {
     const unitTypeEl = document.getElementById("activity-unit-type");
     const xpTimeContainer = document.getElementById("activity-xp-time");
     const xpQuantityContainer = document.getElementById("activity-xp-quantity");
-    
+
     if (!unitTypeEl) return;
-    
+
     const unitType = unitTypeEl.value;
-    
+
     if (unitType === "quantity") {
         xpTimeContainer.classList.add("hidden");
         xpQuantityContainer.classList.remove("hidden");
@@ -6712,7 +6712,7 @@ function updateGoalFormForActivity() {
     const quantityContainer = document.getElementById("goal-quantity-container");
     const xpContainer = document.getElementById("goal-xp-container");
     const modeSelector = document.getElementById("goal-mode-selector");
-    
+
     if (!activityId) {
         if (modeSelector) modeSelector.classList.add("hidden");
         if (quantityContainer) quantityContainer.classList.add("hidden");
@@ -6723,15 +6723,15 @@ function updateGoalFormForActivity() {
         }
         return;
     }
-    
+
     const activity = allActivities.find(a => a.id == activityId);
     if (activity && activity.unit_type === 'quantity') {
         // Для активностей в штуках показываем переключатель
         if (modeSelector) modeSelector.classList.remove("hidden");
-        
+
         // Устанавливаем обработчики для переключателя режима
         setupGoalModeSelector();
-        
+
         // По умолчанию выбираем режим "количество"
         const quantityMode = document.querySelector('input[name="goal-mode"][value="quantity"]');
         if (quantityMode) {
@@ -6767,7 +6767,7 @@ function updateGoalModeDisplay(mode) {
     const quantityInput = document.getElementById("goal-target-quantity");
     const xpInput = document.getElementById("goal-target-xp");
     const modeOptions = document.querySelectorAll('.goal-mode-option');
-    
+
     // Обновляем визуальное выделение выбранного режима
     modeOptions.forEach(option => {
         const radio = option.querySelector('input[type="radio"]');
@@ -6779,7 +6779,7 @@ function updateGoalModeDisplay(mode) {
             option.classList.add('border-gray-200');
         }
     });
-    
+
     if (mode === 'quantity') {
         // Режим "по количеству" - показываем поле количества, скрываем XP
         if (quantityContainer) quantityContainer.classList.remove("hidden");
@@ -6805,23 +6805,23 @@ async function createGoal() {
     const targetXpEl = document.getElementById("goal-target-xp");
     const completionBonusEl = document.getElementById("goal-completion-bonus");
     const completionBonus = completionBonusEl ? parseFloat(completionBonusEl.value) || 0 : 0;
-    
+
     // Название цели теперь необязательно
     // if (!title) {
     //     alert(t('fill_title_and_xp'));
     //     return;
     // }
-    
+
     if (!activityId) {
         alert(t('select_activity_for_goal'));
         return;
     }
-    
+
     // Определяем режим цели для активностей в штуках
     const activity = allActivities.find(a => a.id == activityId);
     let targetXp = null;
     let targetQuantity = null;
-    
+
     if (activity && activity.unit_type === 'quantity') {
         // Для активностей в штуках проверяем выбранный режим
         const selectedMode = document.querySelector('input[name="goal-mode"]:checked');
@@ -6855,7 +6855,7 @@ async function createGoal() {
             return;
         }
     }
-    
+
     try {
         // Если есть ID - это редактирование, иначе - создание
         if (goalId) {
@@ -6876,12 +6876,12 @@ async function createGoal() {
                     target_date: targetDate ? new Date(targetDate).toISOString() : null
                 })
             });
-            
+
             if (!res.ok) {
                 const error = await res.json();
                 throw new Error(error.detail || t('error_updating'));
             }
-            
+
             closeCreateGoalModal();
             loadGoals();
             showNotification(`✅ ${t('goal_updated')}`, 'success');
@@ -6903,12 +6903,12 @@ async function createGoal() {
                     target_date: targetDate ? new Date(targetDate).toISOString() : null
                 })
             });
-            
+
             if (!res.ok) {
                 const error = await res.json();
                 throw new Error(error.detail || t('error_creating_goal'));
             }
-            
+
             closeCreateGoalModal();
             loadGoals();
             showNotification(`✅ ${t('goal_created')}`, 'success');
@@ -6920,19 +6920,18 @@ async function createGoal() {
 
 async function deleteGoal(goalId) {
     if (!confirm(t('delete_goal_confirm'))) return;
-    
+
     try {
         const res = await fetch(`${API_BASE}/goals/${goalId}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${authToken}` }
         });
-        
+
         if (!res.ok) throw new Error(t('error_deleting'));
-        
+
         loadGoals();
         showNotification(`✅ ${t('goal_deleted')}`, 'success');
     } catch (e) {
         alert(t('error_deleting_goal'));
     }
 }
-
