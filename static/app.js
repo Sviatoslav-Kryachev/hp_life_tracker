@@ -250,6 +250,11 @@ const translations = {
         "send_link_to_daughter": "Отправьте эту ссылку дочери для регистрации",
         "filter_by_category": "Фильтр по категориям активностей",
         "all_categories": "Все категории",
+        "sort_label": "Сортировка:",
+        "sort_oldest": "Сначала старые",
+        "category_label": "Категория:",
+        "all_categories_with_icon": "⬆️ Все категории",
+        "reset_filters": "Сбросить",
         "children": "Подопечные",
         "stats": "Статистика",
         "access_denied": "Доступ запрещён. Только администраторы могут просматривать админ-панель.",
@@ -536,6 +541,11 @@ const translations = {
         "send_link_to_daughter": "Надішліть це посилання дочці для реєстрації",
         "filter_by_category": "Фільтр за категоріями активностей",
         "all_categories": "Всі категорії",
+        "sort_label": "Сортування:",
+        "sort_oldest": "Спочатку старі",
+        "category_label": "Категорія:",
+        "all_categories_with_icon": "⬆️ Всі категорії",
+        "reset_filters": "Скинути",
         "children": "Підопічні",
         "stats": "Статистика",
         "access_denied": "Доступ заборонено. Тільки адміністратори можуть переглядати адмін-панель.",
@@ -822,6 +832,11 @@ const translations = {
         "send_link_to_daughter": "Senden Sie diesen Link an Ihre Tochter zur Registrierung",
         "filter_by_category": "Filter nach Aktivitätskategorien",
         "all_categories": "Alle Kategorien",
+        "sort_label": "Sortierung:",
+        "sort_oldest": "Zuerst älteste",
+        "category_label": "Kategorie:",
+        "all_categories_with_icon": "⬆️ Alle Kategorien",
+        "reset_filters": "Zurücksetzen",
         "children": "Schützlinge",
         "stats": "Statistik",
         "access_denied": "Zugriff verweigert. Nur Administratoren können das Admin-Panel anzeigen.",
@@ -1109,6 +1124,11 @@ const translations = {
         "send_link_to_daughter": "Send this link to your daughter for registration",
         "filter_by_category": "Filter by activity categories",
         "all_categories": "All categories",
+        "sort_label": "Sort:",
+        "sort_oldest": "Oldest first",
+        "category_label": "Category:",
+        "all_categories_with_icon": "⬆️ All categories",
+        "reset_filters": "Reset",
         "children": "Children",
         "stats": "Statistics",
         "access_denied": "Access denied. Only administrators can view the admin panel.",
@@ -1241,6 +1261,12 @@ function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         el.textContent = t(key);
+    });
+
+    // Применяем переводы к опциям в select (включая опции внутри select)
+    document.querySelectorAll('select option[data-i18n]').forEach(option => {
+        const key = option.getAttribute('data-i18n');
+        option.textContent = t(key);
     });
 
     // Применяем переводы к placeholder'ам
@@ -3018,7 +3044,7 @@ function updateActivitiesCategoryFilter() {
     const currentValue = categoryFilter.value;
 
     // Очищаем опции (кроме "Все категории")
-    categoryFilter.innerHTML = '<option value="all">📂 Все категории</option>';
+    categoryFilter.innerHTML = `<option value="all">📂 ${t('all_categories')}</option>`;
 
     // Получаем уникальные категории из активностей
     const categories = new Set();
@@ -4768,61 +4794,70 @@ async function createReward() {
         rewardNameInput.value = "";
         rewardCostInput.value = "10";
         
-        // Перезагружаем список наград для обновления UI
-        await loadRewards();
+        // Добавляем новую награду в массив allRewards
+        allRewards.push(created);
+        // Сортируем по ID (старые сверху, новые внизу)
+        allRewards.sort((a, b) => (a.id || 0) - (b.id || 0));
         
-        // Если новая награда попала в скрытый список (больше 4 наград), открываем аккордеон
         getRewardsElements();
-        if (allRewards.length > 4 && rewardsAccordionBtn && rewardsListHidden) {
-            // Проверяем, что новая награда действительно в скрытом списке
-            const newRewardElement = document.querySelector(`[data-reward-id="${created.id}"]`);
-            const newRewardInHidden = newRewardElement && rewardsListHidden.contains(newRewardElement);
-            
-            if (newRewardInHidden) {
-                // Открываем аккордеон, если он закрыт
-                const isExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
-                if (!isExpanded && rewardsListHidden.classList.contains('hidden')) {
-                    toggleRewardsAccordion();
-                }
-                
-                // Прокручиваем к новой награде
-                setTimeout(() => {
-                    if (newRewardElement) {
-                        newRewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        // Подсвечиваем новую награду
-                        newRewardElement.style.transition = 'background-color 0.3s';
-                        newRewardElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
-                        setTimeout(() => {
-                            newRewardElement.style.backgroundColor = '';
-                        }, 2000);
-                    }
-                }, 200);
-            } else if (newRewardElement) {
-                // Если награда в видимом списке, просто подсвечиваем её
-                setTimeout(() => {
-                    newRewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    newRewardElement.style.transition = 'background-color 0.3s';
-                    newRewardElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
-                    setTimeout(() => {
-                        newRewardElement.style.backgroundColor = '';
-                    }, 2000);
-                }, 100);
-            }
-        } else if (allRewards.length <= 4) {
-            // Если наград 4 или меньше, новая награда в видимом списке - подсвечиваем её
-            setTimeout(() => {
-                const newRewardElement = document.querySelector(`[data-reward-id="${created.id}"]`);
-                if (newRewardElement) {
-                    newRewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    newRewardElement.style.transition = 'background-color 0.3s';
-                    newRewardElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
-                    setTimeout(() => {
-                        newRewardElement.style.backgroundColor = '';
-                    }, 2000);
-                }
-            }, 100);
+        if (!rewardsListVisible || !rewardsListHidden) {
+            // Если элементы не найдены, перезагружаем весь список
+            await loadRewards();
+            return;
         }
         
+        // Определяем, куда добавить новую награду
+        const totalRewards = allRewards.length;
+        const visibleCount = Math.min(4, totalRewards);
+        const newRewardIndex = allRewards.findIndex(r => r.id === created.id);
+        
+        // Создаем элемент новой награды
+        const newRewardElement = renderRewardCard(created);
+        
+        if (newRewardIndex < visibleCount) {
+            // Новая награда попадает в видимый список (первые 4)
+            // Нужно перераспределить награды между видимым и скрытым списками
+            await loadRewards();
+        } else {
+            // Новая награда попадает в скрытый список (больше 4 наград)
+            // Добавляем её в конец скрытого списка
+            if (rewardsListHidden) {
+                rewardsListHidden.appendChild(newRewardElement);
+            }
+            
+            // Показываем кнопку аккордеона, если она скрыта
+            if (rewardsAccordionBtn) {
+                rewardsAccordionBtn.classList.remove('hidden');
+            }
+            
+            // Открываем аккордеон, если он закрыт
+            const isExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
+            if (!isExpanded && rewardsListHidden && rewardsListHidden.classList.contains('hidden')) {
+                toggleRewardsAccordion();
+            }
+        }
+        
+        // Прокручиваем к новой награде и подсвечиваем её
+        setTimeout(() => {
+            const rewardElement = document.querySelector(`[data-reward-id="${created.id}"]`);
+            if (rewardElement) {
+                rewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                rewardElement.style.transition = 'background-color 0.3s';
+                rewardElement.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                setTimeout(() => {
+                    rewardElement.style.backgroundColor = '';
+                }, 2000);
+            }
+        }, newRewardIndex < visibleCount ? 100 : 200);
+        
+        // Обновляем состояние аккордеона
+        if (rewardsAccordionBtn && totalRewards > 4) {
+            setTimeout(() => {
+                updateRewardsAccordionButton();
+            }, 0);
+        }
+        
+        // Показываем сообщение об успехе
         showRewardMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {
         console.error("Error:", e);
