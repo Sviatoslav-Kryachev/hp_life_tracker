@@ -2461,15 +2461,9 @@ async function loadHistory() {
 
         const allData = await res.json();
 
-        // Фильтруем данные по выбранному периоду
-        console.log('Filtering history:', { period: historyPeriod, totalItems: allData.length });
-        let filteredData = filterHistoryByPeriod(allData, historyPeriod);
-        console.log('Filtered history:', { period: historyPeriod, filteredItems: filteredData.length });
-
-        // Сортируем по дате: самые новые сверху (по убыванию даты)
-        // Используем стабильную сортировку с timestamp
-        filteredData.sort((a, b) => {
-            // Безопасный парсинг дат
+        // Сначала сортируем все данные по дате (новые сверху) перед фильтрацией
+        // Это гарантирует правильный порядок
+        const sortedAllData = [...allData].sort((a, b) => {
             let timestampA = 0;
             let timestampB = 0;
             
@@ -2483,17 +2477,59 @@ async function loadHistory() {
                     timestampB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
                 }
             } catch (e) {
-                console.warn('Error parsing dates:', e, a.date, b.date);
+                // Игнорируем ошибки парсинга
             }
             
             // Сортируем по убыванию timestamp (новые сверху)
-            // Если timestamps равны, используем amount для стабильности
             if (timestampB !== timestampA) {
                 return timestampB - timestampA;
             }
-            // Если даты равны, сортируем по amount (для стабильности)
-            return (b.amount || 0) - (a.amount || 0);
+            // Если даты равны, используем ID для стабильности (более новые ID выше)
+            const idA = a.id || a.log_id || a.purchase_id || 0;
+            const idB = b.id || b.log_id || b.purchase_id || 0;
+            return idB - idA;
         });
+
+        // Фильтруем уже отсортированные данные по выбранному периоду
+        console.log('Filtering history:', { period: historyPeriod, totalItems: sortedAllData.length });
+        let filteredData = filterHistoryByPeriod(sortedAllData, historyPeriod);
+        console.log('Filtered history:', { period: historyPeriod, filteredItems: filteredData.length });
+
+        // Применяем сортировку еще раз после фильтрации для гарантии
+        filteredData.sort((a, b) => {
+            let timestampA = 0;
+            let timestampB = 0;
+            
+            try {
+                if (a.date) {
+                    const dateA = new Date(a.date);
+                    timestampA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+                }
+                if (b.date) {
+                    const dateB = new Date(b.date);
+                    timestampB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+                }
+            } catch (e) {
+                // Игнорируем ошибки парсинга
+            }
+            
+            // Сортируем по убыванию timestamp (новые сверху)
+            if (timestampB !== timestampA) {
+                return timestampB - timestampA;
+            }
+            // Если даты равны, используем ID для стабильности (более новые ID выше)
+            const idA = a.id || a.log_id || a.purchase_id || 0;
+            const idB = b.id || b.log_id || b.purchase_id || 0;
+            return idB - idA;
+        });
+        
+        // Логируем первые несколько элементов для отладки
+        console.log('Final sorted history (first 10):', filteredData.slice(0, 10).map(item => ({
+            description: item.description,
+            date: item.date,
+            timestamp: new Date(item.date).getTime(),
+            formatted: new Date(item.date).toLocaleString('ru-RU', { timeZone: 'Europe/Berlin' })
+        })));
 
         historyListVisible.innerHTML = '';
         historyListHidden.innerHTML = '';
@@ -2504,8 +2540,11 @@ async function loadHistory() {
             return;
         }
 
-        const visibleHistory = filteredData.slice(0, 4);
-        const hiddenHistory = filteredData.slice(4);
+        // Создаем копию отсортированного массива для безопасности
+        const sortedHistory = [...filteredData];
+        
+        const visibleHistory = sortedHistory.slice(0, 4);
+        const hiddenHistory = sortedHistory.slice(4);
 
         const historyContainer = document.getElementById('history-list-container');
         const historyBlock = document.getElementById('history');
@@ -4423,6 +4462,14 @@ async function createReward() {
         return;
     }
 
+    // Валидация на дубликаты названий
+    const duplicate = allRewards.find(r => r.name.toLowerCase() === name.toLowerCase());
+    if (duplicate) {
+        showRewardMessage(`❌ "${name}" уже существует!`, "error");
+        rewardNameInput.focus();
+        return;
+    }
+
     try {
         const res = await fetch(`${API_BASE}/rewards/`, {
             method: "POST",
@@ -4442,29 +4489,10 @@ async function createReward() {
         const created = await res.json();
         rewardNameInput.value = "";
         rewardCostInput.value = "10";
-        allRewards.push(created);
-
-        // Добавляем награду в правильный список (visible или hidden)
-        getRewardsElements();
-        if (rewardsListVisible) {
-            const currentVisibleCount = rewardsListVisible.children.length;
-            const div = renderRewardCard(created);
-            if (div) {
-                if (currentVisibleCount < 4) {
-                    // Добавляем в видимый список
-                    rewardsListVisible.appendChild(div);
-                } else {
-                    // Добавляем в скрытый список и показываем кнопку аккордеона
-                    if (rewardsListHidden) {
-                        rewardsListHidden.appendChild(div);
-                    }
-                    if (rewardsAccordionBtn) {
-                        rewardsAccordionBtn.classList.remove('hidden');
-                    }
-                }
-            }
-        }
-
+        
+        // Перезагружаем список наград для обновления UI
+        await loadRewards();
+        
         showRewardMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {
         console.error("Error:", e);

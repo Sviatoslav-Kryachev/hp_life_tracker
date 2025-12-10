@@ -382,16 +382,19 @@ async def get_full_history(
     limit: int = 50
 ):
     """Полная история доходов и расходов"""
+    # Увеличиваем лимит для каждого источника, чтобы после объединения и сортировки получить нужное количество
+    source_limit = limit * 2
+    
     # Заработки
     earnings = db.query(ActivityLog).filter(
         ActivityLog.user_id == current_user.id,
         ActivityLog.xp_earned > 0
-    ).order_by(ActivityLog.end_time.desc()).limit(limit).all()
+    ).order_by(ActivityLog.end_time.desc()).limit(source_limit).all()
     
     # Расходы
     spendings = db.query(RewardPurchase).filter(
         RewardPurchase.user_id == current_user.id
-    ).order_by(RewardPurchase.purchased_at.desc()).limit(limit).all()
+    ).order_by(RewardPurchase.purchased_at.desc()).limit(source_limit).all()
     
     # Объединяем и сортируем
     history = []
@@ -413,7 +416,9 @@ async def get_full_history(
                 "description": activity_name,
                 "amount": round(log.xp_earned, 1),
                 "date": log.end_time.isoformat(),
-                "duration_minutes": round(log.duration_minutes, 1) if log.duration_minutes else None
+                "duration_minutes": round(log.duration_minutes, 1) if log.duration_minutes else None,
+                "log_id": log.id,  # Добавляем ID для стабильной сортировки
+                "id": log.id  # Также добавляем в id для совместимости
             })
     
     for purchase in spendings:
@@ -465,13 +470,29 @@ async def get_full_history(
             "description": purchase.reward_name,
             "amount": round(amount, 1),
             "date": date_iso,
-            "duration_minutes": None
+            "duration_minutes": None,
+            "purchase_id": purchase.id,  # Добавляем ID для стабильной сортировки
+            "id": purchase.id  # Также добавляем в id для совместимости
         })
     
     # Сортируем по дате (самые новые сверху)
     # Используем безопасную сортировку с обработкой None значений
-    history.sort(key=lambda x: x["date"] if x.get("date") else "", reverse=True)
+    # Сортируем по ISO строке даты, которая уже содержит время
+    def sort_key(x):
+        date_str = x.get("date", "")
+        if not date_str:
+            return ("", 0)  # Возвращаем кортеж для вторичной сортировки
+        
+        # Используем ISO строку напрямую для сортировки (она уже отсортирована лексикографически)
+        # ISO формат позволяет сортировать строки напрямую
+        # В качестве вторичного ключа используем ID (более новые ID идут выше)
+        item_id = x.get("id") or x.get("log_id") or x.get("purchase_id") or 0
+        return (date_str, -item_id)  # Отрицательный ID для обратной сортировки
     
+    # Сортируем по убыванию даты (новые сверху)
+    history.sort(key=sort_key, reverse=True)
+    
+    # Возвращаем только нужное количество самых новых транзакций
     return history[:limit]
 
 
