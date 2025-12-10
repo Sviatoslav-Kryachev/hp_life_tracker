@@ -3572,7 +3572,7 @@ function renderActivityCard(activity) {
     left.innerHTML = `
         <div class="flex items-center gap-2 mb-1">
             <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
-            <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">${categoryName}</span>
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700 flex items-center justify-center whitespace-normal text-center">${categoryName}</span>
         </div>
         <div class="text-sm text-gray-500">${unitType === 'quantity' ? (activity.xp_per_unit || 1) + ' ' + t('xp_per_unit') : (activity.xp_per_hour || 60) + ' ' + t('xp_per_hour')}</div>
     `;
