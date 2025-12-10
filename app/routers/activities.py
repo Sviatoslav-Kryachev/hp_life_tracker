@@ -32,6 +32,11 @@ async def get_activities(
     # Обеспечиваем значения по умолчанию для новых полей
     result = []
     for activity in activities:
+        # Получаем created_at, если поле существует
+        created_at = None
+        if hasattr(activity, 'created_at') and activity.created_at:
+            created_at = activity.created_at.isoformat() if hasattr(activity.created_at, 'isoformat') else str(activity.created_at)
+        
         activity_dict = {
             "id": activity.id,
             "name": activity.name,
@@ -41,7 +46,7 @@ async def get_activities(
             "xp_per_unit": activity.xp_per_unit if hasattr(activity, 'xp_per_unit') else None,
             "display_order": getattr(activity, 'display_order', 0) or 0,
             "color": getattr(activity, 'color', "#3498db"),
-            "created_at": getattr(activity, 'created_at', None)
+            "created_at": created_at
         }
         result.append(activity_dict)
     return result

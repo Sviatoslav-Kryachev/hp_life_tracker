@@ -196,18 +196,35 @@ async def get_active_timers(
     current_user: User = Depends(get_current_user)
 ):
     """Получить активные таймеры пользователя"""
-    active_logs = db.query(ActivityLog).filter(
+    from sqlalchemy.orm import joinedload
+    
+    active_logs = db.query(ActivityLog).options(
+        joinedload(ActivityLog.activity)
+    ).filter(
         ActivityLog.user_id == current_user.id,
         ActivityLog.end_time == None
     ).all()
     
-    return [
-        {
-            "log_id": log.id,
-            "activity_id": log.activity_id,
-            "activity_name": log.activity.name,
-            "start_time": log.start_time.isoformat(),
-            "xp_per_hour": log.activity.xp_per_hour
-        }
-        for log in active_logs
-    ]
+    result = []
+    for log in active_logs:
+        # Проверяем, что активность существует
+        if log.activity:
+            result.append({
+                "log_id": log.id,
+                "activity_id": log.activity_id,
+                "activity_name": log.activity.name,
+                "start_time": log.start_time.isoformat(),
+                "xp_per_hour": log.activity.xp_per_hour
+            })
+        else:
+            # Если активность удалена, пропускаем этот лог
+            # Или можно вернуть информацию без имени активности
+            result.append({
+                "log_id": log.id,
+                "activity_id": log.activity_id,
+                "activity_name": "Неизвестная активность",
+                "start_time": log.start_time.isoformat(),
+                "xp_per_hour": 0
+            })
+    
+    return result

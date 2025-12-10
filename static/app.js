@@ -251,9 +251,12 @@ const translations = {
         "filter_by_category": "Фильтр по категориям активностей",
         "all_categories": "Все категории",
         "sort_label": "Сортировка:",
+        "sort_newest": "⬆️ Сначала новые",
         "sort_oldest": "Сначала старые",
+        "sort_name_asc": "По имени (А-Я)",
+        "sort_name_desc": "По имени (Я-А)",
         "category_label": "Категория:",
-        "all_categories_with_icon": "⬆️ Все категории",
+        "all_categories_with_icon": "📂 Все категории",
         "reset_filters": "Сбросить",
         "children": "Подопечные",
         "stats": "Статистика",
@@ -542,9 +545,12 @@ const translations = {
         "filter_by_category": "Фільтр за категоріями активностей",
         "all_categories": "Всі категорії",
         "sort_label": "Сортування:",
+        "sort_newest": "⬆️ Спочатку нові",
         "sort_oldest": "Спочатку старі",
+        "sort_name_asc": "За ім'ям (А-Я)",
+        "sort_name_desc": "За ім'ям (Я-А)",
         "category_label": "Категорія:",
-        "all_categories_with_icon": "⬆️ Всі категорії",
+        "all_categories_with_icon": "📂 Всі категорії",
         "reset_filters": "Скинути",
         "children": "Підопічні",
         "stats": "Статистика",
@@ -833,9 +839,12 @@ const translations = {
         "filter_by_category": "Filter nach Aktivitätskategorien",
         "all_categories": "Alle Kategorien",
         "sort_label": "Sortierung:",
+        "sort_newest": "⬆️ Zuerst neueste",
         "sort_oldest": "Zuerst älteste",
+        "sort_name_asc": "Nach Name (A-Z)",
+        "sort_name_desc": "Nach Name (Z-A)",
         "category_label": "Kategorie:",
-        "all_categories_with_icon": "⬆️ Alle Kategorien",
+        "all_categories_with_icon": "📂 Alle Kategorien",
         "reset_filters": "Zurücksetzen",
         "children": "Schützlinge",
         "stats": "Statistik",
@@ -1125,9 +1134,12 @@ const translations = {
         "filter_by_category": "Filter by activity categories",
         "all_categories": "All categories",
         "sort_label": "Sort:",
+        "sort_newest": "⬆️ Newest first",
         "sort_oldest": "Oldest first",
+        "sort_name_asc": "By name (A-Z)",
+        "sort_name_desc": "By name (Z-A)",
         "category_label": "Category:",
-        "all_categories_with_icon": "⬆️ All categories",
+        "all_categories_with_icon": "📂 All categories",
         "reset_filters": "Reset",
         "children": "Children",
         "stats": "Statistics",
@@ -1696,6 +1708,11 @@ function showApp() {
     if (authSection) authSection.classList.add("hidden");
     if (appSection) appSection.classList.remove("hidden");
 
+    // Предотвращаем скролл вниз при показе приложения
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     // Сбрасываем кэш элементов, чтобы они переинициализировались
     rewardsListVisible = null;
     rewardsListHidden = null;
@@ -1742,6 +1759,13 @@ async function checkAuth() {
         initDOMElements();
     }
 
+    // Предотвращаем скролл вниз при загрузке
+    if (window.scrollY > 0 || document.documentElement.scrollTop > 0) {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    }
+
     // Сразу скрываем auth-section если есть токен, чтобы избежать мигания
     if (authToken && authSection && appSection) {
         authSection.classList.add("hidden");
@@ -1756,6 +1780,13 @@ async function checkAuth() {
     try {
         await loadCurrentUser();
         showApp();
+        
+        // После загрузки приложения убеждаемся, что страница вверху
+        setTimeout(() => {
+            if (window.scrollY > 0 || document.documentElement.scrollTop > 0) {
+                window.scrollTo(0, 0);
+            }
+        }, 100);
     } catch (e) {
         showAuth();
     }
@@ -3147,9 +3178,26 @@ function applyActivitiesFilters() {
     switch (activitiesFilterState.sort) {
         case 'newest':
             filtered.sort((a, b) => {
-                const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-                const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-                return dateB - dateA; // Новые сначала
+                // Сначала пытаемся сортировать по created_at, если оно есть
+                if (a.created_at && b.created_at) {
+                    const dateA = new Date(a.created_at);
+                    const dateB = new Date(b.created_at);
+                    if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+                        const diff = dateB.getTime() - dateA.getTime();
+                        if (diff !== 0) return diff;
+                    }
+                } else if (a.created_at && !b.created_at) {
+                    // Если только A имеет дату, A идет первым (новее)
+                    return -1;
+                } else if (!a.created_at && b.created_at) {
+                    // Если только B имеет дату, B идет первым (новее)
+                    return 1;
+                }
+                
+                // Если даты нет или равны, сортируем по ID (больший ID = новее)
+                const idA = a.id || 0;
+                const idB = b.id || 0;
+                return idB - idA; // Новые (с большим ID) сначала
             });
             break;
         case 'oldest':

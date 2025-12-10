@@ -9,9 +9,66 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <title>HP Life Tracker</title>
+    <style>
+        /* Скрываем секции по умолчанию до проверки токена */
+        #auth-section, #app-section {
+            visibility: hidden;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+    <script>
+        // Ранняя проверка авторизации сразу после открытия body
+        (function() {
+            try {
+                const token = localStorage.getItem('token');
+                
+                // Ждем, пока DOM будет готов
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        applyAuthCheck();
+                    });
+                } else {
+                    applyAuthCheck();
+                }
+                
+                function applyAuthCheck() {
+                    const authSection = document.getElementById('auth-section');
+                    const appSection = document.getElementById('app-section');
+                    
+                    if (token) {
+                        // Если есть токен, сразу скрываем auth-section и показываем app-section
+                        if (authSection) {
+                            authSection.classList.add('hidden');
+                            authSection.style.visibility = 'visible';
+                        }
+                        if (appSection) {
+                            appSection.classList.remove('hidden');
+                            appSection.style.visibility = 'visible';
+                        }
+                    } else {
+                        // Если токена нет, показываем auth-section и скрываем app-section
+                        if (authSection) {
+                            authSection.classList.remove('hidden');
+                            authSection.style.visibility = 'visible';
+                        }
+                        if (appSection) {
+                            appSection.classList.add('hidden');
+                            appSection.style.visibility = 'visible';
+                        }
+                    }
+                    
+                    // Предотвращаем скролл вниз при загрузке
+                    window.scrollTo(0, 0);
+                    document.documentElement.scrollTop = 0;
+                    document.body.scrollTop = 0;
+                }
+            } catch(e) {
+                console.error('Auth check error:', e);
+            }
+        })();
+    </script>
 
     <!-- AUTH SECTION (показывается когда не залогинен) -->
     <div id="auth-section" class="min-h-screen flex items-center justify-center p-4">
@@ -543,10 +600,10 @@
                                     <label class="text-sm font-medium text-gray-700 whitespace-nowrap" data-i18n="sort_label">Сортировка:</label>
                                     <div class="relative">
                                         <select id="activities-sort" class="px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 text-sm appearance-none">
-                                            <option value="newest">⬆️ Сначала новые</option>
+                                            <option value="newest" data-i18n="sort_newest">⬆️ Сначала новые</option>
                                             <option value="oldest" data-i18n="sort_oldest">Сначала старые</option>
-                                            <option value="name-asc">По имени (А-Я)</option>
-                                            <option value="name-desc">По имени (Я-А)</option>
+                                            <option value="name-asc" data-i18n="sort_name_asc">По имени (А-Я)</option>
+                                            <option value="name-desc" data-i18n="sort_name_desc">По имени (Я-А)</option>
                                         </select>
                                         <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
                                             <i class="fas fa-chevron-down text-black text-xs"></i>
@@ -559,7 +616,7 @@
                                     <label class="text-sm font-medium text-gray-700 whitespace-nowrap" data-i18n="category_label">Категория:</label>
                                     <div class="relative">
                                         <select id="activities-category-filter" class="px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 text-sm appearance-none">
-                                            <option value="all" data-i18n="all_categories_with_icon">⬆️ Все категории</option>
+                                            <option value="all" data-i18n="all_categories_with_icon">📂 Все категории</option>
                                         </select>
                                         <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
                                             <i class="fas fa-chevron-down text-black text-xs"></i>
@@ -1185,5 +1242,27 @@
     </footer>
 
     <script src="app.js?v=39"></script>
+    <script>
+        // Предотвращаем скролл вниз после загрузки скриптов
+        (function() {
+            // Убираем якорь из URL, если он есть
+            if (window.location.hash && window.location.hash !== '#') {
+                const hash = window.location.hash;
+                window.history.replaceState(null, null, window.location.pathname + window.location.search);
+            }
+            
+            // Убеждаемся, что страница вверху
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            
+            // Дополнительная проверка после небольшой задержки
+            setTimeout(() => {
+                if (window.scrollY > 0 || document.documentElement.scrollTop > 0) {
+                    window.scrollTo(0, 0);
+                }
+            }, 50);
+        })();
+    </script>
 </body>
 </html>
