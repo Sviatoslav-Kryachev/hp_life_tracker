@@ -12,6 +12,20 @@ const translations = {
         "admin_panel": "Админ-панель",
         "logout": "Выход",
         "telegram_bot": "Открыть Telegram бота",
+        "link_telegram": "Привязать Telegram",
+        "link_telegram_title": "Привязать Telegram аккаунт",
+        "telegram_link_instructions": "Чтобы привязать Telegram аккаунт:",
+        "telegram_link_step1": "Откройте бота в Telegram и отправьте /start",
+        "telegram_link_step2": "Скопируйте ваш Telegram ID из сообщения бота",
+        "telegram_link_step3": "Вставьте его в поле ниже и нажмите \"Привязать\"",
+        "telegram_id_label": "Telegram ID:",
+        "telegram_id_hint": "Ваш Telegram ID был показан ботом в сообщении",
+        "link_button": "Привязать",
+        "telegram_linked": "Telegram аккаунт привязан",
+        "telegram_linked_success": "Telegram аккаунт успешно привязан!",
+        "enter_telegram_id": "Введите Telegram ID",
+        "invalid_telegram_id": "Некорректный Telegram ID",
+        "error_linking": "Ошибка привязки аккаунта",
 
         // Auth
         "login": "Вход",
@@ -306,6 +320,20 @@ const translations = {
         "admin_panel": "Адмін-панель",
         "logout": "Вихід",
         "telegram_bot": "Відкрити Telegram бота",
+        "link_telegram": "Прив'язати Telegram",
+        "link_telegram_title": "Прив'язати Telegram акаунт",
+        "telegram_link_instructions": "Щоб прив'язати Telegram акаунт:",
+        "telegram_link_step1": "Відкрийте бота в Telegram та надішліть /start",
+        "telegram_link_step2": "Скопіюйте ваш Telegram ID з повідомлення бота",
+        "telegram_link_step3": "Вставте його в поле нижче та натисніть \"Прив'язати\"",
+        "telegram_id_label": "Telegram ID:",
+        "telegram_id_hint": "Ваш Telegram ID був показаний ботом у повідомленні",
+        "link_button": "Прив'язати",
+        "telegram_linked": "Telegram акаунт прив'язано",
+        "telegram_linked_success": "Telegram акаунт успішно прив'язано!",
+        "enter_telegram_id": "Введіть Telegram ID",
+        "invalid_telegram_id": "Некорректний Telegram ID",
+        "error_linking": "Помилка прив'язки акаунта",
 
         // Auth
         "login": "Вхід",
@@ -601,6 +629,20 @@ const translations = {
         "admin_panel": "Admin-Panel",
         "logout": "Abmelden",
         "telegram_bot": "Telegram-Bot öffnen",
+        "link_telegram": "Telegram verknüpfen",
+        "link_telegram_title": "Telegram-Konto verknüpfen",
+        "telegram_link_instructions": "Um ein Telegram-Konto zu verknüpfen:",
+        "telegram_link_step1": "Öffnen Sie den Bot in Telegram und senden Sie /start",
+        "telegram_link_step2": "Kopieren Sie Ihre Telegram-ID aus der Bot-Nachricht",
+        "telegram_link_step3": "Fügen Sie sie in das Feld unten ein und klicken Sie auf \"Verknüpfen\"",
+        "telegram_id_label": "Telegram-ID:",
+        "telegram_id_hint": "Ihre Telegram-ID wurde vom Bot in der Nachricht angezeigt",
+        "link_button": "Verknüpfen",
+        "telegram_linked": "Telegram-Konto verknüpft",
+        "telegram_linked_success": "Telegram-Konto erfolgreich verknüpft!",
+        "enter_telegram_id": "Telegram-ID eingeben",
+        "invalid_telegram_id": "Ungültige Telegram-ID",
+        "error_linking": "Fehler beim Verknüpfen des Kontos",
 
         // Auth
         "login": "Anmelden",
@@ -895,6 +937,20 @@ const translations = {
         "admin_panel": "Admin Panel",
         "logout": "Logout",
         "telegram_bot": "Open Telegram Bot",
+        "link_telegram": "Link Telegram",
+        "link_telegram_title": "Link Telegram Account",
+        "telegram_link_instructions": "To link a Telegram account:",
+        "telegram_link_step1": "Open the bot in Telegram and send /start",
+        "telegram_link_step2": "Copy your Telegram ID from the bot message",
+        "telegram_link_step3": "Paste it in the field below and click \"Link\"",
+        "telegram_id_label": "Telegram ID:",
+        "telegram_id_hint": "Your Telegram ID was shown by the bot in the message",
+        "link_button": "Link",
+        "telegram_linked": "Telegram account linked",
+        "telegram_linked_success": "Telegram account successfully linked!",
+        "enter_telegram_id": "Enter Telegram ID",
+        "invalid_telegram_id": "Invalid Telegram ID",
+        "error_linking": "Error linking account",
 
         // Auth
         "login": "Login",
@@ -1691,6 +1747,128 @@ function logout() {
     currentUser = null;
     localStorage.removeItem('token');
     showAuth();
+}
+
+// Telegram linking functions
+function openTelegramLinkModal() {
+    const modal = document.getElementById('telegram-link-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        // Проверяем текущий статус привязки
+        checkTelegramStatus();
+    }
+}
+
+function closeTelegramLinkModal() {
+    const modal = document.getElementById('telegram-link-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        const input = document.getElementById('telegram-id-input');
+        if (input) input.value = '';
+        const status = document.getElementById('telegram-link-status');
+        if (status) {
+            status.classList.add('hidden');
+            status.textContent = '';
+        }
+    }
+}
+
+async function checkTelegramStatus() {
+    try {
+        const res = await fetch(`${API_BASE}/telegram/status`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            const statusDiv = document.getElementById('telegram-link-status');
+            const input = document.getElementById('telegram-id-input');
+            
+            if (data.linked) {
+                if (statusDiv) {
+                    statusDiv.className = 'p-3 rounded-xl bg-green-50 border border-green-200';
+                    statusDiv.innerHTML = `<p class="text-sm text-green-800">✅ ${t('telegram_linked')}: ${data.telegram_id}</p>`;
+                    statusDiv.classList.remove('hidden');
+                }
+                if (input) {
+                    input.value = data.telegram_id;
+                    input.disabled = true;
+                }
+            } else {
+                if (statusDiv) {
+                    statusDiv.classList.add('hidden');
+                }
+                if (input) {
+                    input.disabled = false;
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error checking telegram status:', e);
+    }
+}
+
+async function linkTelegramAccount() {
+    const input = document.getElementById('telegram-id-input');
+    const statusDiv = document.getElementById('telegram-link-status');
+    
+    if (!input || !input.value) {
+        if (statusDiv) {
+            statusDiv.className = 'p-3 rounded-xl bg-red-50 border border-red-200';
+            statusDiv.innerHTML = `<p class="text-sm text-red-800">❌ ${t('enter_telegram_id')}</p>`;
+            statusDiv.classList.remove('hidden');
+        }
+        return;
+    }
+    
+    const telegramId = parseInt(input.value);
+    if (isNaN(telegramId) || telegramId <= 0) {
+        if (statusDiv) {
+            statusDiv.className = 'p-3 rounded-xl bg-red-50 border border-red-200';
+            statusDiv.innerHTML = `<p class="text-sm text-red-800">❌ ${t('invalid_telegram_id')}</p>`;
+            statusDiv.classList.remove('hidden');
+        }
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/telegram/link`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+                telegram_id: telegramId
+            })
+        });
+        
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || t('error_linking'));
+        }
+        
+        const data = await res.json();
+        if (statusDiv) {
+            statusDiv.className = 'p-3 rounded-xl bg-green-50 border border-green-200';
+            statusDiv.innerHTML = `<p class="text-sm text-green-800">✅ ${data.message || t('telegram_linked_success')}</p>`;
+            statusDiv.classList.remove('hidden');
+        }
+        
+        // Обновляем статус
+        setTimeout(() => {
+            checkTelegramStatus();
+        }, 1000);
+        
+        showNotification(`✅ ${t('telegram_linked_success')}`, 'success');
+        
+    } catch (e) {
+        if (statusDiv) {
+            statusDiv.className = 'p-3 rounded-xl bg-red-50 border border-red-200';
+            statusDiv.innerHTML = `<p class="text-sm text-red-800">❌ ${e.message || t('error_linking')}</p>`;
+            statusDiv.classList.remove('hidden');
+        }
+    }
 }
 
 function showAuth() {
