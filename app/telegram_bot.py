@@ -84,14 +84,18 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message = (
                 "👋 Привет! Я бот для HP Life Tracker.\n\n"
                 "Чтобы использовать бота, нужно сначала связать ваш Telegram аккаунт с аккаунтом в приложении.\n\n"
-                "📱 Инструкция по привязке:\n"
+                "📱 <b>Инструкция по привязке:</b>\n"
                 "1. Войдите в веб-приложение\n"
-                "2. Используйте API endpoint: POST /telegram/link\n"
-                "3. Отправьте ваш Telegram ID: " + str(update.effective_user.id) + "\n\n"
-                "Или используйте команды для тестирования (без привязки):\n"
-                "/help - справка по командам"
+                "2. Перейдите в настройки (внизу страницы)\n"
+                "3. Нажмите \"Привязать Telegram\"\n"
+                "4. Вставьте ваш Telegram ID: <code>" + str(update.effective_user.id) + "</code>\n\n"
+                "После привязки вы сможете использовать все функции бота!"
             )
-            await update.message.reply_text(message)
+            # Добавляем кнопку помощи даже для непривязанных пользователей
+            help_keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton("❓ Помощь", callback_data="menu_help")]
+            ])
+            await update.message.reply_text(message, parse_mode='HTML', reply_markup=help_keyboard)
             logger.info("Sent start message to unlinked user")
             return
         
@@ -100,8 +104,16 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "🎮 <b>Главное меню</b>\n\n"
             "Выберите действие:"
         )
-        await update.message.reply_text(message, parse_mode='HTML', reply_markup=get_main_menu_keyboard())
-        logger.info(f"Sent start message to linked user {user.username}")
+        try:
+            keyboard = get_main_menu_keyboard()
+            logger.info(f"Sending menu with keyboard to user {user.username}, keyboard: {keyboard}")
+            await update.message.reply_text(message, parse_mode='HTML', reply_markup=keyboard)
+            logger.info(f"Successfully sent start message with keyboard to linked user {user.username}")
+        except Exception as e:
+            logger.error(f"Error sending keyboard: {e}", exc_info=True)
+            # Отправляем без кнопок в случае ошибки
+            await update.message.reply_text(message, parse_mode='HTML')
+            logger.warning("Sent message without keyboard due to error")
     except Exception as e:
         logger.error(f"Error in start_command: {e}", exc_info=True)
         await update.message.reply_text("❌ Произошла ошибка. Попробуйте позже.")
@@ -329,11 +341,34 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик нажатий на кнопки"""
     query = update.callback_query
-    await query.answer()
+    logger.info(f"Button callback received: {query.data} from user {query.from_user.id}")
+    
+    try:
+        await query.answer()
+    except Exception as e:
+        logger.error(f"Error answering query: {e}")
     
     user = get_user_by_telegram_id(query.from_user.id)
     
+    # Обработка кнопки помощи для непривязанных пользователей
+    if query.data == "menu_help" and not user:
+        help_text = (
+            "📖 <b>Справка</b>\n\n"
+            "Для использования бота нужно привязать ваш Telegram аккаунт:\n\n"
+            "1. Войдите в веб-приложение\n"
+            "2. Перейдите в настройки (внизу страницы)\n"
+            "3. Нажмите \"Привязать Telegram\"\n"
+            "4. Вставьте ваш Telegram ID\n\n"
+            "После привязки вы сможете использовать все функции!"
+        )
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("◀️ Назад", callback_data="back_to_start")]
+        ])
+        await query.edit_message_text(help_text, parse_mode='HTML', reply_markup=keyboard)
+        return
+    
     if not user:
+        logger.warning(f"User {query.from_user.id} not linked, trying to use: {query.data}")
         await query.edit_message_text("❌ Ваш аккаунт не привязан. Используйте /start для инструкций.")
         return
     
@@ -358,6 +393,22 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "back_to_menu":
         message = "🎮 <b>Главное меню</b>\n\nВыберите действие:"
         await query.edit_message_text(message, parse_mode='HTML', reply_markup=get_main_menu_keyboard())
+    elif query.data == "back_to_start":
+        # Возврат к начальному сообщению для непривязанных пользователей
+        message = (
+            "👋 Привет! Я бот для HP Life Tracker.\n\n"
+            "Чтобы использовать бота, нужно сначала связать ваш Telegram аккаунт с аккаунтом в приложении.\n\n"
+            "📱 <b>Инструкция по привязке:</b>\n"
+            "1. Войдите в веб-приложение\n"
+            "2. Перейдите в настройки (внизу страницы)\n"
+            "3. Нажмите \"Привязать Telegram\"\n"
+            "4. Вставьте ваш Telegram ID: <code>" + str(query.from_user.id) + "</code>\n\n"
+            "После привязки вы сможете использовать все функции бота!"
+        )
+        help_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("❓ Помощь", callback_data="menu_help")]
+        ])
+        await query.edit_message_text(message, parse_mode='HTML', reply_markup=help_keyboard)
     elif query.data == "enter_custom_minutes":
         await query.edit_message_text(
             "⏱ Введите количество минут (число от 1 до 1440):",
@@ -711,11 +762,13 @@ def run_bot():
     application.add_handler(CommandHandler("activities", activities_command))
     application.add_handler(CommandHandler("help", help_command))
     
-    # Обработчик нажатий на кнопки
+    # Обработчик нажатий на кнопки (должен быть ПЕРЕД MessageHandler)
     application.add_handler(CallbackQueryHandler(button_callback))
+    logger.info("CallbackQueryHandler registered for button_callback")
     
     # Обработчик ввода пользовательского количества минут
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_custom_minutes))
+    logger.info("MessageHandler registered for custom minutes input")
     
     # Запускаем бота
     logger.info("=" * 50)
