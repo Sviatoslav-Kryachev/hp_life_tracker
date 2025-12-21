@@ -91,7 +91,7 @@ python -c "from app.utils.database import Base, engine; from app.models.base imp
 
 ```bash
 # Запуск сервера
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8003
 
 # Откройте в браузере
 # http://127.0.0.1:8000/static/index.html
