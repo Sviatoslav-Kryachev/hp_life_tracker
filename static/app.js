@@ -1,4 +1,5 @@
-const API_BASE = "http://127.0.0.1:8003";
+// Автоматически определяем базовый URL API из текущего домена
+const API_BASE = window.location.origin;
 
 // ============= I18N (INTERNATIONALIZATION) =============
 const translations = {

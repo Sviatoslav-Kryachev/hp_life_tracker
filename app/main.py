@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 import traceback
+from pathlib import Path
 from app.routers import activities, rewards, timer, auth, xp, streak, recommendations, blacklist, telegram, admin, goals, categories
 
 app = FastAPI(title="XP Tracker API")
@@ -56,5 +57,9 @@ app.include_router(goals.router)
 app.include_router(categories.router)
 
 @app.get("/")
-def root():
-    return {"message": "XP Tracker API работает!"}
+async def root():
+    """Главная страница - возвращаем HTML интерфейс"""
+    html_file = Path("static/index.html")
+    if html_file.exists():
+        return FileResponse(html_file)
+    return {"message": "XP Tracker API работает!", "frontend": "/static/index.html"}
