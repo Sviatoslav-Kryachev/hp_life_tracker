@@ -649,16 +649,15 @@ body {
     transition: all 0.2s ease;
     position: relative;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .mobile-nav-btn span {
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+    overflow: visible;
     display: block;
     text-align: center;
+    line-height: 1.2;
 }
 
 .mobile-nav-btn:active {
