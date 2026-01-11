@@ -491,6 +491,12 @@ body {
             top: 0 !important;
         }
         
+        /* Учитываем safe area для dropdown языка на iOS */
+        .fixed.top-0 #language-menu {
+            top: calc(100% + env(safe-area-inset-top)) !important;
+            margin-top: 0.5rem !important;
+        }
+        
         /* Учитываем safe area для контента на iOS */
         #app-section > .container,
         #app-section .container {
