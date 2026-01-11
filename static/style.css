@@ -387,8 +387,8 @@ body {
     /* Убеждаемся, что контейнеры не выходят за границы */
     .container {
         max-width: 100%;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
         margin-left: auto;
         margin-right: auto;
         box-sizing: border-box !important;
