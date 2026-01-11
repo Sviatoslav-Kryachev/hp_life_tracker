@@ -102,6 +102,20 @@ curl https://hp-life-tracker.app-toolbox.space/
 docker compose exec db pg_isready -U hp_life_tracker_user
 ```
 
+## Быстрый REDEPLOY (Git Pull + Rebuild)
+
+```bash
+cd /opt/hp-life-tracker
+
+# Вариант 1: Использовать скрипт
+chmod +x deploy.sh
+./deploy.sh
+
+# Вариант 2: Вручную (2 команды)
+git pull
+docker compose up -d --build
+```
+
 ## Полный перезапуск с сохранением данных
 
 ```bash

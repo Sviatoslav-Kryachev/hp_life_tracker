@@ -458,3 +458,29 @@ certbot --nginx -d hp-life-tracker.app-toolbox.space
 docker compose up -d --build
 docker compose logs -f app
 ```
+
+---
+
+## БЫСТРЫЙ REDEPLOY (Git Pull + Rebuild)
+
+Если всё уже настроено, просто обновите код и пересоберите:
+
+### Вариант 1: Использовать скрипт deploy.sh
+
+**На сервере (VPS):**
+```bash
+cd /opt/hp-life-tracker
+chmod +x deploy.sh
+./deploy.sh
+```
+
+### Вариант 2: Вручную (2 команды)
+
+**На сервере (VPS):**
+```bash
+cd /opt/hp-life-tracker
+git pull
+docker compose up -d --build
+```
+
+**Всё!** Приложение пересобрано и запущено. Данные БД сохраняются (они в volume).
