@@ -540,18 +540,22 @@ body {
 
 /* ============= FIXES FOR HEADER & LANGUAGE MENU ============= */
 
-/* 1. Исправляем фиксированный хедер - гарантируем правильный z-index */
+/* 1. Исправляем фиксированный хедер - ограничиваем ширину контейнером */
 .fixed.top-0 {
     z-index: 9999 !important;
     width: 100% !important;
     left: 0 !important;
     right: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
 }
 
-/* 2. Контейнер хедера должен быть fluid на мобильных */
+/* 2. Контейнер хедера - ограничиваем ширину как у основного контента */
 .fixed.top-0 > .container {
     width: 100% !important;
-    max-width: 100% !important;
+    max-width: 72rem !important; /* max-w-6xl = 72rem = 1152px */
+    margin-left: auto !important;
+    margin-right: auto !important;
     box-sizing: border-box !important;
 }
 
