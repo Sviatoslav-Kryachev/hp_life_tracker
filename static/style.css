@@ -169,6 +169,177 @@ body {
     z-index: auto !important;
 }
 
+/* ============= RESPONSIVE STYLES ============= */
+
+/* Mobile devices (до 640px) */
+@media (max-width: 640px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    /* Уменьшаем размеры текста в хедере */
+    #wallet {
+        padding: 0.5rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    #wallet .text-sm {
+        font-size: 0.6875rem !important;
+    }
+    
+    /* Улучшаем отображение пользовательского блока */
+    #user-info + div + a,
+    #user-info + div + button {
+        padding: 0.5rem !important;
+    }
+}
+
+/* Tablets (640px - 1024px) */
+@media (min-width: 640px) and (max-width: 1024px) {
+    /* Делаем хедер более компактным */
+    .fixed.top-0 .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Уменьшаем отступы между элементами хедера */
+    .fixed.top-0 > .container > div > div.flex.items-center {
+        gap: 0.375rem !important;
+    }
+    
+    /* Компактный вид XP badge на планшетах */
+    #wallet {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        padding-top: 0.375rem !important;
+        padding-bottom: 0.375rem !important;
+    }
+    
+    #wallet .text-lg {
+        font-size: 0.875rem !important;
+    }
+    
+    #wallet .text-sm {
+        font-size: 0.75rem !important;
+    }
+    
+    #wallet i {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Компактные кнопки в пользовательском блоке */
+    .fixed.top-0 .bg-gray-50 a,
+    .fixed.top-0 .bg-gray-50 button {
+        padding: 0.5rem !important;
+    }
+    
+    /* Уменьшаем размеры иконок на планшетах */
+    .fixed.top-0 .bg-gray-50 i {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Компактный переключатель языка */
+    #language-switcher-btn {
+        padding: 0.5rem !important;
+    }
+    
+    #language-switcher-btn i,
+    #current-language-flag {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Уменьшаем размеры текста в хедере */
+    .fixed.top-0 h1 {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Компактная навигация на планшетах */
+    .fixed.top-0 nav a {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.8125rem !important;
+    }
+}
+
+/* Prevent horizontal scroll on all devices */
+@media (max-width: 1024px) {
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Убеждаемся, что контейнеры не выходят за границы */
+    .container {
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Фиксируем ширину для grid элементов */
+    .grid {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Улучшаем отображение фильтров активностей */
+    .flex.flex-nowrap.gap-3 {
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+    }
+    
+    /* Улучшаем размеры форм на мобильных и планшетах */
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Предотвращает зум на iOS */
+    }
+    
+    /* Улучшаем отступы в формах */
+    form .space-y-4 > * + * {
+        margin-top: 1rem;
+    }
+    
+    /* Делаем хедер более гибким на планшетах */
+    .fixed.top-0 > .container > div.flex.justify-between {
+        gap: 0.5rem;
+    }
+    
+    /* Убеждаемся что элементы хедера не сжимаются слишком сильно */
+    .fixed.top-0 > .container > div > div:first-child,
+    .fixed.top-0 > .container > div > div:last-child {
+        flex-shrink: 1;
+        min-width: 0;
+    }
+}
+
+/* Улучшаем отображение на очень маленьких экранах (< 400px) */
+@media (max-width: 400px) {
+    /* Еще более компактный хедер */
+    #wallet {
+        padding: 0.375rem 0.5rem !important;
+    }
+    
+    #wallet .text-sm {
+        font-size: 0.625rem !important;
+    }
+    
+    #wallet .text-\[10px\] {
+        font-size: 0.5rem !important;
+    }
+    
+    /* Скрываем некоторые элементы на очень маленьких экранах */
+    .hidden.sm\:block {
+        display: none !important;
+    }
+}
+
 /* Убираем дублирующиеся стрелки в выпадающих списках */
 #activities-sort,
 #activities-category-filter {
