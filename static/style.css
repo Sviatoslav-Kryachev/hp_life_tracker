@@ -199,6 +199,29 @@ body {
         overflow-y: visible;
     }
     
+    /* Исправляем боковую панель (sidebar) - убираем обрезание */
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+    
+    /* Исправляем блоки внутри sidebar */
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 > div {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+    }
+    
     /* Уменьшаем размеры текста в хедере */
     #wallet {
         padding: 0.5rem !important;
@@ -222,6 +245,7 @@ body {
     .bg-white\/90 {
         overflow: visible !important;
         word-wrap: break-word;
+        box-sizing: border-box !important;
     }
 }
 
@@ -314,6 +338,25 @@ body {
         max-width: 100%;
     }
     
+    /* Исправляем боковую панель на планшетах и мобильных */
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Исправляем блоки внутри sidebar */
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 > div {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
     /* Центрируем все карточки и блоки */
     .grid > div,
     .bg-gradient-to-br,
@@ -324,6 +367,7 @@ body {
         margin-right: auto;
         width: 100%;
         max-width: 100%;
+        box-sizing: border-box !important;
     }
     
     /* Улучшаем отображение фильтров активностей */
