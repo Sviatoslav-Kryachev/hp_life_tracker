@@ -293,6 +293,39 @@ body {
         max-width: 100% !important;
         box-sizing: border-box !important;
     }
+    
+    /* Фиксируем карточки активности на мобильных */
+    .activity-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Убеждаемся, что flex элементы в карточке активности могут уменьшаться */
+    .activity-card > div:first-child {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+    
+    /* Кнопки справа в карточке активности */
+    .activity-card > button,
+    .activity-card .timer-btn,
+    .activity-card .manual-time-btn,
+    .activity-card .edit-btn,
+    .activity-card .delete-btn {
+        flex-shrink: 0 !important;
+        min-width: auto !important;
+    }
+    
+    /* Уменьшаем gap между элементами в карточке активности на мобильных */
+    .activity-card {
+        gap: 0.5rem !important;
+    }
 }
 
 /* Tablets (640px - 1024px) */
@@ -377,6 +410,33 @@ body {
     #activities * {
         max-width: 100% !important;
         box-sizing: border-box !important;
+    }
+    
+    /* Фиксируем карточки активности на всех мобильных устройствах */
+    .activity-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Убеждаемся, что flex элементы в карточке активности могут уменьшаться */
+    .activity-card > div:first-child {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        max-width: calc(100% - 12rem) !important; /* Оставляем место для кнопок */
+        overflow: hidden !important;
+    }
+    
+    /* Кнопки справа в карточке активности */
+    .activity-card > button,
+    .activity-card .timer-btn,
+    .activity-card .manual-time-btn,
+    .activity-card .edit-btn,
+    .activity-card .delete-btn {
+        flex-shrink: 0 !important;
+        min-width: auto !important;
+        width: auto !important;
     }
     
     /* Исправляем обрезание блоков справа на Android/Xiaomi */
