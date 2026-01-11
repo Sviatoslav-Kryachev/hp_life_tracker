@@ -1462,6 +1462,111 @@ function closeMobileMenu() {
     icon.classList.add('fa-bars');
 }
 
+// ============= BOTTOM NAVIGATION (Mobile) =============
+
+function navigateToSection(section) {
+    // Удаляем активный класс у всех кнопок
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        btn.classList.remove('active-nav');
+    });
+    
+    // Добавляем активный класс к выбранной кнопке
+    const activeBtn = document.querySelector(`.mobile-nav-btn[data-section="${section}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active-nav');
+    }
+    
+    // Закрываем мобильное меню если открыто
+    closeMobileMenu();
+    
+    // Скроллим к соответствующей секции
+    let targetElement = null;
+    
+    switch(section) {
+        case 'activities':
+            targetElement = document.getElementById('activities');
+            break;
+        case 'rewards':
+            targetElement = document.getElementById('rewards');
+            break;
+        case 'history':
+            targetElement = document.getElementById('history');
+            break;
+        case 'goals':
+            // Для целей скроллим к goals-list в sidebar
+            targetElement = document.getElementById('goals-list');
+            if (!targetElement) {
+                // Если goals-list не найден, скроллим к sidebar (первому элементу с классом lg:col-span-1)
+                const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
+                if (sidebar) targetElement = sidebar;
+            }
+            break;
+    }
+    
+    if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Добавляем небольшой отступ сверху для фиксированного хедера
+        setTimeout(() => {
+            const headerHeight = document.querySelector('.fixed.top-0')?.offsetHeight || 70;
+            const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - headerHeight - 10;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+}
+
+// Устанавливаем активную кнопку при скролле (опционально)
+let isScrolling = false;
+window.addEventListener('scroll', () => {
+    if (isScrolling) return;
+    
+    const scrollPosition = window.pageYOffset + 150; // С учетом хедера
+    
+    const activitiesEl = document.getElementById('activities');
+    const rewardsEl = document.getElementById('rewards');
+    const historyEl = document.getElementById('history');
+    const goalsEl = document.getElementById('goals-list');
+    
+    const sections = [
+        { id: 'activities', el: activitiesEl },
+        { id: 'rewards', el: rewardsEl },
+        { id: 'history', el: historyEl },
+        { id: 'goals', el: goalsEl }
+    ].filter(s => s.el);
+    
+    // Находим текущую секцию на основе позиции скролла
+    let currentSection = 'activities';
+    for (let i = sections.length - 1; i >= 0; i--) {
+        const rect = sections[i].el.getBoundingClientRect();
+        if (rect.top <= scrollPosition) {
+            currentSection = sections[i].id;
+            break;
+        }
+    }
+    
+    // Обновляем активную кнопку
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        btn.classList.remove('active-nav');
+        if (btn.dataset.section === currentSection) {
+            btn.classList.add('active-nav');
+        }
+    });
+}, { passive: true });
+
+// Устанавливаем начальную активную кнопку
+document.addEventListener('DOMContentLoaded', () => {
+    // По умолчанию активна кнопка "Активности"
+    const activitiesBtn = document.querySelector('.mobile-nav-btn[data-section="activities"]');
+    if (activitiesBtn) {
+        activitiesBtn.classList.add('active-nav');
+    }
+});
+
 // ============= AUTH STATE =============
 let authToken = localStorage.getItem('token') || '';
 let currentUser = null;

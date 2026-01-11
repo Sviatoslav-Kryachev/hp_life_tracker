@@ -401,3 +401,68 @@ body {
     display: block !important;
     position: relative !important;
 }
+
+/* ============= BOTTOM NAVIGATION (Mobile) ============= */
+
+/* Скрываем верхнее меню на мобильных */
+@media (max-width: 768px) {
+    /* Скрываем навигацию в хедере на мобильных */
+    .fixed.top-0 nav {
+        display: none !important;
+    }
+    
+    /* Добавляем отступ снизу для контента, чтобы не перекрывался нижней навигацией */
+    #app-section > div:last-child {
+        padding-bottom: 4rem !important;
+    }
+    
+    /* Добавляем отступ снизу для основного контента */
+    #app-section > div.container {
+        padding-bottom: 5rem !important;
+    }
+    
+    /* Убираем отступ снизу у footer, так как он уже есть у контента */
+    footer {
+        margin-bottom: 4rem;
+    }
+}
+
+/* Стили для нижней навигации */
+#bottom-navigation {
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-nav-btn {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.mobile-nav-btn:active {
+    transform: scale(0.95);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mobile-nav-btn.active-nav {
+    color: #4f46e5 !important; /* indigo-600 */
+}
+
+.mobile-nav-btn.active-nav i {
+    color: #4f46e5 !important;
+}
+
+.mobile-nav-btn.active-nav span {
+    color: #4f46e5 !important;
+}
+
+/* Анимация для активной кнопки */
+.mobile-nav-btn.active-nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(to right, #4f46e5, #7c3aed);
+    border-radius: 3px 3px 0 0;
+}
