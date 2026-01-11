@@ -178,8 +178,25 @@ body {
     }
     
     .container {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Центрируем все блоки */
+    #app-section .container > div {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Убираем обрезание контента */
+    #app-section .container {
+        overflow-x: visible;
+        overflow-y: visible;
     }
     
     /* Уменьшаем размеры текста в хедере */
@@ -196,6 +213,15 @@ body {
     #user-info + div + a,
     #user-info + div + button {
         padding: 0.5rem !important;
+    }
+    
+    /* Исправляем обрезание карточек */
+    .bg-gradient-to-br,
+    .bg-white,
+    .bg-white\/80,
+    .bg-white\/90 {
+        overflow: visible !important;
+        word-wrap: break-word;
     }
 }
 
@@ -278,10 +304,24 @@ body {
         max-width: 100%;
         padding-left: 1rem;
         padding-right: 1rem;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     /* Фиксируем ширину для grid элементов */
     .grid {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Центрируем все карточки и блоки */
+    .grid > div,
+    .bg-gradient-to-br,
+    .bg-white,
+    .bg-white\/80,
+    .bg-white\/90 {
+        margin-left: auto;
+        margin-right: auto;
         width: 100%;
         max-width: 100%;
     }
@@ -414,6 +454,15 @@ body {
     /* Скрываем footer на мобильных */
     footer {
         display: none !important;
+    }
+    
+    /* Исправляем мобильное меню - правильный z-index и позиционирование */
+    #mobile-menu {
+        position: relative !important;
+        z-index: 100 !important;
+        background: white !important;
+        border-top: 1px solid #e5e7eb !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
     }
     
     /* Добавляем отступ снизу для контента, чтобы не перекрывался нижней навигацией */
