@@ -188,15 +188,33 @@ body {
 @media (max-width: 1024px) {
     /* По умолчанию все секции видны (для обратной совместимости) */
     .mobile-section-visible {
-        display: block !important;
+        display: grid !important; /* grid для grid контейнеров */
     }
     
     .mobile-section-hidden {
         display: none !important;
     }
     
-    /* При первой загрузке показываем activities по умолчанию */
-    #activities:not(.mobile-section-hidden) {
+    /* Блоки Today, Calendar, Progress всегда видны */
+    .grid.grid-cols-1.md\\:grid-cols-3 {
+        display: grid !important;
+    }
+    
+    /* Grid контейнеры для секций */
+    .grid.lg\\:grid-cols-3.mobile-section-visible {
+        display: grid !important;
+    }
+    
+    .grid.lg\\:grid-cols-3.mobile-section-hidden {
+        display: none !important;
+    }
+    
+    /* Sidebar (цели) */
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1.mobile-section-hidden {
+        display: none !important;
+    }
+    
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1.mobile-section-visible {
         display: block !important;
     }
 }
