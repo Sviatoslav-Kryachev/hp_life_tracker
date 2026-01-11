@@ -1438,8 +1438,11 @@ window.t = t;
 // ============= MOBILE MENU =============
 function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
+    if (!menu) return;
     const btn = document.getElementById('mobile-menu-btn');
+    if (!btn) return;
     const icon = btn.querySelector('i');
+    if (!icon) return;
 
     if (menu.classList.contains('hidden')) {
         menu.classList.remove('hidden');
@@ -1454,8 +1457,11 @@ function toggleMobileMenu() {
 
 function closeMobileMenu() {
     const menu = document.getElementById('mobile-menu');
+    if (!menu) return;
     const btn = document.getElementById('mobile-menu-btn');
+    if (!btn) return;
     const icon = btn.querySelector('i');
+    if (!icon) return;
 
     menu.classList.add('hidden');
     icon.classList.remove('fa-times');
@@ -2004,12 +2010,6 @@ function showApp() {
     }
     if (authSection) authSection.classList.add("hidden");
     if (appSection) appSection.classList.remove("hidden");
-    
-    // Показываем нижнюю навигацию на мобильных (только для залогиненных)
-    const bottomNav = document.getElementById('bottom-navigation');
-    if (bottomNav) {
-        bottomNav.classList.remove('hidden');
-    }
     
     // Показываем нижнюю навигацию на мобильных (только для залогиненных)
     const bottomNav = document.getElementById('bottom-navigation');

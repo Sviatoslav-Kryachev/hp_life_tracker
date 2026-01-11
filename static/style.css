@@ -184,6 +184,17 @@ body {
         overflow-x: hidden !important;
     }
     
+    /* Отступ сверху для блока Сегодня */
+    #app-section .container > div:first-child {
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
+    }
+    
+    /* Отступ для блока Сегодня */
+    .grid.grid-cols-1.md\\:grid-cols-3 {
+        margin-top: 1rem !important;
+    }
+    
     .container {
         padding-left: 1rem;
         padding-right: 1rem;
@@ -548,6 +559,96 @@ body {
     /* Когда меню открыто - показываем */
     #mobile-menu:not(.hidden) {
         display: block !important;
+    }
+    
+    /* Модальные окна должны быть поверх всего, включая sidebar */
+    .fixed.inset-0.z-50,
+    #create-goal-modal,
+    #category-modal,
+    #child-stats-modal,
+    #edit-activity-modal,
+    #edit-reward-modal,
+    #day-details-modal,
+    #manual-time-modal,
+    #telegram-link-modal,
+    #forgot-password-modal {
+        z-index: 9999 !important;
+    }
+    
+    /* Убеждаемся, что sidebar не перекрывает модальные окна */
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 {
+        z-index: 1 !important;
+        position: relative !important;
+    }
+    
+    /* Модальное окно создания цели - правильная прокрутка на мобильных */
+    #create-goal-modal > div {
+        max-height: 95vh !important;
+        margin: 1rem auto !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    #create-goal-modal form {
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Убеждаемся, что кнопка submit видна */
+    #goal-submit-btn {
+        position: relative !important;
+        z-index: 1 !important;
+        margin-top: 1rem !important;
+    }
+    
+    /* Восстанавливаем border-radius для блоков наград и истории */
+    #rewards {
+        border-radius: 1.5rem !important;
+        overflow: hidden !important;
+    }
+    
+    #history {
+        border-radius: 1.5rem !important;
+        overflow: hidden !important;
+    }
+    
+    /* Исправляем overflow для статистики, целей, рекомендаций */
+    #category-stats,
+    #goals-list,
+    #recommendations-list {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        word-wrap: break-word !important;
+        max-width: 100% !important;
+    }
+    
+    /* Исправляем блок Новая активность */
+    .bg-gradient-to-r.from-blue-50.to-indigo-50 {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Исправляем карточки активностей на мобильных */
+    .activity-card {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Панель действий (кнопки) в карточках активностей */
+    .activity-card .flex.gap-2 {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+        margin-top: 0.75rem !important;
+    }
+    
+    .activity-card button {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap !important;
     }
     
     /* Добавляем отступ снизу для контента, чтобы не перекрывался нижней навигацией */
