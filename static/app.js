@@ -1715,39 +1715,16 @@ window.addEventListener('popstate', (event) => {
     }
 });
 
-// Устанавливаем начальную активную кнопку
+// Устанавливаем начальную активную кнопку (только для десктопа)
 document.addEventListener('DOMContentLoaded', () => {
+    // На десктопе: устанавливаем активную кнопку по умолчанию
+    // На мобильных инициализация происходит в showApp()
     const isMobile = window.innerWidth <= 1024;
-    
-    // На мобильных: инициализируем правильную секцию
-    if (isMobile) {
-        const hash = window.location.hash.replace('#', '');
-        const initialSection = (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) 
-            ? hash 
-            : 'activities';
-        
-        // Показываем нужную секцию
-        showMobileSection(initialSection);
-        
-        // Устанавливаем активную кнопку
-        const activeBtn = document.querySelector(`.mobile-nav-btn[data-section="${initialSection}"]`);
-        if (activeBtn) {
-            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-                btn.classList.remove('active-nav');
-            });
-            activeBtn.classList.add('active-nav');
+    if (!isMobile) {
+        const activitiesBtn = document.querySelector('.mobile-nav-btn[data-section="activities"]');
+        if (activitiesBtn) {
+            activitiesBtn.classList.add('active-nav');
         }
-        
-        // Обновляем URL если нужно
-        if (window.location.hash !== `#${initialSection}`) {
-            window.history.replaceState({ section: initialSection }, '', `#${initialSection}`);
-        }
-    }
-    
-    // По умолчанию активна кнопка "Активности" (для десктопа)
-    const activitiesBtn = document.querySelector('.mobile-nav-btn[data-section="activities"]');
-    if (activitiesBtn) {
-        activitiesBtn.classList.add('active-nav');
     }
     
     // Закрываем языковое меню при клике вне его
