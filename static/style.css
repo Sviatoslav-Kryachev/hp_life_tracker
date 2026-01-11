@@ -411,6 +411,11 @@ body {
         display: none !important;
     }
     
+    /* Скрываем footer на мобильных */
+    footer {
+        display: none !important;
+    }
+    
     /* Добавляем отступ снизу для контента, чтобы не перекрывался нижней навигацией */
     #app-section > div:last-child {
         padding-bottom: 4rem !important;
@@ -419,11 +424,7 @@ body {
     /* Добавляем отступ снизу для основного контента */
     #app-section > div.container {
         padding-bottom: 5rem !important;
-    }
-    
-    /* Убираем отступ снизу у footer, так как он уже есть у контента */
-    footer {
-        margin-bottom: 4rem;
+        margin-bottom: 0 !important;
     }
 }
 
