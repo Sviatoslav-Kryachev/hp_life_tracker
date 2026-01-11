@@ -1551,57 +1551,52 @@ function navigateToSection(section) {
 
 // Функция для показа/скрытия секций на мобильных
 function showMobileSection(section) {
-    // Определяем какие секции показывать/скрывать
-    const sections = {
-        'activities': ['activities'],
-        'rewards': ['rewards'],
-        'history': ['history'],
-        'goals': ['goals-list']
-    };
+    // Находим все grid контейнеры
+    const activitiesGrid = document.querySelector('#activities')?.parentElement;
+    const rewardsGrid = document.querySelector('#rewards')?.parentElement;
+    const historyGrid = document.querySelector('#history')?.parentElement;
+    const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
     
-    const sectionsToShow = sections[section] || [];
-    
-    // Скрываем все основные секции (activities, rewards, history)
-    const allSections = ['activities', 'rewards', 'history'];
-    allSections.forEach(secId => {
-        const el = document.getElementById(secId);
-        if (el) {
-            if (sectionsToShow.includes(secId)) {
-                el.classList.remove('mobile-section-hidden');
-                el.classList.add('mobile-section-visible');
-            } else {
-                el.classList.remove('mobile-section-visible');
-                el.classList.add('mobile-section-hidden');
-            }
+    // Скрываем все grid контейнеры и секции
+    [activitiesGrid, rewardsGrid, historyGrid].forEach(grid => {
+        if (grid) {
+            grid.classList.remove('mobile-section-visible');
+            grid.classList.add('mobile-section-hidden');
         }
     });
     
-    // Для goals обрабатываем sidebar отдельно
-    if (section === 'goals') {
-        const goalsList = document.getElementById('goals-list');
-        const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
-        
-        // Показываем sidebar с целями
-        if (sidebar) {
-            sidebar.classList.remove('mobile-section-hidden');
-            sidebar.classList.add('mobile-section-visible');
-        }
-        
-        // Скрываем основной контент (activities, rewards, history)
-        allSections.forEach(secId => {
-            const el = document.getElementById(secId);
-            if (el) {
-                el.classList.remove('mobile-section-visible');
-                el.classList.add('mobile-section-hidden');
+    // Скрываем sidebar
+    if (sidebar) {
+        sidebar.classList.remove('mobile-section-visible');
+        sidebar.classList.add('mobile-section-hidden');
+    }
+    
+    // Показываем выбранную секцию
+    switch(section) {
+        case 'activities':
+            if (activitiesGrid) {
+                activitiesGrid.classList.remove('mobile-section-hidden');
+                activitiesGrid.classList.add('mobile-section-visible');
             }
-        });
-    } else {
-        // Скрываем sidebar для других секций
-        const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
-        if (sidebar) {
-            sidebar.classList.remove('mobile-section-visible');
-            sidebar.classList.add('mobile-section-hidden');
-        }
+            break;
+        case 'rewards':
+            if (rewardsGrid) {
+                rewardsGrid.classList.remove('mobile-section-hidden');
+                rewardsGrid.classList.add('mobile-section-visible');
+            }
+            break;
+        case 'history':
+            if (historyGrid) {
+                historyGrid.classList.remove('mobile-section-hidden');
+                historyGrid.classList.add('mobile-section-visible');
+            }
+            break;
+        case 'goals':
+            if (sidebar) {
+                sidebar.classList.remove('mobile-section-hidden');
+                sidebar.classList.add('mobile-section-visible');
+            }
+            break;
     }
     
     // Блоки Today, Calendar, Progress всегда остаются видимыми
