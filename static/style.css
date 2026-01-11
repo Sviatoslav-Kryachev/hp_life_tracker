@@ -186,7 +186,12 @@ body {
 
 /* Мобильная навигация - показ/скрытие секций вместо скролла */
 @media (max-width: 1024px) {
-    /* По умолчанию все секции видны (для обратной совместимости) */
+    /* По умолчанию все grid контейнеры скрыты на мобильных */
+    .grid.lg\\:grid-cols-3 {
+        display: none !important;
+    }
+    
+    /* Показываем только те, которые имеют класс mobile-section-visible */
     .mobile-section-visible {
         display: grid !important; /* grid для grid контейнеров */
     }
@@ -200,7 +205,7 @@ body {
         display: grid !important;
     }
     
-    /* Grid контейнеры для секций */
+    /* Grid контейнеры для секций - переопределяем скрытие если есть класс visible */
     .grid.lg\\:grid-cols-3.mobile-section-visible {
         display: grid !important;
     }
@@ -209,7 +214,11 @@ body {
         display: none !important;
     }
     
-    /* Sidebar (цели) */
+    /* Sidebar (цели) - скрыт по умолчанию */
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 {
+        display: none !important;
+    }
+    
     .grid.lg\\:grid-cols-3 > .lg\\:col-span-1.mobile-section-hidden {
         display: none !important;
     }
