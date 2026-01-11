@@ -184,6 +184,23 @@ body {
 
 /* ============= RESPONSIVE STYLES ============= */
 
+/* Мобильная навигация - показ/скрытие секций вместо скролла */
+@media (max-width: 1024px) {
+    /* По умолчанию все секции видны (для обратной совместимости) */
+    .mobile-section-visible {
+        display: block !important;
+    }
+    
+    .mobile-section-hidden {
+        display: none !important;
+    }
+    
+    /* При первой загрузке показываем activities по умолчанию */
+    #activities:not(.mobile-section-hidden) {
+        display: block !important;
+    }
+}
+
 /* Mobile devices (до 640px) */
 @media (max-width: 640px) {
     html, body {

@@ -1474,8 +1474,8 @@ function closeMobileMenu() {
 let isScrolling = false;
 
 function navigateToSection(section) {
-    // Устанавливаем флаг, что идет программная прокрутка
-    isScrolling = true;
+    // Проверяем, мобильное ли устройство (до 1024px)
+    const isMobile = window.innerWidth <= 1024;
     
     // Удаляем активный класс у всех кнопок
     document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
@@ -1491,55 +1491,121 @@ function navigateToSection(section) {
     // Закрываем мобильное меню если открыто
     closeMobileMenu();
     
-    // Скроллим к соответствующей секции
-    let targetElement = null;
-    
-    switch(section) {
-        case 'activities':
-            targetElement = document.getElementById('activities');
-            break;
-        case 'rewards':
-            targetElement = document.getElementById('rewards');
-            break;
-        case 'history':
-            targetElement = document.getElementById('history');
-            break;
-        case 'goals':
-            // Для целей скроллим к goals-list в sidebar
-            targetElement = document.getElementById('goals-list');
-            if (!targetElement) {
-                // Если goals-list не найден, скроллим к sidebar (первому элементу с классом lg:col-span-1)
-                const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
-                if (sidebar) targetElement = sidebar;
-            }
-            break;
-    }
-    
-    if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (isMobile) {
+        // На мобильных: показываем/скрываем секции вместо скролла
+        showMobileSection(section);
         
-        // Добавляем небольшой отступ сверху для фиксированного хедера
-        setTimeout(() => {
-            const headerHeight = document.querySelector('.fixed.top-0')?.offsetHeight || 70;
-            const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-            const offsetPosition = elementPosition - headerHeight - 10;
-            
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-            
-            // Сбрасываем флаг после завершения прокрутки (примерно 500мс для smooth scroll)
-            setTimeout(() => {
-                isScrolling = false;
-                // Обновляем активную кнопку после прокрутки, чтобы она соответствовала реальной позиции
-                updateActiveNavButton();
-            }, 600);
-        }, 100);
+        // Обновляем URL через History API
+        const url = `#${section}`;
+        if (window.location.hash !== url) {
+            window.history.pushState({ section: section }, '', url);
+        }
     } else {
-        // Если элемент не найден, сбрасываем флаг сразу
-        isScrolling = false;
+        // На десктопе: используем старую логику со скроллом
+        isScrolling = true;
+        
+        let targetElement = null;
+        
+        switch(section) {
+            case 'activities':
+                targetElement = document.getElementById('activities');
+                break;
+            case 'rewards':
+                targetElement = document.getElementById('rewards');
+                break;
+            case 'history':
+                targetElement = document.getElementById('history');
+                break;
+            case 'goals':
+                targetElement = document.getElementById('goals-list');
+                if (!targetElement) {
+                    const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
+                    if (sidebar) targetElement = sidebar;
+                }
+                break;
+        }
+        
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            setTimeout(() => {
+                const headerHeight = document.querySelector('.fixed.top-0')?.offsetHeight || 70;
+                const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - headerHeight - 10;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+                
+                setTimeout(() => {
+                    isScrolling = false;
+                    updateActiveNavButton();
+                }, 600);
+            }, 100);
+        } else {
+            isScrolling = false;
+        }
     }
+}
+
+// Функция для показа/скрытия секций на мобильных
+function showMobileSection(section) {
+    // Определяем какие секции показывать/скрывать
+    const sections = {
+        'activities': ['activities'],
+        'rewards': ['rewards'],
+        'history': ['history'],
+        'goals': ['goals-list']
+    };
+    
+    const sectionsToShow = sections[section] || [];
+    
+    // Скрываем все основные секции
+    const allSections = ['activities', 'rewards', 'history'];
+    allSections.forEach(secId => {
+        const el = document.getElementById(secId);
+        if (el) {
+            if (sectionsToShow.includes(secId)) {
+                el.classList.remove('mobile-section-hidden');
+                el.classList.add('mobile-section-visible');
+            } else {
+                el.classList.remove('mobile-section-visible');
+                el.classList.add('mobile-section-hidden');
+            }
+        }
+    });
+    
+    // Для goals обрабатываем sidebar отдельно
+    if (section === 'goals') {
+        const goalsList = document.getElementById('goals-list');
+        const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
+        
+        // Показываем sidebar с целями
+        if (sidebar) {
+            sidebar.classList.remove('mobile-section-hidden');
+            sidebar.classList.add('mobile-section-visible');
+        }
+        
+        // Скрываем основной контент (activities, rewards, history)
+        allSections.forEach(secId => {
+            const el = document.getElementById(secId);
+            if (el) {
+                el.classList.remove('mobile-section-visible');
+                el.classList.add('mobile-section-hidden');
+            }
+        });
+    } else {
+        // Скрываем sidebar для других секций
+        const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
+        if (sidebar) {
+            sidebar.classList.remove('mobile-section-visible');
+            sidebar.classList.add('mobile-section-hidden');
+        }
+    }
+    
+    // Скроллим вверх страницы
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Устанавливаем активную кнопку при скролле (опционально)
@@ -1633,9 +1699,54 @@ window.addEventListener('scroll', () => {
     updateActiveNavButton();
 }, { passive: true });
 
+// Обработчик для кнопки "Назад" в браузере (History API)
+window.addEventListener('popstate', (event) => {
+    const isMobile = window.innerWidth <= 1024;
+    if (isMobile && event.state && event.state.section) {
+        // Восстанавливаем секцию из истории
+        navigateToSection(event.state.section);
+    } else if (isMobile) {
+        // Если нет state, проверяем hash в URL
+        const hash = window.location.hash.replace('#', '');
+        if (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) {
+            navigateToSection(hash);
+        } else {
+            // По умолчанию показываем activities
+            navigateToSection('activities');
+        }
+    }
+});
+
 // Устанавливаем начальную активную кнопку
 document.addEventListener('DOMContentLoaded', () => {
-    // По умолчанию активна кнопка "Активности"
+    const isMobile = window.innerWidth <= 1024;
+    
+    // На мобильных: инициализируем правильную секцию
+    if (isMobile) {
+        const hash = window.location.hash.replace('#', '');
+        const initialSection = (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) 
+            ? hash 
+            : 'activities';
+        
+        // Показываем нужную секцию
+        showMobileSection(initialSection);
+        
+        // Устанавливаем активную кнопку
+        const activeBtn = document.querySelector(`.mobile-nav-btn[data-section="${initialSection}"]`);
+        if (activeBtn) {
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.classList.remove('active-nav');
+            });
+            activeBtn.classList.add('active-nav');
+        }
+        
+        // Обновляем URL если нужно
+        if (window.location.hash !== `#${initialSection}`) {
+            window.history.replaceState({ section: initialSection }, '', `#${initialSection}`);
+        }
+    }
+    
+    // По умолчанию активна кнопка "Активности" (для десктопа)
     const activitiesBtn = document.querySelector('.mobile-nav-btn[data-section="activities"]');
     if (activitiesBtn) {
         activitiesBtn.classList.add('active-nav');
