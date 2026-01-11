@@ -192,8 +192,8 @@ body {
     }
     
     .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
         margin-left: auto;
         margin-right: auto;
         width: 100%;
@@ -205,6 +205,27 @@ body {
         width: 100%;
         margin-left: auto;
         margin-right: auto;
+    }
+    
+    /* Убеждаемся, что все grid контейнеры имеют одинаковую ширину */
+    .grid.grid-cols-1,
+    .grid.grid-cols-1.md\\:grid-cols-3 {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        gap: 1rem !important;
+    }
+    
+    /* Все блоки внутри grid должны иметь одинаковую ширину */
+    .grid.grid-cols-1 > div,
+    .grid.grid-cols-1.md\\:grid-cols-3 > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     /* Убираем обрезание контента */
