@@ -482,86 +482,43 @@ body {
     }
 }
 
-/* Скрываем верхнее меню на мобильных */
+/* Адаптивный хедер для мобильных */
 @media (max-width: 768px) {
-    /* Учитываем safe area для хедера на iOS (только для iOS) */
+    /* iOS - учитываем safe area */
     @supports (padding: env(safe-area-inset-top)) {
         .fixed.top-0 {
-            padding-top: env(safe-area-inset-top) !important;
-            top: 0 !important;
+            padding-top: env(safe-area-inset-top);
         }
         
-        /* Минимальные отступы хедера на iOS */
         .fixed.top-0 > .container {
-            padding-top: 0.375rem !important;
-            padding-bottom: 0.375rem !important;
-            padding-left: 0.75rem !important;
-            padding-right: 0.5rem !important;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
         }
         
-        .fixed.top-0 > .container > div {
-            gap: 0.5rem !important;
-        }
-        
-        /* Отступ справа для правого блока в хедере */
-        .fixed.top-0 > .container > div > div:last-child {
-            padding-right: 0 !important;
-            margin-right: 0 !important;
-        }
-        
-        /* Исправляем dropdown языка на iOS */
-        .fixed.top-0 #language-menu {
-            top: 100% !important;
-            right: 0 !important;
-            left: auto !important;
-            margin-top: 0.25rem !important;
-            z-index: 9999 !important;
-        }
-        
-        /* Учитываем safe area для контента на iOS */
         #app-section > .container,
         #app-section .container {
-            padding-top: calc(4rem + env(safe-area-inset-top)) !important;
+            padding-top: calc(3.5rem + env(safe-area-inset-top));
         }
     }
     
-    /* Для Android/Xiaomi - обычные отступы без safe area */
+    /* Android/Xiaomi */
     @supports not (padding: env(safe-area-inset-top)) {
-        .fixed.top-0 {
-            top: 0 !important;
-        }
-        
-        /* Минимальные отступы хедера на Android */
         .fixed.top-0 > .container {
-            padding-top: 0.375rem !important;
-            padding-bottom: 0.375rem !important;
-            padding-left: 0.75rem !important;
-            padding-right: 0.5rem !important;
-        }
-        
-        .fixed.top-0 > .container > div {
-            gap: 0.5rem !important;
-        }
-        
-        /* Отступ справа для правого блока в хедере */
-        .fixed.top-0 > .container > div > div:last-child {
-            padding-right: 0 !important;
-            margin-right: 0 !important;
-        }
-        
-        /* Исправляем dropdown языка на Android */
-        .fixed.top-0 #language-menu {
-            top: 100% !important;
-            right: 0 !important;
-            left: auto !important;
-            margin-top: 0.25rem !important;
-            z-index: 9999 !important;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
         }
         
         #app-section > .container,
         #app-section .container {
-            padding-top: 4rem !important;
+            padding-top: 3.5rem;
         }
+    }
+    
+    /* Общие стили для мобильных */
+    .fixed.top-0 #language-menu {
+        top: calc(100% + 0.25rem);
+        right: 0;
+        z-index: 9999;
     }
     
     /* Скрываем навигацию в хедере на мобильных */
