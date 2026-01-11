@@ -491,6 +491,12 @@ body {
             top: 0 !important;
         }
         
+        /* Уменьшаем внутренние отступы хедера на iOS для компактности */
+        .fixed.top-0 > .container {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+        
         /* Учитываем safe area для dropdown языка на iOS */
         .fixed.top-0 #language-menu {
             top: calc(100% + env(safe-area-inset-top)) !important;
@@ -500,7 +506,7 @@ body {
         /* Учитываем safe area для контента на iOS */
         #app-section > .container,
         #app-section .container {
-            padding-top: calc(7rem + env(safe-area-inset-top)) !important;
+            padding-top: calc(5rem + env(safe-area-inset-top)) !important;
         }
     }
     
