@@ -506,7 +506,7 @@ body {
         /* Учитываем safe area для контента на iOS */
         #app-section > .container,
         #app-section .container {
-            padding-top: calc(4.5rem + env(safe-area-inset-top)) !important;
+            padding-top: calc(5.5rem + env(safe-area-inset-top)) !important;
         }
     }
     
@@ -524,7 +524,7 @@ body {
         
         #app-section > .container,
         #app-section .container {
-            padding-top: 4.5rem !important;
+            padding-top: 5.5rem !important;
         }
     }
     
