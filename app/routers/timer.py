@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
+import pytz
 from app.utils.database import get_db
 from app.utils.auth import get_current_user
 from app.models.base import Activity, ActivityLog, TimerLog, XPWallet, User, Goal
@@ -52,10 +53,17 @@ async def stop_timer(
     if not log or log.end_time:
         raise HTTPException(status_code=404, detail="Лог не найден или уже остановлен")
 
-    log.end_time = datetime.utcnow()
+    end_time = datetime.utcnow()
+    log.end_time = end_time
+    
+    # Убеждаемся, что оба datetime naive (без timezone) для корректного вычитания
+    start_time = log.start_time
+    if start_time.tzinfo is not None:
+        # Если start_time aware (с timezone), конвертируем в UTC и убираем timezone
+        start_time = start_time.astimezone(pytz.UTC).replace(tzinfo=None)
     
     # Считаем по секундам для точности (даже если работал меньше минуты)
-    total_seconds = (log.end_time - log.start_time).total_seconds()
+    total_seconds = (end_time - start_time).total_seconds()
     log.duration_minutes = total_seconds / 60  # float для точности
     
     # XP за секунду = xp_per_hour / 3600

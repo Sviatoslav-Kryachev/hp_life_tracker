@@ -500,13 +500,25 @@ body {
         display: none !important;
     }
     
-    /* Исправляем мобильное меню - правильный z-index и позиционирование */
+    /* Исправляем мобильное меню - правильное отображение */
     #mobile-menu {
-        position: relative !important;
-        z-index: 100 !important;
         background: white !important;
         border-top: 1px solid #e5e7eb !important;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        position: relative !important;
+        z-index: 49 !important;
+        min-height: auto !important;
+        padding: 0 !important;
+    }
+    
+    /* Когда меню скрыто - действительно скрываем */
+    #mobile-menu.hidden {
+        display: none !important;
+    }
+    
+    /* Когда меню открыто - показываем */
+    #mobile-menu:not(.hidden) {
+        display: block !important;
     }
     
     /* Добавляем отступ снизу для контента, чтобы не перекрывался нижней навигацией */
