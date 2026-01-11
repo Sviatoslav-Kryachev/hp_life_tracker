@@ -199,7 +199,7 @@ body {
     /* Отступ для контейнера приложения - чтобы контент не перекрывался хедером */
     #app-section > .container,
     #app-section .container {
-        padding-top: 3rem !important;
+        padding-top: 1.5rem !important;
     }
     
     .container {
@@ -247,20 +247,83 @@ body {
         box-sizing: border-box !important;
     }
     
+    /* Компактный хедер на маленьких экранах */
+    .fixed.top-0 {
+        padding: 0 !important;
+        min-height: auto !important;
+        height: auto !important;
+    }
+    
+    .fixed.top-0 > .container {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+    }
+    
     /* Уменьшаем размеры текста в хедере */
     #wallet {
-        padding: 0.5rem !important;
+        padding: 0.25rem 0.375rem !important;
+        font-size: 0.625rem !important;
+        min-height: auto !important;
+        height: auto !important;
+    }
+    
+    #wallet .text-sm,
+    #wallet .text-lg {
+        font-size: 0.5625rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    #wallet i {
+        font-size: 0.625rem !important;
+    }
+    
+    /* Компактный пользовательский блок */
+    .fixed.top-0 .bg-gray-50 {
+        padding: 0.25rem 0.375rem !important;
+        min-height: auto !important;
+        height: auto !important;
+    }
+    
+    .fixed.top-0 .bg-gray-50 button,
+    .fixed.top-0 .bg-gray-50 a {
+        padding: 0.25rem !important;
+    }
+    
+    .fixed.top-0 .bg-gray-50 i {
         font-size: 0.75rem !important;
     }
     
-    #wallet .text-sm {
-        font-size: 0.6875rem !important;
+    .fixed.top-0 .bg-gray-50 .h-6 {
+        height: 1rem !important;
+    }
+    
+    /* Компактный логотип и заголовок */
+    .fixed.top-0 h1 {
+        font-size: 0.875rem !important;
+        line-height: 1.2 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .fixed.top-0 img {
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+    }
+    
+    /* Компактный переключатель языка */
+    .fixed.top-0 #language-switcher-btn {
+        padding: 0.25rem !important;
+    }
+    
+    .fixed.top-0 #language-switcher-btn i,
+    .fixed.top-0 #language-switcher-btn span {
+        font-size: 0.75rem !important;
     }
     
     /* Улучшаем отображение пользовательского блока */
     #user-info + div + a,
     #user-info + div + button {
-        padding: 0.5rem !important;
+        padding: 0.25rem !important;
     }
     
     /* Исправляем обрезание карточек */
