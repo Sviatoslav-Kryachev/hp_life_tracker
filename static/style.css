@@ -187,7 +187,7 @@ body {
     /* Отступ для контейнера приложения - чтобы контент не перекрывался хедером */
     #app-section > .container,
     #app-section .container {
-        padding-top: 5rem !important;
+        padding-top: 7rem !important;
     }
     
     .container {
