@@ -1561,7 +1561,7 @@ function showMobileSection(section) {
     
     const sectionsToShow = sections[section] || [];
     
-    // Скрываем все основные секции
+    // Скрываем все основные секции (activities, rewards, history)
     const allSections = ['activities', 'rewards', 'history'];
     allSections.forEach(secId => {
         const el = document.getElementById(secId);
@@ -1603,6 +1603,9 @@ function showMobileSection(section) {
             sidebar.classList.add('mobile-section-hidden');
         }
     }
+    
+    // Блоки Today, Calendar, Progress всегда остаются видимыми
+    // (они находятся в .grid.grid-cols-1.md:grid-cols-3 и не обрабатываются здесь)
     
     // Скроллим вверх страницы
     window.scrollTo({ top: 0, behavior: 'smooth' });
