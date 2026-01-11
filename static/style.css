@@ -516,9 +516,15 @@ body {
             top: 0 !important;
         }
         
+        /* Уменьшаем внутренние отступы хедера на Android для компактности */
+        .fixed.top-0 > .container {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+        
         #app-section > .container,
         #app-section .container {
-            padding-top: 7rem !important;
+            padding-top: 5rem !important;
         }
     }
     
