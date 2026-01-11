@@ -246,6 +246,30 @@ body {
         box-sizing: border-box !important;
     }
     
+    /* Фиксируем grid контейнер на мобильных */
+    .grid.lg\\:grid-cols-3 {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        gap: 1rem !important; /* Уменьшаем gap на мобильных */
+    }
+    
+    /* Фиксируем блок активности внутри grid на мобильных */
+    .grid.lg\\:grid-cols-3 > #activities,
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-2 {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
     /* Исправляем обрезание блоков справа на мобильных (Xiaomi/Android) */
     #activities,
     #activities > div,
@@ -253,13 +277,21 @@ body {
     #category-stats,
     #goals-list,
     #recommendations-list {
-        padding-right: 1rem !important;
+        padding-right: 0.75rem !important;
+        padding-left: 0.75rem !important;
         margin-right: 0 !important;
+        margin-left: 0 !important;
         box-sizing: border-box !important;
         max-width: 100% !important;
         width: 100% !important;
-        overflow-x: visible !important;
+        overflow-x: hidden !important;
         overflow-y: visible !important;
+    }
+    
+    /* Все элементы внутри блока активности должны учитывать ширину */
+    #activities * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 }
 
@@ -310,8 +342,40 @@ body {
     
     /* Фиксируем ширину для grid элементов */
     .grid {
-        width: 100%;
-        max-width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    /* Убеждаемся, что grid контейнер не создает горизонтальный скролл */
+    .grid.lg\\:grid-cols-3 {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        gap: 1rem !important; /* Уменьшаем gap на мобильных */
+    }
+    
+    /* Фиксируем блок активности внутри grid */
+    .grid.lg\\:grid-cols-3 > #activities,
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-2 {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
+    /* Все элементы внутри блока активности должны учитывать ширину */
+    #activities * {
+        max-width: 100% !important;
         box-sizing: border-box !important;
     }
     
