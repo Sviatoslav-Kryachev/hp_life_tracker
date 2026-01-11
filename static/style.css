@@ -491,22 +491,27 @@ body {
             top: 0 !important;
         }
         
-        /* Уменьшаем внутренние отступы хедера на iOS для компактности */
+        /* Минимальные отступы хедера на iOS */
         .fixed.top-0 > .container {
-            padding-top: 0.375rem !important;
-            padding-bottom: 0.375rem !important;
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
         }
         
-        /* Учитываем safe area для dropdown языка на iOS */
+        /* Исправляем dropdown языка на iOS */
         .fixed.top-0 #language-menu {
-            top: calc(100% + env(safe-area-inset-top)) !important;
-            margin-top: 0.5rem !important;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
+            margin-top: 0.25rem !important;
+            z-index: 9999 !important;
         }
         
         /* Учитываем safe area для контента на iOS */
         #app-section > .container,
         #app-section .container {
-            padding-top: calc(5.5rem + env(safe-area-inset-top)) !important;
+            padding-top: calc(4rem + env(safe-area-inset-top)) !important;
         }
     }
     
@@ -516,15 +521,26 @@ body {
             top: 0 !important;
         }
         
-        /* Уменьшаем внутренние отступы хедера на Android для компактности */
+        /* Минимальные отступы хедера на Android */
         .fixed.top-0 > .container {
-            padding-top: 0.375rem !important;
-            padding-bottom: 0.375rem !important;
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        /* Исправляем dropdown языка на Android */
+        .fixed.top-0 #language-menu {
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
+            margin-top: 0.25rem !important;
+            z-index: 9999 !important;
         }
         
         #app-section > .container,
         #app-section .container {
-            padding-top: 5.5rem !important;
+            padding-top: 4rem !important;
         }
     }
     
