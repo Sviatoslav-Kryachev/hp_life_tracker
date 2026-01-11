@@ -184,19 +184,11 @@ body {
         overflow-x: hidden !important;
     }
     
-    /* Отступ для контейнера приложения - чтобы контент не перекрывался хедером */
-    /* Учитываем safe area на iOS */
+    /* Отступ для контейнера приложения - учитываем safe area на iOS */
     @supports (padding: env(safe-area-inset-top)) {
         #app-section > .container,
         #app-section .container {
-            padding-top: calc(4rem + env(safe-area-inset-top)) !important;
-        }
-    }
-    
-    @supports not (padding: env(safe-area-inset-top)) {
-        #app-section > .container,
-        #app-section .container {
-            padding-top: 4rem !important;
+            padding-top: calc(4.5rem + env(safe-area-inset-top)) !important;
         }
     }
     
