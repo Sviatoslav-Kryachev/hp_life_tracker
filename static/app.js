@@ -1470,7 +1470,13 @@ function closeMobileMenu() {
 
 // ============= BOTTOM NAVIGATION (Mobile) =============
 
+// Флаг для отслеживания программной прокрутки
+let isScrolling = false;
+
 function navigateToSection(section) {
+    // Устанавливаем флаг, что идет программная прокрутка
+    isScrolling = true;
+    
     // Удаляем активный класс у всех кнопок
     document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
         btn.classList.remove('active-nav');
@@ -1522,15 +1528,25 @@ function navigateToSection(section) {
                 top: offsetPosition,
                 behavior: 'smooth'
             });
+            
+            // Сбрасываем флаг после завершения прокрутки (примерно 500мс для smooth scroll)
+            setTimeout(() => {
+                isScrolling = false;
+                // Обновляем активную кнопку после прокрутки, чтобы она соответствовала реальной позиции
+                updateActiveNavButton();
+            }, 600);
         }, 100);
+    } else {
+        // Если элемент не найден, сбрасываем флаг сразу
+        isScrolling = false;
     }
 }
 
 // Устанавливаем активную кнопку при скролле (опционально)
-let isScrolling = false;
-window.addEventListener('scroll', () => {
-    if (isScrolling) return;
-    
+// Флаг для отслеживания программной прокрутки (объявлен выше, в функции navigateToSection)
+
+// Функция для обновления активной кнопки на основе позиции скролла
+function updateActiveNavButton() {
     const scrollPosition = window.pageYOffset + 150; // С учетом хедера
     
     const activitiesEl = document.getElementById('activities');
@@ -1562,6 +1578,12 @@ window.addEventListener('scroll', () => {
             btn.classList.add('active-nav');
         }
     });
+}
+
+window.addEventListener('scroll', () => {
+    if (isScrolling) return; // Игнорируем скролл во время программной прокрутки
+    
+    updateActiveNavButton();
 }, { passive: true });
 
 // Устанавливаем начальную активную кнопку
