@@ -245,6 +245,22 @@ body {
         word-wrap: break-word;
         box-sizing: border-box !important;
     }
+    
+    /* Исправляем обрезание блоков справа на мобильных (Xiaomi/Android) */
+    #activities,
+    #activities > div,
+    .bg-gradient-to-r.from-blue-50.to-indigo-50,
+    #category-stats,
+    #goals-list,
+    #recommendations-list {
+        padding-right: 1rem !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
 }
 
 /* Tablets (640px - 1024px) */
@@ -273,13 +289,13 @@ body {
         box-sizing: border-box !important;
     }
     
-    /* Фиксируем все контейнеры */
+    /* Фиксируем все контейнеры - но не обрезаем контент */
     .container,
     #app-section,
     #app-section > div {
-        overflow-x: hidden !important;
         max-width: 100% !important;
         width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     /* Убеждаемся, что контейнеры не выходят за границы */
@@ -289,12 +305,30 @@ body {
         padding-right: 1rem;
         margin-left: auto;
         margin-right: auto;
+        box-sizing: border-box !important;
     }
     
     /* Фиксируем ширину для grid элементов */
     .grid {
         width: 100%;
         max-width: 100%;
+        box-sizing: border-box !important;
+    }
+    
+    /* Исправляем обрезание блоков справа на Android/Xiaomi */
+    #activities,
+    #activities > div,
+    .bg-gradient-to-r.from-blue-50.to-indigo-50,
+    #category-stats,
+    #goals-list,
+    #recommendations-list {
+        padding-right: 1rem !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
     }
     
     /* Исправляем боковую панель на планшетах и мобильных */
@@ -434,12 +468,46 @@ body {
 
 /* ============= BOTTOM NAVIGATION (Mobile) ============= */
 
+/* Показываем нижнее меню на мобильных устройствах (до 1024px) */
+@media (max-width: 1024px) {
+    #bottom-navigation {
+        display: flex !important;
+    }
+}
+
+/* Скрываем на десктопах */
+@media (min-width: 1025px) {
+    #bottom-navigation {
+        display: none !important;
+    }
+}
+
 /* Скрываем верхнее меню на мобильных */
 @media (max-width: 768px) {
-    /* Учитываем safe area для хедера на iOS */
-    .fixed.top-0 {
-        padding-top: env(safe-area-inset-top) !important;
-        top: 0 !important;
+    /* Учитываем safe area для хедера на iOS (только для iOS) */
+    @supports (padding: env(safe-area-inset-top)) {
+        .fixed.top-0 {
+            padding-top: env(safe-area-inset-top) !important;
+            top: 0 !important;
+        }
+        
+        /* Учитываем safe area для контента на iOS */
+        #app-section > .container,
+        #app-section .container {
+            padding-top: calc(7rem + env(safe-area-inset-top)) !important;
+        }
+    }
+    
+    /* Для Android/Xiaomi - обычные отступы без safe area */
+    @supports not (padding: env(safe-area-inset-top)) {
+        .fixed.top-0 {
+            top: 0 !important;
+        }
+        
+        #app-section > .container,
+        #app-section .container {
+            padding-top: 7rem !important;
+        }
     }
     
     /* Скрываем навигацию в хедере на мобильных */
