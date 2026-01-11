@@ -1640,6 +1640,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activitiesBtn) {
         activitiesBtn.classList.add('active-nav');
     }
+    
+    // Закрываем языковое меню при клике вне его
+    document.addEventListener('click', function(event) {
+        const languageMenu = document.getElementById('language-menu');
+        const languageWrapper = document.getElementById('language-switcher-wrapper');
+        
+        if (languageMenu && !languageMenu.classList.contains('hidden')) {
+            // Если клик был вне языкового меню и не на кнопке переключения языка
+            if (languageWrapper && !languageWrapper.contains(event.target)) {
+                closeLanguageMenu();
+            }
+        }
+    });
 });
 
 // ============= AUTH STATE =============
