@@ -186,9 +186,8 @@ body {
     
     /* Отступ для контейнера приложения - учитываем safe area на iOS */
     @supports (padding: env(safe-area-inset-top)) {
-        #app-section > .container,
-        #app-section .container {
-            padding-top: calc(4.5rem + env(safe-area-inset-top)) !important;
+        #app-section > .container {
+            padding-top: calc(4.5rem + env(safe-area-inset-top));
         }
     }
     
@@ -331,143 +330,7 @@ body {
         overflow-x: visible !important;
         overflow-y: visible !important;
     }
-    
-    /* Исправляем боковую панель на планшетах и мобильных */
-    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-    
-    /* Исправляем блоки внутри sidebar */
-    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 > div {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-    
-    /* Центрируем все карточки и блоки */
-    .grid > div,
-    .bg-gradient-to-br,
-    .bg-white,
-    .bg-white\/80,
-    .bg-white\/90 {
-        margin-left: auto;
-        margin-right: auto;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box !important;
-    }
-    
-    /* Улучшаем отображение фильтров активностей */
-    .flex.flex-nowrap.gap-3 {
-        flex-wrap: wrap !important;
-        gap: 0.75rem !important;
-    }
-    
-    /* Улучшаем размеры форм на мобильных и планшетах */
-    input[type="text"],
-    input[type="number"],
-    input[type="password"],
-    select,
-    textarea {
-        font-size: 16px !important; /* Предотвращает зум на iOS */
-    }
-    
-    /* Улучшаем отступы в формах */
-    form .space-y-4 > * + * {
-        margin-top: 1rem;
-    }
-    
-    /* Делаем хедер более гибким на планшетах */
-    .fixed.top-0 > .container > div.flex.justify-between {
-        gap: 0.5rem;
-    }
-    
-    /* Убеждаемся что элементы хедера не сжимаются слишком сильно */
-    .fixed.top-0 > .container > div > div:first-child,
-    .fixed.top-0 > .container > div > div:last-child {
-        flex-shrink: 1;
-        min-width: 0;
-    }
 }
-
-/* Улучшаем отображение на очень маленьких экранах (< 400px) */
-@media (max-width: 400px) {
-    /* Скрываем некоторые элементы на очень маленьких экранах */
-    .hidden.sm\:block {
-        display: none !important;
-    }
-}
-
-/* Убираем дублирующиеся стрелки в выпадающих списках */
-#activities-sort,
-#activities-category-filter {
-    background-image: none !important;
-    background: none !important;
-    padding-right: 1.75rem !important;
-    appearance: none !important;
-}
-
-/* Убрали sticky позиционирование - все элементы обычные */
-#history-list-visible {
-    position: relative;
-}
-
-#history-list-container {
-    position: relative;
-    /* Контейнер должен заполнять доступное пространство */
-    display: flex;
-    flex-direction: column;
-    /* Всегда скроллится при переполнении, заполняет доступное пространство */
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex: 1 1 0;
-    min-height: 0;
-}
-
-#history.history-expanded {
-    /* Убрали position: sticky чтобы блок не прыгал вверх */
-}
-
-#history.history-expanded > div.p-5 {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-}
-
-/* При раскрытии аккордеона контейнер списка становится скроллируемым */
-/* Контейнер остается в пределах своего размера, не расширяется вниз */
-#history.history-expanded #history-list-container {
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex: 1 1 0;
-    min-height: 0;
-    /* Контейнер заполняет доступное пространство через flex, не расширяется вниз */
-}
-
-/* Все элементы списка обычные, без sticky */
-/* При раскрытии visible скрывается, все элементы в hidden */
-#history.history-expanded #history-list-visible {
-    display: none !important;
-}
-
-#history.history-expanded #history-list-visible::after {
-    display: none !important;
-}
-
-#history.history-expanded #history-list-hidden {
-    display: block !important;
-    position: relative !important;
-}
-
-/* ============= BOTTOM NAVIGATION (Mobile) ============= */
 
 /* Показываем нижнее меню на мобильных устройствах (до 1024px) */
 @media (max-width: 1024px) {
@@ -483,45 +346,219 @@ body {
     }
 }
 
+/* ============= FIXES FOR HEADER & LANGUAGE MENU ============= */
+
+/* 1. Исправляем фиксированный хедер - гарантируем правильный z-index */
+.fixed.top-0 {
+    z-index: 9999 !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+}
+
+/* 2. Контейнер хедера должен быть fluid на мобильных */
+.fixed.top-0 > .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 3. Исправляем flex-контейнер внутри хедера */
+.fixed.top-0 > .container > div.flex {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+}
+
+/* 4. Левый блок (лого + навигация) */
+.fixed.top-0 > .container > div.flex > div:first-child {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    overflow: hidden !important;
+}
+
+/* 5. Правый блок (язык + XP + пользователь) */
+.fixed.top-0 > .container > div.flex > div:last-child {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    flex-wrap: nowrap !important;
+}
+
+/* 6. Языковый переключатель - исправляем позиционирование */
+#language-switcher-wrapper {
+    position: relative !important;
+    z-index: 10000 !important;
+    overflow: visible !important;
+}
+
+/* 7. Кнопка языкового переключателя */
+#language-switcher-btn {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 8. Дропдаун меню языка - абсолютное позиционирование */
+#language-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    margin-top: 0.5rem !important;
+    z-index: 10001 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    min-width: 10rem !important;
+    width: max-content !important;
+}
+
+/* 9. Скрытие/показ меню языка */
+#language-menu.hidden {
+    display: none !important;
+}
+
+#language-menu:not(.hidden) {
+    display: block !important;
+}
+
+@keyframes fadeInDropdown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 10. XP бейдж - компактный на мобильных */
+@media (max-width: 768px) {
+    #wallet {
+        flex-shrink: 0 !important;
+        min-width: 4rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+}
+
+/* 11. Информация о пользователе - скрываем на мобильных */
+@media (max-width: 768px) {
+    #user-info {
+        display: none !important;
+    }
+    
+    /* Контейнер пользователя */
+    .fixed.top-0 .bg-gray-50.border.border-gray-200.rounded-xl {
+        padding: 0.25rem !important;
+        gap: 0.25rem !important;
+        flex-shrink: 0 !important;
+    }
+}
+
 /* Адаптивный хедер для мобильных */
 @media (max-width: 768px) {
     /* iOS - учитываем safe area */
     @supports (padding: env(safe-area-inset-top)) {
         .fixed.top-0 {
-            padding-top: env(safe-area-inset-top);
+            padding-top: env(safe-area-inset-top) !important;
+            padding-left: env(safe-area-inset-left) !important;
+            padding-right: env(safe-area-inset-right) !important;
         }
         
         .fixed.top-0 > .container {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
         }
     }
     
     /* Android/Xiaomi */
     @supports not (padding: env(safe-area-inset-top)) {
         .fixed.top-0 > .container {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
         }
     }
     
+    /* Скрываем десктопную навигацию */
+    nav.hidden.md\:flex {
+        display: none !important;
+    }
+    
+    /* Уменьшаем логотип */
+    .fixed.top-0 img.h-8.w-8.md\:h-10.md\:w-10 {
+        height: 1.5rem !important;
+        width: 1.5rem !important;
+    }
+    
+    /* Уменьшаем заголовок */
+    .fixed.top-0 h1.text-xl.md\:text-2xl {
+        font-size: 1rem !important;
+    }
+    
     /* Языковое меню - исправляем обрезание */
-    #language-switcher-wrapper {
-        overflow: visible !important;
-        position: relative;
-        z-index: 100;
-    }
-    
     .fixed.top-0 #language-menu {
-        top: 100%;
-        right: 0;
-        margin-top: 0.5rem;
-        max-height: 60vh;
-        overflow-y: auto;
-        z-index: 9999;
-        position: absolute;
+        top: calc(100% + 0.5rem) !important;
+        right: 0 !important;
+        z-index: 10001 !important;
+        max-height: 60vh !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* 12. Улучшаем отображение на очень маленьких экранах */
+@media (max-width: 400px) {
+    .fixed.top-0 > .container > div.flex {
+        gap: 0.25rem !important;
     }
     
+    #wallet {
+        min-width: 3.5rem !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+    
+    #language-switcher-btn {
+        min-width: 2.5rem !important;
+        padding: 0.4rem !important;
+    }
+    
+    .fixed.top-0 .bg-gray-50.border.border-gray-200.rounded-xl {
+        padding: 0.2rem !important;
+    }
+}
+
+/* 13. Предотвращаем переполнение хедера */
+@media (max-width: 640px) {
+    .fixed.top-0 > .container {
+        overflow: visible !important;
+    }
+    
+    .fixed.top-0 > .container > div.flex {
+        flex-wrap: nowrap !important;
+        overflow: visible !important;
+    }
+}
+
+/* 14. Исправляем кнопки в хедере */
+.fixed.top-0 button,
+.fixed.top-0 a {
+    flex-shrink: 0 !important;
+}
+
+/* 15. Исправляем высоту строки в дропдауне */
+.language-option {
+    line-height: 1.5 !important;
+    height: auto !important;
+    min-height: 3rem !important;
+}
+
+/* Скрываем верхнее меню на мобильных */
+@media (max-width: 768px) {
     /* Скрываем навигацию в хедере на мобильных */
     .fixed.top-0 nav {
         display: none !important;
@@ -581,45 +618,68 @@ body {
         overflow: hidden !important;
     }
     
-    /* Исправляем overflow для статистики, целей, рекомендаций */
-    #category-stats,
-    #goals-list,
-    #recommendations-list {
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-        word-wrap: break-word !important;
-        max-width: 100% !important;
-    }
-    
-    /* Исправляем блок Новая активность */
+    /* Исправляем обрезание блоков справа на мобильных */
+    #activities,
+    #activities > div,
     .bg-gradient-to-r.from-blue-50.to-indigo-50 {
-        max-width: 100% !important;
-        overflow-x: hidden !important;
-        padding-left: 1rem !important;
         padding-right: 1rem !important;
+        margin-right: 0 !important;
         box-sizing: border-box !important;
-    }
-    
-    /* Исправляем карточки активностей на мобильных */
-    .activity-card {
         max-width: 100% !important;
-        overflow-x: hidden !important;
+        width: 100% !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
+    
+    /* Исправляем обрезание статистики категорий */
+    #category-stats {
+        padding-right: 1rem !important;
+        margin-right: 0 !important;
         box-sizing: border-box !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
     }
     
-    /* Панель действий (кнопки) в карточках активностей */
-    .activity-card .flex.gap-2 {
-        flex-wrap: wrap !important;
-        gap: 0.5rem !important;
-        margin-top: 0.75rem !important;
+    /* Исправляем обрезание целей */
+    #goals-list {
+        padding-right: 1rem !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
     }
     
-    .activity-card button {
-        flex: 1 1 auto !important;
-        min-width: 0 !important;
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.75rem !important;
-        white-space: nowrap !important;
+    /* Исправляем обрезание рекомендаций */
+    #recommendations-list {
+        padding-right: 1rem !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
+    
+    /* Уменьшаем размер текста для компактности */
+    #wallet #balance {
+        font-size: 0.875rem !important;
+    }
+    
+    #wallet .text-\\[10px\\] {
+        font-size: 0.625rem !important;
+    }
+    
+    .fixed.top-0 #language-switcher-btn,
+    .fixed.top-0 #language-switcher-wrapper button {
+        padding: 0.375rem !important;
+    }
+    
+    .fixed.top-0 > .container > div > div:last-child {
+        padding: 0.25rem 0.375rem !important;
     }
     
     /* Добавляем отступ снизу для контента, чтобы не перекрывался нижней навигацией */
@@ -632,6 +692,37 @@ body {
         padding-bottom: 5rem !important;
         margin-bottom: 0 !important;
     }
+}
+
+/* Планшеты (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    /* Делаем хедер более гибким на планшетах */
+    .fixed.top-0 > .container > div.flex.justify-between {
+        gap: 0.5rem;
+    }
+    
+    /* Убеждаемся что элементы хедера не сжимаются слишком сильно */
+    .fixed.top-0 > .container > div > div:first-child,
+    .fixed.top-0 > .container > div > div:last-child {
+        flex-shrink: 1;
+        min-width: 0;
+    }
+}
+
+/* Улучшаем отображение на очень маленьких экранах (< 400px) */
+@media (max-width: 400px) {
+    /* Скрываем некоторые элементы на очень маленьких экранах */
+    .hidden.sm\:block {
+        display: none !important;
+    }
+}
+
+/* Убираем дублирующиеся стрелки в выпадающих списках */
+#activities-sort,
+#activities-category-filter {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 /* Стили для нижней навигации */
