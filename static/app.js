@@ -1852,6 +1852,13 @@ function logout() {
     authToken = '';
     currentUser = null;
     localStorage.removeItem('token');
+    
+    // Скрываем нижнюю навигацию при выходе
+    const bottomNav = document.getElementById('bottom-navigation');
+    if (bottomNav) {
+        bottomNav.classList.add('hidden');
+    }
+    
     showAuth();
 }
 
@@ -1983,6 +1990,12 @@ function showAuth() {
     }
     if (authSection) authSection.classList.remove("hidden");
     if (appSection) appSection.classList.add("hidden");
+    
+    // Скрываем нижнюю навигацию для неавторизованных пользователей
+    const bottomNav = document.getElementById('bottom-navigation');
+    if (bottomNav) {
+        bottomNav.classList.add('hidden');
+    }
 }
 
 function showApp() {
@@ -1991,6 +2004,18 @@ function showApp() {
     }
     if (authSection) authSection.classList.add("hidden");
     if (appSection) appSection.classList.remove("hidden");
+    
+    // Показываем нижнюю навигацию на мобильных (только для залогиненных)
+    const bottomNav = document.getElementById('bottom-navigation');
+    if (bottomNav) {
+        bottomNav.classList.remove('hidden');
+    }
+    
+    // Показываем нижнюю навигацию на мобильных (только для залогиненных)
+    const bottomNav = document.getElementById('bottom-navigation');
+    if (bottomNav) {
+        bottomNav.classList.remove('hidden');
+    }
 
     // Предотвращаем скролл вниз при показе приложения
     window.scrollTo(0, 0);
