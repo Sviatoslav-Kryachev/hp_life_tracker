@@ -186,9 +186,18 @@ body {
     
     /* Отступ для контейнера приложения - чтобы контент не перекрывался хедером */
     /* Учитываем safe area на iOS */
-    #app-section > .container,
-    #app-section .container {
-        padding-top: calc(7rem + env(safe-area-inset-top)) !important;
+    @supports (padding: env(safe-area-inset-top)) {
+        #app-section > .container,
+        #app-section .container {
+            padding-top: calc(4rem + env(safe-area-inset-top)) !important;
+        }
+    }
+    
+    @supports not (padding: env(safe-area-inset-top)) {
+        #app-section > .container,
+        #app-section .container {
+            padding-top: 4rem !important;
+        }
     }
     
     .container {
@@ -494,11 +503,6 @@ body {
             padding-top: 0.5rem;
             padding-bottom: 0.5rem;
         }
-        
-        #app-section > .container,
-        #app-section .container {
-            padding-top: calc(3.5rem + env(safe-area-inset-top));
-        }
     }
     
     /* Android/Xiaomi */
@@ -507,18 +511,23 @@ body {
             padding-top: 0.5rem;
             padding-bottom: 0.5rem;
         }
-        
-        #app-section > .container,
-        #app-section .container {
-            padding-top: 3.5rem;
-        }
     }
     
-    /* Общие стили для мобильных */
+    /* Языковое меню - исправляем обрезание */
+    #language-switcher-wrapper {
+        overflow: visible !important;
+        position: relative;
+        z-index: 100;
+    }
+    
     .fixed.top-0 #language-menu {
-        top: calc(100% + 0.25rem);
+        top: 100%;
         right: 0;
+        margin-top: 0.5rem;
+        max-height: 60vh;
+        overflow-y: auto;
         z-index: 9999;
+        position: absolute;
     }
     
     /* Скрываем навигацию в хедере на мобильных */
