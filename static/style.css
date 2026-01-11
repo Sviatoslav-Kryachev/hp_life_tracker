@@ -185,9 +185,10 @@ body {
     }
     
     /* Отступ для контейнера приложения - чтобы контент не перекрывался хедером */
+    /* Учитываем safe area на iOS */
     #app-section > .container,
     #app-section .container {
-        padding-top: 7rem !important;
+        padding-top: calc(7rem + env(safe-area-inset-top)) !important;
     }
     
     .container {
@@ -435,6 +436,12 @@ body {
 
 /* Скрываем верхнее меню на мобильных */
 @media (max-width: 768px) {
+    /* Учитываем safe area для хедера на iOS */
+    .fixed.top-0 {
+        padding-top: env(safe-area-inset-top) !important;
+        top: 0 !important;
+    }
+    
     /* Скрываем навигацию в хедере на мобильных */
     .fixed.top-0 nav {
         display: none !important;
