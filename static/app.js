@@ -2212,6 +2212,35 @@ function showApp() {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+    
+    // Инициализируем мобильную навигацию после показа приложения
+    const isMobile = window.innerWidth <= 1024;
+    if (isMobile) {
+        // Небольшая задержка, чтобы DOM успел обновиться
+        setTimeout(() => {
+            const hash = window.location.hash.replace('#', '');
+            const initialSection = (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) 
+                ? hash 
+                : 'activities';
+            
+            // Показываем нужную секцию
+            showMobileSection(initialSection);
+            
+            // Устанавливаем активную кнопку
+            const activeBtn = document.querySelector(`.mobile-nav-btn[data-section="${initialSection}"]`);
+            if (activeBtn) {
+                document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                    btn.classList.remove('active-nav');
+                });
+                activeBtn.classList.add('active-nav');
+            }
+            
+            // Обновляем URL если нужно
+            if (window.location.hash !== `#${initialSection}`) {
+                window.history.replaceState({ section: initialSection }, '', `#${initialSection}`);
+            }
+        }, 100);
+    }
 
     // Сбрасываем кэш элементов, чтобы они переинициализировались
     rewardsListVisible = null;
