@@ -1548,6 +1548,7 @@ function navigateToSection(section) {
 // Функция для обновления активной кнопки на основе позиции скролла
 function updateActiveNavButton() {
     const scrollPosition = window.pageYOffset + 150; // С учетом хедера
+    const viewportHeight = window.innerHeight;
     
     const activitiesEl = document.getElementById('activities');
     const rewardsEl = document.getElementById('rewards');
@@ -1562,12 +1563,58 @@ function updateActiveNavButton() {
     ].filter(s => s.el);
     
     // Находим текущую секцию на основе позиции скролла
+    // Используем более точную логику: секция считается активной, если она видна на экране
     let currentSection = 'activities';
-    for (let i = sections.length - 1; i >= 0; i--) {
-        const rect = sections[i].el.getBoundingClientRect();
-        if (rect.top <= scrollPosition) {
-            currentSection = sections[i].id;
-            break;
+    let bestMatch = null;
+    let bestScore = -Infinity;
+    
+    for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        const rect = section.el.getBoundingClientRect();
+        
+        // Проверяем, видна ли секция на экране
+        const isVisible = rect.top < viewportHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+            // Вычисляем "оценку" видимости секции
+            // Чем больше секция видна в верхней части экрана, тем выше оценка
+            const visibleTop = Math.max(0, rect.top);
+            const visibleBottom = Math.min(viewportHeight, rect.bottom);
+            const visibleHeight = visibleBottom - visibleTop;
+            const score = visibleHeight - Math.abs(rect.top - 100); // Предпочитаем секции ближе к верху экрана
+            
+            // Для goals-list используем более строгую проверку - он должен быть явно виден
+            if (section.id === 'goals') {
+                // Goals активен только если он явно в видимой области и не слишком далеко сверху
+                if (rect.top >= 100 && rect.top < viewportHeight - 200) {
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMatch = section.id;
+                    }
+                }
+            } else {
+                // Для основных секций (activities, rewards, history) используем стандартную логику
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = section.id;
+                }
+            }
+        }
+    }
+    
+    // Если нашли подходящую секцию, используем её, иначе используем старую логику
+    if (bestMatch) {
+        currentSection = bestMatch;
+    } else {
+        // Fallback: используем старую логику для секций, которые находятся ниже текущей позиции скролла
+        for (let i = sections.length - 1; i >= 0; i--) {
+            const rect = sections[i].el.getBoundingClientRect();
+            // Пропускаем goals в fallback логике, так как он в sidebar
+            if (sections[i].id === 'goals') continue;
+            if (rect.top <= scrollPosition) {
+                currentSection = sections[i].id;
+                break;
+            }
         }
     }
     
