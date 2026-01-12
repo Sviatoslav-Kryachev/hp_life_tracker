@@ -2165,11 +2165,22 @@ function showAuth() {
     if (authSection) {
         authSection.classList.remove("hidden");
         authSection.style.display = '';
+        authSection.style.height = '';
+        authSection.style.overflow = '';
     }
     if (appSection) {
         appSection.classList.add("hidden");
         appSection.style.display = 'none';
+        appSection.style.height = '0';
+        appSection.style.overflow = 'hidden';
+        appSection.style.position = 'absolute';
+        appSection.style.left = '-9999px';
     }
+    
+    // Предотвращаем скролл
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     
     // Скрываем нижнюю навигацию для неавторизованных пользователей
     const bottomNav = document.getElementById('bottom-navigation');
@@ -2191,10 +2202,16 @@ async function showApp() {
     if (authSection) {
         authSection.classList.add("hidden");
         authSection.style.display = 'none';
+        authSection.style.height = '0';
+        authSection.style.overflow = 'hidden';
     }
     if (appSection) {
         appSection.classList.remove("hidden");
         appSection.style.display = '';
+        appSection.style.height = '';
+        appSection.style.overflow = '';
+        appSection.style.position = '';
+        appSection.style.left = '';
     }
     
     // Показываем нижнюю навигацию на мобильных (только для залогиненных)
