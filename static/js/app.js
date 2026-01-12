@@ -1,6 +1,7 @@
 // ============= I18N (INTERNATIONALIZATION) =============
-// Примечание: API_BASE определен в app_utils.js
-// Не объявляем API_BASE здесь, используем существующий из app_utils.js или window
+// Примечание: API_BASE определен в app_utils.js (загружается ПЕРЕД этим файлом)
+// НЕ объявляем API_BASE здесь - используем существующий из app_utils.js
+// Если API_BASE недоступен, используем window.API_BASE или window.location.origin
 
 const translations = {
     ru: {
