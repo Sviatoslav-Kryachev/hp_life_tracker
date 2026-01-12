@@ -228,7 +228,10 @@
 
     <!-- Component Loader -->
     <script src="components.js"></script>
-    <!-- Main App Script -->
+    <!-- JavaScript Modules (загружаются в правильном порядке) -->
+    <script src="js/app_utils.js"></script>
+    <script src="js/app_auth.js"></script>
+    <!-- Main App Script (остальной код, который еще не модуляризован) -->
     <script src="app.js?v=44"></script>
     <!-- Load Components -->
     <script>
