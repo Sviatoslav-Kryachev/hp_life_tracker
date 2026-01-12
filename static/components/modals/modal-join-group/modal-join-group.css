@@ -1,0 +1,16 @@
+/* ============= JOIN GROUP MODAL STYLES ============= */
+/* Специфичные стили для модального окна присоединения к группе */
+
+#join-group-modal {
+    /* Базовые стили наследуются из modal-base.css */
+}
+
+#join-group-error {
+    color: rgb(239, 68, 68);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+#join-group-error.hidden {
+    display: none;
+}

@@ -1,0 +1,16 @@
+/* ============= CREATE CHALLENGE MODAL STYLES ============= */
+/* Специфичные стили для модального окна создания челленджа */
+
+#create-challenge-modal {
+    /* Базовые стили наследуются из modal-base.css */
+}
+
+#create-challenge-error {
+    color: rgb(239, 68, 68);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+#create-challenge-error.hidden {
+    display: none;
+}

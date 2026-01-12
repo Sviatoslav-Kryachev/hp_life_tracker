@@ -70,132 +70,13 @@
         })();
     </script>
 
-    <!-- AUTH SECTION (показывается когда не залогинен) -->
-    <div id="auth-section" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white/90 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50">
-            <div class="text-center mb-8">
-                <!-- Логотип -->
-                <div class="mb-4 flex justify-center">
-                    <img src="/static/logo.png" alt="XP Life Tracker Logo" class="h-24 w-24 md:h-32 md:w-32 object-contain drop-shadow-lg" onerror="this.style.display='none'">
-                </div>
-                <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                    XP Life Tracker
-                </h1>
-                <p class="text-gray-600">Трекер активности и опыта</p>
-            </div>
-
-            <!-- Табы Login/Register -->
-            <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
-                <button id="login-tab" onclick="showLoginForm()" class="flex-1 py-3 px-4 rounded-lg font-medium transition-all bg-white shadow text-indigo-600">
-                    Вход
-                </button>
-                <button id="register-tab" onclick="showRegisterForm()" class="flex-1 py-3 px-4 rounded-lg font-medium transition-all text-gray-500 hover:text-gray-700">
-                    Регистрация
-                </button>
-            </div>
-
-            <!-- Login Form -->
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="login-email" placeholder="your@email.com"
-                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
-                    <input type="password" id="login-password" placeholder="••••••••"
-                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white py-4 px-6 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Войти
-                </button>
-                <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
-                <button type="button" onclick="showForgotPassword()" class="w-full text-sm text-gray-500 hover:text-indigo-600 mt-2 transition-colors">
-                    Забыли пароль?
-                </button>
-            </form>
-
-            <!-- Register Form (hidden by default) -->
-            <form id="register-form" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="register-email" placeholder="your@email.com"
-                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Имя пользователя</label>
-                    <input type="text" id="register-username" placeholder="username"
-                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
-                    <input type="password" id="register-password" placeholder="Минимум 6 символов"
-                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required minlength="6">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Подтвердите пароль</label>
-                    <input type="password" id="register-password-confirm" placeholder="Повторите пароль"
-                           class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-4 px-6 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl">
-                    <i class="fas fa-user-plus mr-2"></i>Зарегистрироваться
-                </button>
-                <p id="register-error" class="text-red-500 text-sm text-center hidden"></p>
-                <p id="register-success" class="text-green-500 text-sm text-center hidden"></p>
-            </form>
-
-            <!-- Forgot Password Modal -->
-            <div id="forgot-password-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeForgotPassword()">
-                <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6" onclick="event.stopPropagation()">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800">Восстановление пароля</h3>
-                        <button onclick="closeForgotPassword()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-                    </div>
-
-                    <!-- Step 1: Request Code -->
-                    <div id="forgot-step1" class="space-y-4">
-                        <p class="text-gray-600">Введите ваш email для получения кода восстановления</p>
-                        <input type="email" id="forgot-email" placeholder="your@email.com"
-                               class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                        <button onclick="requestResetCode()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white py-4 px-6 rounded-xl font-bold transition-all">
-                            Получить код
-                        </button>
-                        <p id="forgot-error1" class="text-red-500 text-sm text-center hidden"></p>
-                    </div>
-
-                    <!-- Step 2: Enter Code and New Password -->
-                    <div id="forgot-step2" class="space-y-4 hidden">
-                        <p class="text-gray-600">Введите код и новый пароль</p>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Код из email</label>
-                            <input type="text" id="forgot-code" placeholder="000000" maxlength="6"
-                                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all text-center text-2xl tracking-widest" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Новый пароль</label>
-                            <input type="password" id="forgot-new-password" placeholder="Минимум 6 символов"
-                                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required minlength="6">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Подтвердите пароль</label>
-                            <input type="password" id="forgot-confirm-password" placeholder="Повторите пароль"
-                                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                        </div>
-                        <button onclick="resetPassword()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-4 px-6 rounded-xl font-bold transition-all">
-                            Сбросить пароль
-                        </button>
-                        <p id="forgot-error2" class="text-red-500 text-sm text-center hidden"></p>
-                        <p id="forgot-success" class="text-green-500 text-sm text-center hidden"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- AUTH SECTION Component Container -->
+    <div id="auth-section"></div>
 
     <!-- MAIN APP (показывается когда залогинен) -->
     <div id="app-section" class="hidden">
-        <!-- Fixed Header -->
-        <div class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl shadow-lg border-b border-white/50">
+        <!-- Header Component Container -->
+        <div id="header-container"></div>
             <div class="container mx-auto px-3 md:px-4 py-1.5 md:py-3 max-w-6xl">
                 <div class="flex justify-between items-center gap-2">
                     <div class="flex items-center gap-2 md:gap-4">
@@ -286,190 +167,10 @@
         <!-- Content with top padding for fixed header -->
         <div class="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-6xl pt-20 md:pt-24">
             <!-- Admin Panel (hidden by default) -->
-            <div id="admin-panel" class="hidden mb-6 bg-white/90 backdrop-blur rounded-2xl p-6 shadow-xl border border-white/50 mt-2">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-users-cog mr-2 text-blue-600"></i><span data-i18n="admin_panel">Админ-панель</span>
-                    </h2>
-                    <button onclick="hideAdminPanel()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
+            <!-- Admin Panel Component Container -->
+            <div id="section-admin-container"></div>
 
-                <!-- Invite Code Section -->
-                <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-                    <h3 class="font-bold text-gray-800 mb-2" data-i18n="invite_link">🔗 Ссылка для приглашения</h3>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="text" id="invite-link" readonly
-                               class="flex-1 p-3 border-2 border-blue-200 rounded-lg bg-white text-sm font-mono">
-                        <button onclick="copyInviteLink()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg transition-all">
-                            <i class="fas fa-copy"></i> <span data-i18n="copy">Копировать</span>
-                        </button>
-                    </div>
-                    <p class="text-xs text-gray-600" data-i18n="send_link_to_daughter">Отправьте эту ссылку дочери для регистрации</p>
-                </div>
-
-                <!-- Category Filter -->
-                <div class="mb-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-filter text-blue-600 mr-1"></i><span data-i18n="filter_by_category">Фильтр по категориям активностей</span>
-                    </label>
-                    <select id="admin-category-filter" onchange="filterChildrenByCategory()" class="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white">
-                        <option value="" data-i18n="all_categories">Все категории</option>
-                        <option value="general">Общее</option>
-                        <option value="study">Учеба</option>
-                        <option value="sport">Спорт</option>
-                        <option value="hobby">Хобби</option>
-                        <option value="work">Работа</option>
-                        <option value="health">Здоровье</option>
-                    </select>
-                </div>
-
-                <!-- Children List -->
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-3" data-i18n="children">👥 Подопечные</h3>
-                    <div id="children-list" class="space-y-3">
-                        <div class="text-center text-gray-400 py-4" data-i18n="loading">Загрузка...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Category Management Modal -->
-            <div id="category-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4" onclick="if(event.target === this) closeCategoryModal()">
-                <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-2xl font-bold text-gray-800" id="category-modal-title">Добавить категорию</h3>
-                        <button onclick="closeCategoryModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <form id="category-form" class="space-y-4">
-                        <input type="hidden" id="category-id">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Название категории <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="category-name" placeholder="Введите название" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
-                        </div>
-                        <div class="flex gap-3 pt-2">
-                            <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl transition-all font-medium">
-                                Сохранить
-                            </button>
-                            <button type="button" onclick="closeCategoryModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-xl transition-all font-medium">
-                                Отмена
-                            </button>
-                        </div>
-                    </form>
-                    <div class="mt-6 pt-6 border-t border-gray-200">
-                        <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <i class="fas fa-list text-blue-500"></i>
-                            Мои категории
-                        </h4>
-                        <div id="custom-categories-list" class="space-y-2 max-h-64 overflow-y-auto">
-                            <div class="text-center text-gray-400 py-4 text-sm">Загрузка...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Create/Edit Goal Modal -->
-            <div id="create-goal-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" lang="ru" onclick="if(event.target === this) closeCreateGoalModal()">
-                <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 my-8 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
-                    <div class="flex justify-between items-center mb-4 relative">
-                        <h3 class="text-2xl font-bold text-gray-800 text-center flex-1" id="goal-modal-title" data-i18n="new_goal">🎯 Новая цель</h3>
-                        <button onclick="closeCreateGoalModal()" class="text-gray-400 hover:text-gray-600 text-2xl absolute right-0">&times;</button>
-                    </div>
-                    <form id="create-goal-form" class="space-y-4" lang="ru">
-                        <input type="hidden" id="edit-goal-id" value="">
-                        <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-2">
-                            <p class="text-xs text-purple-700">
-                                <i class="fas fa-info-circle mr-1"></i>
-                                <strong data-i18n="important">Важно:</strong> <span data-i18n="goal_info_text">Выберите активность из вашего списка. Цель будет отслеживать прогресс только по этой активности.</span>
-                            </p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                <i class="fas fa-tasks text-purple-600 mr-1"></i><span data-i18n="select_activity_label">Выберите активность</span> <span class="text-red-500">*</span>
-                            </label>
-                            <select id="goal-activity" class="w-full p-3 border-2 border-purple-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-300 transition-all bg-white" required>
-                                <option value="" data-i18n="loading_activities">-- Загрузка активностей --</option>
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                <i class="fas fa-lightbulb text-amber-500"></i>
-                                <span data-i18n="create_activity_first">Сначала создайте активность, если её нет в списке</span>
-                            </p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="goal_title">Название цели</label>
-                            <input type="text" id="goal-title" data-i18n-placeholder="goal_title_placeholder" placeholder="Например: Изучить 100 часов немецкого"
-                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                        </div>
-
-                        <!-- Переключатель режима цели (только для активностей в штуках) -->
-                        <div id="goal-mode-selector" class="hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Выберите тип цели:</label>
-                            <div class="flex gap-3 mb-3">
-                                <label class="flex-1 p-3 border-2 border-purple-300 rounded-xl cursor-pointer hover:bg-purple-50 transition-all goal-mode-option">
-                                    <input type="radio" name="goal-mode" value="quantity" class="sr-only" checked>
-                                    <div class="text-center">
-                                        <i class="fas fa-hashtag text-purple-600 mb-1"></i>
-                                        <div class="text-sm font-medium text-gray-700">По количеству</div>
-                                    </div>
-                                </label>
-                                <label class="flex-1 p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all goal-mode-option">
-                                    <input type="radio" name="goal-mode" value="xp" class="sr-only">
-                                    <div class="text-center">
-                                        <i class="fas fa-coins text-purple-600 mb-1"></i>
-                                        <div class="text-sm font-medium text-gray-700">По XP</div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Поле целевого количества XP (для активностей во времени или выбран режим XP) -->
-                        <div id="goal-xp-container">
-                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="target_xp">Целевое количество XP <span class="text-red-500">*</span></label>
-                            <input type="number" id="goal-target-xp" placeholder="1000" min="1" step="1"
-                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
-                            <p class="text-xs text-gray-500 mt-1" data-i18n="target_xp_description">Сколько XP нужно заработать для достижения цели</p>
-                        </div>
-
-                        <!-- Поле количества штук (только для активностей в штуках в режиме количества) -->
-                        <div id="goal-quantity-container" class="hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="target_quantity">К-во для достижения <span class="text-red-500">*</span></label>
-                            <input type="number" id="goal-target-quantity" placeholder="1500" min="1" step="1"
-                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                            <p class="text-xs text-gray-500 mt-1" data-i18n="target_quantity_description">Целевое количество (для активностей в штуках)</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="completion_bonus_xp">Бонус XP за достижение цели</label>
-                            <input type="number" id="goal-completion-bonus" placeholder="0" min="0" step="1" value="0"
-                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                            <p class="text-xs text-gray-500 mt-1" data-i18n="completion_bonus_xp_description">Дополнительный бонус XP при достижении цели</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="description">Описание (необязательно)</label>
-                            <textarea id="goal-description" data-i18n-placeholder="goal_description_placeholder" placeholder="Дополнительная информация о цели"
-                                      class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" rows="2"></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="deadline">Дедлайн (необязательно)</label>
-                            <input type="date" id="goal-target-date" lang="ru"
-                                   class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                            <p class="text-xs text-gray-500 mt-1" id="deadline-description-text">Установите дату, к которой хотите достичь цели. Формат: <span id="date-format-text">дд.мм.гггг</span></p>
-                        </div>
-
-                        <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 px-6 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl" id="goal-submit-btn">
-                            <i class="fas fa-check mr-2"></i><span data-i18n="create_goal_btn">Создать цель</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
+            <!-- Модальные окна загружаются динамически через components.js -->
 
             <!-- Child Stats Modal -->
             <div id="child-stats-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeChildStats()">
@@ -487,234 +188,24 @@
             <!-- Виджеты: Сегодня + Неделя + Прогресс -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
                 <!-- Виджет Сегодня -->
-                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl md:rounded-2xl p-4 md:p-5 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
-                    <div class="flex items-center justify-center gap-2 mb-3">
-                        <i class="fas fa-sun text-yellow-300"></i>
-                        <span class="font-bold" data-i18n="today">Сегодня</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 md:gap-4">
-                        <div class="flex flex-col">
-                            <div class="text-2xl font-black mb-2 leading-tight" id="today-earned">0</div>
-                            <div class="text-emerald-100 text-xs leading-tight" data-i18n="earned_xp">Заработано XP</div>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="text-2xl font-black mb-2 leading-tight" id="today-spent">0</div>
-                            <div class="text-emerald-100 text-xs leading-tight" data-i18n="spent_xp">Потрачено XP</div>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="text-lg font-bold mb-2 leading-tight" id="today-sessions">0</div>
-                            <div class="text-emerald-100 text-xs leading-tight" data-i18n="sessions">Сессий</div>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="text-lg font-bold mb-2 leading-tight" id="today-time">0м</div>
-                            <div class="text-emerald-100 text-xs leading-tight" data-i18n="time">Время</div>
-                        </div>
-                    </div>
-                </div>
+                <div id="widget-today-container"></div>
 
                 <!-- Календарь активности -->
-                <div class="bg-white/90 backdrop-blur rounded-2xl p-5 shadow-xl border border-white/50 hover:shadow-2xl transition-all duration-300">
-                    <div class="flex items-center justify-center gap-2 mb-3">
-                        <i class="fas fa-calendar-week text-indigo-500"></i>
-                        <span class="font-bold text-gray-800" data-i18n="calendar">Календарь</span>
-                    </div>
-                    <!-- Переключатель периодов -->
-                    <div class="flex items-center justify-center gap-2 mb-4">
-                        <button onclick="changeCalendarPeriod('week')" id="period-week" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500 text-white transition-all">
-                            <span data-i18n="week">Неделя</span>
-                        </button>
-                        <button onclick="changeCalendarPeriod('month')" id="period-month" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all">
-                            <span data-i18n="month">Месяц</span>
-                        </button>
-                        <button onclick="changeCalendarPeriod('year')" id="period-year" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all">
-                            <span data-i18n="year">Год</span>
-                        </button>
-                    </div>
-                    <!-- Календарь -->
-                    <div id="calendar-container">
-                        <div class="flex justify-between gap-1" id="week-calendar">
-                            <!-- Заполняется через JS -->
-                        </div>
-                    </div>
-                </div>
+                <div id="widget-calendar-container"></div>
 
                 <!-- Прогресс до следующего уровня -->
-                <div class="bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-5 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
-                    <div class="flex items-center justify-center gap-2 mb-3">
-                        <i class="fas fa-chart-line text-yellow-300"></i>
-                        <span class="font-bold" data-i18n="progress">Прогресс</span>
-                    </div>
-                    <div class="mb-2">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span><span data-i18n="to_level">До уровня</span> <span id="next-level">2</span></span>
-                            <span id="xp-to-next">0/1000 XP</span>
-                        </div>
-                        <div class="h-3 bg-white/20 rounded-full overflow-hidden">
-                            <div id="level-progress" class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="text-violet-200 text-xs mt-2">
-                        <span data-i18n="total_earned">Всего заработано</span>: <span id="total-earned" class="font-bold text-white">0</span> XP
-                    </div>
-                </div>
+                <div id="widget-progress-container"></div>
             </div>
 
             <!-- Основной контент: Активности + Боковая панель -->
             <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
-                <!-- Активности (основной контент, 2/3 ширины) -->
-                <div id="activities" class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl pt-4 px-4 pb-4 md:pt-8 md:px-8 md:pb-4 shadow-2xl border border-white/50 scroll-mt-20 md:scroll-mt-24">
-                    <!-- Заголовок -->
-                    <div class="flex justify-center items-center mb-4 md:mb-6">
-                        <h2 class="text-xl md:text-3xl font-bold text-gray-800">
-                            <i class="fas fa-tasks mr-2 md:mr-3 text-blue-500"></i><span data-i18n="activities">Активности</span>
-                        </h2>
-                    </div>
-
-                    <!-- Аккордеон контент -->
-                    <div id="activities-accordion-content">
-                        <!-- Фильтры и сортировка -->
-                        <div class="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                            <div class="flex flex-nowrap gap-3 items-center">
-                                <!-- Сортировка по дате -->
-                                <div class="flex items-center gap-2 flex-shrink-0">
-                                    <label class="text-sm font-medium text-gray-700 whitespace-nowrap" data-i18n="sort_label">Сортировка:</label>
-                                    <div class="relative">
-                                        <select id="activities-sort" class="px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 text-sm appearance-none">
-                                            <option value="newest" data-i18n="sort_newest">⬆️ Сначала новые</option>
-                                            <option value="oldest" data-i18n="sort_oldest">Сначала старые</option>
-                                            <option value="name-asc" data-i18n="sort_name_asc">По имени (А-Я)</option>
-                                            <option value="name-desc" data-i18n="sort_name_desc">По имени (Я-А)</option>
-                                        </select>
-                                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                                            <i class="fas fa-chevron-down text-black text-xs"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Фильтр по категории -->
-                                <div class="flex items-center gap-2 flex-shrink-0">
-                                    <label class="text-sm font-medium text-gray-700 whitespace-nowrap" data-i18n="category_label">Категория:</label>
-                                    <div class="relative">
-                                        <select id="activities-category-filter" class="px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 text-sm appearance-none">
-                                            <option value="all" data-i18n="all_categories_with_icon">📂 Все категории</option>
-                                        </select>
-                                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                                            <i class="fas fa-chevron-down text-black text-xs"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Кнопка сброса фильтров -->
-                                <div class="flex items-center flex-shrink-0">
-                                    <button id="activities-reset-filters" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition-all whitespace-nowrap">
-                                        <i class="fas fa-redo mr-1"></i><span data-i18n="reset_filters">Сбросить</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Список активностей -->
-                        <div class="mb-6 flex flex-col">
-                            <div id="activities-list-container" class="space-y-4">
-                                <div id="activities-list-visible" class="space-y-4"></div>
-                                <div id="activities-list-hidden" class="space-y-4 hidden"></div>
-                            </div>
-                            <button id="activities-accordion-btn" onclick="toggleActivitiesAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-indigo-100 hover:from-blue-200 hover:to-indigo-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
-                                <span class="accordion-text" data-i18n="show_all_activities">Показать все активности</span>
-                                <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Новая активность -->
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 pt-6 pb-5 rounded-2xl border-2 border-dashed border-blue-200" style="margin-bottom: 0;">
-                        <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center"><span data-i18n="new_activity">➕ Новая активность</span></h3>
-                        <form id="new-activity-form" class="space-y-4">
-                            <!-- Название активности (широкое) -->
-                            <div>
-                                <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-lg text-center" required>
-                            </div>
-
-                            <!-- Выбор категории -->
-                            <div class="relative">
-                                <div id="activity-category-wrapper" class="custom-dropdown">
-                                    <input type="hidden" id="activity-category" value="general">
-                                    <button type="button" id="activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-center flex items-center justify-center gap-2 min-w-0">
-                                        <span id="activity-category-text" class="flex-1 min-w-0 break-words line-clamp-2 text-center">Общее</span>
-                                        <i class="fas fa-chevron-down text-gray-500 text-sm flex-shrink-0"></i>
-                                    </button>
-                                    <div id="activity-category-dropdown" class="hidden absolute z-50 min-w-full w-max max-w-md mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                                        <!-- Опции будут добавлены через JavaScript -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Время и Количество -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Время (минуты) -->
-                                <div class="flex flex-col items-center justify-center">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2 text-center" data-i18n="unit_time">Время (минуты)</label>
-                                    <div class="relative w-full">
-                                        <select id="activity-unit-type" class="w-full p-4 pr-10 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-center appearance-none">
-                                            <option value="time" data-i18n="unit_time">Время (минуты)</option>
-                                            <option value="quantity" data-i18n="unit_quantity">Количество (штуки)</option>
-                                        </select>
-                                        <div class="absolute right-5 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                                            <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Количество (отцентрировано) -->
-                                <div class="flex flex-col items-center justify-center">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="unit_quantity">Количество</label>
-                                    <div id="activity-xp-input-container" class="w-full">
-                                        <div id="activity-xp-time" class="w-full">
-                                            <input type="number" id="xp-per-hour" data-i18n-placeholder="xp_per_hour" placeholder="XP/час" value="60" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all text-center">
-                                        </div>
-                                        <div id="activity-xp-quantity" class="w-full hidden">
-                                            <input type="number" id="xp-per-unit" data-i18n-placeholder="xp_per_unit" placeholder="XP/штука" value="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all text-center">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Кнопка Создать (красиво размещена) -->
-                            <div class="flex justify-center pt-2">
-                                <button type="submit" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 font-semibold text-lg min-w-[200px]">
-                                    <i class="fas fa-plus"></i>
-                                    <span data-i18n="create">Создать</span>
-                                </button>
-                            </div>
-                        </form>
-                        <p id="activity-message" class="text-sm mt-4 mb-0 hidden"></p>
-                    </div>
-                </div>
+                <!-- Активности Component Container -->
+                <div id="section-activities-container" class="lg:col-span-2"></div>
 
                 <!-- Боковая панель (правая колонка) -->
                 <div class="space-y-3 md:space-y-4">
                     <!-- Виджет Streak (компактный) -->
-                    <div class="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 rounded-xl md:rounded-2xl p-3 md:p-4 text-white shadow-xl hover:shadow-2xl transition-all duration-300">
-                        <!-- Заголовок -->
-                        <div class="flex items-center justify-center gap-1.5 md:gap-2 mb-3 md:mb-4">
-                            <i class="fas fa-fire text-yellow-300 text-lg md:text-xl"></i>
-                            <span class="text-xs md:text-sm font-semibold opacity-95" data-i18n="streak_days">Серия дней</span>
-                        </div>
-                        <!-- Текущая серия -->
-                        <div class="mb-2 md:mb-3 text-center">
-                            <div class="flex items-baseline gap-1.5 md:gap-2 justify-center">
-                                <span class="text-2xl md:text-3xl font-black" id="streak-count">0</span>
-                                <span class="text-xs md:text-sm opacity-80 font-medium" data-i18n="days">дней</span>
-                            </div>
-                        </div>
-                        <!-- Рекорд -->
-                        <div class="flex items-center justify-between pt-2 border-t border-white/20">
-                            <span class="text-[10px] md:text-xs opacity-80" data-i18n="record">Рекорд:</span>
-                            <span class="text-xs md:text-sm font-bold opacity-95" id="streak-record">0 <span data-i18n="days">дней</span></span>
-                        </div>
-                        <!-- Сообщение -->
-                        <div class="text-[10px] md:text-xs opacity-75 mt-1.5 md:mt-2 italic" id="streak-message" data-i18n="start_activity">Начните активность!</div>
-                    </div>
+                    <div id="widget-streak-container"></div>
 
                     <!-- Статистика по категориям -->
                     <div class="bg-white/90 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border border-white/50">
@@ -758,148 +249,11 @@
 
             <!-- Награды и История транзакций (общий контейнер) -->
             <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
-                <!-- Награды (левая колонка, ширина как у Активностей - 2/3) -->
-                <div id="rewards" class="lg:col-span-2 relative scroll-mt-20 md:scroll-mt-24 bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col">
-                    <!-- Декоративные элементы -->
-                    <div class="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-3xl opacity-30"></div>
-                    <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full blur-3xl opacity-20"></div>
-                    <!-- Заголовок с градиентом -->
-                    <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center">
-                        <div class="flex items-start gap-2 md:gap-3">
-                            <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-crown text-white text-lg md:text-xl"></i>
-                            </div>
-                            <div class="flex flex-col -mt-1 md:-mt-0.5">
-                                <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="rewards">Награды</span></h2>
-                                <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="spend_xp">Потрать XP на удовольствия</span></p>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Награды Component Container -->
+                <div id="section-rewards-container" class="lg:col-span-2"></div>
 
-                    <div class="p-5 flex-1 flex flex-col">
-                        <!-- Список наград -->
-                        <div class="mb-5 flex flex-col">
-                            <div id="rewards-list-container" class="space-y-2">
-                                <div id="rewards-list-visible" class="space-y-2 overflow-x-hidden pr-2"></div>
-                                <div id="rewards-list-hidden" class="space-y-2 overflow-x-hidden pr-2 hidden"></div>
-                            </div>
-                            <button id="rewards-accordion-btn" onclick="toggleRewardsAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-amber-100 to-orange-100 hover:from-amber-200 hover:to-orange-200 text-amber-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
-                                <span class="accordion-text" data-i18n="show_all_rewards">Показать все награды</span>
-                                <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
-                            </button>
-                        </div>
-
-                        <!-- Сообщение -->
-                        <p id="reward-message" class="text-sm mb-4 hidden p-3 rounded-xl"></p>
-
-                        <!-- Быстрые награды -->
-                        <div class="mb-5">
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-3 font-semibold flex items-center gap-2">
-                                <i class="fas fa-bolt text-amber-400"></i> <span data-i18n="quick_select">Быстрый выбор</span>
-                            </p>
-                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="preset-rewards">
-                                <button type="button" onclick="selectPreset('mcdonalds')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all duration-300" title="McDonald's">
-                                    <div class="w-9 h-9 mx-auto rounded-xl bg-red-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-red-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                        <span class="text-yellow-400 font-black text-base">M</span>
-                                    </div>
-                                </button>
-                                <button type="button" onclick="selectPreset('youtube')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all duration-300" title="YouTube">
-                                    <div class="w-9 h-9 mx-auto rounded-xl bg-red-600 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-red-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                        <i class="fab fa-youtube text-white"></i>
-                                    </div>
-                                </button>
-                                <button type="button" onclick="selectPreset('gaming')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-purple-50 transition-all duration-300" title="Игры">
-                                    <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-purple-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                        <i class="fas fa-gamepad text-white"></i>
-                                    </div>
-                                </button>
-                                <button type="button" onclick="selectPreset('netflix')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-300" title="Netflix">
-                                    <div class="w-9 h-9 mx-auto rounded-xl bg-black flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-gray-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                        <span class="text-red-600 font-black text-sm">N</span>
-                                    </div>
-                                </button>
-                                <button type="button" onclick="selectPreset('coffee')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-green-50 transition-all duration-300" title="Кофе">
-                                    <div class="w-9 h-9 mx-auto rounded-xl bg-green-700 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-green-400 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                        <i class="fas fa-coffee text-white"></i>
-                                    </div>
-                                </button>
-                                <button type="button" onclick="selectPreset('custom')" class="preset-btn group relative p-2 rounded-xl bg-gray-50 hover:bg-amber-50 transition-all duration-300" data-i18n-title="custom_reward">
-                                    <div class="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-amber-300 group-hover:ring-offset-2 transition-all duration-300 relative z-10">
-                                        <i class="fas fa-plus text-white"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Форма создания награды -->
-                        <form id="new-reward-form" class="space-y-3">
-                            <div class="flex gap-2">
-                                <input type="text" id="reward-name" data-i18n-placeholder="reward_name" placeholder="Название награды"
-                                       class="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 placeholder-gray-400 text-center placeholder:text-center" required>
-                                <input type="number" id="reward-cost" placeholder="XP" min="1" value="10"
-                                   class="w-20 px-3 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-100 transition-all text-gray-800 text-center font-medium" required>
-                            </div>
-                            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white py-3.5 px-6 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
-                                <i class="fas fa-sparkles"></i>
-                                <span data-i18n="create_reward">Создать награду</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- История транзакций (правая колонка, ширина как у правых блоков - 1/3) -->
-                <div id="history" class="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/60 overflow-hidden flex flex-col h-full scroll-mt-20 md:scroll-mt-24">
-                    <!-- Заголовок с градиентом -->
-                    <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-4 md:p-5 min-h-[88px] md:min-h-[100px] flex items-center justify-center flex-shrink-0">
-                        <div class="flex items-start gap-2 md:gap-3">
-                            <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-history text-white text-lg md:text-xl"></i>
-                            </div>
-                            <div class="flex flex-col -mt-1 md:-mt-0.5">
-                                <h2 class="text-xl md:text-2xl font-bold text-white"><span data-i18n="transaction_history">История транзакций</span></h2>
-                                <p class="text-white/80 text-sm mt-0 md:mt-0.5"><span data-i18n="all_xp_operations">Все операции с XP</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-5 flex flex-col flex-1 min-h-0">
-                        <!-- Фильтр периода -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-filter text-indigo-600 mr-1"></i>
-                                <span data-i18n="filter_period">Период</span>
-                            </label>
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="setHistoryPeriod('today')" id="history-period-today" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-indigo-500 text-white font-medium transition-all hover:bg-indigo-600">
-                                    <span data-i18n="today">Сегодня</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('week')" id="history-period-week" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="week">Неделя</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('month')" id="history-period-month" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="month">Месяц</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('year')" id="history-period-year" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="year">Год</span>
-                                </button>
-                                <button onclick="setHistoryPeriod('all')" id="history-period-all" class="history-period-btn px-3 py-1.5 text-sm rounded-lg bg-gray-200 text-gray-700 font-medium transition-all hover:bg-gray-300">
-                                    <span data-i18n="all">Все</span>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Список истории -->
-                        <div class="flex flex-col flex-1 min-h-0">
-                            <div id="history-list-container" class="overflow-x-hidden pr-2 relative flex-1 min-h-0">
-                                <div id="history-list-visible" class="space-y-2"></div>
-                                <div id="history-list-hidden" class="space-y-2 hidden"></div>
-                            </div>
-                            <button id="history-accordion-btn" onclick="toggleHistoryAccordion()" class="hidden mt-3 mb-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group flex-shrink-0">
-                                <span class="accordion-text" data-i18n="show_all_history">Показать всю историю</span>
-                                <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- История транзакций Component Container -->
+                <div id="section-history-container"></div>
                 </div>
             </div>
 
@@ -1024,126 +378,8 @@
         </div>
     </div>
 
-    <!-- Модальное окно редактирования активности -->
-    <div id="edit-activity-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeEditModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800" data-i18n="edit_activity">✏️ Редактировать активность</h3>
-                <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="edit-activity-form" class="space-y-4">
-                <input type="hidden" id="edit-activity-id">
-                <input type="text" id="edit-activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-left" required>
-                <div class="relative">
-                    <div id="edit-activity-category-wrapper" class="custom-dropdown">
-                        <input type="hidden" id="edit-activity-category" value="general">
-                        <button type="button" id="edit-activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-left flex items-center gap-2 min-w-0">
-                            <span id="edit-activity-category-text" class="flex-1 min-w-0 break-words line-clamp-2">Общее</span>
-                            <i class="fas fa-chevron-down text-gray-500 text-sm flex-shrink-0"></i>
-                        </button>
-                        <div id="edit-activity-category-dropdown" class="hidden absolute z-50 min-w-full w-max max-w-md mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                            <!-- Опции будут добавлены через JavaScript -->
-                        </div>
-                    </div>
-                </div>
-                <div class="relative">
-                    <select id="edit-activity-unit-type" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white">
-                        <option value="time" data-i18n="unit_time">Время (минуты)</option>
-                        <option value="quantity" data-i18n="unit_quantity">Количество (штуки)</option>
-                    </select>
-                </div>
-                <div id="edit-activity-xp-input-container" class="space-y-4">
-                    <div id="edit-activity-xp-time">
-                        <input type="number" id="edit-xp-per-hour" data-i18n-placeholder="xp_per_hour" placeholder="XP/час" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" min="1">
-                    </div>
-                    <div id="edit-activity-xp-quantity" class="hidden">
-                        <input type="number" id="edit-xp-per-unit" data-i18n-placeholder="xp_per_unit" placeholder="XP/штука" value="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" min="0.1">
-                    </div>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-save"></i> <span data-i18n="save">Сохранить</span>
-                    </button>
-                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i> <span data-i18n="cancel">Отмена</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Модальные окна загружаются динамически через components.js -->
 
-    <!-- Модальное окно редактирования награды -->
-    <div id="edit-reward-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeEditRewardModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800" data-i18n="edit_reward">✏️ Редактировать награду</h3>
-                <button onclick="closeEditRewardModal()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
-            </div>
-            <form id="edit-reward-form" class="space-y-4">
-                <input type="hidden" id="edit-reward-id">
-                <input type="text" id="edit-reward-name" data-i18n-placeholder="reward_name_placeholder" placeholder="Название" class="w-full p-4 border-2 border-gray-200 rounded-xl" required>
-                <input type="number" id="edit-reward-cost" data-i18n-placeholder="xp_cost_placeholder" placeholder="XP стоимость" min="1" class="w-full p-4 border-2 border-gray-200 rounded-xl" required>
-                <div class="flex gap-3">
-                    <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl" data-i18n="save_reward">Сохранить</button>
-                    <button type="button" onclick="closeEditRewardModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 py-3 px-6 rounded-xl" data-i18n="cancel">Отмена</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модальное окно деталей дня -->
-    <div id="day-details-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeDayDetailsModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800" id="day-details-title">📅 Детали дня</h3>
-                <button onclick="closeDayDetailsModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="day-details-content">
-                <div class="text-center text-gray-400 py-4">Загрузка...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно ручного ввода времени/количества -->
-    <div id="manual-time-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeManualTimeModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800" id="manual-modal-title" data-i18n="manual_time">⏱️ Добавить время вручную</h3>
-                <button onclick="closeManualTimeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="manual-time-form" class="space-y-4">
-                <div class="relative">
-                    <select id="manual-activity-select" class="w-full p-4 pr-10 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all bg-white appearance-none" required>
-                        <option value="" data-i18n="select_activity_label">Выберите активность</option>
-                    </select>
-                    <div class="absolute right-5 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                        <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
-                    </div>
-                </div>
-                <div id="manual-time-input-container">
-                    <input type="number" id="manual-minutes" data-i18n-placeholder="minutes_placeholder" placeholder="Минут" min="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                </div>
-                <div id="manual-quantity-input-container" class="hidden">
-                    <input type="number" id="manual-quantity" data-i18n-placeholder="quantity_placeholder" placeholder="Введите к-во" min="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all" required>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-plus"></i> <span data-i18n="add">Добавить</span>
-                    </button>
-                    <button type="button" onclick="closeManualTimeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i> <span data-i18n="cancel">Отмена</span>
-                    </button>
-                </div>
-                <div id="manual-time-preview" class="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-xl hidden"></div>
-            </form>
-        </div>
-    </div>
 
     <!-- Bottom Navigation (Mobile Only) - hidden by default, shown when logged in -->
     <nav id="bottom-navigation" class="hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-lg">
@@ -1167,246 +403,61 @@
         </div>
     </nav>
 
-    <!-- Footer (hidden on mobile) -->
-    <footer class="bg-white/95 backdrop-blur-xl border-t border-gray-200 mt-12 pb-8 hidden md:block">
-        <div class="container mx-auto px-4 py-8 max-w-6xl">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- О проекте -->
-                <div>
-                    <div class="mb-4">
-                        <img src="/static/logo.png" alt="XP Life Tracker Logo" class="h-16 w-16 object-contain" onerror="this.style.display='none'">
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span data-i18n="about_project">О проекте</span>
-                    </h3>
-                    <p class="text-sm text-gray-600 mb-4" data-i18n="project_description">
-                        Система отслеживания активности и мотивации через XP. Достигайте целей и зарабатывайте награды!
-                    </p>
-                    <a href="https://t.me/xp_life_tracker_bot" target="_blank"
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg transition-all shadow-md hover:shadow-lg">
-                        <i class="fab fa-telegram-plane"></i>
-                        <span class="font-medium" data-i18n="telegram_bot">Открыть Telegram бота</span>
-                    </a>
-                </div>
+    <!-- Footer Component Container -->
+    <div id="footer-container"></div>
 
-                <!-- Навигация -->
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-compass text-blue-600"></i>
-                        <span data-i18n="navigation">Навигация</span>
-                    </h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="#activities" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-tasks text-xs"></i><span data-i18n="activities">Активности</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#rewards" class="text-sm text-gray-600 hover:text-amber-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-crown text-xs"></i><span data-i18n="rewards">Награды</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#history" class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-history text-xs"></i><span data-i18n="history">История</span>
-                            </a>
-                        </li>
-                        <li>
-                            <button onclick="document.querySelector('#activities')?.scrollIntoView({behavior: 'smooth', block: 'start'})"
-                                    class="text-sm text-gray-600 hover:text-purple-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-bullseye text-xs"></i><span data-i18n="goals">Мои цели</span>
-                            </button>
-                        </li>
-                        <li>
-                            <a href="#activities" onclick="openManualTimeModal(null, true)"
-                               class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-clock text-xs"></i><span data-i18n="timer">Таймер</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
 
-                <!-- Функции -->
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-star text-yellow-500"></i>
-                        <span data-i18n="features">Функции</span>
-                    </h3>
-                    <ul class="space-y-2">
-                        <li class="text-sm text-gray-600 flex items-center gap-2">
-                            <i class="fas fa-fire text-orange-500 text-xs"></i><span data-i18n="streak_system">Система серий (Streak)</span>
-                        </li>
-                        <li class="text-sm text-gray-600 flex items-center gap-2">
-                            <i class="fas fa-lightbulb text-blue-500 text-xs"></i><span data-i18n="smart_recommendations">Умные рекомендации</span>
-                        </li>
-                        <li class="text-sm text-gray-600 flex items-center gap-2">
-                            <i class="fas fa-ban text-red-500 text-xs"></i><span data-i18n="blacklist">Черный список наград</span>
-                        </li>
-                        <li class="text-sm text-gray-600 flex items-center gap-2">
-                            <i class="fas fa-bullseye text-purple-500 text-xs"></i><span data-i18n="goals_system">Система целей</span>
-                        </li>
-                        <li class="text-sm text-gray-600 flex items-center gap-2">
-                            <i class="fas fa-calendar text-indigo-500 text-xs"></i><span data-i18n="calendar_stats">Календарь активности</span>
-                        </li>
-                        <li class="text-sm text-gray-600 flex items-center gap-2">
-                            <i class="fas fa-chart-pie text-blue-500 text-xs"></i><span data-i18n="category_stats">Статистика по категориям</span>
-                        </li>
-                        <li>
-                            <a href="https://t.me/xp_life_tracker_bot" target="_blank"
-                               class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2">
-                                <i class="fab fa-telegram text-blue-500 text-xs"></i><span data-i18n="telegram_bot">Telegram бот</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Функции и инструменты -->
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-tools text-gray-600"></i>
-                        <span data-i18n="tools">Инструменты</span>
-                    </h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <button onclick="openManualTimeModal(null, true)"
-                                    class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-clock text-xs"></i><span data-i18n="manual_time">Ручной ввод времени</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button onclick="document.getElementById('category-modal')?.classList.remove('hidden'); document.getElementById('category-modal-title').textContent = t('add_category');"
-                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-tags text-xs"></i><span data-i18n="manage_categories">Управление категориями</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button onclick="showCreateGoalModal()"
-                                    class="text-sm text-gray-600 hover:text-purple-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-bullseye text-xs"></i><span data-i18n="create_goal">Создать цель</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button onclick="loadWallet(); loadActivities(); loadRewards(); loadGoals(); loadHistory(); loadTodayStats(); loadCategoryStats(); loadCalendar(); alert(t('data_updated'))"
-                                    class="text-sm text-gray-600 hover:text-green-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-sync-alt text-xs"></i><span data-i18n="refresh_data">Обновить данные</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Язык и настройки -->
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-cog text-gray-600"></i>
-                        <span data-i18n="settings">Настройки</span>
-                    </h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <div class="relative inline-block w-full">
-                                <button onclick="toggleFooterLanguageMenu()" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2 w-full">
-                                    <i class="fas fa-globe text-xs"></i>
-                                    <span data-i18n="language">Язык</span>
-                                    <span id="footer-language-flag" class="ml-auto">🇷🇺</span>
-                                </button>
-                                <div id="footer-language-menu" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
-                                    <button onclick="changeLanguage('ru')" class="w-full px-4 py-3 text-left hover:bg-gray-50 transition-all flex items-center gap-3 language-option" data-lang="ru">
-                                        <span class="text-lg">🇷🇺</span>
-                                        <span class="font-medium text-gray-700">Русский</span>
-                                        <i class="fas fa-check text-indigo-600 ml-auto hidden" data-check-footer="ru"></i>
-                                    </button>
-                                    <button onclick="changeLanguage('uk')" class="w-full px-4 py-3 text-left hover:bg-gray-50 transition-all flex items-center gap-3 language-option" data-lang="uk">
-                                        <span class="text-lg">🇺🇦</span>
-                                        <span class="font-medium text-gray-700">Українська</span>
-                                        <i class="fas fa-check text-indigo-600 ml-auto hidden" data-check-footer="uk"></i>
-                                    </button>
-                                    <button onclick="changeLanguage('de')" class="w-full px-4 py-3 text-left hover:bg-gray-50 transition-all flex items-center gap-3 language-option" data-lang="de">
-                                        <span class="text-lg">🇩🇪</span>
-                                        <span class="font-medium text-gray-700">Deutsch</span>
-                                        <i class="fas fa-check text-indigo-600 ml-auto hidden" data-check-footer="de"></i>
-                                    </button>
-                                    <button onclick="changeLanguage('en')" class="w-full px-4 py-3 text-left hover:bg-gray-50 transition-all flex items-center gap-3 language-option" data-lang="en">
-                                        <span class="text-lg">🇬🇧</span>
-                                        <span class="font-medium text-gray-700">English</span>
-                                        <i class="fas fa-check text-indigo-600 ml-auto hidden" data-check-footer="en"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <button onclick="openTelegramLinkModal()" class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2">
-                                <i class="fab fa-telegram text-xs"></i><span data-i18n="link_telegram">Привязать Telegram</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button id="footer-admin-btn" onclick="showAdminPanel()" class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2 hidden">
-                                <i class="fas fa-users-cog text-xs"></i><span data-i18n="admin_panel">Админ-панель</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button onclick="logout()" class="text-sm text-gray-600 hover:text-red-600 transition-colors flex items-center gap-2">
-                                <i class="fas fa-sign-out-alt text-xs"></i><span data-i18n="logout">Выход</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Разделитель -->
-            <div class="border-t border-gray-200 mt-8 pt-6">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p class="text-xs text-gray-500">
-                        © 2024 HP Life Tracker. Система мотивации и отслеживания прогресса.
-                    </p>
-                    <div class="flex items-center gap-4 text-xs text-gray-500">
-                        <span>Версия 1.0</span>
-                        <span>•</span>
-                        <a href="https://t.me/sviat_kryachev" target="_blank" class="hover:text-indigo-600 transition-colors">Помощь</a>
-                        <span>•</span>
-                        <a href="#" class="hover:text-indigo-600 transition-colors">Обратная связь</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Модальное окно привязки Telegram -->
-    <div id="telegram-link-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeTelegramLinkModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fab fa-telegram text-blue-500"></i>
-                    <span data-i18n="link_telegram_title">Привязать Telegram аккаунт</span>
-                </h3>
-                <button onclick="closeTelegramLinkModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <p class="text-sm text-blue-800 mb-3" data-i18n="telegram_link_instructions">
-                        Чтобы привязать Telegram аккаунт:
-                    </p>
-                    <ol class="list-decimal list-inside space-y-2 text-sm text-blue-700">
-                        <li data-i18n="telegram_link_step1">Откройте бота в Telegram и отправьте /start</li>
-                        <li data-i18n="telegram_link_step2">Скопируйте ваш Telegram ID из сообщения бота</li>
-                        <li data-i18n="telegram_link_step3">Вставьте его в поле ниже и нажмите "Привязать"</li>
-                    </ol>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="telegram_id_label">Telegram ID:</label>
-                    <input type="number" id="telegram-id-input" placeholder="330566779" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
-                    <p class="text-xs text-gray-500 mt-2" data-i18n="telegram_id_hint">Ваш Telegram ID был показан ботом в сообщении</p>
-                </div>
-                <div id="telegram-link-status" class="hidden p-3 rounded-xl"></div>
-                <div class="flex gap-3">
-                    <button onclick="linkTelegramAccount()" class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg" data-i18n="link_button">Привязать</button>
-                    <button onclick="closeTelegramLinkModal()" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-medium transition-all" data-i18n="cancel">Отмена</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Component Loader -->
+    <script src="components.js"></script>
+    <!-- Main App Script -->
     <script src="app.js?v=44"></script>
+    <!-- Load Components -->
+    <script>
+        // Загружаем компоненты после загрузки DOM
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Загружаем auth компонент
+            await loadComponent('auth', '#auth-section');
+            
+            // Загружаем header и footer только в app-section
+            const appSection = document.getElementById('app-section');
+            if (appSection) {
+                await loadComponents([
+                    { name: 'header', selector: '#header-container' },
+                    { name: 'footer', selector: '#footer-container' },
+                    // Загружаем виджеты
+                    { name: 'widget-today', selector: '#widget-today-container', path: 'widgets/widget-today' },
+                    { name: 'widget-calendar', selector: '#widget-calendar-container', path: 'widgets/widget-calendar' },
+                    { name: 'widget-progress', selector: '#widget-progress-container', path: 'widgets/widget-progress' },
+                    { name: 'widget-streak', selector: '#widget-streak-container', path: 'widgets/widget-streak' },
+                    // Загружаем основные секции
+                    { name: 'section-activities', selector: '#section-activities-container', path: 'sections/section-activities' },
+                    { name: 'section-rewards', selector: '#section-rewards-container', path: 'sections/section-rewards' },
+                    { name: 'section-history', selector: '#section-history-container', path: 'sections/section-history' },
+                    { name: 'section-admin', selector: '#section-admin-container', path: 'sections/section-admin' }
+                ]);
+            }
+            
+            // Загружаем все модальные окна в body
+            await loadComponents([
+                { name: 'modal-edit-activity', selector: 'body', path: 'modals/modal-edit-activity' },
+                { name: 'modal-edit-reward', selector: 'body', path: 'modals/modal-edit-reward' },
+                { name: 'modal-create-goal', selector: 'body', path: 'modals/modal-create-goal' },
+                { name: 'modal-manual-time', selector: 'body', path: 'modals/modal-manual-time' },
+                { name: 'modal-day-details', selector: 'body', path: 'modals/modal-day-details' },
+                { name: 'modal-category', selector: 'body', path: 'modals/modal-category' },
+                { name: 'modal-telegram-link', selector: 'body', path: 'modals/modal-telegram-link' },
+                { name: 'modal-create-group', selector: 'body', path: 'modals/modal-create-group' },
+                { name: 'modal-join-group', selector: 'body', path: 'modals/modal-join-group' },
+                { name: 'modal-create-challenge', selector: 'body', path: 'modals/modal-create-challenge' }
+            ]);
+            
+            // Загружаем базовые стили модальных окон
+            const modalBaseCSS = document.createElement('link');
+            modalBaseCSS.rel = 'stylesheet';
+            modalBaseCSS.href = '/static/components/modals/modal-base.css';
+            document.head.appendChild(modalBaseCSS);
+        });
+    </script>
     <script>
         // Предотвращаем скролл вниз после загрузки скриптов
         (function() {
@@ -1430,112 +481,7 @@
         })();
     </script>
 
-    <!-- Модальное окно создания группы -->
-    <div id="create-group-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeCreateGroupModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Создать группу</h3>
-                <button onclick="closeCreateGroupModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="create-group-form" class="space-y-4" onsubmit="event.preventDefault(); createGroup();">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Название группы <span class="text-red-500">*</span></label>
-                    <input type="text" id="group-name" placeholder="Введите название группы" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-green-400 focus:ring-2 focus:ring-green-200 transition-all" required>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-plus"></i> <span>Создать</span>
-                    </button>
-                    <button type="button" onclick="closeCreateGroupModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i> <span>Отмена</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модальное окно присоединения к группе -->
-    <div id="join-group-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeJoinGroupModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Присоединиться к группе</h3>
-                <button onclick="closeJoinGroupModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="join-group-form" class="space-y-4" onsubmit="event.preventDefault(); joinGroup();">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Код приглашения <span class="text-red-500">*</span></label>
-                    <input type="text" id="invite-code" placeholder="Введите код приглашения" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all" required>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-sign-in-alt"></i> <span>Присоединиться</span>
-                    </button>
-                    <button type="button" onclick="closeJoinGroupModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i> <span>Отмена</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модальное окно создания челленджа -->
-    <div id="create-challenge-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeCreateChallengeModal()">
-        <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Создать челлендж</h3>
-                <button onclick="closeCreateChallengeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="create-challenge-form" class="space-y-4" onsubmit="event.preventDefault(); createChallenge();">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Группа <span class="text-red-500">*</span></label>
-                    <select id="challenge-group-select" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
-                        <option value="">Выберите группу</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Название <span class="text-red-500">*</span></label>
-                    <input type="text" id="challenge-title" placeholder="Введите название челленджа" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Описание</label>
-                    <textarea id="challenge-description" placeholder="Описание челленджа" rows="3" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Целевой XP</label>
-                    <input type="number" id="challenge-target-xp" placeholder="0" min="0" step="1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Целевое время (минуты)</label>
-                    <input type="number" id="challenge-target-time" placeholder="0" min="0" step="1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Целевая серия (дни)</label>
-                    <input type="number" id="challenge-target-streak" placeholder="0" min="0" step="1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Дата начала <span class="text-red-500">*</span></label>
-                    <input type="date" id="challenge-start-date" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Дата окончания <span class="text-red-500">*</span></label>
-                    <input type="date" id="challenge-end-date" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-plus"></i> <span>Создать</span>
-                    </button>
-                    <button type="button" onclick="closeCreateChallengeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i> <span>Отмена</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+</body>
+</html>
 </body>
 </html>
