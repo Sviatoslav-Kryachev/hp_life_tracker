@@ -1,17 +1,11 @@
 // ============= I18N (INTERNATIONALIZATION) =============
-// ВАЖНО: API_BASE определен в app_utils.js (загружается ПЕРЕД этим файлом)
-// НЕ объявляем API_BASE здесь - используем существующий из app_utils.js
-// Если API_BASE недоступен, используем window.API_BASE или window.location.origin
+// ВАЖНО: API_BASE, translations, currentLanguage и функция t() определены в app_utils.js
+// НЕ объявляем их здесь - используем существующие из app_utils.js
 
-const translations = {
-    ru: {
-        // Header
-        "level": "Ур.",
-        "activities": "Активности",
-        "rewards": "Награды",
-        "history": "История",
-        "goals": "Мои цели",
-        "admin_panel": "Админ-панель",
+// Примечание: translations, currentLanguage и t() уже определены в app_utils.js
+// Если они недоступны, используем window.translations, window.currentLanguage и window.t
+
+// ============= ACTIVITIES =============
         "logout": "Выход",
         "telegram_bot": "Открыть Telegram бота",
         "link_telegram": "Привязать Telegram",
@@ -1235,20 +1229,12 @@ const translations = {
         "today_exclamation": "Today!",
         "overdue": "Overdue",
         "completed": "Completed",
-        "min_short": "min",
-        "activities_count": "activities"
-    }
-};
-
-let currentLanguage = localStorage.getItem('language') || 'ru';
-
-function t(key) {
-    return translations[currentLanguage][key] || translations['ru'][key] || key;
-}
+// Примечание: translations, currentLanguage, t() и formatActivitiesCount уже определены в app_utils.js
 
 // Функция для правильного склонения "активностей" на разных языках
 function formatActivitiesCount(count) {
-    if (currentLanguage === 'uk') {
+    const currentLang = typeof currentLanguage !== 'undefined' ? currentLanguage : (typeof window !== 'undefined' && window.currentLanguage) ? window.currentLanguage : 'ru';
+    if (currentLang === 'uk') {
         // Украинский: 1 активність, 2-4 активності, 5+ активностів
         const lastDigit = count % 10;
         const lastTwoDigits = count % 100;
