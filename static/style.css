@@ -25,6 +25,19 @@ body {
 
 .container {
     max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Убеждаемся, что все контейнеры с max-w-6xl ограничены */
+.max-w-6xl {
+    max-width: 1152px !important; /* max-w-6xl = 72rem = 1152px */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* Карточки активностей */
@@ -1003,12 +1016,16 @@ body {
 
 /* ============= SOCIAL SECTIONS (Groups, Leaderboard, Challenges, Achievements) ============= */
 
-/* Контейнер социальных секций */
+/* Контейнер социальных секций - ограничиваем шириной родительского контейнера */
 #social {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
     overflow-x: hidden !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 /* Все блоки социальных секций */
