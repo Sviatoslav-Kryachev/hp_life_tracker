@@ -1745,6 +1745,11 @@ document.addEventListener('DOMContentLoaded', () => {
 let authToken = localStorage.getItem('token') || '';
 let currentUser = null;
 
+// Функция для получения актуального токена (всегда из localStorage)
+function getAuthToken() {
+    return localStorage.getItem('token') || authToken || '';
+}
+
 // ============= APP STATE =============
 const activeTimers = new Map();
 let allActivities = [];
@@ -2065,29 +2070,52 @@ async function register(email, username, password) {
 
 async function loadCurrentUser() {
     try {
+        // Получаем токен из localStorage (на случай если глобальная переменная не обновлена)
+        const token = getAuthToken();
+        if (!token) {
+            console.error("No auth token available for loadCurrentUser");
+            return;
+        }
+
         const res = await fetch(`${API_BASE}/auth/me`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error("Не удалось загрузить пользователя");
 
         currentUser = await res.json();
-        document.getElementById("user-info").textContent = currentUser.username || currentUser.email;
+        
+        // Обновляем user-info только если элемент существует (компонент header может быть еще не загружен)
+        const userInfoEl = document.getElementById("user-info");
+        if (userInfoEl) {
+            userInfoEl.textContent = currentUser.username || currentUser.email;
+        } else {
+            // Если элемент еще не загружен, обновим его позже
+            setTimeout(() => {
+                const userInfoEl = document.getElementById("user-info");
+                if (userInfoEl) {
+                    userInfoEl.textContent = currentUser.username || currentUser.email;
+                }
+            }, 500);
+        }
 
         // Проверяем, является ли пользователь администратором
         checkAdminStatus();
 
     } catch (e) {
         console.error("Error loading user:", e);
-        logout();
+        // Не вызываем logout() сразу, возможно это временная ошибка
+        // logout();
     }
 }
 
 async function checkAdminStatus() {
     try {
+        const token = getAuthToken();
+        if (!token) return;
         // Пытаемся получить invite код - если успешно, значит админ
         const res = await fetch(`${API_BASE}/admin/invite-code`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         if (res.ok) {
             const adminBtn = document.getElementById("admin-btn");
@@ -2142,7 +2170,7 @@ function closeTelegramLinkModal() {
 async function checkTelegramStatus() {
     try {
         const res = await fetch(`${API_BASE}/telegram/status`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
         
         if (res.ok) {
@@ -2202,7 +2230,7 @@ async function linkTelegramAccount() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify({
                 telegram_id: telegramId
@@ -2392,7 +2420,8 @@ async function checkAuth() {
     }
 
     // Сразу скрываем auth-section если есть токен, чтобы избежать мигания
-    if (authToken && authSection && appSection) {
+    const token = getAuthToken();
+    if (token && authSection && appSection) {
         authSection.classList.add("hidden");
         appSection.classList.remove("hidden");
     } else {
@@ -2421,8 +2450,11 @@ async function checkAuth() {
 // ============= WALLET =============
 async function loadWallet() {
     try {
+        const token = getAuthToken();
+        if (!token) return;
+        
         const res = await fetch(`${API_BASE}/xp/wallet`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         if (!res.ok) return;
         const data = await res.json();
@@ -2454,8 +2486,10 @@ async function loadWallet() {
 // ============= TODAY STATS =============
 async function loadTodayStats() {
     try {
+        const token = getAuthToken();
+        if (!token) return;
         const res = await fetch(`${API_BASE}/xp/today`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         if (!res.ok) return;
         const data = await res.json();
@@ -2489,14 +2523,15 @@ async function loadCategoryStats() {
             return;
         }
 
-        if (!authToken) {
+        const token = getAuthToken();
+        if (!token) {
             console.error("No auth token available");
             categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Требуется авторизация</div>';
             return;
         }
 
         const res = await fetch(`${API_BASE}/xp/category-stats?period=week`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
@@ -2577,9 +2612,11 @@ function changeCalendarPeriod(period) {
 
 async function loadCalendar(period = currentCalendarPeriod) {
     try {
+        const token = getAuthToken();
+        if (!token) return;
         const endpoint = period === 'week' ? '/xp/week' : period === 'month' ? '/xp/month' : '/xp/year';
         const res = await fetch(`${API_BASE}${endpoint}`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         if (!res.ok) return;
         const data = await res.json();
@@ -2803,8 +2840,14 @@ async function showDayDetails(date) {
 
         console.log("Loading day details for date:", formattedDate);
 
+        const token = getAuthToken();
+        if (!token) {
+            contentEl.innerHTML = `<div class="text-center text-red-400 py-4">${t('auth_required')}</div>`;
+            return;
+        }
+
         const res = await fetch(`${API_BASE}/xp/day/${formattedDate}`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
@@ -3192,7 +3235,8 @@ async function loadHistory() {
             return;
         }
 
-        if (!authToken) {
+        const token = getAuthToken();
+        if (!token) {
             console.error("No auth token available");
             if (historyListVisible) {
                 historyListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
@@ -3206,7 +3250,7 @@ async function loadHistory() {
         const cacheBuster = Date.now();
         const res = await fetch(`${API_BASE}/xp/full-history?limit=1000&_t=${cacheBuster}`, {
             headers: {
-                "Authorization": `Bearer ${authToken}`,
+                "Authorization": `Bearer ${token}`,
                 "Cache-Control": "no-cache, no-store, must-revalidate",
                 "Pragma": "no-cache",
                 "Expires": "0"
@@ -3651,7 +3695,8 @@ async function loadActivities() {
     try {
         getActivitiesElements();
 
-        if (!authToken) {
+        const token = getAuthToken();
+        if (!token) {
             console.error("No auth token available");
             if (activitiesListVisible) {
                 activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
@@ -3660,7 +3705,7 @@ async function loadActivities() {
         }
 
         const res = await fetch(`${API_BASE}/activities/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
@@ -4083,7 +4128,8 @@ function initActivitiesFilters() {
 // Загружает активные таймеры с сервера и восстанавливает их состояние
 async function loadActiveTimers() {
     try {
-        if (!authToken) return;
+        const token = getAuthToken();
+        if (!token) return;
 
         // Сохраняем текущие активные таймеры перед загрузкой с сервера
         // Это нужно, чтобы не потерять локальное состояние при смене языка
@@ -4098,7 +4144,7 @@ async function loadActiveTimers() {
         });
 
         const res = await fetch(`${API_BASE}/timer/active`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) {
@@ -4381,7 +4427,7 @@ async function updateActivitiesOrder() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify({ activity_ids: activityIds })
         });
@@ -4440,7 +4486,7 @@ async function createActivity() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify(activityData)
         });
@@ -4638,7 +4684,7 @@ async function updateActivity() {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify(activityData)
         });
@@ -4719,7 +4765,7 @@ async function deleteActivity(activityId, cardElement) {
     try {
         const res = await fetch(`${API_BASE}/activities/${activityId}`, {
             method: "DELETE",
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) {
@@ -4769,7 +4815,7 @@ async function startTimer(activityId, button, activity) {
             method: "POST",
             headers: {
                 "accept": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             }
         });
 
@@ -4843,7 +4889,7 @@ async function stopTimer(activityId, button) {
             method: "POST",
             headers: {
                 "accept": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             }
         });
 
@@ -5112,7 +5158,7 @@ async function addManualTime() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify(requestData)
         });
@@ -5224,7 +5270,8 @@ async function loadRewards() {
             return;
         }
 
-        if (!authToken) {
+        const token = getAuthToken();
+        if (!token) {
             console.error("No auth token available");
             if (rewardsListVisible) {
                 rewardsListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
@@ -5234,7 +5281,7 @@ async function loadRewards() {
         }
 
         const res = await fetch(`${API_BASE}/rewards/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
@@ -5452,7 +5499,7 @@ async function createReward() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify({ name, xp_cost: xpCost })
         });
@@ -5566,7 +5613,7 @@ async function updateReward() {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify({ name, xp_cost: xpCost })
         });
@@ -5592,7 +5639,7 @@ async function deleteReward(rewardId, cardElement) {
     try {
         const res = await fetch(`${API_BASE}/rewards/${rewardId}`, {
             method: "DELETE",
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) {
@@ -5628,7 +5675,7 @@ async function spendReward(rewardId) {
             method: "POST",
             headers: {
                 "accept": "application/json",
-                "Authorization": `Bearer ${authToken}`
+                "Authorization": `Bearer ${getAuthToken()}`
             }
         });
 
@@ -5715,7 +5762,8 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         // Сразу проверяем токен и скрываем auth-section если он есть
-        if (authToken) {
+        const token = getAuthToken();
+        if (token) {
             authSection.classList.add("hidden");
             appSection.classList.remove("hidden");
         } else {
@@ -5958,7 +6006,7 @@ async function resetPassword() {
 async function loadStreak() {
     try {
         const res = await fetch(`${API_BASE}/streak/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
         if (!res.ok) return;
         const data = await res.json();
@@ -6002,14 +6050,15 @@ async function loadRecommendations() {
             return;
         }
 
-        if (!authToken) {
+        const token = getAuthToken();
+        if (!token) {
             console.error("No auth token available");
             listVisible.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
             return;
         }
 
         const res = await fetch(`${API_BASE}/recommendations/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
@@ -6257,7 +6306,7 @@ function showNotification(message, type = 'info') {
 async function loadInviteCode() {
     try {
         const res = await fetch(`${API_BASE}/admin/invite-code`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
         if (!res.ok) {
             if (res.status === 403) {
@@ -6288,7 +6337,7 @@ async function showAdminPanel() {
     // Проверяем права доступа перед открытием панели
     try {
         const res = await fetch(`${API_BASE}/admin/invite-code`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) {
@@ -6352,7 +6401,7 @@ function copyInviteLink() {
 async function loadChildren() {
     try {
         const res = await fetch(`${API_BASE}/admin/children`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
         if (!res.ok) {
             if (res.status === 403) {
@@ -6409,19 +6458,19 @@ async function showChildStats(childId, childName) {
         // Загружаем статистику
         const [statsRes, historyRes, activitiesRes, goalsRes, categoryStatsRes] = await Promise.all([
             fetch(`${API_BASE}/admin/child/${childId}/stats`, {
-                headers: { "Authorization": `Bearer ${authToken}` }
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
             }),
             fetch(`${API_BASE}/admin/child/${childId}/history?limit=20`, {
-                headers: { "Authorization": `Bearer ${authToken}` }
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
             }),
             fetch(`${API_BASE}/admin/child/${childId}/activities${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ''}`, {
-                headers: { "Authorization": `Bearer ${authToken}` }
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
             }),
             fetch(`${API_BASE}/admin/child/${childId}/goals`, {
-                headers: { "Authorization": `Bearer ${authToken}` }
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
             }),
             fetch(`${API_BASE}/admin/child/${childId}/category-stats?period=week`, {
-                headers: { "Authorization": `Bearer ${authToken}` }
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
             })
         ]);
 
@@ -6731,7 +6780,8 @@ let allCategories = { standard: [], custom: [], all: [] };
 
 async function loadCategories() {
     try {
-        if (!authToken) {
+        const token = getAuthToken();
+        if (!token) {
             // Даже без токена обновляем dropdown с базовыми категориями
             updateCategoryDropdown('activity-category');
             updateCategoryDropdown('edit-activity-category');
@@ -6739,7 +6789,7 @@ async function loadCategories() {
         }
 
         const res = await fetch(`${API_BASE}/categories/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) {
@@ -7113,7 +7163,7 @@ async function saveCategory() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${getAuthToken()}`
                 },
                 body: JSON.stringify({ name })
             });
@@ -7134,7 +7184,7 @@ async function saveCategory() {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
+                            'Authorization': `Bearer ${getAuthToken()}`
                         },
                         body: JSON.stringify({ name })
                     });
@@ -7144,7 +7194,7 @@ async function saveCategory() {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
+                            'Authorization': `Bearer ${getAuthToken()}`
                         },
                         body: JSON.stringify({
                             name: name,
@@ -7158,7 +7208,7 @@ async function saveCategory() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
+                        'Authorization': `Bearer ${getAuthToken()}`
                     },
                     body: JSON.stringify({ name })
                 });
@@ -7271,7 +7321,7 @@ async function deleteCategory(categoryId) {
         const dbId = categoryId.replace('custom_', '');
         const res = await fetch(`${API_BASE}/categories/${dbId}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${authToken}` }
+            headers: { 'Authorization': `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) {
@@ -7366,14 +7416,15 @@ async function loadGoals() {
             return;
         }
 
-        if (!authToken) {
+        const token = getAuthToken();
+        if (!token) {
             console.error("No auth token available");
             listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
             return;
         }
 
         const res = await fetch(`${API_BASE}/goals/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
@@ -7643,7 +7694,7 @@ async function editGoal(goalId) {
     try {
         // Загружаем данные цели
         const res = await fetch(`${API_BASE}/goals/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
         if (!res.ok) {
             alert(t('error_loading_goals'));
@@ -7744,7 +7795,7 @@ async function editGoal(goalId) {
 async function loadActivitiesForGoal() {
     try {
         const res = await fetch(`${API_BASE}/activities/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
         if (!res.ok) {
             console.error("Failed to load activities");
@@ -7976,7 +8027,7 @@ async function createGoal() {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${authToken}`
+                    "Authorization": `Bearer ${getAuthToken()}`
                 },
                 body: JSON.stringify({
                     title,
@@ -8003,7 +8054,7 @@ async function createGoal() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${authToken}`
+                    "Authorization": `Bearer ${getAuthToken()}`
                 },
                 body: JSON.stringify({
                     title,
@@ -8034,9 +8085,14 @@ async function deleteGoal(goalId) {
     if (!confirm(t('delete_goal_confirm'))) return;
 
     try {
+        const token = getAuthToken();
+        if (!token) {
+            alert(t('auth_required'));
+            return;
+        }
         const res = await fetch(`${API_BASE}/goals/${goalId}`, {
             method: "DELETE",
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error(t('error_deleting'));
@@ -8057,7 +8113,7 @@ async function loadGroups() {
 
     try {
         const res = await fetch(`${API_BASE}/groups/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) throw new Error('Failed to load groups');
@@ -8119,7 +8175,7 @@ async function createGroup() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify({ name })
         });
@@ -8158,7 +8214,7 @@ async function joinGroup() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify({ invite_code: inviteCode })
         });
@@ -8180,7 +8236,7 @@ async function joinGroup() {
 async function viewGroupMembers(groupId) {
     try {
         const res = await fetch(`${API_BASE}/groups/${groupId}/members`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) throw new Error('Failed to load members');
@@ -8197,9 +8253,14 @@ async function leaveGroup(groupId) {
     if (!confirm('Вы уверены, что хотите покинуть группу?')) return;
 
     try {
+        const token = getAuthToken();
+        if (!token) {
+            alert('Требуется авторизация');
+            return;
+        }
         const res = await fetch(`${API_BASE}/groups/${groupId}/leave`, {
             method: 'POST',
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error('Failed to leave group');
@@ -8216,9 +8277,14 @@ async function deleteGroup(groupId) {
     if (!confirm('Вы уверены, что хотите удалить группу? Это действие нельзя отменить.')) return;
 
     try {
+        const token = getAuthToken();
+        if (!token) {
+            alert('Требуется авторизация');
+            return;
+        }
         const res = await fetch(`${API_BASE}/groups/${groupId}`, {
             method: 'DELETE',
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error('Failed to delete group');
@@ -8244,9 +8310,14 @@ async function loadLeaderboard() {
 
     try {
         // Загрузить список групп для селекта
+        const token = getAuthToken();
+        if (!token) {
+            leaderboardList.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
+        }
         if (groupSelect.children.length <= 1) {
             const groupsRes = await fetch(`${API_BASE}/groups/`, {
-                headers: { "Authorization": `Bearer ${authToken}` }
+                headers: { "Authorization": `Bearer ${token}` }
             });
             if (groupsRes.ok) {
                 const groups = await groupsRes.json();
@@ -8264,7 +8335,7 @@ async function loadLeaderboard() {
             : `${API_BASE}/leaderboard/global?sort_by=${sortBy}`;
         
         const res = await fetch(url, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error('Failed to load leaderboard');
@@ -8324,7 +8395,7 @@ async function loadChallenges() {
 
     try {
         const res = await fetch(`${API_BASE}/challenges/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) throw new Error('Failed to load challenges');
@@ -8441,7 +8512,7 @@ async function createChallenge() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${getAuthToken()}`
             },
             body: JSON.stringify({
                 group_id: parseInt(groupId),
@@ -8470,9 +8541,14 @@ async function createChallenge() {
 
 async function joinChallenge(challengeId) {
     try {
+        const token = getAuthToken();
+        if (!token) {
+            alert('Требуется авторизация');
+            return;
+        }
         const res = await fetch(`${API_BASE}/challenges/${challengeId}/join`, {
             method: 'POST',
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
@@ -8489,8 +8565,13 @@ async function joinChallenge(challengeId) {
 
 async function viewChallengeProgress(challengeId) {
     try {
+        const token = getAuthToken();
+        if (!token) {
+            alert('Требуется авторизация');
+            return;
+        }
         const res = await fetch(`${API_BASE}/challenges/${challengeId}/participants`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error('Failed to load participants');
@@ -8518,9 +8599,14 @@ async function loadAchievements() {
 
     try {
         // Загрузить список групп для селекта
+        const token = getAuthToken();
+        if (!token) {
+            achievementsList.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
+        }
         if (groupSelect.children.length <= 2) {
             const groupsRes = await fetch(`${API_BASE}/groups/`, {
-                headers: { "Authorization": `Bearer ${authToken}` }
+                headers: { "Authorization": `Bearer ${token}` }
             });
             if (groupsRes.ok) {
                 const groups = await groupsRes.json();
@@ -8537,7 +8623,7 @@ async function loadAchievements() {
         if (groupId) url += `&group_id=${groupId}`;
         
         const res = await fetch(url, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error('Failed to load achievements');
@@ -8587,7 +8673,7 @@ async function shareAchievement(achievementId) {
     try {
         const res = await fetch(`${API_BASE}/achievements/${achievementId}/share`, {
             method: 'POST',
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) throw new Error('Failed to share achievement');
@@ -8603,7 +8689,7 @@ async function unshareAchievement(achievementId) {
     try {
         const res = await fetch(`${API_BASE}/achievements/${achievementId}/unshare`, {
             method: 'POST',
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
 
         if (!res.ok) throw new Error('Failed to unshare achievement');
