@@ -2523,22 +2523,32 @@ async function loadTodayStats() {
 // ============= CATEGORY STATS =============
 async function loadCategoryStats() {
     try {
+        console.log('[loadCategoryStats] Starting...');
         const categoryStatsEl = document.getElementById('category-stats');
         if (!categoryStatsEl) {
-            console.warn("Category stats element not found");
+            console.warn("[loadCategoryStats] Category stats element not found");
             return;
         }
 
-        const token = getAuthToken();
+        // Безопасный доступ к функциям
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        
+        const token = getToken();
+        console.log('[loadCategoryStats] Token available:', !!token, 'API_BASE:', apiBase);
+        
         if (!token) {
-            console.error("No auth token available");
+            console.error("[loadCategoryStats] No auth token available");
             categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Требуется авторизация</div>';
             return;
         }
 
-        const res = await fetch(`${API_BASE}/xp/category-stats?period=week`, {
+        console.log('[loadCategoryStats] Fetching from:', `${apiBase}/xp/category-stats?period=week`);
+        const res = await fetch(`${apiBase}/xp/category-stats?period=week`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[loadCategoryStats] Response status:', res.status);
 
         if (!res.ok) {
             const errorText = await res.text();
@@ -6048,24 +6058,35 @@ async function loadStreak() {
 // ============= RECOMMENDATIONS =============
 async function loadRecommendations() {
     try {
+        console.log('[loadRecommendations] Starting...');
         const listVisible = document.getElementById('recommendations-list-visible');
         const listHidden = document.getElementById('recommendations-list-hidden');
 
         if (!listVisible || !listHidden) {
-            console.warn("Recommendations list elements not found");
+            console.warn("[loadRecommendations] Recommendations list elements not found");
             return;
         }
 
-        const token = getAuthToken();
+        // Безопасный доступ к функциям
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const translate = typeof t === 'function' ? t : (typeof window !== 'undefined' && window.t) ? window.t : (key) => key;
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        
+        const token = getToken();
+        console.log('[loadRecommendations] Token available:', !!token, 'API_BASE:', apiBase);
+        
         if (!token) {
-            console.error("No auth token available");
-            listVisible.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
+            console.error("[loadRecommendations] No auth token available");
+            listVisible.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${translate('auth_required') || 'Требуется авторизация'}</div>`;
             return;
         }
 
-        const res = await fetch(`${API_BASE}/recommendations/`, {
+        console.log('[loadRecommendations] Fetching from:', `${apiBase}/recommendations/`);
+        const res = await fetch(`${apiBase}/recommendations/`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[loadRecommendations] Response status:', res.status);
 
         if (!res.ok) {
             const errorText = await res.text();
@@ -8128,13 +8149,33 @@ async function deleteGoal(goalId) {
 
 // Groups
 async function loadGroups() {
+    console.log('[loadGroups] Starting...');
     const groupsList = document.getElementById('groups-list');
-    if (!groupsList) return;
+    if (!groupsList) {
+        console.warn("[loadGroups] Groups list element not found");
+        return;
+    }
 
     try {
-        const res = await fetch(`${API_BASE}/groups/`, {
-            headers: { "Authorization": `Bearer ${getAuthToken()}` }
+        // Безопасный доступ к функциям
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        
+        const token = getToken();
+        console.log('[loadGroups] Token available:', !!token, 'API_BASE:', apiBase);
+        
+        if (!token) {
+            console.error("[loadGroups] No auth token available");
+            groupsList.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
+        }
+
+        console.log('[loadGroups] Fetching from:', `${apiBase}/groups/`);
+        const res = await fetch(`${apiBase}/groups/`, {
+            headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[loadGroups] Response status:', res.status);
 
         if (!res.ok) throw new Error('Failed to load groups');
 
@@ -8410,13 +8451,33 @@ function getSortLabel(sortBy) {
 
 // Challenges
 async function loadChallenges() {
+    console.log('[loadChallenges] Starting...');
     const challengesList = document.getElementById('challenges-list');
-    if (!challengesList) return;
+    if (!challengesList) {
+        console.warn("[loadChallenges] Challenges list element not found");
+        return;
+    }
 
     try {
-        const res = await fetch(`${API_BASE}/challenges/`, {
-            headers: { "Authorization": `Bearer ${getAuthToken()}` }
+        // Безопасный доступ к функциям
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        
+        const token = getToken();
+        console.log('[loadChallenges] Token available:', !!token, 'API_BASE:', apiBase);
+        
+        if (!token) {
+            console.error("[loadChallenges] No auth token available");
+            challengesList.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
+        }
+
+        console.log('[loadChallenges] Fetching from:', `${apiBase}/challenges/`);
+        const res = await fetch(`${apiBase}/challenges/`, {
+            headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[loadChallenges] Response status:', res.status);
 
         if (!res.ok) throw new Error('Failed to load challenges');
 
@@ -8618,14 +8679,23 @@ async function loadAchievements() {
     const groupId = groupSelect.value !== 'my' && groupSelect.value !== 'shared' && groupSelect.value ? groupSelect.value : null;
 
     try {
-        // Загрузить список групп для селекта
-        const token = getAuthToken();
+        console.log('[loadAchievements] Starting...');
+        // Безопасный доступ к функциям
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        
+        const token = getToken();
+        console.log('[loadAchievements] Token available:', !!token, 'API_BASE:', apiBase);
+        
         if (!token) {
+            console.error("[loadAchievements] No auth token available");
             achievementsList.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
             return;
         }
+        
         if (groupSelect.children.length <= 2) {
-            const groupsRes = await fetch(`${API_BASE}/groups/`, {
+            console.log('[loadAchievements] Fetching groups from:', `${apiBase}/groups/`);
+            const groupsRes = await fetch(`${apiBase}/groups/`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
             if (groupsRes.ok) {
@@ -8639,12 +8709,15 @@ async function loadAchievements() {
             }
         }
 
-        let url = `${API_BASE}/achievements/?filter=${filter}`;
+        let url = `${apiBase}/achievements/?filter=${filter}`;
         if (groupId) url += `&group_id=${groupId}`;
         
+        console.log('[loadAchievements] Fetching achievements from:', url);
         const res = await fetch(url, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[loadAchievements] Response status:', res.status);
 
         if (!res.ok) throw new Error('Failed to load achievements');
 
