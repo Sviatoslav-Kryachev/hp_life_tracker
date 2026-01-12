@@ -98,6 +98,15 @@ async def stop_timer(
         if goal.is_completed == 1 and old_completed == 0:
             completed_goals.append(goal.title)
     
+    # Обновляем прогресс в челленджах
+    from app.routers.challenges import update_challenge_progress
+    from app.models.base import ChallengeParticipant
+    user_challenges = db.query(ChallengeParticipant).filter(
+        ChallengeParticipant.user_id == current_user.id
+    ).all()
+    for challenge_participant in user_challenges:
+        update_challenge_progress(db, challenge_participant.challenge_id, current_user.id)
+    
     return {
         "duration_minutes": log.duration_minutes, 
         "xp_earned": log.xp_earned,
@@ -192,6 +201,15 @@ async def add_manual_time(
     ).all()
     for goal in goals:
         update_goal_progress(db, goal)
+    
+    # Обновляем прогресс в челленджах
+    from app.routers.challenges import update_challenge_progress
+    from app.models.base import ChallengeParticipant
+    user_challenges = db.query(ChallengeParticipant).filter(
+        ChallengeParticipant.user_id == current_user.id
+    ).all()
+    for challenge_participant in user_challenges:
+        update_challenge_progress(db, challenge_participant.challenge_id, current_user.id)
     
     db.commit()
 
