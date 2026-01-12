@@ -1,7 +1,7 @@
-// Автоматически определяем базовый URL API из текущего домена
-const API_BASE = window.location.origin;
-
 // ============= I18N (INTERNATIONALIZATION) =============
+// Примечание: API_BASE определен в app_utils.js
+// Не объявляем API_BASE здесь, используем существующий из app_utils.js или window
+
 const translations = {
     ru: {
         // Header
@@ -1421,6 +1421,7 @@ function toggleFooterLanguageMenu() {
     }
 }
 
+// Экспортируем функции для использования в HTML
 window.toggleFooterLanguageMenu = toggleFooterLanguageMenu;
 
 // Применяем переводы при загрузке страницы
@@ -1605,6 +1606,10 @@ function showMobileSection(section) {
     // Скроллим вверх страницы
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Экспортируем функции навигации для использования в HTML
+window.navigateToSection = navigateToSection;
+window.showMobileSection = showMobileSection;
 
 // Устанавливаем активную кнопку при скролле (опционально)
 // Флаг для отслеживания программной прокрутки (объявлен выше, в функции navigateToSection)
@@ -7410,34 +7415,47 @@ function initCategoryForm() {
 // ============= GOALS =============
 async function loadGoals() {
     try {
+        console.log('[loadGoals] Starting to load goals...');
         const listEl = document.getElementById('goals-list');
         if (!listEl) {
-            console.warn("Goals list element not found");
+            console.warn("[loadGoals] Goals list element not found");
             return;
         }
 
-        const token = getAuthToken();
+        // Проверяем доступность функций
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const translate = typeof t === 'function' ? t : (typeof window !== 'undefined' && window.t) ? window.t : (key) => key;
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        
+        console.log('[loadGoals] API_BASE:', apiBase);
+        const token = getToken();
+        console.log('[loadGoals] Token available:', !!token);
+        
         if (!token) {
-            console.error("No auth token available");
-            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('auth_required')}</div>`;
+            console.error("[loadGoals] No auth token available");
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${translate('auth_required') || 'Требуется авторизация'}</div>`;
             return;
         }
 
-        const res = await fetch(`${API_BASE}/goals/`, {
+        console.log('[loadGoals] Fetching goals from:', `${apiBase}/goals/`);
+        const res = await fetch(`${apiBase}/goals/`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[loadGoals] Response status:', res.status, res.statusText);
 
         if (!res.ok) {
             const errorText = await res.text();
-            console.error("Failed to load goals:", res.status, res.statusText, errorText);
-            listEl.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${t('error_loading_goals')}</div>`;
+            console.error("[loadGoals] Failed to load goals:", res.status, res.statusText, errorText);
+            listEl.innerHTML = `<div class="text-center text-red-400 py-4 text-xs">${translate('error_loading_goals') || 'Ошибка загрузки целей'}</div>`;
             return;
         }
 
         let data = await res.json();
+        console.log('[loadGoals] Received', data.length, 'goals');
 
         if (data.length === 0) {
-            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${t('no_goals')}</div>`;
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs">${translate('no_goals') || 'Нет целей'}</div>`;
             return;
         }
 
@@ -7513,7 +7531,8 @@ async function loadGoals() {
                 ? ` Бонус: +${Math.round(goal.completion_bonus_xp)} XP!`
                 : '';
             const message = `🎉 Поздравляем! Цель "${goalTitle}" достигнута!${bonusText} Прокрутите к разделу "Мои цели" чтобы увидеть прогресс.`;
-            showNotification(message, 'success');
+            const showNotif = typeof showNotification === 'function' ? showNotification : (typeof window !== 'undefined' && window.showNotification) ? window.showNotification : console.log;
+            showNotif(message, 'success');
         });
 
         listEl.innerHTML = data.map(goal => {
