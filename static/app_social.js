@@ -1,5 +1,10 @@
 // ============= SOCIAL FEATURES =============
 
+// Определяем API_URL если он не определен (используем API_BASE из app.js)
+if (typeof API_URL === 'undefined') {
+    var API_URL = typeof API_BASE !== 'undefined' ? API_BASE : window.location.origin;
+}
+
 // ============= GROUPS =============
 
 let myGroups = [];
