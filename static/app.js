@@ -2250,6 +2250,11 @@ function showApp() {
             setHistoryPeriod(historyPeriod);
         }
         loadHistory(); // Автоматически загружаем историю
+        // Загружаем социальные функции
+        loadGroups();
+        loadLeaderboard();
+        loadChallenges();
+        loadAchievements();
 
         // Дополнительное обновление dropdown через небольшую задержку на случай, если элементы еще не готовы
         setTimeout(() => {
@@ -7983,4 +7988,588 @@ async function deleteGoal(goalId) {
     } catch (e) {
         alert(t('error_deleting_goal'));
     }
+}
+
+// ============= SOCIAL FEATURES =============
+
+// Groups
+async function loadGroups() {
+    const groupsList = document.getElementById('groups-list');
+    if (!groupsList) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/groups/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to load groups');
+
+        const groups = await res.json();
+        
+        if (groups.length === 0) {
+            groupsList.innerHTML = '<div class="text-center text-gray-400 py-4">У вас пока нет групп</div>';
+            return;
+        }
+
+        groupsList.innerHTML = groups.map(group => `
+            <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-bold text-gray-800">${escapeHtml(group.name)}</h3>
+                    ${group.role === 'owner' ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded-full">Владелец</span>' : ''}
+                </div>
+                <p class="text-sm text-gray-600 mb-2">Код: <code class="bg-white px-2 py-1 rounded">${escapeHtml(group.invite_code)}</code></p>
+                <p class="text-xs text-gray-500 mb-3">Участников: ${group.member_count || 0}</p>
+                <div class="flex gap-2">
+                    <button onclick="viewGroupMembers(${group.id})" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg text-sm transition-all">
+                        <i class="fas fa-users"></i> Участники
+                    </button>
+                    ${group.role !== 'owner' ? `
+                        <button onclick="leaveGroup(${group.id})" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded-lg text-sm transition-all">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </button>
+                    ` : `
+                        <button onclick="deleteGroup(${group.id})" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded-lg text-sm transition-all">
+                            <i class="fas fa-trash"></i> Удалить
+                        </button>
+                    `}
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        groupsList.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки групп</div>';
+    }
+}
+
+function openCreateGroupModal() {
+    document.getElementById('create-group-modal').classList.remove('hidden');
+    document.getElementById('group-name').value = '';
+}
+
+function closeCreateGroupModal() {
+    document.getElementById('create-group-modal').classList.add('hidden');
+}
+
+async function createGroup() {
+    const name = document.getElementById('group-name').value.trim();
+    if (!name) {
+        alert('Введите название группы');
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/groups/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ name })
+        });
+
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Ошибка создания группы');
+        }
+
+        closeCreateGroupModal();
+        loadGroups();
+        showNotification('✅ Группа создана', 'success');
+    } catch (e) {
+        alert('Ошибка: ' + e.message);
+    }
+}
+
+function openJoinGroupModal() {
+    document.getElementById('join-group-modal').classList.remove('hidden');
+    document.getElementById('invite-code').value = '';
+}
+
+function closeJoinGroupModal() {
+    document.getElementById('join-group-modal').classList.add('hidden');
+}
+
+async function joinGroup() {
+    const inviteCode = document.getElementById('invite-code').value.trim();
+    if (!inviteCode) {
+        alert('Введите код приглашения');
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/groups/join`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ invite_code: inviteCode })
+        });
+
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Ошибка присоединения к группе');
+        }
+
+        closeJoinGroupModal();
+        loadGroups();
+        loadLeaderboard(); // Обновить лидерборд
+        showNotification('✅ Вы присоединились к группе', 'success');
+    } catch (e) {
+        alert('Ошибка: ' + e.message);
+    }
+}
+
+async function viewGroupMembers(groupId) {
+    try {
+        const res = await fetch(`${API_BASE}/groups/${groupId}/members`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to load members');
+
+        const members = await res.json();
+        const membersList = members.map(m => `${m.username} (${m.role})`).join(', ');
+        alert(`Участники группы:\n\n${membersList}`);
+    } catch (e) {
+        alert('Ошибка загрузки участников');
+    }
+}
+
+async function leaveGroup(groupId) {
+    if (!confirm('Вы уверены, что хотите покинуть группу?')) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/groups/${groupId}/leave`, {
+            method: 'POST',
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to leave group');
+
+        loadGroups();
+        loadLeaderboard();
+        showNotification('✅ Вы покинули группу', 'success');
+    } catch (e) {
+        alert('Ошибка выхода из группы');
+    }
+}
+
+async function deleteGroup(groupId) {
+    if (!confirm('Вы уверены, что хотите удалить группу? Это действие нельзя отменить.')) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/groups/${groupId}`, {
+            method: 'DELETE',
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to delete group');
+
+        loadGroups();
+        loadLeaderboard();
+        showNotification('✅ Группа удалена', 'success');
+    } catch (e) {
+        alert('Ошибка удаления группы');
+    }
+}
+
+// Leaderboard
+async function loadLeaderboard() {
+    const leaderboardList = document.getElementById('leaderboard-list');
+    const groupSelect = document.getElementById('leaderboard-group-select');
+    const sortSelect = document.getElementById('leaderboard-sort-select');
+    
+    if (!leaderboardList || !groupSelect || !sortSelect) return;
+
+    const groupId = groupSelect.value === 'global' ? null : groupSelect.value;
+    const sortBy = sortSelect.value;
+
+    try {
+        // Загрузить список групп для селекта
+        if (groupSelect.children.length <= 1) {
+            const groupsRes = await fetch(`${API_BASE}/groups/`, {
+                headers: { "Authorization": `Bearer ${authToken}` }
+            });
+            if (groupsRes.ok) {
+                const groups = await groupsRes.json();
+                groups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.id;
+                    option.textContent = group.name;
+                    groupSelect.appendChild(option);
+                });
+            }
+        }
+
+        const url = groupId 
+            ? `${API_BASE}/leaderboard/group/${groupId}?sort_by=${sortBy}`
+            : `${API_BASE}/leaderboard/global?sort_by=${sortBy}`;
+        
+        const res = await fetch(url, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to load leaderboard');
+
+        const leaderboard = await res.json();
+        
+        if (leaderboard.length === 0) {
+            leaderboardList.innerHTML = '<div class="text-center text-gray-400 py-4">Нет данных</div>';
+            return;
+        }
+
+        leaderboardList.innerHTML = leaderboard.map((entry, index) => {
+            const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+            const isCurrentUser = entry.user_id === parseInt(localStorage.getItem('userId') || '0');
+            const bgColor = isCurrentUser ? 'bg-yellow-50 border-yellow-300' : 'bg-white border-gray-200';
+            
+            return `
+                <div class="p-4 ${bgColor} rounded-xl border-2 hover:shadow-md transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">${medal || `#${index + 1}`}</span>
+                            <div>
+                                <h3 class="font-bold text-gray-800">${escapeHtml(entry.username)}${isCurrentUser ? ' (Вы)' : ''}</h3>
+                                <p class="text-sm text-gray-600">Уровень ${entry.level || 0}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-amber-600">${formatNumber(entry.value || 0)}</p>
+                            <p class="text-xs text-gray-500">${getSortLabel(sortBy)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        leaderboardList.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки лидерборда</div>';
+    }
+}
+
+function getSortLabel(sortBy) {
+    const labels = {
+        balance: 'Баланс XP',
+        level: 'Уровень',
+        total_earned: 'Всего заработано',
+        streak: 'Серия дней',
+        today_xp: 'Сегодня',
+        week_xp: 'Неделя',
+        month_xp: 'Месяц'
+    };
+    return labels[sortBy] || sortBy;
+}
+
+// Challenges
+async function loadChallenges() {
+    const challengesList = document.getElementById('challenges-list');
+    if (!challengesList) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/challenges/`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to load challenges');
+
+        const challenges = await res.json();
+        
+        if (challenges.length === 0) {
+            challengesList.innerHTML = '<div class="text-center text-gray-400 py-4">Нет активных челленджей</div>';
+            return;
+        }
+
+        challengesList.innerHTML = challenges.map(challenge => {
+            const progress = calculateChallengeProgress(challenge);
+            const isParticipant = challenge.is_participant || false;
+            
+            return `
+                <div class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 hover:shadow-md transition-all">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-800 mb-1">${escapeHtml(challenge.title)}</h3>
+                            ${challenge.description ? `<p class="text-sm text-gray-600 mb-2">${escapeHtml(challenge.description)}</p>` : ''}
+                        </div>
+                        ${challenge.is_active ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded-full">Активен</span>' : '<span class="text-xs bg-gray-500 text-white px-2 py-1 rounded-full">Завершен</span>'}
+                    </div>
+                    <div class="mb-3 space-y-1">
+                        ${challenge.target_xp ? `<p class="text-xs text-gray-600">Цель XP: ${formatNumber(challenge.target_xp)} (${progress.xp}%)</p>` : ''}
+                        ${challenge.target_time_minutes ? `<p class="text-xs text-gray-600">Цель времени: ${challenge.target_time_minutes} мин (${progress.time}%)</p>` : ''}
+                        ${challenge.target_streak_days ? `<p class="text-xs text-gray-600">Цель серии: ${challenge.target_streak_days} дней (${progress.streak}%)</p>` : ''}
+                    </div>
+                    <p class="text-xs text-gray-500 mb-3">${formatDate(challenge.start_date)} - ${formatDate(challenge.end_date)}</p>
+                    <div class="flex gap-2">
+                        ${!isParticipant ? `
+                            <button onclick="joinChallenge(${challenge.id})" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 px-3 rounded-lg text-sm transition-all">
+                                <i class="fas fa-sign-in-alt"></i> Присоединиться
+                            </button>
+                        ` : `
+                            <button onclick="viewChallengeProgress(${challenge.id})" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg text-sm transition-all">
+                                <i class="fas fa-chart-line"></i> Прогресс
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        challengesList.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки челленджей</div>';
+    }
+}
+
+function calculateChallengeProgress(challenge) {
+    const participant = challenge.participant || {};
+    return {
+        xp: challenge.target_xp ? Math.round((participant.current_xp || 0) / challenge.target_xp * 100) : 0,
+        time: challenge.target_time_minutes ? Math.round((participant.current_time_minutes || 0) / challenge.target_time_minutes * 100) : 0,
+        streak: challenge.target_streak_days ? Math.round((participant.current_streak_days || 0) / challenge.target_streak_days * 100) : 0
+    };
+}
+
+function openCreateChallengeModal() {
+    const modal = document.getElementById('create-challenge-modal');
+    const groupSelect = document.getElementById('challenge-group-select');
+    
+    modal.classList.remove('hidden');
+    
+    // Загрузить список групп
+    groupSelect.innerHTML = '<option value="">Выберите группу</option>';
+    fetch(`${API_BASE}/groups/`, {
+        headers: { "Authorization": `Bearer ${authToken}` }
+    })
+    .then(res => res.json())
+    .then(groups => {
+        groups.forEach(group => {
+            const option = document.createElement('option');
+            option.value = group.id;
+            option.textContent = group.name;
+            groupSelect.appendChild(option);
+        });
+    })
+    .catch(() => {});
+    
+    // Установить даты по умолчанию
+    const today = new Date().toISOString().split('T')[0];
+    const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    document.getElementById('challenge-start-date').value = today;
+    document.getElementById('challenge-end-date').value = nextWeek;
+}
+
+function closeCreateChallengeModal() {
+    document.getElementById('create-challenge-modal').classList.add('hidden');
+}
+
+async function createChallenge() {
+    const groupId = document.getElementById('challenge-group-select').value;
+    const title = document.getElementById('challenge-title').value.trim();
+    const description = document.getElementById('challenge-description').value.trim();
+    const targetXp = document.getElementById('challenge-target-xp').value;
+    const targetTime = document.getElementById('challenge-target-time').value;
+    const targetStreak = document.getElementById('challenge-target-streak').value;
+    const startDate = document.getElementById('challenge-start-date').value;
+    const endDate = document.getElementById('challenge-end-date').value;
+
+    if (!groupId || !title || !startDate || !endDate) {
+        alert('Заполните все обязательные поля');
+        return;
+    }
+
+    if (!targetXp && !targetTime && !targetStreak) {
+        alert('Укажите хотя бы одну цель (XP, время или серия)');
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/challenges/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+                group_id: parseInt(groupId),
+                title,
+                description: description || null,
+                target_xp: targetXp ? parseInt(targetXp) : null,
+                target_time_minutes: targetTime ? parseInt(targetTime) : null,
+                target_streak_days: targetStreak ? parseInt(targetStreak) : null,
+                start_date: startDate,
+                end_date: endDate
+            })
+        });
+
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Ошибка создания челленджа');
+        }
+
+        closeCreateChallengeModal();
+        loadChallenges();
+        showNotification('✅ Челлендж создан', 'success');
+    } catch (e) {
+        alert('Ошибка: ' + e.message);
+    }
+}
+
+async function joinChallenge(challengeId) {
+    try {
+        const res = await fetch(`${API_BASE}/challenges/${challengeId}/join`, {
+            method: 'POST',
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Ошибка присоединения к челленджу');
+        }
+
+        loadChallenges();
+        showNotification('✅ Вы присоединились к челленджу', 'success');
+    } catch (e) {
+        alert('Ошибка: ' + e.message);
+    }
+}
+
+async function viewChallengeProgress(challengeId) {
+    try {
+        const res = await fetch(`${API_BASE}/challenges/${challengeId}/participants`, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to load participants');
+
+        const participants = await res.json();
+        const participantsList = participants.map(p => 
+            `${p.username}: XP ${p.current_xp || 0}, Время ${p.current_time_minutes || 0} мин, Серия ${p.current_streak_days || 0} дней`
+        ).join('\n');
+        
+        alert(`Прогресс участников:\n\n${participantsList}`);
+    } catch (e) {
+        alert('Ошибка загрузки прогресса');
+    }
+}
+
+// Achievements
+async function loadAchievements() {
+    const achievementsList = document.getElementById('achievements-list');
+    const groupSelect = document.getElementById('achievements-group-select');
+    
+    if (!achievementsList || !groupSelect) return;
+
+    const filter = groupSelect.value === 'my' ? 'my' : groupSelect.value === 'shared' ? 'shared' : 'all';
+    const groupId = groupSelect.value !== 'my' && groupSelect.value !== 'shared' && groupSelect.value ? groupSelect.value : null;
+
+    try {
+        // Загрузить список групп для селекта
+        if (groupSelect.children.length <= 2) {
+            const groupsRes = await fetch(`${API_BASE}/groups/`, {
+                headers: { "Authorization": `Bearer ${authToken}` }
+            });
+            if (groupsRes.ok) {
+                const groups = await groupsRes.json();
+                groups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.id;
+                    option.textContent = group.name;
+                    groupSelect.appendChild(option);
+                });
+            }
+        }
+
+        let url = `${API_BASE}/achievements/?filter=${filter}`;
+        if (groupId) url += `&group_id=${groupId}`;
+        
+        const res = await fetch(url, {
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to load achievements');
+
+        const achievements = await res.json();
+        
+        if (achievements.length === 0) {
+            achievementsList.innerHTML = '<div class="text-center text-gray-400 py-4">Нет достижений</div>';
+            return;
+        }
+
+        achievementsList.innerHTML = achievements.map(achievement => `
+            <div class="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-200 hover:shadow-md transition-all">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center text-white text-xl">
+                            ${achievement.icon || '🏆'}
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">${escapeHtml(achievement.name)}</h3>
+                            <p class="text-sm text-gray-600">${escapeHtml(achievement.description || '')}</p>
+                        </div>
+                    </div>
+                    ${achievement.is_shared ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded-full">Поделился</span>' : ''}
+                </div>
+                <div class="flex items-center justify-between mt-3">
+                    <span class="text-sm text-gray-600">+${formatNumber(achievement.xp_reward || 0)} XP</span>
+                    <span class="text-xs text-gray-500">${formatDate(achievement.created_at)}</span>
+                </div>
+                ${!achievement.is_shared ? `
+                    <button onclick="shareAchievement(${achievement.id})" class="mt-2 w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-3 rounded-lg text-sm transition-all">
+                        <i class="fas fa-share"></i> Поделиться
+                    </button>
+                ` : `
+                    <button onclick="unshareAchievement(${achievement.id})" class="mt-2 w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-3 rounded-lg text-sm transition-all">
+                        <i class="fas fa-share-slash"></i> Убрать из общего доступа
+                    </button>
+                `}
+            </div>
+        `).join('');
+    } catch (e) {
+        achievementsList.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки достижений</div>';
+    }
+}
+
+async function shareAchievement(achievementId) {
+    try {
+        const res = await fetch(`${API_BASE}/achievements/${achievementId}/share`, {
+            method: 'POST',
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to share achievement');
+
+        loadAchievements();
+        showNotification('✅ Достижение опубликовано', 'success');
+    } catch (e) {
+        alert('Ошибка публикации достижения');
+    }
+}
+
+async function unshareAchievement(achievementId) {
+    try {
+        const res = await fetch(`${API_BASE}/achievements/${achievementId}/unshare`, {
+            method: 'POST',
+            headers: { "Authorization": `Bearer ${authToken}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to unshare achievement');
+
+        loadAchievements();
+        showNotification('✅ Достижение скрыто', 'success');
+    } catch (e) {
+        alert('Ошибка скрытия достижения');
+    }
+}
+
+// Helper functions
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function formatNumber(num) {
+    return new Intl.NumberFormat('ru-RU').format(num);
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
