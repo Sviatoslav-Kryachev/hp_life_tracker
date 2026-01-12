@@ -1,7 +1,7 @@
 """create social features tables
 
 Revision ID: social_features_001
-Revises: 0bd258a19db8
+Revises: dpcpp6w73ey6
 Create Date: 2025-01-12 12:00:00.000000
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = 'social_features_001'
-down_revision = '0bd258a19db8'
+down_revision = 'dpcpp6w73ey6'
 branch_labels = None
 depends_on = None
 
