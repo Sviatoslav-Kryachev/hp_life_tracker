@@ -14,60 +14,61 @@
         #auth-section, #app-section {
             visibility: hidden;
         }
+        /* Убеждаемся, что скрытые секции действительно скрыты */
+        #auth-section.hidden {
+            display: none !important;
+            visibility: visible !important;
+        }
+        #app-section.hidden {
+            display: none !important;
+            visibility: visible !important;
+        }
     </style>
 </head>
 
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
     <script>
-        // Ранняя проверка авторизации сразу после открытия body
-        (function() {
+        // Функция проверки авторизации (будет вызвана после загрузки компонентов)
+        function applyAuthCheck() {
             try {
                 const token = localStorage.getItem('token');
+                const authSection = document.getElementById('auth-section');
+                const appSection = document.getElementById('app-section');
                 
-                // Ждем, пока DOM будет готов
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', function() {
-                        applyAuthCheck();
-                    });
-                } else {
-                    applyAuthCheck();
-                }
-                
-                function applyAuthCheck() {
-                    const authSection = document.getElementById('auth-section');
-                    const appSection = document.getElementById('app-section');
-                    
-                    if (token) {
-                        // Если есть токен, сразу скрываем auth-section и показываем app-section
-                        if (authSection) {
-                            authSection.classList.add('hidden');
-                            authSection.style.visibility = 'visible';
-                        }
-                        if (appSection) {
-                            appSection.classList.remove('hidden');
-                            appSection.style.visibility = 'visible';
-                        }
-                    } else {
-                        // Если токена нет, показываем auth-section и скрываем app-section
-                        if (authSection) {
-                            authSection.classList.remove('hidden');
-                            authSection.style.visibility = 'visible';
-                        }
-                        if (appSection) {
-                            appSection.classList.add('hidden');
-                            appSection.style.visibility = 'visible';
-                        }
+                if (token) {
+                    // Если есть токен, скрываем auth-section и показываем app-section
+                    if (authSection) {
+                        authSection.classList.add('hidden');
+                        authSection.style.display = 'none';
+                        authSection.style.visibility = 'visible';
                     }
-                    
-                    // Предотвращаем скролл вниз при загрузке
-                    window.scrollTo(0, 0);
-                    document.documentElement.scrollTop = 0;
-                    document.body.scrollTop = 0;
+                    if (appSection) {
+                        appSection.classList.remove('hidden');
+                        appSection.style.display = '';
+                        appSection.style.visibility = 'visible';
+                    }
+                } else {
+                    // Если токена нет, показываем auth-section и скрываем app-section
+                    if (authSection) {
+                        authSection.classList.remove('hidden');
+                        authSection.style.display = '';
+                        authSection.style.visibility = 'visible';
+                    }
+                    if (appSection) {
+                        appSection.classList.add('hidden');
+                        appSection.style.display = 'none';
+                        appSection.style.visibility = 'visible';
+                    }
                 }
+                
+                // Предотвращаем скролл вниз при загрузке
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
             } catch(e) {
                 console.error('Auth check error:', e);
             }
-        })();
+        }
     </script>
 
     <!-- AUTH SECTION Component Container -->
@@ -413,14 +414,17 @@
     <script src="app.js?v=44"></script>
     <!-- Load Components -->
     <script>
-        // Загружаем компоненты после загрузки DOM
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Загружаем auth компонент
-            await loadComponent('auth', '#auth-section');
+        // Флаг для отслеживания загрузки компонентов app-section
+        let appComponentsLoaded = false;
+        
+        // Функция загрузки компонентов app-section
+        async function loadAppComponents() {
+            if (appComponentsLoaded) return;
             
-            // Загружаем header и footer только в app-section
             const appSection = document.getElementById('app-section');
-            if (appSection) {
+            if (!appSection) return;
+            
+            try {
                 await loadComponents([
                     { name: 'header', selector: '#header-container' },
                     { name: 'footer', selector: '#footer-container' },
@@ -435,9 +439,27 @@
                     { name: 'section-history', selector: '#section-history-container', path: 'sections/section-history' },
                     { name: 'section-admin', selector: '#section-admin-container', path: 'sections/section-admin' }
                 ]);
+                appComponentsLoaded = true;
+            } catch (error) {
+                console.error('Error loading app components:', error);
+            }
+        }
+        
+        // Загружаем компоненты после загрузки DOM
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Загружаем auth компонент
+            await loadComponent('auth', '#auth-section');
+            
+            // Проверяем авторизацию ПОСЛЕ загрузки auth компонента
+            applyAuthCheck();
+            
+            // Загружаем компоненты app-section если пользователь уже залогинен
+            const token = localStorage.getItem('token');
+            if (token) {
+                await loadAppComponents();
             }
             
-            // Загружаем все модальные окна в body
+            // Загружаем все модальные окна в body (всегда, они скрыты по умолчанию)
             await loadComponents([
                 { name: 'modal-edit-activity', selector: 'body', path: 'modals/modal-edit-activity' },
                 { name: 'modal-edit-reward', selector: 'body', path: 'modals/modal-edit-reward' },
@@ -456,7 +478,17 @@
             modalBaseCSS.rel = 'stylesheet';
             modalBaseCSS.href = '/static/components/modals/modal-base.css';
             document.head.appendChild(modalBaseCSS);
+            
+            // Повторная проверка авторизации после загрузки всех компонентов
+            setTimeout(() => {
+                applyAuthCheck();
+            }, 100);
         });
+        
+        // Экспортируем функцию для использования в app.js
+        if (typeof window !== 'undefined') {
+            window.loadAppComponents = loadAppComponents;
+        }
     </script>
     <script>
         // Предотвращаем скролл вниз после загрузки скриптов

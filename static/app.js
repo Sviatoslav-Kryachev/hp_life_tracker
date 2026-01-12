@@ -2162,8 +2162,14 @@ function showAuth() {
     if (!authSection || !appSection) {
         initDOMElements();
     }
-    if (authSection) authSection.classList.remove("hidden");
-    if (appSection) appSection.classList.add("hidden");
+    if (authSection) {
+        authSection.classList.remove("hidden");
+        authSection.style.display = '';
+    }
+    if (appSection) {
+        appSection.classList.add("hidden");
+        appSection.style.display = 'none';
+    }
     
     // Скрываем нижнюю навигацию для неавторизованных пользователей
     const bottomNav = document.getElementById('bottom-navigation');
@@ -2172,12 +2178,24 @@ function showAuth() {
     }
 }
 
-function showApp() {
+async function showApp() {
     if (!authSection || !appSection) {
         initDOMElements();
     }
-    if (authSection) authSection.classList.add("hidden");
-    if (appSection) appSection.classList.remove("hidden");
+    
+    // Загружаем компоненты app-section если они еще не загружены
+    if (typeof window.loadAppComponents === 'function') {
+        await window.loadAppComponents();
+    }
+    
+    if (authSection) {
+        authSection.classList.add("hidden");
+        authSection.style.display = 'none';
+    }
+    if (appSection) {
+        appSection.classList.remove("hidden");
+        appSection.style.display = '';
+    }
     
     // Показываем нижнюю навигацию на мобильных (только для залогиненных)
     const bottomNav = document.getElementById('bottom-navigation');
