@@ -2,10 +2,53 @@
 
 #auth-section {
     min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+}
+
+#auth-section > div {
+    margin: auto 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    max-height: calc(100vh - 4rem);
+    overflow-y: visible;
+    flex-shrink: 0;
+}
+
+/* На мобильных устройствах и маленьких экранах уменьшаем отступы */
+@media (max-height: 700px) {
+    #auth-section {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    #auth-section > div {
+        max-height: calc(100vh - 2rem);
+    }
+}
+
+/* Если контент не помещается, разрешаем скролл */
+@media (max-height: 600px) {
+    #auth-section {
+        align-items: flex-start;
+        padding-top: 1rem;
+    }
+    
+    #auth-section > div {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 }
 
 #auth-section > div {

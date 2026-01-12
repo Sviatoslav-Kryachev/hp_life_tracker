@@ -23,11 +23,15 @@
         }
         #app-section.hidden {
             display: none !important;
-            visibility: visible !important;
+            visibility: hidden !important;
             height: 0 !important;
             overflow: hidden !important;
             position: absolute !important;
             left: -9999px !important;
+        }
+        /* Убеждаемся, что footer скрывается вместе с app-section */
+        #app-section.hidden #footer-container {
+            display: none !important;
         }
         /* Убеждаемся, что body не прокручивается когда app-section скрыт */
         body:has(#app-section.hidden) {
