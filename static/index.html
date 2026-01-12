@@ -393,6 +393,13 @@
             // Загружаем auth компонент
             await loadComponent('auth', '#auth-section');
             
+            // Инициализируем обработчики форм авторизации ПОСЛЕ загрузки компонента
+            if (typeof window.initAuthForms === 'function') {
+                window.initAuthForms();
+            } else if (typeof initAuthForms === 'function') {
+                initAuthForms();
+            }
+            
             // Проверяем авторизацию ПОСЛЕ загрузки auth компонента
             applyAuthCheck();
             

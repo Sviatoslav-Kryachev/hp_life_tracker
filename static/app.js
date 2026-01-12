@@ -1833,6 +1833,85 @@ const rewardCostInput = document.getElementById("reward-cost");
 
 
 // ============= AUTH FUNCTIONS =============
+// Функция инициализации обработчиков форм авторизации
+function initAuthForms() {
+    // Используем делегирование событий на auth-section для надежности
+    const authSection = document.getElementById('auth-section');
+    if (!authSection) {
+        // Если auth-section еще не загружен, попробуем позже
+        setTimeout(initAuthForms, 100);
+        return;
+    }
+    
+    // Удаляем старые обработчики, если они есть (через клонирование)
+    const existingHandler = authSection.getAttribute('data-auth-handler');
+    if (existingHandler === 'true') {
+        return; // Обработчики уже установлены
+    }
+    
+    // Обработчик для формы логина и регистрации через делегирование
+    authSection.addEventListener('submit', async function(e) {
+        if (e.target.id === 'login-form') {
+            e.preventDefault();
+            const emailInput = document.getElementById("login-email");
+            const passwordInput = document.getElementById("login-password");
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+
+            if (!emailInput || !passwordInput) {
+                console.error("Login form inputs not found");
+                return;
+            }
+
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            // Отключаем кнопку во время загрузки
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Вход...';
+
+                try {
+                    await login(email, password);
+                } finally {
+                    // Включаем кнопку обратно
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } else {
+                await login(email, password);
+            }
+        }
+        
+        // Обработчик для формы регистрации
+        if (e.target.id === 'register-form') {
+            e.preventDefault();
+            const email = document.getElementById("register-email").value;
+            const username = document.getElementById("register-username").value;
+            const password = document.getElementById("register-password").value;
+            const passwordConfirm = document.getElementById("register-password-confirm").value;
+
+            if (password !== passwordConfirm) {
+                const errorEl = document.getElementById("register-error");
+                if (errorEl) {
+                    errorEl.textContent = "Пароли не совпадают";
+                    errorEl.classList.remove("hidden");
+                }
+                return;
+            }
+
+            register(email, username, password);
+        }
+    }, true); // Используем capture phase для надежности
+    
+    authSection.setAttribute('data-auth-handler', 'true');
+}
+
+// Экспортируем функцию для использования в index.html
+if (typeof window !== 'undefined') {
+    window.initAuthForms = initAuthForms;
+}
+
 function showLoginForm() {
     document.getElementById("login-form").classList.remove("hidden");
     document.getElementById("register-form").classList.add("hidden");
@@ -5655,64 +5734,8 @@ window.addEventListener("DOMContentLoaded", () => {
         if (appEl) appEl.classList.add("hidden");
     }
 
-    // Login form
-    const loginForm = document.getElementById("login-form");
-    if (loginForm) {
-        loginForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const emailInput = document.getElementById("login-email");
-            const passwordInput = document.getElementById("login-password");
-            const submitBtn = loginForm.querySelector('button[type="submit"]');
-
-            if (!emailInput || !passwordInput) {
-                console.error("Login form inputs not found");
-                return;
-            }
-
-            const email = emailInput.value;
-            const password = passwordInput.value;
-
-            // Отключаем кнопку во время загрузки
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Вход...';
-
-                try {
-                    await login(email, password);
-                } finally {
-                    // Включаем кнопку обратно
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                }
-            } else {
-                await login(email, password);
-            }
-        });
-    }
-
-    // Register form
-    const registerForm = document.getElementById("register-form");
-    if (registerForm) {
-        registerForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const email = document.getElementById("register-email").value;
-            const username = document.getElementById("register-username").value;
-            const password = document.getElementById("register-password").value;
-            const passwordConfirm = document.getElementById("register-password-confirm").value;
-
-            if (password !== passwordConfirm) {
-                const errorEl = document.getElementById("register-error");
-                if (errorEl) {
-                    errorEl.textContent = "Пароли не совпадают";
-                    errorEl.classList.remove("hidden");
-                }
-                return;
-            }
-
-            register(email, username, password);
-        });
-    }
+    // Инициализируем обработчики форм авторизации (если компонент уже загружен)
+    initAuthForms();
 
     // Activity form
     if (newActivityForm) {
