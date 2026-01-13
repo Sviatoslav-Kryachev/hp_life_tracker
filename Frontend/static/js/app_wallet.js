@@ -670,7 +670,7 @@ async function loadRecommendations() {
             return;
         }
 
-        const getToken = typeof getAuthToken === 'function' ? getAuthToken() : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken() : () => localStorage.getItem('token') || '';
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
         const translate = typeof t === 'function' ? t : (typeof window !== 'undefined' && window.t) ? window.t : (key) => key;
         const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
         
