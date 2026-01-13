@@ -143,11 +143,17 @@ function updateLanguageMenu(langParam) {
     };
     const flagEl = document.getElementById('current-language-flag');
     if (flagEl) {
-        flagEl.textContent = flagMap[lang] || '🇷🇺';
+        const flag = flagMap[lang] || flagMap['ru'] || '🇷🇺';
+        flagEl.textContent = flag;
+        console.log('[updateLanguageMenu] Updated header flag to:', flag, 'for language:', lang);
+    } else {
+        console.warn('[updateLanguageMenu] Element current-language-flag not found');
     }
     const flagFooterEl = document.getElementById('footer-language-flag');
     if (flagFooterEl) {
-        flagFooterEl.textContent = flagMap[lang] || '🇷🇺';
+        const flag = flagMap[lang] || flagMap['ru'] || '🇷🇺';
+        flagFooterEl.textContent = flag;
+        console.log('[updateLanguageMenu] Updated footer flag to:', flag, 'for language:', lang);
     }
 }
 
@@ -180,7 +186,9 @@ window.toggleFooterLanguageMenu = toggleFooterLanguageMenu;
 // Применяем переводы при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
-    updateLanguageMenu();
+    // Получаем язык из localStorage или используем 'ru' по умолчанию
+    const savedLang = localStorage.getItem('language') || 'ru';
+    updateLanguageMenu(savedLang);
     updateDateInputLang(); // Обновляем lang атрибут календаря при загрузке
 });
 
