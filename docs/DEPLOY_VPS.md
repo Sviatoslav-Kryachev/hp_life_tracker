@@ -13,7 +13,7 @@
 ├── docker-compose.yml
 ├── Dockerfile
 ├── .env
-├── deploy/nginx-hp-life-tracker.conf (конфиг для Nginx)
+├── Backend/deploy/nginx-hp-life-tracker.conf (конфиг для Nginx)
 └── [весь код приложения]
 ```
 
@@ -106,7 +106,7 @@ TELEGRAM_BOT_TOKEN=ваш_токен_если_нужен
 ### VPS (root)
 ```bash
 # Копируем конфиг Nginx
-cp /opt/hp-life-tracker/deploy/nginx-hp-life-tracker.conf /etc/nginx/sites-available/hp-life-tracker.app-toolbox.space
+cp /opt/hp-life-tracker/Backend/deploy/nginx-hp-life-tracker.conf /etc/nginx/sites-available/hp-life-tracker.app-toolbox.space
 
 # Создаем симлинк (активируем сайт)
 ln -s /etc/nginx/sites-available/hp-life-tracker.app-toolbox.space /etc/nginx/sites-enabled/
@@ -451,7 +451,7 @@ chmod +x /opt/hp-life-tracker/backup.sh
 cd /opt/hp-life-tracker
 cp env.example .env
 nano .env  # Настройте пароли
-cp deploy/nginx-hp-life-tracker.conf /etc/nginx/sites-available/hp-life-tracker.app-toolbox.space
+cp Backend/deploy/nginx-hp-life-tracker.conf /etc/nginx/sites-available/hp-life-tracker.app-toolbox.space
 ln -s /etc/nginx/sites-available/hp-life-tracker.app-toolbox.space /etc/nginx/sites-enabled/
 nginx -t && systemctl reload nginx
 certbot --nginx -d hp-life-tracker.app-toolbox.space
