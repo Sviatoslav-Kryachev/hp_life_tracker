@@ -335,6 +335,16 @@
             // Повторная проверка авторизации после загрузки всех компонентов
             setTimeout(() => {
                 applyAuthCheck();
+                
+                // Если пользователь уже залогинен, автоматически загружаем данные
+                const token = localStorage.getItem('token');
+                if (token && typeof window.showApp === 'function') {
+                    // Ждем еще немного, чтобы все модули точно загрузились
+                    setTimeout(() => {
+                        console.log('[index.html] Auto-loading data for logged in user...');
+                        window.showApp();
+                    }, 500);
+                }
             }, 100);
         });
         
