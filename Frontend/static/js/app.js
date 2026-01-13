@@ -12,21 +12,15 @@ function changeLanguage(lang) {
     if (typeof window !== 'undefined') {
         window.currentLanguage = lang;
     }
+    // Также обновляем локальную переменную, если она существует
     if (typeof currentLanguage !== 'undefined') {
         currentLanguage = lang;
     }
     localStorage.setItem('language', lang);
     
-    // Вызываем базовую функцию из app_utils.js, если она доступна
-    if (typeof window !== 'undefined' && typeof window.changeLanguage === 'function' && window.changeLanguage.toString().includes('app_utils')) {
-        // Используем базовую функцию, но добавляем свою логику после
-        const baseChangeLanguage = window.changeLanguage;
-        baseChangeLanguage(lang);
-    } else {
-        // Если базовой функции нет, используем свою логику
-        applyTranslations();
-        updateLanguageMenu();
-    }
+    // Применяем переводы и обновляем меню (включая флаг) - передаем lang явно
+    applyTranslations();
+    updateLanguageMenu(lang);
     // Обновляем lang атрибут для календаря
     updateDateInputLang();
     // Обновляем тексты аккордеонов
@@ -107,15 +101,17 @@ function closeLanguageMenu() {
     }
 }
 
-function updateLanguageMenu() {
-    // Получаем текущий язык - сначала из window, потом из localStorage
-    let lang = 'ru';
-    if (typeof window !== 'undefined' && window.currentLanguage) {
-        lang = window.currentLanguage;
-    } else if (typeof currentLanguage !== 'undefined') {
-        lang = currentLanguage;
-    } else {
-        lang = localStorage.getItem('language') || 'ru';
+function updateLanguageMenu(langParam) {
+    // Получаем текущий язык - сначала из параметра, потом из window, потом из localStorage
+    let lang = langParam;
+    if (!lang) {
+        if (typeof window !== 'undefined' && window.currentLanguage) {
+            lang = window.currentLanguage;
+        } else if (typeof currentLanguage !== 'undefined') {
+            lang = currentLanguage;
+        } else {
+            lang = localStorage.getItem('language') || 'ru';
+        }
     }
     
     // Убеждаемся, что window.currentLanguage тоже обновлен
