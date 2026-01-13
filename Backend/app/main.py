@@ -16,6 +16,16 @@ app = FastAPI(title="XP Tracker API")
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 STATIC_DIR = BASE_DIR / "Frontend" / "static"
 
+# Альтернативный путь, если первый не работает (для случаев, когда сервер запускается из другой директории)
+if not STATIC_DIR.exists():
+    # Пробуем найти относительно текущей рабочей директории
+    import os
+    cwd = Path(os.getcwd())
+    if (cwd / "Frontend" / "static").exists():
+        STATIC_DIR = cwd / "Frontend" / "static"
+    elif (cwd.parent / "Frontend" / "static").exists():
+        STATIC_DIR = cwd.parent / "Frontend" / "static"
+
 # Обработка ошибок
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
