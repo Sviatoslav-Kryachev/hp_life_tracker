@@ -8,7 +8,12 @@
 
 // Переопределяем changeLanguage для добавления дополнительной логики
 function changeLanguage(lang) {
-    currentLanguage = lang;
+    // Используем window.currentLanguage если доступен, иначе объявляем локально
+    if (typeof window !== 'undefined' && window.currentLanguage !== undefined) {
+        window.currentLanguage = lang;
+    } else if (typeof currentLanguage !== 'undefined') {
+        currentLanguage = lang;
+    }
     localStorage.setItem('language', lang);
     applyTranslations();
     updateLanguageMenu();
@@ -39,7 +44,8 @@ function changeLanguage(lang) {
         const childStatsModal = document.getElementById("child-stats-modal");
         if (childStatsModal && !childStatsModal.classList.contains("hidden")) {
             const childId = childStatsModal.getAttribute("data-child-id");
-            const childName = document.getElementById("child-stats-name")?.textContent.replace(`${t('stats_for')} `, "") || "";
+            const translate = (typeof window !== 'undefined' && window.t) ? window.t : (typeof t !== 'undefined' ? t : (key) => key);
+            const childName = document.getElementById("child-stats-name")?.textContent.replace(`${translate('stats_for')} `, "") || "";
             if (childId) {
                 showChildStats(parseInt(childId), childName);
             }
@@ -49,28 +55,31 @@ function changeLanguage(lang) {
 }
 
 function applyTranslations() {
+    // Получаем функцию перевода
+    const translate = (typeof window !== 'undefined' && window.t) ? window.t : (typeof t !== 'undefined' ? t : (key) => key);
+    
     // Применяем переводы ко всем элементам с data-i18n
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        el.textContent = t(key);
+        el.textContent = translate(key);
     });
 
     // Применяем переводы к опциям в select (включая опции внутри select)
     document.querySelectorAll('select option[data-i18n]').forEach(option => {
         const key = option.getAttribute('data-i18n');
-        option.textContent = t(key);
+        option.textContent = translate(key);
     });
 
     // Применяем переводы к placeholder'ам
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
-        el.placeholder = t(key);
+        el.placeholder = translate(key);
     });
 
     // Применяем переводы к title атрибутам
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
         const key = el.getAttribute('data-i18n-title');
-        el.title = t(key);
+        el.title = translate(key);
     });
 }
 
@@ -89,17 +98,22 @@ function closeLanguageMenu() {
 }
 
 function updateLanguageMenu() {
+    // Получаем текущий язык
+    const lang = (typeof window !== 'undefined' && window.currentLanguage) 
+        ? window.currentLanguage 
+        : (typeof currentLanguage !== 'undefined' ? currentLanguage : localStorage.getItem('language') || 'ru');
+    
     document.querySelectorAll('[data-check]').forEach(check => {
         check.classList.add('hidden');
     });
     document.querySelectorAll('[data-check-footer]').forEach(check => {
         check.classList.add('hidden');
     });
-    const activeCheck = document.querySelector(`[data-check="${currentLanguage}"]`);
+    const activeCheck = document.querySelector(`[data-check="${lang}"]`);
     if (activeCheck) {
         activeCheck.classList.remove('hidden');
     }
-    const activeCheckFooter = document.querySelector(`[data-check-footer="${currentLanguage}"]`);
+    const activeCheckFooter = document.querySelector(`[data-check-footer="${lang}"]`);
     if (activeCheckFooter) {
         activeCheckFooter.classList.remove('hidden');
     }
@@ -113,11 +127,11 @@ function updateLanguageMenu() {
     };
     const flagEl = document.getElementById('current-language-flag');
     if (flagEl) {
-        flagEl.textContent = flagMap[currentLanguage] || '🇷🇺';
+        flagEl.textContent = flagMap[lang] || '🇷🇺';
     }
     const flagFooterEl = document.getElementById('footer-language-flag');
     if (flagFooterEl) {
-        flagFooterEl.textContent = flagMap[currentLanguage] || '🇷🇺';
+        flagFooterEl.textContent = flagMap[lang] || '🇷🇺';
     }
 }
 
@@ -157,7 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // Экспортируем функции для использования в HTML
 window.changeLanguage = changeLanguage;
 window.toggleLanguageMenu = toggleLanguageMenu;
-window.t = t;
+// t() уже экспортирована в app_utils.js, не переопределяем здесь
+if (typeof window.t === 'undefined' && typeof t !== 'undefined') {
+    window.t = t;
+}
 
 // ============= MOBILE MENU =============
 function toggleMobileMenu() {
