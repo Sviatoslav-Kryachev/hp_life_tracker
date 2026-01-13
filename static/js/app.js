@@ -2442,680 +2442,246 @@ async function checkAuth() {
 
 
 // ============= WALLET =============
-async function loadWallet() {
-    try {
-        const token = getAuthToken();
-        if (!token) return;
-        
-        const res = await fetch(`${API_BASE}/xp/wallet`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        balanceSpan.textContent = `${Math.round(data.balance)} XP`;
-        levelSpan.textContent = data.level;
-
-        // Обновляем прогресс уровня
-        const nextLevel = data.level + 1;
-        const xpForCurrentLevel = (data.level - 1) * 1000;
-        const xpForNextLevel = data.level * 1000;
-        const currentProgress = data.total_earned - xpForCurrentLevel;
-        const progressPercent = Math.min((currentProgress / 1000) * 100, 100);
-
-        const nextLevelEl = document.getElementById('next-level');
-        const xpToNextEl = document.getElementById('xp-to-next');
-        const levelProgressEl = document.getElementById('level-progress');
-        const totalEarnedEl = document.getElementById('total-earned');
-
-        if (nextLevelEl) nextLevelEl.textContent = nextLevel;
-        if (xpToNextEl) xpToNextEl.textContent = `${Math.round(currentProgress)}/${1000} XP`;
-        if (levelProgressEl) levelProgressEl.style.width = `${progressPercent}%`;
-        if (totalEarnedEl) totalEarnedEl.textContent = Math.round(data.total_earned);
-
-    } catch (e) {
-        console.error("Error loading wallet", e);
-    }
-}
-
-// ============= TODAY STATS =============
-async function loadTodayStats() {
-    try {
-        const token = getAuthToken();
-        if (!token) return;
-        const res = await fetch(`${API_BASE}/xp/today`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-
-        const earnedEl = document.getElementById('today-earned');
-        const spentEl = document.getElementById('today-spent');
-        const sessionsEl = document.getElementById('today-sessions');
-        const timeEl = document.getElementById('today-time');
-
-        if (earnedEl) earnedEl.textContent = Math.round(data.earned_today);
-        if (spentEl) spentEl.textContent = Math.round(data.spent_today);
-        if (sessionsEl) sessionsEl.textContent = data.sessions_today;
-        if (timeEl) {
-            const hours = Math.floor(data.time_today_minutes / 60);
-            const mins = Math.round(data.time_today_minutes % 60);
-            const hourLabel = currentLanguage === 'uk' ? 'год' : currentLanguage === 'de' ? 'Std.' : currentLanguage === 'en' ? 'h' : 'ч';
-            const minLabel = currentLanguage === 'uk' ? 'хв' : currentLanguage === 'de' ? 'Min.' : currentLanguage === 'en' ? 'm' : 'м';
-            timeEl.textContent = hours > 0 ? `${hours}${hourLabel} ${mins}${minLabel}` : `${mins}${minLabel}`;
-        }
-    } catch (e) {
-        console.error("Error loading today stats", e);
-    }
-}
-
-// ============= CATEGORY STATS =============
-async function loadCategoryStats() {
-    try {
-        console.log('[loadCategoryStats] Starting...');
-        const categoryStatsEl = document.getElementById('category-stats');
-        if (!categoryStatsEl) {
-            console.warn("[loadCategoryStats] Category stats element not found");
-            return;
-        }
-
-        // Безопасный доступ к функциям
-        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
-        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
-        
-        const token = getToken();
-        console.log('[loadCategoryStats] Token available:', !!token, 'API_BASE:', apiBase);
-        
-        if (!token) {
-            console.error("[loadCategoryStats] No auth token available");
-            categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Требуется авторизация</div>';
-            return;
-        }
-
-        console.log('[loadCategoryStats] Fetching from:', `${apiBase}/xp/category-stats?period=week`);
-        const res = await fetch(`${apiBase}/xp/category-stats?period=week`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        
-        console.log('[loadCategoryStats] Response status:', res.status);
-
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error("Failed to load category stats:", res.status, res.statusText, errorText);
-            categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Ошибка загрузки</div>';
-            return;
-        }
-
-        const data = await res.json();
-
-        if (!data.categories || data.categories.length === 0) {
-            categoryStatsEl.innerHTML = '<div class="text-center text-gray-400 py-4 text-sm">Нет данных по категориям</div>';
-            return;
-        }
-
-        const categoryNames = {
-            "general": t('category_general'),
-            "study": t('category_study'),
-            "sport": t('category_sport'),
-            "hobby": t('category_hobby'),
-            "work": t('category_work'),
-            "health": t('category_health')
-        };
-
-        // Добавляем пользовательские категории
-        if (allCategories.custom) {
-            allCategories.custom.forEach(customCat => {
-                categoryNames[customCat.id] = customCat.name;
-            });
-        }
-
-        categoryStatsEl.innerHTML = data.categories.map(cat => {
-            const catName = categoryNames[cat.category] || cat.category;
-            const percentage = data.total_xp > 0 ? (cat.total_xp / data.total_xp * 100) : 0;
-            return `
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200 mb-2">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-gray-800 text-sm">${catName}</span>
-                        <span class="font-bold text-blue-600 text-sm">${Math.round(cat.total_xp)} XP</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
-                        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
-                    </div>
-                    <div class="text-xs text-gray-500">${Math.round(cat.total_time)} ${t('min_short')} • ${formatActivitiesCount(cat.activity_count)}</div>
-                </div>
-            `;
-        }).join('');
-    } catch (e) {
-        console.error("Error loading category stats", e);
-        const categoryStatsEl = document.getElementById('category-stats');
-        if (categoryStatsEl) {
-            categoryStatsEl.innerHTML = '<div class="text-center text-red-400 py-4 text-sm">Ошибка загрузки</div>';
-        }
-    }
-}
-
-// ============= CALENDAR =============
-let currentCalendarPeriod = 'week';
-
-function changeCalendarPeriod(period) {
-    currentCalendarPeriod = period;
-
-    // Обновляем активную кнопку
-    document.querySelectorAll('[id^="period-"]').forEach(btn => {
-        btn.classList.remove('bg-indigo-500', 'text-white');
-        btn.classList.add('bg-gray-200', 'text-gray-700');
-    });
-    const activeBtn = document.getElementById(`period-${period}`);
-    if (activeBtn) {
-        activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
-        activeBtn.classList.add('bg-indigo-500', 'text-white');
-    }
-
-    // Загружаем календарь для выбранного периода
-    loadCalendar(period);
-}
-
-async function loadCalendar(period = currentCalendarPeriod) {
-    try {
-        const token = getAuthToken();
-        if (!token) return;
-        const endpoint = period === 'week' ? '/xp/week' : period === 'month' ? '/xp/month' : '/xp/year';
-        const res = await fetch(`${API_BASE}${endpoint}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-
-        const containerEl = document.getElementById('calendar-container');
-        if (!containerEl) return;
-
-        if (period === 'week') {
-            // Маппинг дней недели на ключи переводов
-            const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-            
-            // Маппинг русских сокращений на индексы (Пн=0, Вт=1, ..., Вс=6)
-            const dayNameToIndex = {
-                'Пн': 0, 'Вт': 1, 'Ср': 2, 'Чт': 3, 'Пт': 4, 'Сб': 5, 'Вс': 6
-            };
-
-            containerEl.innerHTML = `
-                <div class="flex justify-between gap-0.5 md:gap-1" id="week-calendar">
-                    ${data.map((day, index) => {
-                        const hasActivity = day.earned > 0 || day.spent > 0;
-                        const intensity = Math.min(day.earned / 100, 1);
-                        const todayDate = new Date();
-                        // Парсим дату правильно, учитывая что она в формате YYYY-MM-DD
-                        const [year, month, dayNum] = day.date.split('-').map(Number);
-                        const dayDate = new Date(year, month - 1, dayNum, 12, 0, 0);
-                        const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
-
-                        // Определяем день недели из данных сервера или вычисляем из даты
-                        let dayIndex = dayNameToIndex[day.day_name];
-                        if (dayIndex === undefined) {
-                            // Если не нашли по названию, вычисляем из даты
-                            // JavaScript: 0=Вс, 1=Пн, ..., 6=Сб
-                            // Нужно: 0=Пн, 1=Вт, ..., 6=Вс
-                            const jsDay = dayDate.getDay();
-                            dayIndex = jsDay === 0 ? 6 : jsDay - 1; // Конвертируем в формат Пн=0, Вс=6
-                        }
-                        
-                        // Получаем локализованное название дня недели
-                        const dayKey = dayKeys[dayIndex];
-                        const localizedDayName = dayKey ? t(dayKey) : day.day_name;
-                        
-                        // Логируем для отладки
-                        console.log(`Week day ${index}:`, {
-                            date: day.date,
-                            dayName: day.day_name,
-                            dayIndex: dayIndex,
-                            localizedName: localizedDayName,
-                            parsedDate: dayDate.toDateString()
-                        });
-
-                        return `
-                            <div class="flex flex-col items-center cursor-pointer ${isTodayDate ? 'scale-110' : ''}"
-                                 onclick="showDayDetails('${day.date}')"
-                                 title="${t('click_for_details')}: ${day.earned} ${t('earned_xp')}, ${day.spent} ${t('spent_xp')}">
-                                <span class="text-xs text-gray-500 mb-1">${localizedDayName}</span>
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all hover:scale-110
-                                    ${isTodayDate ? 'bg-indigo-500 text-white ring-2 ring-indigo-300' :
-                                      hasActivity ? `bg-emerald-${Math.round(intensity * 4 + 1)}00 text-emerald-800` : 'bg-gray-100 text-gray-400'}">
-                                    ${Math.round(day.earned)}
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        } else if (period === 'month') {
-            // Календарь месяца в виде сетки
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Понедельник = 0
-
-            // Создаём карту данных по дням
-            const dayDataMap = {};
-            data.forEach(day => {
-                dayDataMap[day.day_number] = day;
-            });
-
-            let calendarHTML = `
-                <div class="grid grid-cols-7 gap-1 mb-2">
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('mon')}</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('tue')}</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('wed')}</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('thu')}</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('fri')}</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('sat')}</div>
-                    <div class="text-center text-xs font-semibold text-gray-500 py-1">${t('sun')}</div>
-                </div>
-                <div class="grid grid-cols-7 gap-1">
-            `;
-
-            // Пустые ячейки до первого дня месяца
-            for (let i = 0; i < startDayOfWeek; i++) {
-                calendarHTML += '<div class="aspect-square"></div>';
-            }
-
-            // Дни месяца
-            for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
-                const day = dayDataMap[dayNum] || { day_number: dayNum, earned: 0, spent: 0, date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}` };
-                const dayDate = new Date(day.date);
-                const todayDate = new Date();
-                const isTodayDate = dayDate.toDateString() === todayDate.toDateString();
-                const hasActivity = day.earned > 0 || day.spent > 0;
-                const intensity = Math.min(day.earned / 200, 1);
-
-                calendarHTML += `
-                    <div class="aspect-square flex flex-col items-center justify-center rounded-lg transition-all hover:bg-gray-50 cursor-pointer ${isTodayDate ? 'ring-2 ring-indigo-400 scale-105 bg-indigo-50' : ''}"
-                         onclick="showDayDetails('${day.date}')"
-                         title="${t('click_for_details')}: ${day.earned} ${t('earned_xp')}, ${day.spent} ${t('spent_xp')}">
-                        <span class="text-[10px] font-medium ${isTodayDate ? 'text-indigo-600 font-bold' : 'text-gray-600'}">${dayNum}</span>
-                        ${hasActivity ? `
-                            <div class="w-2 h-2 rounded-full mt-0.5 ${isTodayDate ? 'bg-indigo-500' : intensity > 0.5 ? 'bg-emerald-500' : intensity > 0.25 ? 'bg-emerald-400' : 'bg-emerald-300'}"></div>
-                        ` : ''}
-                    </div>
-                `;
-            }
-
-            calendarHTML += '</div>';
-            containerEl.innerHTML = calendarHTML;
-        } else if (period === 'year') {
-            // Календарь года - по месяцам
-            const today = new Date();
-            const currentYear = today.getFullYear();
-
-            // Маппинг номеров месяцев на ключи переводов
-            const monthKeys = [
-                'month_jan', 'month_feb', 'month_mar', 'month_apr', 'month_may', 'month_jun',
-                'month_jul', 'month_aug', 'month_sep', 'month_oct', 'month_nov', 'month_dec'
-            ];
-
-            containerEl.innerHTML = `
-                <div class="text-center mb-3">
-                    <h4 class="text-sm font-bold text-gray-700">${currentYear}</h4>
-                </div>
-                <div class="grid grid-cols-4 gap-2">
-                    ${data.map(month => {
-                        const hasActivity = month.earned > 0 || month.spent > 0;
-                        const intensity = Math.min(month.earned / 2000, 1);
-                        const today = new Date();
-                        const isCurrentMonth = today.getMonth() + 1 === month.month;
-
-                        // Получаем локализованное название месяца
-                        const monthKey = monthKeys[month.month - 1];
-                        const localizedMonthName = t(monthKey);
-
-                        let bgColor = 'bg-gray-100';
-                        let textColor = 'text-gray-400';
-                        if (hasActivity) {
-                            if (intensity > 0.75) {
-                                bgColor = 'bg-emerald-500';
-                                textColor = 'text-white';
-                            } else if (intensity > 0.5) {
-                                bgColor = 'bg-emerald-400';
-                                textColor = 'text-white';
-                            } else if (intensity > 0.25) {
-                                bgColor = 'bg-emerald-300';
-                                textColor = 'text-emerald-800';
-                            } else {
-                                bgColor = 'bg-emerald-200';
-                                textColor = 'text-emerald-800';
-                            }
-                        }
-
-                        return `
-                            <div class="flex flex-col items-center p-2 rounded-lg transition-all hover:shadow-md cursor-pointer ${isCurrentMonth ? 'ring-2 ring-indigo-300' : ''}"
-                                 onclick="showMonthDetails(${month.month})"
-                                 title="${t('click_for_details')}: ${localizedMonthName} - ${month.earned} ${t('earned_xp')}, ${month.spent} ${t('spent_xp')}">
-                                <span class="text-xs font-semibold ${isCurrentMonth ? 'text-indigo-600' : 'text-gray-600'} mb-1">${localizedMonthName}</span>
-                                <div class="w-full h-8 rounded flex items-center justify-center text-[10px] font-bold ${bgColor} ${textColor}">
-                                    ${Math.round(month.earned)}
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        }
-    } catch (e) {
-        console.error("Error loading calendar", e);
-    }
-}
-
-// Старая функция для обратной совместимости
-async function loadWeekCalendar() {
-    await loadCalendar('week');
-}
-
-// ============= DAY DETAILS =============
-async function showDayDetails(date) {
-    try {
-        const modal = document.getElementById('day-details-modal');
-        const titleEl = document.getElementById('day-details-title');
-        const contentEl = document.getElementById('day-details-content');
-
-        if (!modal || !titleEl || !contentEl) {
-            console.error("Day details modal elements not found");
-            return;
-        }
-
-        modal.classList.remove('hidden');
-        contentEl.innerHTML = `<div class="text-center text-gray-400 py-4">${t('loading')}</div>`;
-
-        // Убеждаемся, что дата в правильном формате YYYY-MM-DD
-        let formattedDate = date;
-        if (date instanceof Date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            formattedDate = `${year}-${month}-${day}`;
-        } else if (typeof date === 'string') {
-            // Проверяем формат даты
-            const dateMatch = date.match(/^(\d{4})-(\d{2})-(\d{2})/);
-            if (!dateMatch) {
-                console.error("Invalid date format:", date);
-                contentEl.innerHTML = `<div class="text-center text-red-400 py-4">Неверный формат даты: ${date}</div>`;
-                return;
-            }
-            formattedDate = dateMatch[0]; // Берем только часть YYYY-MM-DD
-        }
-
-        console.log("Loading day details for date:", formattedDate);
-
-        const token = getAuthToken();
-        if (!token) {
-            contentEl.innerHTML = `<div class="text-center text-red-400 py-4">${t('auth_required')}</div>`;
-            return;
-        }
-
-        const res = await fetch(`${API_BASE}/xp/day/${formattedDate}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error("Failed to load day details:", res.status, res.statusText, errorText, "Date:", formattedDate);
-            let errorMessage = t('error_loading_data');
-            try {
-                const errorJson = JSON.parse(errorText);
-                if (errorJson.detail) {
-                    errorMessage = errorJson.detail;
-                }
-            } catch (e) {
-                // Если не JSON, используем стандартное сообщение
-            }
-            contentEl.innerHTML = `<div class="text-center text-red-400 py-4">${errorMessage}</div>`;
-            return;
-        }
-
-        const data = await res.json();
-
-        // ВСЕГДА используем переданную дату для отображения, чтобы избежать проблем с часовыми поясами
-        // Сервер может вернуть дату в другом формате или с учетом часового пояса
-        const dateToDisplay = formattedDate;
-        
-        // Парсим дату из строки YYYY-MM-DD напрямую, без проблем с часовыми поясами
-        const [year, month, day] = dateToDisplay.split('-').map(Number);
-        
-        // Создаем дату в локальном времени для правильного определения дня недели
-        // Используем полдень, чтобы избежать проблем с переходом через полночь
-        const dateObj = new Date(year, month - 1, day, 12, 0, 0);
-        
-        // Проверяем, что дата парсится правильно
-        if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
-            console.warn("Date parsing mismatch:", { year, month, day, parsed: dateObj });
-        }
-
-        // Для украинского языка используем правильный падеж (именительный)
-        let formattedDateDisplay;
-        if (currentLanguage === 'uk') {
-            const weekdays = ['неділя', 'понеділок', 'вівторок', 'середа', 'четвер', 'п\'ятниця', 'субота'];
-            const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
-                           'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
-            const weekday = weekdays[dateObj.getDay()];
-            const monthName = months[dateObj.getMonth()];
-            formattedDateDisplay = `${weekday}, ${day} ${monthName} ${year}`;
-        } else {
-            const localeMap = { 'ru': 'ru-RU', 'de': 'de-DE', 'en': 'en-US' };
-            const locale = localeMap[currentLanguage] || 'ru-RU';
-            formattedDateDisplay = dateObj.toLocaleDateString(locale, {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-
-        titleEl.textContent = `📅 ${formattedDateDisplay}`;
-        
-        // Логируем для отладки
-        console.log("Displaying day details:", {
-            receivedDate: formattedDate,
-            serverDate: data.date,
-            dateToDisplay: dateToDisplay,
-            parsedDate: { year, month, day },
-            dateObj: dateObj,
-            dayOfWeek: dateObj.getDay(),
-            formattedDisplay: formattedDateDisplay
-        });
-
-        // Форматируем время
-        const formatTime = (timeStr) => {
-            if (!timeStr) return '';
-            const time = new Date(timeStr);
-            const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
-            const locale = localeMap[currentLanguage] || 'ru-RU';
-            return time.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-        };
-
-        // Форматируем длительность
-        const formatDuration = (minutes) => {
-            if (!minutes || minutes === 0) return '0м';
-            const hours = Math.floor(minutes / 60);
-            const mins = Math.round(minutes % 60);
-            if (hours > 0) {
-                return mins > 0 ? `${hours}ч ${mins}м` : `${hours}ч`;
-            }
-            return `${mins}м`;
-        };
-
-        let html = `
-            <div class="space-y-4">
-                <!-- Общая статистика -->
-                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border-2 border-indigo-200">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <div class="text-xs text-gray-600 mb-1">${t('earned')}</div>
-                            <div class="text-xl font-bold text-green-600">+${data.total_earned} XP</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-600 mb-1">${t('spent')}</div>
-                            <div class="text-xl font-bold text-red-600">-${data.total_spent} XP</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-600 mb-1">${t('activity_time')}</div>
-                            <div class="text-lg font-semibold text-indigo-600">${formatDuration(data.total_time)}</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-600 mb-1">${t('total')}</div>
-                            <div class="text-lg font-semibold ${data.net >= 0 ? 'text-green-600' : 'text-red-600'}">${data.net >= 0 ? '+' : ''}${data.net} XP</div>
-                        </div>
-                    </div>
-                </div>
-        `;
-
-        // Заработки
-        if (data.earnings && data.earnings.length > 0) {
-            html += `
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
-                        <i class="fas fa-arrow-up text-green-500"></i>
-                        ${t('earnings')} (${data.sessions_count} ${t('sessions')})
-                    </h4>
-                    <div class="space-y-2">
-                        ${data.earnings.map(earning => `
-                            <div class="bg-green-50 rounded-lg p-3 border border-green-200">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex-1">
-                                        <div class="font-semibold text-gray-800">${earning.activity_name}</div>
-                                        <div class="text-xs text-gray-600 mt-1">
-                                            <i class="fas fa-clock text-xs"></i> ${formatDuration(earning.duration_minutes)}
-                                            ${earning.time ? ` • ${formatTime(earning.time)}` : ''}
-                                        </div>
-                                    </div>
-                                    <div class="text-green-600 font-bold">+${earning.xp_earned} XP</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="text-center text-gray-400 py-4 bg-gray-50 rounded-lg">
-                    <i class="fas fa-info-circle mb-2"></i>
-                    <div>${t('no_activity_today')}</div>
-                </div>
-            `;
-        }
-
-        // Расходы (только реальные траты, бонусы уже в заработках)
-        if (data.spendings && data.spendings.length > 0) {
-            html += `
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
-                        <i class="fas fa-arrow-down text-red-500"></i>
-                        ${t('spendings')} (${data.purchases_count} ${t('purchases')})
-                    </h4>
-                    <div class="space-y-2">
-                        ${data.spendings.map(spending => `
-                            <div class="bg-red-50 rounded-lg p-3 border border-red-200">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex-1">
-                                        <div class="font-semibold text-gray-800">${spending.reward_name}</div>
-                                        ${spending.time ? `
-                                            <div class="text-xs text-gray-600 mt-1">
-                                                <i class="fas fa-clock text-xs"></i> ${formatTime(spending.time)}
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                    <div class="text-red-600 font-bold">-${Math.abs(spending.xp_spent)} XP</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Добавляем кнопку создания цели внизу
-        html += `
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <button onclick="showCreateGoalModal(); closeDayDetailsModal();"
-                        class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 px-6 rounded-xl font-medium transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-                    <i class="fas fa-bullseye"></i>
-                    <span>${t('create_goal')}</span>
-                </button>
-            </div>
-        `;
-
-        html += '</div>';
-        contentEl.innerHTML = html;
-
-    } catch (e) {
-        console.error("Error loading day details:", e);
-        document.getElementById('day-details-content').innerHTML =
-            `<div class="text-center text-red-400 py-4">${t('error_loading_data')}</div>`;
-    }
-}
-
-function closeDayDetailsModal() {
-    document.getElementById('day-details-modal').classList.add('hidden');
-}
-
-// Показать детали месяца (переключаемся на календарь месяца)
-function showMonthDetails(month) {
-    changeCalendarPeriod('month');
-    // Прокручиваем к календарю
-    setTimeout(() => {
-        document.getElementById('calendar-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
-}
+// Функции перенесены в app_wallet.js
+// Удалено: loadWallet, loadTodayStats, loadCategoryStats, loadCalendar, loadWeekCalendar, changeCalendarPeriod, showDayDetails, closeDayDetailsModal, showMonthDetails, loadStreak, loadRecommendations
 
 // ============= HISTORY =============
-let historyOpen = false;
-let historyPeriod = 'today'; // По умолчанию показываем сегодня
+// Функции перенесены в app_history.js
 
-function toggleHistory() {
-    historyOpen = !historyOpen;
-    const panel = document.getElementById('history-panel');
-    const chevron = document.getElementById('history-chevron');
+// ============= ACTIVITIES =============
+// Функции перенесены в app_activities.js
 
-    if (historyOpen) {
-        panel.classList.remove('hidden');
-        chevron.style.transform = 'rotate(180deg)';
-        loadHistory();
-    } else {
-        panel.classList.add('hidden');
-        chevron.style.transform = 'rotate(0deg)';
+// ============= REWARDS =============
+// Функции перенесены в app_rewards.js
+
+// ============= HISTORY =============
+// Функции перенесены в app_history.js
+
+// ============= ACTIVITIES =============
+// Функции перенесены в app_activities.js
+
+// ============= REWARDS =============
+// Функции перенесены в app_rewards.js
+
+// ============= STREAK =============
+// Функции перенесены в app_wallet.js
+
+// ============= RECOMMENDATIONS =============
+// Функции перенесены в app_wallet.js
+
+// ============= CATEGORIES =============
+// Функции перенесены в app_categories.js
+
+// ============= GOALS =============
+// Функции перенесены в app_goals.js
+
+// ============= ACTIVITIES =============
+// Функции перенесены в app_activities.js
+
+// ============= ACTIVITIES =============
+async function loadActivities() {
+    try {
+        getActivitiesElements();
+
+        const token = getAuthToken();
+        if (!token) {
+            console.error("No auth token available");
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            }
+            return;
+        }
+
+        const res = await fetch(`${API_BASE}/activities/`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load activities:", res.status, res.statusText, errorText);
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+            }
+            return;
+        }
+
+        const data = await res.json();
+        allActivities = data;
+        
+        console.log("Activities loaded:", allActivities.length, allActivities);
+
+        // Обновляем фильтр категорий
+        updateActivitiesCategoryFilter();
+
+        // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
+        applyActivitiesFilters();
+    } catch (e) {
+        console.error("Error loading activities", e);
+        getActivitiesElements();
+        if (activitiesListVisible) {
+            activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+        }
     }
 }
 
-function renderHistoryItem(item) {
-    const isEarn = item.type === 'earn';
-    // Парсим дату - если она в формате ISO с timezone, JavaScript правильно её обработает
-    const date = new Date(item.date);
+// ============= REWARDS =============
+// Функции перенесены в app_rewards.js
 
-    // Локализация даты и времени
-    const localeMap = { 'ru': 'ru-RU', 'uk': 'uk-UA', 'de': 'de-DE', 'en': 'en-US' };
-    const locale = localeMap[currentLanguage] || 'ru-RU';
-    // Используем timeZone для правильного отображения Берлинского времени
-    const timeStr = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' });
-    const dateStr = date.toLocaleDateString(locale, { day: 'numeric', month: 'short', timeZone: 'Europe/Berlin' });
+// ============= STREAK =============
+// Функции перенесены в app_wallet.js
 
-    return `
-        <div class="flex items-center justify-between p-2.5 rounded-lg ${isEarn ? 'bg-emerald-50' : 'bg-red-50'} transition-all hover:bg-opacity-80">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isEarn ? 'bg-emerald-500' : 'bg-red-500'}">
-                    <i class="fas ${isEarn ? 'fa-arrow-up' : 'fa-arrow-down'} text-white text-xs"></i>
-                </div>
-                <div class="min-w-0 flex-1">
-                    <div class="font-medium text-gray-800 text-sm break-words">${item.description}</div>
-                    <div class="text-xs text-gray-500">${dateStr} ${t('at_time')} ${timeStr}${item.duration_minutes ? ` • ${Math.round(item.duration_minutes)} ${t('min_short')}` : ''}</div>
-                </div>
-            </div>
-            <div class="font-bold ${isEarn ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0 ml-2 text-center">
-                ${isEarn ? '+' : '-'}${Math.round(item.amount)} XP
-            </div>
-        </div>
-    `;
+// ============= RECOMMENDATIONS =============
+// Функции перенесены в app_wallet.js
+
+// ============= CATEGORIES =============
+// Функции перенесены в app_categories.js
+
+// ============= GOALS =============
+// Функции перенесены в app_goals.js
+
+// ============= ACTIVITIES =============
+// Функции перенесены в app_activities.js
+
+// ============= ACTIVITIES =============
+async function loadActivities() {
+    try {
+        getActivitiesElements();
+
+        const token = getAuthToken();
+        if (!token) {
+            console.error("No auth token available");
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            }
+            return;
+        }
+
+        const res = await fetch(`${API_BASE}/activities/`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load activities:", res.status, res.statusText, errorText);
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+            }
+            return;
+        }
+
+        const data = await res.json();
+        allActivities = data;
+        
+        console.log("Activities loaded:", allActivities.length, allActivities);
+
+        // Обновляем фильтр категорий
+        updateActivitiesCategoryFilter();
+
+        // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
+        applyActivitiesFilters();
+    } catch (e) {
+        console.error("Error loading activities", e);
+        getActivitiesElements();
+        if (activitiesListVisible) {
+            activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+        }
+    }
 }
 
-// Функция для фильтрации истории по периоду
-function filterHistoryByPeriod(data, period) {
-    if (!data || data.length === 0) return [];
+// ============= ACTIVITIES =============
+async function loadActivities() {
+    try {
+        getActivitiesElements();
+
+        const token = getAuthToken();
+        if (!token) {
+            console.error("No auth token available");
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            }
+            return;
+        }
+
+        const res = await fetch(`${API_BASE}/activities/`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load activities:", res.status, res.statusText, errorText);
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+            }
+            return;
+        }
+
+        const data = await res.json();
+        allActivities = data;
+        
+        console.log("Activities loaded:", allActivities.length, allActivities);
+
+        // Обновляем фильтр категорий
+        updateActivitiesCategoryFilter();
+
+        // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
+        applyActivitiesFilters();
+    } catch (e) {
+        console.error("Error loading activities", e);
+        getActivitiesElements();
+        if (activitiesListVisible) {
+            activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+        }
+    }
+}
+
+// ============= ACTIVITIES =============
+async function loadActivities() {
+    try {
+        getActivitiesElements();
+
+        const token = getAuthToken();
+        if (!token) {
+            console.error("No auth token available");
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            }
+            return;
+        }
+
+        const res = await fetch(`${API_BASE}/activities/`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to load activities:", res.status, res.statusText, errorText);
+            if (activitiesListVisible) {
+                activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+            }
+            return;
+        }
+
+        const data = await res.json();
+        allActivities = data;
+        
+        console.log("Activities loaded:", allActivities.length, allActivities);
+
+        // Обновляем фильтр категорий
+        updateActivitiesCategoryFilter();
+
+        // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
+        applyActivitiesFilters();
+    } catch (e) {
+        console.error("Error loading activities", e);
+        getActivitiesElements();
+        if (activitiesListVisible) {
+            activitiesListVisible.innerHTML = '<div class="text-center text-red-400 py-4">Ошибка загрузки активностей</div>';
+        }
+    }
+}
+
+// ============= ACTIVITIES =============
+async function loadActivities() {
 
     // Получаем сегодняшнюю дату в Берлинском времени
     // Используем Intl.DateTimeFormat для надежного получения даты в нужном timezone
