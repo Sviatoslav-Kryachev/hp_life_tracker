@@ -206,18 +206,24 @@
             </div>
 
             <!-- Социальные функции: Группы, Лидерборды, Челленджи, Достижения -->
-            <div id="social" class="grid lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start scroll-mt-20 md:scroll-mt-24">
-                <!-- Группы Component Container -->
-                <div id="section-groups-container"></div>
+            <div id="social" class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start scroll-mt-20 md:scroll-mt-24">
+                <!-- Левая колонка: Группы и Челленджи (2 колонки из 3, как активности/награды) -->
+                <div class="lg:col-span-2 space-y-4 md:space-y-6">
+                    <!-- Группы Component Container -->
+                    <div id="section-groups-container"></div>
 
-                <!-- Лидерборд Component Container -->
-                <div id="section-leaderboard-container"></div>
+                    <!-- Челленджи Component Container -->
+                    <div id="section-challenges-container"></div>
+                </div>
 
-                <!-- Челленджи Component Container -->
-                <div id="section-challenges-container"></div>
+                <!-- Правая колонка: Лидерборд и Достижения (1 колонка из 3, как история) -->
+                <div class="space-y-4 md:space-y-6">
+                    <!-- Лидерборд Component Container -->
+                    <div id="section-leaderboard-container"></div>
 
-                <!-- Достижения Component Container -->
-                <div id="section-achievements-container"></div>
+                    <!-- Достижения Component Container -->
+                    <div id="section-achievements-container"></div>
+                </div>
             </div>
         </div>
 
