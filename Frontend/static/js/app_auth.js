@@ -395,8 +395,22 @@ async function showApp() {
         window.activitiesAccordionBtn = null;
     }
 
-    // Загружаем данные
-    setTimeout(async () => {
+    // Загружаем данные - ждем, пока все модули загрузятся
+    // Используем более длинную задержку и проверяем наличие функций
+    const loadData = async () => {
+        // Проверяем, что основные функции загружены
+        const requiredFunctions = ['loadWallet', 'loadActivities', 'loadRewards', 'loadGoals'];
+        const allLoaded = requiredFunctions.every(fn => typeof window[fn] === 'function');
+        
+        if (!allLoaded) {
+            // Если функции еще не загружены, ждем еще немного
+            console.log('[showApp] Waiting for modules to load...');
+            setTimeout(loadData, 100);
+            return;
+        }
+        
+        console.log('[showApp] All modules loaded, starting data load...');
+        
         // Используем window.* для доступа к функциям, так как они экспортируются в window
         if (typeof window !== 'undefined' && typeof window.loadWallet === 'function') window.loadWallet();
         if (typeof window !== 'undefined' && typeof window.loadCategories === 'function') await window.loadCategories();
@@ -426,7 +440,10 @@ async function showApp() {
                 window.updateCategoryDropdown('edit-activity-category');
             }, 200);
         }
-    }, 50);
+    };
+    
+    // Начинаем загрузку данных с небольшой задержкой
+    setTimeout(loadData, 100);
 }
 
 // Экспортируем функции в глобальную область видимости
