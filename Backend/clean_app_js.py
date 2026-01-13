@@ -7,7 +7,7 @@
 import re
 
 def clean_app_js():
-    file_path = 'static/js/app.js'
+    file_path = '../Frontend/static/js/app.js'
     
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()

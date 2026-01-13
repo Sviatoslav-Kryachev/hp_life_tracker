@@ -6,9 +6,15 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 import traceback
 from pathlib import Path
+import os
 from app.routers import activities, rewards, timer, auth, xp, streak, recommendations, blacklist, telegram, admin, goals, categories, groups, leaderboard, challenges, achievements
 
 app = FastAPI(title="XP Tracker API")
+
+# Определяем путь к статическим файлам относительно текущего файла
+# Backend/app/main.py -> Backend/app -> Backend -> корень проекта
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+STATIC_DIR = BASE_DIR / "Frontend" / "static"
 
 # Обработка ошибок
 @app.exception_handler(Exception)
@@ -41,7 +47,7 @@ app.add_middleware(
     expose_headers=["*"]
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 app.include_router(activities.router)
 app.include_router(rewards.router)
@@ -63,7 +69,7 @@ app.include_router(achievements.router)
 @app.get("/")
 async def root():
     """Главная страница - возвращаем HTML интерфейс"""
-    html_file = Path("static/index.html")
+    html_file = STATIC_DIR / "index.html"
     if html_file.exists():
         return FileResponse(html_file)
     return {"message": "XP Tracker API работает!", "frontend": "/static/index.html"}
