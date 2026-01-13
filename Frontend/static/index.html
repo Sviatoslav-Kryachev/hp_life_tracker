@@ -23,11 +23,15 @@
         }
         #app-section.hidden {
             display: none !important;
-            visibility: visible !important;
+            visibility: hidden !important;
             height: 0 !important;
             overflow: hidden !important;
             position: absolute !important;
             left: -9999px !important;
+        }
+        /* Убеждаемся, что footer скрывается вместе с app-section */
+        #app-section.hidden #footer-container {
+            display: none !important;
         }
         /* Убеждаемся, что body не прокручивается когда app-section скрыт */
         body:has(#app-section.hidden) {
@@ -227,12 +231,20 @@
     <div id="bottom-navigation-container"></div>
 
     <!-- Component Loader -->
-    <script src="components.js"></script>
-    <!-- JavaScript Modules (загружаются в правильном порядке) -->
-    <script src="js/app_utils.js"></script>
-    <script src="js/app_auth.js"></script>
-    <!-- Main App Script (остальной код, который еще не модуляризован) -->
-    <script src="app.js?v=44"></script>
+    <script src="js/components.js"></script>
+           <!-- JavaScript Modules (загружаются в правильном порядке) -->
+           <script src="js/app_utils.js"></script>
+           <script src="js/app_auth.js"></script>
+           <script src="js/app_activities.js"></script>
+           <script src="js/app_rewards.js"></script>
+           <script src="js/app_history.js"></script>
+           <script src="js/app_wallet.js"></script>
+           <script src="js/app_goals.js"></script>
+           <script src="js/app_categories.js"></script>
+           <!-- Main App Script (остальной код, который еще не модуляризован) -->
+           <script src="js/app.js?v=50"></script>
+    <!-- Social Features -->
+    <script src="js/app_social.js"></script>
     <!-- Load Components -->
     <script>
         // Флаг для отслеживания загрузки компонентов app-section

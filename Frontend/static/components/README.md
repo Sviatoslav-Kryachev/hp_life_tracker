@@ -80,7 +80,7 @@ await loadComponents([
 
 Компоненты загружаются автоматически при загрузке DOM:
 ```html
-<script src="components.js"></script>
+<script src="js/components.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
         await loadComponents([

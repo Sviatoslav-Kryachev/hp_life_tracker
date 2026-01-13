@@ -1,8 +1,9 @@
 // ============= SOCIAL FEATURES =============
 
-// Определяем API_URL если он не определен (используем API_BASE из app.js)
+// Определяем API_URL если он не определен (используем API_BASE из app_utils.js)
+// НЕ объявляем API_BASE здесь - используем существующий
 if (typeof API_URL === 'undefined') {
-    var API_URL = typeof API_BASE !== 'undefined' ? API_BASE : window.location.origin;
+    var API_URL = (typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin);
 }
 
 // ============= GROUPS =============
@@ -11,16 +12,35 @@ let myGroups = [];
 
 async function loadGroups() {
     try {
-        const res = await fetch(`${API_URL}/groups/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+        console.log('[app_social.loadGroups] Starting...');
+        // Безопасный доступ к токену
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const token = getToken();
+        const apiUrl = typeof API_URL !== 'undefined' ? API_URL : (typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin);
+        
+        console.log('[app_social.loadGroups] Token available:', !!token, 'API_URL:', apiUrl);
+        
+        if (!token) {
+            console.error("[app_social.loadGroups] No auth token available");
+            const container = document.getElementById('groups-list');
+            if (container) container.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
+        }
+        
+        console.log('[app_social.loadGroups] Fetching from:', `${apiUrl}/groups/`);
+        const res = await fetch(`${apiUrl}/groups/`, {
+            headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[app_social.loadGroups] Response status:', res.status);
         if (!res.ok) throw new Error("Ошибка загрузки групп");
         myGroups = await res.json();
         renderGroups();
         updateGroupSelects();
     } catch (e) {
-        console.error("Error loading groups:", e);
-        document.getElementById('groups-list').innerHTML = '<div class="text-center text-red-500 py-4">Ошибка загрузки групп</div>';
+        console.error("[app_social.loadGroups] Error:", e);
+        const container = document.getElementById('groups-list');
+        if (container) container.innerHTML = '<div class="text-center text-red-500 py-4">Ошибка загрузки групп</div>';
     }
 }
 
@@ -363,14 +383,32 @@ let myChallenges = [];
 
 async function loadChallenges() {
     try {
-        const res = await fetch(`${API_URL}/challenges/`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+        console.log('[app_social.loadChallenges] Starting...');
+        // Безопасный доступ к токену
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const token = getToken();
+        const apiUrl = typeof API_URL !== 'undefined' ? API_URL : (typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin);
+        
+        console.log('[app_social.loadChallenges] Token available:', !!token, 'API_URL:', apiUrl);
+        
+        if (!token) {
+            console.error("[app_social.loadChallenges] No auth token available");
+            const container = document.getElementById('challenges-list');
+            if (container) container.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
+        }
+        
+        console.log('[app_social.loadChallenges] Fetching from:', `${apiUrl}/challenges/`);
+        const res = await fetch(`${apiUrl}/challenges/`, {
+            headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[app_social.loadChallenges] Response status:', res.status);
         if (!res.ok) throw new Error("Ошибка загрузки");
         myChallenges = await res.json();
         renderChallenges();
     } catch (e) {
-        console.error("Error loading challenges:", e);
+        console.error("[app_social.loadChallenges] Error:", e);
         const container = document.getElementById('challenges-list');
         if (container) {
             container.innerHTML = '<div class="text-center text-red-500 py-4">Ошибка загрузки</div>';
@@ -576,21 +614,41 @@ function getChallengeUnitFromChallenge(challengeId) {
 let myAchievements = [];
 
 async function loadAchievements() {
+    console.log('[app_social.loadAchievements] Starting...');
     const groupSelect = document.getElementById('achievements-group-select');
     const groupId = groupSelect?.value;
     const container = document.getElementById('achievements-list');
     
-    if (!container) return;
+    if (!container) {
+        console.warn("[app_social.loadAchievements] Container not found");
+        return;
+    }
     
     try {
-        let url = `${API_URL}/achievements/`;
-        if (groupId && groupId !== 'my') {
-            url = `${API_URL}/achievements/group/${groupId}`;
+        // Безопасный доступ к токену
+        const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+        const token = getToken();
+        const apiUrl = typeof API_URL !== 'undefined' ? API_URL : (typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin);
+        
+        console.log('[app_social.loadAchievements] Token available:', !!token, 'API_URL:', apiUrl);
+        
+        if (!token) {
+            console.error("[app_social.loadAchievements] No auth token available");
+            container.innerHTML = '<div class="text-center text-gray-400 py-4">Требуется авторизация</div>';
+            return;
         }
         
+        let url = `${apiUrl}/achievements/`;
+        if (groupId && groupId !== 'my') {
+            url = `${apiUrl}/achievements/group/${groupId}`;
+        }
+        
+        console.log('[app_social.loadAchievements] Fetching from:', url);
         const res = await fetch(url, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
+        
+        console.log('[app_social.loadAchievements] Response status:', res.status);
         
         if (!res.ok) throw new Error("Ошибка загрузки");
         const achievements = await res.json();
