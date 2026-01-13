@@ -17,8 +17,9 @@ ENV/
 .env
 .env.local
 
-# Config with tokens
-config.py
+# Config with tokens (only root level config.py, not Backend/app/core/config.py)
+/config.py
+Backend/config.py
 
 # IDE
 .vscode/
