@@ -2475,7 +2475,7 @@ function detectBrand(name) {
 // Функции loadRewards, createReward, updateReward, deleteReward, spendReward определены в app_rewards.js
 
 // Вспомогательная функция renderRewardCard (используется только в app.js)
-function renderRewardCard(reward) {
+async function renderRewardCard(reward) {
 
         // Если элементы не найдены, пробуем еще раз через небольшую задержку
         if (!rewardsListVisible || !rewardsListHidden || !rewardsAccordionBtn) {

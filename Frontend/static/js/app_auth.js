@@ -398,52 +398,77 @@ async function showApp() {
     // Загружаем данные - ждем, пока все модули загрузятся
     // Используем более длинную задержку и проверяем наличие функций
     const loadData = async () => {
-        // Проверяем, что основные функции загружены
-        const requiredFunctions = ['loadWallet', 'loadActivities', 'loadRewards', 'loadGoals'];
-        const allLoaded = requiredFunctions.every(fn => typeof window[fn] === 'function');
+        // Проверяем, что основные функции загружены (увеличиваем список проверяемых функций)
+        const requiredFunctions = [
+            'loadWallet', 'loadActivities', 'loadRewards', 'loadGoals',
+            'loadCategories', 'loadHistory', 'loadGroups', 'loadLeaderboard',
+            'loadChallenges', 'loadAchievements', 'loadStreak', 'loadRecommendations'
+        ];
         
-        if (!allLoaded) {
-            // Если функции еще не загружены, ждем еще немного
-            console.log('[showApp] Waiting for modules to load...');
-            setTimeout(loadData, 100);
-            return;
-        }
+        let attempts = 0;
+        const maxAttempts = 50; // Максимум 5 секунд (50 * 100ms)
         
+        const checkAndLoad = async () => {
+            attempts++;
+            const allLoaded = requiredFunctions.every(fn => typeof window[fn] === 'function');
+            
+            if (!allLoaded && attempts < maxAttempts) {
+                // Если функции еще не загружены, ждем еще немного
+                console.log(`[showApp] Waiting for modules to load... (attempt ${attempts}/${maxAttempts})`);
+                setTimeout(checkAndLoad, 100);
+                return;
+            }
+            
+            if (!allLoaded) {
+                console.warn('[showApp] Some modules not loaded after max attempts, loading anyway...');
+            }
+            
         console.log('[showApp] All modules loaded, starting data load...');
         
         // Используем window.* для доступа к функциям, так как они экспортируются в window
-        if (typeof window !== 'undefined' && typeof window.loadWallet === 'function') window.loadWallet();
-        if (typeof window !== 'undefined' && typeof window.loadCategories === 'function') await window.loadCategories();
-        if (typeof window !== 'undefined' && typeof window.loadActivities === 'function') window.loadActivities();
-        if (typeof window !== 'undefined' && typeof window.initActivitiesFilters === 'function') window.initActivitiesFilters();
-        if (typeof window !== 'undefined' && typeof window.loadRewards === 'function') window.loadRewards();
-        if (typeof window !== 'undefined' && typeof window.loadTodayStats === 'function') window.loadTodayStats();
-        if (typeof window !== 'undefined' && typeof window.loadWeekCalendar === 'function') window.loadWeekCalendar();
-        if (typeof window !== 'undefined' && typeof window.loadCategoryStats === 'function') setTimeout(() => window.loadCategoryStats(), 100);
-        if (typeof window !== 'undefined' && typeof window.loadStreak === 'function') window.loadStreak();
-        if (typeof window !== 'undefined' && typeof window.loadRecommendations === 'function') window.loadRecommendations();
-        if (typeof window !== 'undefined' && typeof window.loadGoals === 'function') window.loadGoals();
-        if (typeof window !== 'undefined' && typeof window.loadHistory === 'function') {
-            window.loadHistory();
-            if (document.getElementById('history-period-today') && typeof window.setHistoryPeriod === 'function') {
-                window.setHistoryPeriod(window.historyPeriod);
+        // Загружаем данные последовательно для надежности
+        try {
+            if (typeof window !== 'undefined' && typeof window.loadWallet === 'function') await window.loadWallet();
+            if (typeof window !== 'undefined' && typeof window.loadCategories === 'function') await window.loadCategories();
+            if (typeof window !== 'undefined' && typeof window.loadActivities === 'function') await window.loadActivities();
+            if (typeof window !== 'undefined' && typeof window.initActivitiesFilters === 'function') window.initActivitiesFilters();
+            if (typeof window !== 'undefined' && typeof window.loadRewards === 'function') await window.loadRewards();
+            if (typeof window !== 'undefined' && typeof window.loadTodayStats === 'function') await window.loadTodayStats();
+            if (typeof window !== 'undefined' && typeof window.loadWeekCalendar === 'function') await window.loadWeekCalendar();
+            if (typeof window !== 'undefined' && typeof window.loadCategoryStats === 'function') setTimeout(() => window.loadCategoryStats(), 100);
+            if (typeof window !== 'undefined' && typeof window.loadStreak === 'function') await window.loadStreak();
+            if (typeof window !== 'undefined' && typeof window.loadRecommendations === 'function') await window.loadRecommendations();
+            if (typeof window !== 'undefined' && typeof window.loadGoals === 'function') await window.loadGoals();
+            if (typeof window !== 'undefined' && typeof window.loadHistory === 'function') {
+                await window.loadHistory();
+                if (document.getElementById('history-period-today') && typeof window.setHistoryPeriod === 'function') {
+                    window.setHistoryPeriod(window.historyPeriod);
+                }
             }
-        }
-        if (typeof window !== 'undefined' && typeof window.loadGroups === 'function') window.loadGroups();
-        if (typeof window !== 'undefined' && typeof window.loadLeaderboard === 'function') window.loadLeaderboard();
-        if (typeof window !== 'undefined' && typeof window.loadChallenges === 'function') window.loadChallenges();
-        if (typeof window !== 'undefined' && typeof window.loadAchievements === 'function') window.loadAchievements();
+            if (typeof window !== 'undefined' && typeof window.loadGroups === 'function') await window.loadGroups();
+            if (typeof window !== 'undefined' && typeof window.loadLeaderboard === 'function') await window.loadLeaderboard();
+            if (typeof window !== 'undefined' && typeof window.loadChallenges === 'function') await window.loadChallenges();
+            if (typeof window !== 'undefined' && typeof window.loadAchievements === 'function') await window.loadAchievements();
 
-        if (typeof window !== 'undefined' && typeof window.updateCategoryDropdown === 'function') {
-            setTimeout(() => {
-                window.updateCategoryDropdown('activity-category');
-                window.updateCategoryDropdown('edit-activity-category');
-            }, 200);
+            if (typeof window !== 'undefined' && typeof window.updateCategoryDropdown === 'function') {
+                setTimeout(() => {
+                    window.updateCategoryDropdown('activity-category');
+                    window.updateCategoryDropdown('edit-activity-category');
+                }, 200);
+            }
+            
+            console.log('[showApp] All data loaded successfully');
+        } catch (error) {
+            console.error('[showApp] Error loading data:', error);
         }
+        };
+        
+        // Начинаем проверку и загрузку
+        checkAndLoad();
     };
     
     // Начинаем загрузку данных с небольшой задержкой
-    setTimeout(loadData, 100);
+    setTimeout(loadData, 200);
 }
 
 // Экспортируем функции в глобальную область видимости
