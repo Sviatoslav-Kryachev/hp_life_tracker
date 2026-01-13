@@ -1,8 +1,8 @@
 # app/routers/xp.py
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.utils.database import get_db
-from app.utils.auth import get_current_user
+from app.core.database import get_db
+from app.core.security import get_current_user
 from app.models.base import User
 from app.services.xp_service import XPService
 

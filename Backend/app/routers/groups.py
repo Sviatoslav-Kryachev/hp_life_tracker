@@ -9,8 +9,8 @@ import secrets
 import string
 
 from app.models.base import User, Group, GroupMember, XPWallet, Streak, ActivityLog
-from app.utils.database import get_db
-from app.utils.auth import get_current_user
+from app.core.database import get_db
+from app.core.security import get_current_user
 
 router = APIRouter(prefix="/groups", tags=["groups"])
 

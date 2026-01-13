@@ -7,8 +7,8 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from app.models.base import User, Achievement, XPWallet, Streak, Goal
-from app.utils.database import get_db
-from app.utils.auth import get_current_user
+from app.core.database import get_db
+from app.core.security import get_current_user
 
 router = APIRouter(prefix="/achievements", tags=["achievements"])
 

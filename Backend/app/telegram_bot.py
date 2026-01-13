@@ -6,7 +6,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, CallbackQueryHandler
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from app.utils.database import SessionLocal
+from app.core.database import SessionLocal
 from app.models.base import User, Activity, XPWallet, ActivityLog, TimerLog
 from app.routers.streak import update_streak
 
@@ -24,7 +24,7 @@ try:
     from config import TELEGRAM_BOT_TOKEN as CONFIG_TOKEN
     DEFAULT_TOKEN = CONFIG_TOKEN
 except ImportError:
-    DEFAULT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+    DEFAULT_TOKEN = "8351741227:AAEkDtvBaDe3HP_reSegjtaoiUfItqRhKJI"
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", DEFAULT_TOKEN)
 

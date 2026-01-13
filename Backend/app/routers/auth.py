@@ -6,14 +6,14 @@ from datetime import timedelta
 from app.models.base import User, XPWallet
 from app.schemas import UserCreate, UserOut, Token
 from pydantic import BaseModel
-from app.utils.database import get_db
-from app.utils.auth import (
+from app.core.database import get_db
+from app.core.security import (
     verify_password, 
     get_password_hash, 
     create_access_token,
     get_current_user,
-    ACCESS_TOKEN_EXPIRE_MINUTES
 )
+from app.core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -104,7 +104,7 @@ def login(form_data: UserCreate, db: Session = Depends(get_db)):
     
     access_token = create_access_token(
         data={"sub": str(user.id), "email": user.email},
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     
     return {"access_token": access_token, "token_type": "bearer"}

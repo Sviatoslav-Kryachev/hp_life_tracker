@@ -13,7 +13,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app.utils.database import Base
+from app.core.database import Base
 target_metadata = Base.metadata
 
 # Используем DATABASE_URL из переменных окружения, если доступна
