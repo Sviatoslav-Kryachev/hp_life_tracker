@@ -8,15 +8,25 @@
 
 // Переопределяем changeLanguage для добавления дополнительной логики
 function changeLanguage(lang) {
-    // Используем window.currentLanguage если доступен, иначе объявляем локально
-    if (typeof window !== 'undefined' && window.currentLanguage !== undefined) {
+    // Обновляем currentLanguage везде, где он может быть
+    if (typeof window !== 'undefined') {
         window.currentLanguage = lang;
-    } else if (typeof currentLanguage !== 'undefined') {
+    }
+    if (typeof currentLanguage !== 'undefined') {
         currentLanguage = lang;
     }
     localStorage.setItem('language', lang);
-    applyTranslations();
-    updateLanguageMenu();
+    
+    // Вызываем базовую функцию из app_utils.js, если она доступна
+    if (typeof window !== 'undefined' && typeof window.changeLanguage === 'function' && window.changeLanguage.toString().includes('app_utils')) {
+        // Используем базовую функцию, но добавляем свою логику после
+        const baseChangeLanguage = window.changeLanguage;
+        baseChangeLanguage(lang);
+    } else {
+        // Если базовой функции нет, используем свою логику
+        applyTranslations();
+        updateLanguageMenu();
+    }
     // Обновляем lang атрибут для календаря
     updateDateInputLang();
     // Обновляем тексты аккордеонов
@@ -98,10 +108,20 @@ function closeLanguageMenu() {
 }
 
 function updateLanguageMenu() {
-    // Получаем текущий язык
-    const lang = (typeof window !== 'undefined' && window.currentLanguage) 
-        ? window.currentLanguage 
-        : (typeof currentLanguage !== 'undefined' ? currentLanguage : localStorage.getItem('language') || 'ru');
+    // Получаем текущий язык - сначала из window, потом из localStorage
+    let lang = 'ru';
+    if (typeof window !== 'undefined' && window.currentLanguage) {
+        lang = window.currentLanguage;
+    } else if (typeof currentLanguage !== 'undefined') {
+        lang = currentLanguage;
+    } else {
+        lang = localStorage.getItem('language') || 'ru';
+    }
+    
+    // Убеждаемся, что window.currentLanguage тоже обновлен
+    if (typeof window !== 'undefined') {
+        window.currentLanguage = lang;
+    }
     
     document.querySelectorAll('[data-check]').forEach(check => {
         check.classList.add('hidden');
