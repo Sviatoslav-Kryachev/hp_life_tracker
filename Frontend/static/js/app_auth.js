@@ -397,32 +397,33 @@ async function showApp() {
 
     // Загружаем данные
     setTimeout(async () => {
-        if (typeof loadWallet === 'function') loadWallet();
-        if (typeof loadCategories === 'function') await loadCategories();
-        if (typeof loadActivities === 'function') loadActivities();
-        if (typeof initActivitiesFilters === 'function') initActivitiesFilters();
-        if (typeof loadRewards === 'function') loadRewards();
-        if (typeof loadTodayStats === 'function') loadTodayStats();
-        if (typeof loadWeekCalendar === 'function') loadWeekCalendar();
-        if (typeof loadCategoryStats === 'function') setTimeout(() => loadCategoryStats(), 100);
-        if (typeof loadStreak === 'function') loadStreak();
-        if (typeof loadRecommendations === 'function') loadRecommendations();
-        if (typeof loadGoals === 'function') loadGoals();
-        if (typeof loadHistory === 'function') {
-            loadHistory();
-            if (document.getElementById('history-period-today') && typeof setHistoryPeriod === 'function') {
-                setHistoryPeriod(historyPeriod);
+        // Используем window.* для доступа к функциям, так как они экспортируются в window
+        if (typeof window !== 'undefined' && typeof window.loadWallet === 'function') window.loadWallet();
+        if (typeof window !== 'undefined' && typeof window.loadCategories === 'function') await window.loadCategories();
+        if (typeof window !== 'undefined' && typeof window.loadActivities === 'function') window.loadActivities();
+        if (typeof window !== 'undefined' && typeof window.initActivitiesFilters === 'function') window.initActivitiesFilters();
+        if (typeof window !== 'undefined' && typeof window.loadRewards === 'function') window.loadRewards();
+        if (typeof window !== 'undefined' && typeof window.loadTodayStats === 'function') window.loadTodayStats();
+        if (typeof window !== 'undefined' && typeof window.loadWeekCalendar === 'function') window.loadWeekCalendar();
+        if (typeof window !== 'undefined' && typeof window.loadCategoryStats === 'function') setTimeout(() => window.loadCategoryStats(), 100);
+        if (typeof window !== 'undefined' && typeof window.loadStreak === 'function') window.loadStreak();
+        if (typeof window !== 'undefined' && typeof window.loadRecommendations === 'function') window.loadRecommendations();
+        if (typeof window !== 'undefined' && typeof window.loadGoals === 'function') window.loadGoals();
+        if (typeof window !== 'undefined' && typeof window.loadHistory === 'function') {
+            window.loadHistory();
+            if (document.getElementById('history-period-today') && typeof window.setHistoryPeriod === 'function') {
+                window.setHistoryPeriod(window.historyPeriod);
             }
         }
-        if (typeof loadGroups === 'function') loadGroups();
-        if (typeof loadLeaderboard === 'function') loadLeaderboard();
-        if (typeof loadChallenges === 'function') loadChallenges();
-        if (typeof loadAchievements === 'function') loadAchievements();
+        if (typeof window !== 'undefined' && typeof window.loadGroups === 'function') window.loadGroups();
+        if (typeof window !== 'undefined' && typeof window.loadLeaderboard === 'function') window.loadLeaderboard();
+        if (typeof window !== 'undefined' && typeof window.loadChallenges === 'function') window.loadChallenges();
+        if (typeof window !== 'undefined' && typeof window.loadAchievements === 'function') window.loadAchievements();
 
-        if (typeof updateCategoryDropdown === 'function') {
+        if (typeof window !== 'undefined' && typeof window.updateCategoryDropdown === 'function') {
             setTimeout(() => {
-                updateCategoryDropdown('activity-category');
-                updateCategoryDropdown('edit-activity-category');
+                window.updateCategoryDropdown('activity-category');
+                window.updateCategoryDropdown('edit-activity-category');
             }, 200);
         }
     }, 50);
