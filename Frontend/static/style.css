@@ -1028,13 +1028,23 @@ body {
     padding-right: 0 !important;
 }
 
-/* Все блоки социальных секций */
+/* Все блоки социальных секций - обновлено для новой структуры с колонками */
 #social > div {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
     min-width: 0 !important;
+}
+
+/* Контейнеры компонентов внутри колонок */
+#social #section-groups-container,
+#social #section-challenges-container,
+#social #section-leaderboard-container,
+#social #section-achievements-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* Внутренние контейнеры списков */
@@ -1185,9 +1195,11 @@ body {
         gap: 1rem !important;
     }
     
+    /* На мобильных все колонки занимают полную ширину */
     #social > div {
         width: 100% !important;
         max-width: 100% !important;
+        grid-column: span 1 !important; /* Отменяем col-span-2 на мобильных */
     }
     
     /* На мобильных кнопки могут переноситься */
