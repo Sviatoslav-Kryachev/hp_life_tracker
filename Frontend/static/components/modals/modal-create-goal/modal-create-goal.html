@@ -1,0 +1,97 @@
+<div id="create-goal-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" lang="ru" onclick="if(event.target === this) closeCreateGoalModal()">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 my-8 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center mb-4 relative">
+            <h3 class="text-2xl font-bold text-gray-800 text-center flex-1" id="goal-modal-title" data-i18n="new_goal">🎯 Новая цель</h3>
+            <button onclick="closeCreateGoalModal()" class="text-gray-400 hover:text-gray-600 text-2xl absolute right-0">&times;</button>
+        </div>
+        <form id="create-goal-form" class="space-y-4" lang="ru">
+            <input type="hidden" id="edit-goal-id" value="">
+            <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-2">
+                <p class="text-xs text-purple-700">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    <strong data-i18n="important">Важно:</strong> <span data-i18n="goal_info_text">Выберите активность из вашего списка. Цель будет отслеживать прогресс только по этой активности.</span>
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    <i class="fas fa-tasks text-purple-600 mr-1"></i><span data-i18n="select_activity_label">Выберите активность</span> <span class="text-red-500">*</span>
+                </label>
+                <select id="goal-activity" class="w-full p-3 border-2 border-purple-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-300 transition-all bg-white" required>
+                    <option value="" data-i18n="loading_activities">-- Загрузка активностей --</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                    <i class="fas fa-lightbulb text-amber-500"></i>
+                    <span data-i18n="create_activity_first">Сначала создайте активность, если её нет в списке</span>
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="goal_title">Название цели</label>
+                <input type="text" id="goal-title" data-i18n-placeholder="goal_title_placeholder" placeholder="Например: Изучить 100 часов немецкого"
+                       class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
+            </div>
+
+            <!-- Переключатель режима цели (только для активностей в штуках) -->
+            <div id="goal-mode-selector" class="hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Выберите тип цели:</label>
+                <div class="flex gap-3 mb-3">
+                    <label class="flex-1 p-3 border-2 border-purple-300 rounded-xl cursor-pointer hover:bg-purple-50 transition-all goal-mode-option">
+                        <input type="radio" name="goal-mode" value="quantity" class="sr-only" checked>
+                        <div class="text-center">
+                            <i class="fas fa-hashtag text-purple-600 mb-1"></i>
+                            <div class="text-sm font-medium text-gray-700">По количеству</div>
+                        </div>
+                    </label>
+                    <label class="flex-1 p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all goal-mode-option">
+                        <input type="radio" name="goal-mode" value="xp" class="sr-only">
+                        <div class="text-center">
+                            <i class="fas fa-coins text-purple-600 mb-1"></i>
+                            <div class="text-sm font-medium text-gray-700">По XP</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Поле целевого количества XP (для активностей во времени или выбран режим XP) -->
+            <div id="goal-xp-container">
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="target_xp">Целевое количество XP <span class="text-red-500">*</span></label>
+                <input type="number" id="goal-target-xp" placeholder="1000" min="1" step="1"
+                       class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" required>
+                <p class="text-xs text-gray-500 mt-1" data-i18n="target_xp_description">Сколько XP нужно заработать для достижения цели</p>
+            </div>
+
+            <!-- Поле количества штук (только для активностей в штуках в режиме количества) -->
+            <div id="goal-quantity-container" class="hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="target_quantity">К-во для достижения <span class="text-red-500">*</span></label>
+                <input type="number" id="goal-target-quantity" placeholder="1500" min="1" step="1"
+                       class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
+                <p class="text-xs text-gray-500 mt-1" data-i18n="target_quantity_description">Целевое количество (для активностей в штуках)</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="completion_bonus_xp">Бонус XP за достижение цели</label>
+                <input type="number" id="goal-completion-bonus" placeholder="0" min="0" step="1" value="0"
+                       class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
+                <p class="text-xs text-gray-500 mt-1" data-i18n="completion_bonus_xp_description">Дополнительный бонус XP при достижении цели</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="description">Описание (необязательно)</label>
+                <textarea id="goal-description" data-i18n-placeholder="goal_description_placeholder" placeholder="Дополнительная информация о цели"
+                          class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all" rows="2"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="deadline">Дедлайн (необязательно)</label>
+                <input type="date" id="goal-target-date" lang="ru"
+                       class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all">
+                <p class="text-xs text-gray-500 mt-1" id="deadline-description-text">Установите дату, к которой хотите достичь цели. Формат: <span id="date-format-text">дд.мм.гггг</span></p>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 px-6 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl" id="goal-submit-btn">
+                <i class="fas fa-check mr-2"></i><span data-i18n="create_goal_btn">Создать цель</span>
+            </button>
+        </form>
+    </div>
+</div>

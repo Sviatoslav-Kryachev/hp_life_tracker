@@ -1,0 +1,128 @@
+<div id="activities" class="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl pt-4 px-4 pb-4 md:pt-8 md:px-8 md:pb-4 shadow-2xl border border-white/50 scroll-mt-20 md:scroll-mt-24">
+    <!-- Заголовок -->
+    <div class="flex justify-center items-center mb-4 md:mb-6">
+        <h2 class="text-xl md:text-3xl font-bold text-gray-800">
+            <i class="fas fa-tasks mr-2 md:mr-3 text-blue-500"></i><span data-i18n="activities">Активности</span>
+        </h2>
+    </div>
+
+    <!-- Аккордеон контент -->
+    <div id="activities-accordion-content">
+        <!-- Фильтры и сортировка -->
+        <div class="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <div class="flex flex-nowrap gap-3 items-center">
+                <!-- Сортировка по дате -->
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <label class="text-sm font-medium text-gray-700 whitespace-nowrap" data-i18n="sort_label">Сортировка:</label>
+                    <div class="relative">
+                        <select id="activities-sort" class="px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 text-sm appearance-none">
+                            <option value="newest" data-i18n="sort_newest">⬆️ Сначала новые</option>
+                            <option value="oldest" data-i18n="sort_oldest">Сначала старые</option>
+                            <option value="name-asc" data-i18n="sort_name_asc">По имени (А-Я)</option>
+                            <option value="name-desc" data-i18n="sort_name_desc">По имени (Я-А)</option>
+                        </select>
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <i class="fas fa-chevron-down text-black text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Фильтр по категории -->
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <label class="text-sm font-medium text-gray-700 whitespace-nowrap" data-i18n="category_label">Категория:</label>
+                    <div class="relative">
+                        <select id="activities-category-filter" class="px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-200 text-sm appearance-none">
+                            <option value="all" data-i18n="all_categories_with_icon">📂 Все категории</option>
+                        </select>
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <i class="fas fa-chevron-down text-black text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопка сброса фильтров -->
+                <div class="flex items-center flex-shrink-0">
+                    <button id="activities-reset-filters" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition-all whitespace-nowrap">
+                        <i class="fas fa-redo mr-1"></i><span data-i18n="reset_filters">Сбросить</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список активностей -->
+        <div class="mb-6 flex flex-col">
+            <div id="activities-list-container" class="space-y-4">
+                <div id="activities-list-visible" class="space-y-4"></div>
+                <div id="activities-list-hidden" class="space-y-4 hidden"></div>
+            </div>
+            <button id="activities-accordion-btn" onclick="toggleActivitiesAccordion()" class="hidden mt-3 w-full py-2.5 px-4 bg-gradient-to-r from-blue-100 to-indigo-100 hover:from-blue-200 hover:to-indigo-200 text-blue-700 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 group">
+                <span class="accordion-text" data-i18n="show_all_activities">Показать все активности</span>
+                <i class="fas fa-chevron-down accordion-icon transition-transform duration-300"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Новая активность -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 pt-6 pb-5 rounded-2xl border-2 border-dashed border-blue-200" style="margin-bottom: 0;">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center"><span data-i18n="new_activity">➕ Новая активность</span></h3>
+        <form id="new-activity-form" class="space-y-4">
+            <!-- Название активности (широкое) -->
+            <div>
+                <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-lg text-center" required>
+            </div>
+
+            <!-- Выбор категории -->
+            <div class="relative">
+                <div id="activity-category-wrapper" class="custom-dropdown">
+                    <input type="hidden" id="activity-category" value="general">
+                    <button type="button" id="activity-category-button" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-center flex items-center justify-center gap-2 min-w-0">
+                        <span id="activity-category-text" class="flex-1 min-w-0 break-words line-clamp-2 text-center">Общее</span>
+                        <i class="fas fa-chevron-down text-gray-500 text-sm flex-shrink-0"></i>
+                    </button>
+                    <div id="activity-category-dropdown" class="hidden absolute z-50 min-w-full w-max max-w-md mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        <!-- Опции будут добавлены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Время и Количество -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Время (минуты) -->
+                <div class="flex flex-col items-center justify-center">
+                    <label class="block text-sm font-medium text-gray-700 mb-2 text-center" data-i18n="unit_time">Время (минуты)</label>
+                    <div class="relative w-full">
+                        <select id="activity-unit-type" class="w-full p-4 pr-10 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-center appearance-none">
+                            <option value="time" data-i18n="unit_time">Время (минуты)</option>
+                            <option value="quantity" data-i18n="unit_quantity">Количество (штуки)</option>
+                        </select>
+                        <div class="absolute right-5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Количество (отцентрировано) -->
+                <div class="flex flex-col items-center justify-center">
+                    <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="unit_quantity">Количество</label>
+                    <div id="activity-xp-input-container" class="w-full">
+                        <div id="activity-xp-time" class="w-full">
+                            <input type="number" id="xp-per-hour" data-i18n-placeholder="xp_per_hour" placeholder="XP/час" value="60" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all text-center">
+                        </div>
+                        <div id="activity-xp-quantity" class="w-full hidden">
+                            <input type="number" id="xp-per-unit" data-i18n-placeholder="xp_per_unit" placeholder="XP/штука" value="1" step="0.1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all text-center">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка Создать (красиво размещена) -->
+            <div class="flex justify-center pt-2">
+                <button type="submit" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 font-semibold text-lg min-w-[200px]">
+                    <i class="fas fa-plus"></i>
+                    <span data-i18n="create">Создать</span>
+                </button>
+            </div>
+        </form>
+        <p id="activity-message" class="text-sm mt-4 mb-0 hidden"></p>
+    </div>
+</div>

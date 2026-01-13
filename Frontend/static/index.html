@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='70' fill='%23333' font-weight='bold'%3E🎯⏱️%3C/text%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=54">
+    <title>HP Life Tracker</title>
+    <style>
+        /* Скрываем секции по умолчанию до проверки токена */
+        #auth-section, #app-section {
+            visibility: hidden;
+        }
+        /* Убеждаемся, что скрытые секции действительно скрыты и не занимают место */
+        #auth-section.hidden {
+            display: none !important;
+            visibility: visible !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+        #app-section.hidden {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            left: -9999px !important;
+        }
+        /* Убеждаемся, что footer скрывается вместе с app-section */
+        #app-section.hidden #footer-container {
+            display: none !important;
+        }
+        /* Убеждаемся, что body не прокручивается когда app-section скрыт */
+        body:has(#app-section.hidden) {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+    <script>
+        // Функция проверки авторизации (будет вызвана после загрузки компонентов)
+        function applyAuthCheck() {
+            try {
+                const token = localStorage.getItem('token');
+                const authSection = document.getElementById('auth-section');
+                const appSection = document.getElementById('app-section');
+                
+                if (token) {
+                    // Если есть токен, скрываем auth-section и показываем app-section
+                    if (authSection) {
+                        authSection.classList.add('hidden');
+                        authSection.style.display = 'none';
+                        authSection.style.visibility = 'visible';
+                        authSection.style.height = '0';
+                        authSection.style.overflow = 'hidden';
+                    }
+                    if (appSection) {
+                        appSection.classList.remove('hidden');
+                        appSection.style.display = '';
+                        appSection.style.visibility = 'visible';
+                        appSection.style.height = '';
+                        appSection.style.overflow = '';
+                        appSection.style.position = '';
+                        appSection.style.left = '';
+                    }
+                } else {
+                    // Если токена нет, показываем auth-section и скрываем app-section
+                    if (authSection) {
+                        authSection.classList.remove('hidden');
+                        authSection.style.display = '';
+                        authSection.style.visibility = 'visible';
+                        authSection.style.height = '';
+                        authSection.style.overflow = '';
+                    }
+                    if (appSection) {
+                        appSection.classList.add('hidden');
+                        appSection.style.display = 'none';
+                        appSection.style.visibility = 'visible';
+                        appSection.style.height = '0';
+                        appSection.style.overflow = 'hidden';
+                        appSection.style.position = 'absolute';
+                        appSection.style.left = '-9999px';
+                    }
+                }
+                
+                // Предотвращаем скролл вниз при загрузке
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+                
+                // Дополнительная проверка через небольшую задержку
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                    document.documentElement.scrollTop = 0;
+                    document.body.scrollTop = 0;
+                }, 50);
+            } catch(e) {
+                console.error('Auth check error:', e);
+            }
+        }
+    </script>
+
+    <!-- AUTH SECTION Component Container -->
+    <div id="auth-section"></div>
+
+    <!-- MAIN APP (показывается когда залогинен) -->
+    <div id="app-section" class="hidden">
+        <!-- Header Component Container -->
+        <div id="header-container"></div>
+
+        <!-- Content with top padding for fixed header -->
+        <div class="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-6xl pt-20 md:pt-24">
+            <!-- Admin Panel (hidden by default) -->
+            <!-- Admin Panel Component Container -->
+            <div id="section-admin-container"></div>
+
+            <!-- Модальные окна загружаются динамически через components.js -->
+
+            <!-- Child Stats Modal -->
+            <div id="child-stats-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeChildStats()">
+                <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800" id="child-stats-name">Статистика</h3>
+                        <button onclick="closeChildStats()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                    </div>
+                    <div id="child-stats-content">
+                        <div class="text-center text-gray-400 py-8">Загрузка...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Виджеты: Сегодня + Неделя + Прогресс -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
+                <!-- Виджет Сегодня -->
+                <div id="widget-today-container"></div>
+
+                <!-- Календарь активности -->
+                <div id="widget-calendar-container"></div>
+
+                <!-- Прогресс до следующего уровня -->
+                <div id="widget-progress-container"></div>
+            </div>
+
+            <!-- Основной контент: Активности + Боковая панель -->
+            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
+                <!-- Активности Component Container -->
+                <div id="section-activities-container" class="lg:col-span-2"></div>
+
+                <!-- Боковая панель (правая колонка) -->
+                <div class="space-y-3 md:space-y-4">
+                    <!-- Виджет Streak (компактный) -->
+                    <div id="widget-streak-container"></div>
+
+                    <!-- Статистика по категориям -->
+                    <div class="bg-white/90 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border border-white/50">
+                        <div class="flex items-center justify-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                            <i class="fas fa-chart-pie text-blue-600 text-sm md:text-base"></i>
+                            <h3 class="text-xs md:text-sm font-bold text-gray-800" data-i18n="category_stats">Статистика по категориям</h3>
+                        </div>
+                        <div id="category-stats" class="space-y-2 max-h-[200px] md:max-h-[250px] overflow-y-auto overflow-x-hidden pr-1 md:pr-2" style="scrollbar-width: thin; scrollbar-color: rgba(156, 163, 175, 0.5) transparent;">
+                            <div class="text-center text-gray-400 py-2 text-xs">Загрузка...</div>
+                        </div>
+                    </div>
+
+                    <!-- Цели (компактный) -->
+                    <div class="bg-white/90 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border border-white/50">
+                        <div class="flex items-center justify-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                            <i class="fas fa-bullseye text-purple-600 text-sm md:text-base"></i>
+                            <h3 class="text-xs md:text-sm font-bold text-gray-800" data-i18n="my_goals">Мои цели</h3>
+                            <button onclick="showCreateGoalModal()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white w-5 h-5 rounded-lg transition-all text-xs flex items-center justify-center" title="Добавить цель">
+                                <i class="fas fa-plus text-[10px]"></i>
+                            </button>
+                        </div>
+                        <div id="goals-list" class="space-y-1.5 md:space-y-2 max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden pr-1 md:pr-2" style="scrollbar-width: thin; scrollbar-color: rgba(156, 163, 175, 0.5) transparent;">
+                            <div class="text-center text-gray-400 py-2 text-xs">Загрузка...</div>
+                        </div>
+                    </div>
+
+                    <!-- Умные рекомендации (компактный) -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border-2 border-green-200">
+                        <div class="flex items-center justify-center gap-2 mb-2 md:mb-3">
+                            <i class="fas fa-lightbulb text-green-600 text-sm md:text-base"></i>
+                            <h3 class="text-xs md:text-sm font-bold text-gray-800" data-i18n="smart_recommendations">Рекомендации</h3>
+                        </div>
+                        <div class="flex flex-col">
+                            <div id="recommendations-list-visible" class="space-y-2"></div>
+                            <div id="recommendations-list-hidden" class="space-y-2 hidden"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Награды и История транзакций (общий контейнер) -->
+            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
+                <!-- Награды Component Container -->
+                <div id="section-rewards-container" class="lg:col-span-2"></div>
+
+                <!-- История транзакций Component Container -->
+                <div id="section-history-container"></div>
+                </div>
+            </div>
+
+            <!-- Социальные функции: Группы, Лидерборды, Челленджи, Достижения -->
+            <div id="social" class="grid lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start scroll-mt-20 md:scroll-mt-24">
+                <!-- Группы Component Container -->
+                <div id="section-groups-container"></div>
+
+                <!-- Лидерборд Component Container -->
+                <div id="section-leaderboard-container"></div>
+
+                <!-- Челленджи Component Container -->
+                <div id="section-challenges-container"></div>
+
+                <!-- Достижения Component Container -->
+                <div id="section-achievements-container"></div>
+            </div>
+        </div>
+
+        <!-- Footer Component Container -->
+        <div id="footer-container"></div>
+    </div>
+
+    <!-- Модальные окна загружаются динамически через components.js -->
+
+    <!-- Bottom Navigation Component Container -->
+    <div id="bottom-navigation-container"></div>
+
+    <!-- Component Loader -->
+    <script src="js/components.js"></script>
+           <!-- JavaScript Modules (загружаются в правильном порядке) -->
+           <script src="js/app_utils.js"></script>
+           <script src="js/app_auth.js"></script>
+           <script src="js/app_activities.js"></script>
+           <script src="js/app_rewards.js"></script>
+           <script src="js/app_history.js"></script>
+           <script src="js/app_wallet.js"></script>
+           <script src="js/app_goals.js"></script>
+           <script src="js/app_categories.js"></script>
+           <!-- Main App Script (остальной код, который еще не модуляризован) -->
+           <script src="js/app.js?v=50"></script>
+    <!-- Social Features -->
+    <script src="js/app_social.js"></script>
+    <!-- Load Components -->
+    <script>
+        // Флаг для отслеживания загрузки компонентов app-section
+        let appComponentsLoaded = false;
+        
+        // Функция загрузки компонентов app-section
+        async function loadAppComponents() {
+            if (appComponentsLoaded) return;
+            
+            const appSection = document.getElementById('app-section');
+            if (!appSection) return;
+            
+            try {
+                await loadComponents([
+                    { name: 'header', selector: '#header-container' },
+                    { name: 'footer', selector: '#footer-container' },
+                    // Загружаем виджеты
+                    { name: 'widget-today', selector: '#widget-today-container', path: 'widgets/widget-today' },
+                    { name: 'widget-calendar', selector: '#widget-calendar-container', path: 'widgets/widget-calendar' },
+                    { name: 'widget-progress', selector: '#widget-progress-container', path: 'widgets/widget-progress' },
+                    { name: 'widget-streak', selector: '#widget-streak-container', path: 'widgets/widget-streak' },
+                    // Загружаем основные секции
+                    { name: 'section-activities', selector: '#section-activities-container', path: 'sections/section-activities' },
+                    { name: 'section-rewards', selector: '#section-rewards-container', path: 'sections/section-rewards' },
+                    { name: 'section-history', selector: '#section-history-container', path: 'sections/section-history' },
+                    { name: 'section-admin', selector: '#section-admin-container', path: 'sections/section-admin' },
+                    // Загружаем социальные секции
+                    { name: 'section-groups', selector: '#section-groups-container', path: 'sections/section-groups' },
+                    { name: 'section-leaderboard', selector: '#section-leaderboard-container', path: 'sections/section-leaderboard' },
+                    { name: 'section-challenges', selector: '#section-challenges-container', path: 'sections/section-challenges' },
+                    { name: 'section-achievements', selector: '#section-achievements-container', path: 'sections/section-achievements' },
+                    // Загружаем мобильную навигацию
+                    { name: 'bottom-navigation', selector: '#bottom-navigation-container', path: 'bottom-navigation' }
+                ]);
+                appComponentsLoaded = true;
+            } catch (error) {
+                console.error('Error loading app components:', error);
+            }
+        }
+        
+        // Загружаем компоненты после загрузки DOM
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Загружаем auth компонент
+            await loadComponent('auth', '#auth-section');
+            
+            // Инициализируем обработчики форм авторизации ПОСЛЕ загрузки компонента
+            if (typeof window.initAuthForms === 'function') {
+                window.initAuthForms();
+            } else if (typeof initAuthForms === 'function') {
+                initAuthForms();
+            }
+            
+            // Проверяем авторизацию ПОСЛЕ загрузки auth компонента
+            applyAuthCheck();
+            
+            // Загружаем компоненты app-section если пользователь уже залогинен
+            const token = localStorage.getItem('token');
+            if (token) {
+                await loadAppComponents();
+            }
+            
+            // Загружаем все модальные окна в body (всегда, они скрыты по умолчанию)
+            await loadComponents([
+                { name: 'modal-edit-activity', selector: 'body', path: 'modals/modal-edit-activity' },
+                { name: 'modal-edit-reward', selector: 'body', path: 'modals/modal-edit-reward' },
+                { name: 'modal-create-goal', selector: 'body', path: 'modals/modal-create-goal' },
+                { name: 'modal-manual-time', selector: 'body', path: 'modals/modal-manual-time' },
+                { name: 'modal-day-details', selector: 'body', path: 'modals/modal-day-details' },
+                { name: 'modal-category', selector: 'body', path: 'modals/modal-category' },
+                { name: 'modal-telegram-link', selector: 'body', path: 'modals/modal-telegram-link' },
+                { name: 'modal-create-group', selector: 'body', path: 'modals/modal-create-group' },
+                { name: 'modal-join-group', selector: 'body', path: 'modals/modal-join-group' },
+                { name: 'modal-create-challenge', selector: 'body', path: 'modals/modal-create-challenge' }
+            ]);
+            
+            // Загружаем базовые стили модальных окон
+            const modalBaseCSS = document.createElement('link');
+            modalBaseCSS.rel = 'stylesheet';
+            modalBaseCSS.href = '/static/components/modals/modal-base.css';
+            document.head.appendChild(modalBaseCSS);
+            
+            // Повторная проверка авторизации после загрузки всех компонентов
+            setTimeout(() => {
+                applyAuthCheck();
+            }, 100);
+        });
+        
+        // Экспортируем функцию для использования в app.js
+        if (typeof window !== 'undefined') {
+            window.loadAppComponents = loadAppComponents;
+        }
+    </script>
+    <script>
+        // Предотвращаем скролл вниз после загрузки скриптов
+        (function() {
+            // Убираем якорь из URL, если он есть
+            if (window.location.hash && window.location.hash !== '#') {
+                const hash = window.location.hash;
+                window.history.replaceState(null, null, window.location.pathname + window.location.search);
+            }
+            
+            // Убеждаемся, что страница вверху
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            
+            // Дополнительная проверка после небольшой задержки
+            setTimeout(() => {
+                if (window.scrollY > 0 || document.documentElement.scrollTop > 0) {
+                    window.scrollTo(0, 0);
+                }
+            }, 50);
+        })();
+    </script>
+
+</body>
+</html>
+</body>
+</html>

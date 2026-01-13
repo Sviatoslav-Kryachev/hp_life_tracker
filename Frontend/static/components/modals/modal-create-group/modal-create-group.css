@@ -1,0 +1,16 @@
+/* ============= CREATE GROUP MODAL STYLES ============= */
+/* Специфичные стили для модального окна создания группы */
+
+#create-group-modal {
+    /* Базовые стили наследуются из modal-base.css */
+}
+
+#create-group-error {
+    color: rgb(239, 68, 68);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+#create-group-error.hidden {
+    display: none;
+}

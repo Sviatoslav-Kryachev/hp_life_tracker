@@ -1,0 +1,18 @@
+/* ============= MANUAL TIME MODAL STYLES ============= */
+/* Специфичные стили для модального окна ручного ввода времени */
+
+#manual-time-modal {
+    /* Базовые стили наследуются из modal-base.css */
+}
+
+#manual-time-preview {
+    background: rgb(249, 250, 251);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    color: rgb(75, 85, 99);
+}
+
+#manual-time-preview.hidden {
+    display: none;
+}

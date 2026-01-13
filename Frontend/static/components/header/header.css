@@ -1,0 +1,205 @@
+/* ============= HEADER COMPONENT STYLES ============= */
+
+/* Header container */
+.fixed.top-0 {
+    z-index: 9999 !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+/* Header container - ограничиваем ширину как у основного контента */
+.fixed.top-0 > .container {
+    width: 100% !important;
+    max-width: 72rem !important; /* max-w-6xl = 72rem = 1152px */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Flex контейнер внутри хедера */
+.fixed.top-0 > .container > div.flex {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+}
+
+/* Левый блок (лого + навигация) */
+.fixed.top-0 > .container > div.flex > div:first-child {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    overflow: hidden !important;
+}
+
+/* Правый блок (язык + XP + пользователь) */
+.fixed.top-0 > .container > div.flex > div:last-child {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Языковый переключатель */
+#language-switcher-wrapper {
+    position: relative !important;
+    z-index: 10000 !important;
+    overflow: visible !important;
+}
+
+#language-switcher-btn {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Дропдаун меню языка */
+#language-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    margin-top: 0.5rem !important;
+    z-index: 10001 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    min-width: 10rem !important;
+    width: max-content !important;
+}
+
+#language-menu.hidden {
+    display: none !important;
+}
+
+#language-menu:not(.hidden) {
+    display: block !important;
+}
+
+@keyframes fadeInDropdown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* XP бейдж - компактный на мобильных */
+@media (max-width: 768px) {
+    #wallet {
+        flex-shrink: 0 !important;
+        min-width: 4rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+}
+
+/* Информация о пользователе - скрываем на мобильных */
+@media (max-width: 768px) {
+    #user-info {
+        display: none !important;
+    }
+    
+    .fixed.top-0 .bg-gray-50.border.border-gray-200.rounded-xl {
+        padding: 0.25rem !important;
+        gap: 0.25rem !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* Адаптивный хедер для мобильных */
+@media (max-width: 768px) {
+    @supports (padding: env(safe-area-inset-top)) {
+        .fixed.top-0 {
+            padding-top: env(safe-area-inset-top) !important;
+            padding-left: env(safe-area-inset-left) !important;
+            padding-right: env(safe-area-inset-right) !important;
+        }
+        
+        .fixed.top-0 > .container {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+    }
+    
+    @supports not (padding: env(safe-area-inset-top)) {
+        .fixed.top-0 > .container {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+    }
+    
+    nav.hidden.md\:flex {
+        display: none !important;
+    }
+    
+    .fixed.top-0 img.h-8.w-8.md\:h-10.md\:w-10 {
+        height: 1.5rem !important;
+        width: 1.5rem !important;
+    }
+    
+    .fixed.top-0 h1.text-xl.md\:text-2xl {
+        font-size: 1rem !important;
+    }
+    
+    .fixed.top-0 #language-menu {
+        top: calc(100% + 0.5rem) !important;
+        right: 0 !important;
+        z-index: 10001 !important;
+        max-height: 60vh !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* Улучшаем отображение на очень маленьких экранах */
+@media (max-width: 400px) {
+    .fixed.top-0 > .container > div.flex {
+        gap: 0.25rem !important;
+    }
+    
+    #wallet {
+        min-width: 3.5rem !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+    
+    #language-switcher-btn {
+        min-width: 2.5rem !important;
+        padding: 0.4rem !important;
+    }
+    
+    .fixed.top-0 .bg-gray-50.border.border-gray-200.rounded-xl {
+        padding: 0.2rem !important;
+    }
+}
+
+/* Предотвращаем переполнение хедера */
+@media (max-width: 640px) {
+    .fixed.top-0 > .container {
+        overflow: visible !important;
+    }
+    
+    .fixed.top-0 > .container > div.flex {
+        flex-wrap: nowrap !important;
+        overflow: visible !important;
+    }
+}
+
+/* Исправляем кнопки в хедере */
+.fixed.top-0 button,
+.fixed.top-0 a {
+    flex-shrink: 0 !important;
+}
+
+/* Исправляем высоту строки в дропдауне */
+.language-option {
+    line-height: 1.5 !important;
+    height: auto !important;
+    min-height: 3rem !important;
+}

@@ -1,0 +1,31 @@
+/* ============= STREAK WIDGET STYLES ============= */
+/* Стили для виджета серии дней */
+
+/* Базовые стили уже в HTML классах */
+/* Дополнительные стили при необходимости */
+
+#streak-count {
+    font-size: 1.5rem;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+    #streak-count {
+        font-size: 1.875rem;
+    }
+}
+
+#streak-message {
+    font-size: 0.625rem;
+    font-style: italic;
+    opacity: 0.75;
+    margin-top: 0.375rem;
+}
+
+@media (min-width: 768px) {
+    #streak-message {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+    }
+}

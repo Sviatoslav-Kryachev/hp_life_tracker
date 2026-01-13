@@ -1,0 +1,27 @@
+/* ============= REWARDS SECTION STYLES ============= */
+/* Стили для секции наград */
+
+#rewards {
+    /* Базовые стили уже в HTML классах */
+    position: relative;
+}
+
+#rewards .absolute {
+    pointer-events: none;
+}
+
+#rewards-accordion-btn {
+    transition: all 0.3s;
+}
+
+#rewards-accordion-btn .accordion-icon {
+    transition: transform 0.3s;
+}
+
+#rewards-accordion-btn.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+#preset-rewards .preset-btn {
+    transition: all 0.3s;
+}

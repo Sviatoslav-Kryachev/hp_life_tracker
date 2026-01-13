@@ -1,0 +1,242 @@
+/* ============= AUTH COMPONENT STYLES ============= */
+
+#auth-section {
+    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+}
+
+#auth-section > div {
+    margin: auto 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    max-height: calc(100vh - 4rem);
+    overflow-y: visible;
+    flex-shrink: 0;
+}
+
+/* На мобильных устройствах и маленьких экранах уменьшаем отступы */
+@media (max-height: 700px) {
+    #auth-section {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    #auth-section > div {
+        max-height: calc(100vh - 2rem);
+    }
+}
+
+/* Если контент не помещается, разрешаем скролл */
+@media (max-height: 600px) {
+    #auth-section {
+        align-items: flex-start;
+        padding-top: 1rem;
+    }
+    
+    #auth-section > div {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+#auth-section > div {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    max-width: 28rem;
+    width: 100%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Логотип и заголовок */
+#auth-section .text-center {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#auth-section img {
+    height: 6rem;
+    width: 6rem;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+}
+
+@media (min-width: 768px) {
+    #auth-section img {
+        height: 8rem;
+        width: 8rem;
+    }
+}
+
+#auth-section h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    background: linear-gradient(to right, rgb(79, 70, 229), rgb(147, 51, 234));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    #auth-section h1 {
+        font-size: 2.25rem;
+    }
+}
+
+/* Табы */
+#auth-section .flex.mb-6 {
+    display: flex;
+    margin-bottom: 1.5rem;
+    background: rgb(243, 244, 246);
+    border-radius: 0.75rem;
+    padding: 0.25rem;
+}
+
+#auth-section #login-tab,
+#auth-section #register-tab {
+    flex: 1 1 0%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+#auth-section #login-tab {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: rgb(79, 70, 229);
+}
+
+#auth-section #register-tab {
+    color: rgb(107, 114, 128);
+}
+
+#auth-section #register-tab:hover {
+    color: rgb(55, 65, 81);
+}
+
+/* Формы */
+#auth-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#auth-section form.hidden {
+    display: none;
+}
+
+#auth-section label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(55, 65, 81);
+    margin-bottom: 0.25rem;
+}
+
+#auth-section input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid rgb(229, 231, 235);
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+}
+
+#auth-section input:focus {
+    outline: none;
+    border-color: rgb(99, 102, 241);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Кнопки */
+#auth-section button[type="submit"] {
+    width: 100%;
+    background: linear-gradient(to right, rgb(99, 102, 241), rgb(147, 51, 234));
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+#auth-section button[type="submit"]:hover {
+    background: linear-gradient(to right, rgb(79, 70, 229), rgb(126, 34, 206));
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+#auth-section .bg-gradient-to-r.from-emerald-500 {
+    background: linear-gradient(to right, rgb(16, 185, 129), rgb(20, 184, 166));
+}
+
+#auth-section .bg-gradient-to-r.from-emerald-500:hover {
+    background: linear-gradient(to right, rgb(5, 150, 105), rgb(13, 148, 136));
+}
+
+/* Сообщения об ошибках */
+#auth-section .text-red-500,
+#auth-section .text-green-500 {
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+#auth-section .text-red-500.hidden,
+#auth-section .text-green-500.hidden {
+    display: none;
+}
+
+/* Модальное окно восстановления пароля */
+#forgot-password-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+#forgot-password-modal.hidden {
+    display: none;
+}
+
+#forgot-password-modal > div {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 28rem;
+    width: 100%;
+    padding: 1.5rem;
+}
+
+#forgot-password-modal h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(31, 41, 55);
+}
+
+#forgot-password-modal #forgot-step2.hidden {
+    display: none;
+}

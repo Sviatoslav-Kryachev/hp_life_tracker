@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: hp-life-tracker_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hp_life_tracker_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-hp_life_tracker_db}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata_hp_life_tracker:/var/lib/postgresql/data
+    networks:
+      - hp_life_tracker_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hp_life_tracker_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: hp-life-tracker_app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8001:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-hp_life_tracker_user}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-hp_life_tracker_db}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      # Добавьте другие переменные окружения при необходимости
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - hp_life_tracker_network
+    volumes:
+      # Монтируем статические файлы, если нужны изменения без пересборки
+      - ../Frontend/static:/app/Frontend/static:ro
+    command: >
+      sh -c "
+        echo 'Ожидание готовности PostgreSQL...' &&
+        sleep 5 &&
+        echo 'Запуск миграций Alembic...' &&
+        alembic upgrade head &&
+        echo 'Запуск приложения...' &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000
+      "
+
+volumes:
+  pgdata_hp_life_tracker:
+    driver: local
+    name: pgdata_hp_life_tracker
+
+networks:
+  hp_life_tracker_network:
+    driver: bridge
+    name: hp_life_tracker_network

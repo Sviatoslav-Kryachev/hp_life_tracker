@@ -1,0 +1,33 @@
+/* ============= BUTTONS ============= */
+/* Общие стили для кнопок */
+
+/* Градиентные кнопки */
+.bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* Кнопки с hover эффектами */
+button.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Кнопки с иконками */
+button i {
+    display: inline-block;
+}
+
+/* Кнопки в модальных окнах */
+.modal-button {
+    transition: all 0.2s ease;
+}
+
+.modal-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-button:active {
+    transform: translateY(0);
+}
