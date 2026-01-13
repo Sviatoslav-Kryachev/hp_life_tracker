@@ -98,24 +98,41 @@ function changeLanguage(lang) {
         window.updateLanguageMenu(lang);
     }
     updateDateInputLang();
-    // Перезагружаем данные, которые зависят от языка
+    // Перезагружаем ВСЕ данные при смене языка
     if (document.getElementById('app-section') && !document.getElementById('app-section').classList.contains('hidden')) {
-        if (typeof loadCategoryStats === 'function') loadCategoryStats();
-        if (typeof loadCalendar === 'function') loadCalendar(currentCalendarPeriod);
-        if (typeof loadActivities === 'function') loadActivities();
-        if (typeof loadRewards === 'function') loadRewards();
-        if (typeof loadRecommendations === 'function') loadRecommendations();
-        if (typeof loadGoals === 'function') loadGoals();
-        if (typeof loadStreak === 'function') loadStreak();
-        if (typeof loadHistory === 'function') loadHistory();
-        if (typeof setHistoryPeriod === 'function' && document.getElementById('history-period-today')) {
-            setHistoryPeriod(historyPeriod);
-        }
-        if (typeof updateCategoryDropdown === 'function') {
-            updateCategoryDropdown('activity-category');
-            updateCategoryDropdown('edit-activity-category');
-        }
-        if (typeof updateAdminCategoryFilter === 'function') updateAdminCategoryFilter();
+        // Загружаем все данные последовательно
+        const reloadAllData = async () => {
+            try {
+                if (typeof window !== 'undefined' && typeof window.loadWallet === 'function') await window.loadWallet();
+                if (typeof window !== 'undefined' && typeof window.loadCategories === 'function') await window.loadCategories();
+                if (typeof window !== 'undefined' && typeof window.loadActivities === 'function') await window.loadActivities();
+                if (typeof window !== 'undefined' && typeof window.loadRewards === 'function') await window.loadRewards();
+                if (typeof window !== 'undefined' && typeof window.loadTodayStats === 'function') await window.loadTodayStats();
+                if (typeof window !== 'undefined' && typeof window.loadWeekCalendar === 'function') await window.loadWeekCalendar();
+                if (typeof window !== 'undefined' && typeof window.loadCategoryStats === 'function') window.loadCategoryStats();
+                if (typeof window !== 'undefined' && typeof window.loadStreak === 'function') await window.loadStreak();
+                if (typeof window !== 'undefined' && typeof window.loadRecommendations === 'function') await window.loadRecommendations();
+                if (typeof window !== 'undefined' && typeof window.loadGoals === 'function') await window.loadGoals();
+                if (typeof window !== 'undefined' && typeof window.loadHistory === 'function') {
+                    await window.loadHistory();
+                    if (typeof window.setHistoryPeriod === 'function' && document.getElementById('history-period-today')) {
+                        window.setHistoryPeriod(window.historyPeriod);
+                    }
+                }
+                if (typeof window !== 'undefined' && typeof window.loadGroups === 'function') await window.loadGroups();
+                if (typeof window !== 'undefined' && typeof window.loadLeaderboard === 'function') await window.loadLeaderboard();
+                if (typeof window !== 'undefined' && typeof window.loadChallenges === 'function') await window.loadChallenges();
+                if (typeof window !== 'undefined' && typeof window.loadAchievements === 'function') await window.loadAchievements();
+                if (typeof window !== 'undefined' && typeof window.updateCategoryDropdown === 'function') {
+                    window.updateCategoryDropdown('activity-category');
+                    window.updateCategoryDropdown('edit-activity-category');
+                }
+                if (typeof window !== 'undefined' && typeof window.updateAdminCategoryFilter === 'function') window.updateAdminCategoryFilter();
+            } catch (error) {
+                console.error('[changeLanguage] Error reloading data:', error);
+            }
+        };
+        reloadAllData();
     }
     closeLanguageMenu();
 }
