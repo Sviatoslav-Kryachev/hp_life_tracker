@@ -86,9 +86,17 @@ function formatActivitiesCount(count) {
 // Функция смены языка
 function changeLanguage(lang) {
     currentLanguage = lang;
+    if (typeof window !== 'undefined') {
+        window.currentLanguage = lang;
+    }
     localStorage.setItem('language', lang);
     applyTranslations();
-    updateLanguageMenu();
+    // Передаем lang явно в updateLanguageMenu для обновления флага
+    if (typeof updateLanguageMenu === 'function') {
+        updateLanguageMenu(lang);
+    } else if (typeof window !== 'undefined' && typeof window.updateLanguageMenu === 'function') {
+        window.updateLanguageMenu(lang);
+    }
     updateDateInputLang();
     // Перезагружаем данные, которые зависят от языка
     if (document.getElementById('app-section') && !document.getElementById('app-section').classList.contains('hidden')) {
@@ -147,20 +155,56 @@ function closeLanguageMenu() {
     }
 }
 
-function updateLanguageMenu() {
+function updateLanguageMenu(langParam) {
+    // Получаем текущий язык - сначала из параметра, потом из переменных
+    let lang = langParam;
+    if (!lang) {
+        lang = (typeof window !== 'undefined' && window.currentLanguage) 
+            ? window.currentLanguage 
+            : (typeof currentLanguage !== 'undefined' ? currentLanguage : localStorage.getItem('language') || 'ru');
+    }
+    
+    // Убеждаемся, что window.currentLanguage тоже обновлен
+    if (typeof window !== 'undefined') {
+        window.currentLanguage = lang;
+    }
+    if (typeof currentLanguage !== 'undefined') {
+        currentLanguage = lang;
+    }
+    
     document.querySelectorAll('[data-check]').forEach(check => {
         check.classList.add('hidden');
     });
     document.querySelectorAll('[data-check-footer]').forEach(check => {
         check.classList.add('hidden');
     });
-    const activeCheck = document.querySelector(`[data-check="${currentLanguage}"]`);
+    const activeCheck = document.querySelector(`[data-check="${lang}"]`);
     if (activeCheck) {
         activeCheck.classList.remove('hidden');
     }
-    const activeCheckFooter = document.querySelector(`[data-check-footer="${currentLanguage}"]`);
+    const activeCheckFooter = document.querySelector(`[data-check-footer="${lang}"]`);
     if (activeCheckFooter) {
         activeCheckFooter.classList.remove('hidden');
+    }
+    
+    // Обновляем флажок в кнопке хедера
+    const flagMap = {
+        'ru': '🇷🇺',
+        'uk': '🇺🇦',
+        'de': '🇩🇪',
+        'en': '🇬🇧'
+    };
+    const flagEl = document.getElementById('current-language-flag');
+    if (flagEl) {
+        const flag = flagMap[lang] || flagMap['ru'] || '🇷🇺';
+        flagEl.textContent = flag;
+        console.log('[updateLanguageMenu app_utils] Updated header flag to:', flag, 'for language:', lang);
+    }
+    const flagFooterEl = document.getElementById('footer-language-flag');
+    if (flagFooterEl) {
+        const flag = flagMap[lang] || flagMap['ru'] || '🇷🇺';
+        flagFooterEl.textContent = flag;
+        console.log('[updateLanguageMenu app_utils] Updated footer flag to:', flag, 'for language:', lang);
     }
 }
 
