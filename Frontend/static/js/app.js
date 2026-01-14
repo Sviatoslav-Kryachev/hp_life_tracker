@@ -2880,6 +2880,8 @@ window.addEventListener("DOMContentLoaded", () => {
         
         if (activityForm && !activityForm.hasAttribute('data-handler-attached')) {
             console.log("[Direct Handler] Attaching handler directly to activity form");
+            
+            // Обработчик на форму
             activityForm.addEventListener("submit", async function(e) {
                 console.log("[Direct Handler] Activity form submit (direct)");
                 e.preventDefault();
@@ -2892,17 +2894,49 @@ window.addEventListener("DOMContentLoaded", () => {
                         await window.createActivity();
                     } else {
                         console.error("[Direct Handler] createActivity not found");
+                        alert("Функция createActivity не найдена!");
                     }
                 } catch (error) {
                     console.error("[Direct Handler] Error:", error);
+                    alert("Ошибка: " + error.message);
                 }
                 return false;
             }, true);
+            
+            // Также прикрепляем обработчик на кнопку submit напрямую
+            const submitBtn = activityForm.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.hasAttribute('data-handler-attached')) {
+                console.log("[Direct Handler] Attaching handler to activity submit button");
+                submitBtn.addEventListener("click", async function(e) {
+                    console.log("[Direct Handler] Activity button clicked");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    try {
+                        if (typeof createActivity === 'function') {
+                            await createActivity();
+                        } else if (typeof window.createActivity === 'function') {
+                            await window.createActivity();
+                        } else {
+                            console.error("[Direct Handler] createActivity not found");
+                            alert("Функция createActivity не найдена!");
+                        }
+                    } catch (error) {
+                        console.error("[Direct Handler] Error:", error);
+                        alert("Ошибка: " + error.message);
+                    }
+                    return false;
+                }, true);
+                submitBtn.setAttribute('data-handler-attached', 'true');
+            }
+            
             activityForm.setAttribute('data-handler-attached', 'true');
         }
         
         if (rewardForm && !rewardForm.hasAttribute('data-handler-attached')) {
             console.log("[Direct Handler] Attaching handler directly to reward form");
+            
+            // Обработчик на форму
             rewardForm.addEventListener("submit", async function(e) {
                 console.log("[Direct Handler] Reward form submit (direct)");
                 e.preventDefault();
@@ -2915,19 +2949,52 @@ window.addEventListener("DOMContentLoaded", () => {
                         await window.createReward();
                     } else {
                         console.error("[Direct Handler] createReward not found");
+                        alert("Функция createReward не найдена!");
                     }
                 } catch (error) {
                     console.error("[Direct Handler] Error:", error);
+                    alert("Ошибка: " + error.message);
                 }
                 return false;
             }, true);
+            
+            // Также прикрепляем обработчик на кнопку submit напрямую
+            const submitBtn = rewardForm.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.hasAttribute('data-handler-attached')) {
+                console.log("[Direct Handler] Attaching handler to reward submit button");
+                submitBtn.addEventListener("click", async function(e) {
+                    console.log("[Direct Handler] Reward button clicked");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    try {
+                        if (typeof createReward === 'function') {
+                            await createReward();
+                        } else if (typeof window.createReward === 'function') {
+                            await window.createReward();
+                        } else {
+                            console.error("[Direct Handler] createReward not found");
+                            alert("Функция createReward не найдена!");
+                        }
+                    } catch (error) {
+                        console.error("[Direct Handler] Error:", error);
+                        alert("Ошибка: " + error.message);
+                    }
+                    return false;
+                }, true);
+                submitBtn.setAttribute('data-handler-attached', 'true');
+            }
+            
             rewardForm.setAttribute('data-handler-attached', 'true');
         }
     }
     
     // Пытаемся прикрепить обработчики напрямую к формам
+    setTimeout(attachDirectFormHandlers, 500);
     setTimeout(attachDirectFormHandlers, 1000);
+    setTimeout(attachDirectFormHandlers, 2000);
     setTimeout(attachDirectFormHandlers, 3000);
+    setTimeout(attachDirectFormHandlers, 5000);
 
     // Инициализация обработчика изменения типа единицы измерения (после загрузки компонентов)
     function initActivityUnitTypeHandler() {
