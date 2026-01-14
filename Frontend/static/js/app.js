@@ -2725,9 +2725,19 @@ window.addEventListener("DOMContentLoaded", () => {
     
     // Прикрепляем обработчики напрямую к кнопкам (более надежный способ)
     function attachDirectFormHandlers() {
+        console.log("[attachDirectFormHandlers] Function called");
+        
         // Обработчик для кнопки создания активности
         const activityBtn = document.getElementById("create-activity-btn");
         console.log("[attachDirectFormHandlers] Looking for activity button:", !!activityBtn);
+        if (activityBtn) {
+            console.log("[attachDirectFormHandlers] Activity button found, has handler:", activityBtn.hasAttribute('data-handler-attached'));
+        } else {
+            console.warn("[attachDirectFormHandlers] Activity button NOT FOUND! Trying querySelector...");
+            const activityBtnAlt = document.querySelector("#create-activity-btn");
+            console.log("[attachDirectFormHandlers] querySelector result:", !!activityBtnAlt);
+        }
+        
         if (activityBtn && !activityBtn.hasAttribute('data-handler-attached')) {
             console.log("[Direct Handler] Attaching handler to activity button");
             activityBtn.addEventListener("click", async function(e) {
@@ -2781,6 +2791,15 @@ window.addEventListener("DOMContentLoaded", () => {
         
         // Обработчик для кнопки создания награды
         const rewardBtn = document.getElementById("create-reward-btn");
+        console.log("[attachDirectFormHandlers] Looking for reward button:", !!rewardBtn);
+        if (rewardBtn) {
+            console.log("[attachDirectFormHandlers] Reward button found, has handler:", rewardBtn.hasAttribute('data-handler-attached'));
+        } else {
+            console.warn("[attachDirectFormHandlers] Reward button NOT FOUND! Trying querySelector...");
+            const rewardBtnAlt = document.querySelector("#create-reward-btn");
+            console.log("[attachDirectFormHandlers] querySelector result:", !!rewardBtnAlt);
+        }
+        
         if (rewardBtn && !rewardBtn.hasAttribute('data-handler-attached')) {
             console.log("[Direct Handler] Attaching handler to reward button");
             rewardBtn.addEventListener("click", async function(e) {
