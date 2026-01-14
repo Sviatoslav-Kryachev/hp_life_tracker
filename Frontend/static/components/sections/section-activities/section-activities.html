@@ -65,7 +65,7 @@
     <!-- Новая активность -->
     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 pt-6 pb-5 rounded-2xl border-2 border-dashed border-blue-200" style="margin-bottom: 0;">
         <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center"><span data-i18n="new_activity">➕ Новая активность</span></h3>
-        <form id="new-activity-form" class="space-y-4">
+        <form id="new-activity-form" class="space-y-4" onsubmit="return false;">
             <!-- Название активности (широкое) -->
             <div>
                 <input type="text" id="activity-name" data-i18n-placeholder="activity_name" placeholder="Название активности" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all min-h-[3.5rem] text-lg text-center" required>

@@ -286,6 +286,13 @@
                     { name: 'bottom-navigation', selector: '#bottom-navigation-container', path: 'bottom-navigation' }
                 ]);
                 appComponentsLoaded = true;
+                
+                // Инициализируем обработчики форм после загрузки компонентов
+                if (typeof window.initFormHandlers === 'function') {
+                    setTimeout(() => {
+                        window.initFormHandlers();
+                    }, 100);
+                }
             } catch (error) {
                 console.error('Error loading app components:', error);
             }

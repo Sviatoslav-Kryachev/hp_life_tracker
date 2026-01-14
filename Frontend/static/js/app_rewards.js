@@ -366,40 +366,36 @@ async function createReward() {
         if (rewardNameInput) rewardNameInput.value = "";
         if (rewardCostInput) rewardCostInput.value = "10";
         
-        allRewards.push(created);
-        allRewards.sort((a, b) => (a.id || 0) - (b.id || 0));
-        
-        getRewardsElements();
-        if (!rewardsListVisible || !rewardsListHidden) {
+        // Перезагружаем награды с сервера для обеспечения согласованности
+        try {
             await loadRewards();
-            return;
-        }
-        
-        const totalRewards = allRewards.length;
-        const visibleCount = Math.min(4, totalRewards);
-        const newRewardIndex = allRewards.findIndex(r => r.id === created.id);
-        
-        const newRewardElement = renderRewardCard(created);
-        
-        if (newRewardIndex < visibleCount) {
-            await loadRewards();
-        } else {
-            if (rewardsListHidden) {
-                rewardsListHidden.appendChild(newRewardElement);
-            }
-            
-            if (rewardsAccordionBtn) {
-                rewardsAccordionBtn.classList.remove('hidden');
-            }
-            
-            const isExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
-            if (!isExpanded && rewardsListHidden && rewardsListHidden.classList.contains('hidden')) {
-                toggleRewardsAccordion();
+        } catch (loadError) {
+            console.error("Error reloading rewards:", loadError);
+            // Если перезагрузка не удалась, просто добавляем созданную награду в список
+            allRewards.push(created);
+            allRewards.sort((a, b) => (a.id || 0) - (b.id || 0));
+            getRewardsElements();
+            if (rewardsListVisible && rewardsListHidden) {
+                const newRewardElement = renderRewardCard(created);
+                const totalRewards = allRewards.length;
+                const visibleCount = Math.min(4, totalRewards);
+                const newRewardIndex = allRewards.findIndex(r => r.id === created.id);
+                
+                if (newRewardIndex < visibleCount) {
+                    rewardsListVisible.appendChild(newRewardElement);
+                } else {
+                    rewardsListHidden.appendChild(newRewardElement);
+                    if (rewardsAccordionBtn) {
+                        rewardsAccordionBtn.classList.remove('hidden');
+                    }
+                }
             }
         }
         
+        // Находим только что созданную награду для её подсветки
+        const createdRewardId = created.id;
         setTimeout(() => {
-            const rewardElement = document.querySelector(`[data-reward-id="${created.id}"]`);
+            const rewardElement = document.querySelector(`[data-reward-id="${createdRewardId}"]`);
             if (rewardElement) {
                 rewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 rewardElement.style.transition = 'background-color 0.3s';
@@ -408,13 +404,7 @@ async function createReward() {
                     rewardElement.style.backgroundColor = '';
                 }, 2000);
             }
-        }, newRewardIndex < visibleCount ? 100 : 200);
-        
-        if (rewardsAccordionBtn && totalRewards > 4) {
-            setTimeout(() => {
-                updateRewardsAccordionButton();
-            }, 0);
-        }
+        }, 200);
         
         showRewardMessage(`✅ "${created.name}" создана!`, "success");
     } catch (e) {

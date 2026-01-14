@@ -836,7 +836,15 @@ async function createActivity() {
         if (typeof window.updateActivityXPInputs === 'function') window.updateActivityXPInputs();
         
         // Перезагружаем активности с сервера для обеспечения согласованности
-        await loadActivities();
+        try {
+            await loadActivities();
+        } catch (loadError) {
+            console.error("Error reloading activities:", loadError);
+            // Если перезагрузка не удалась, просто добавляем созданную активность в список
+            allActivities.push(created);
+            updateActivitiesCategoryFilter();
+            applyActivitiesFilters();
+        }
         
         // Находим только что созданную активность для её подсветки
         const createdActivityId = created.id;

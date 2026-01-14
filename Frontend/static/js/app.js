@@ -2785,27 +2785,100 @@ window.addEventListener("DOMContentLoaded", () => {
     // Инициализируем обработчики форм авторизации (если компонент уже загружен)
     initAuthForms();
 
-    // Activity form
-    if (newActivityForm) {
-        newActivityForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            createActivity();
-        });
+    // Функция для прикрепления обработчиков форм через делегирование событий
+    function attachFormHandlers() {
+        const appSection = document.getElementById("app-section");
+        if (!appSection) {
+            console.warn("app-section not found, will retry form handler attachment");
+            return false;
+        }
+        
+        // Проверяем, не прикреплены ли уже обработчики
+        if (appSection.hasAttribute('data-form-handlers-attached')) {
+            return true;
+        }
+        
+        // Обработчик для формы активности через делегирование
+        appSection.addEventListener("submit", async function(e) {
+            if (e.target && e.target.id === "new-activity-form") {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                try {
+                    if (typeof createActivity === 'function') {
+                        await createActivity();
+                    } else if (typeof window.createActivity === 'function') {
+                        await window.createActivity();
+                    } else {
+                        console.error("createActivity function not found");
+                    }
+                } catch (error) {
+                    console.error("Error creating activity:", error);
+                }
+                return false;
+            }
+        }, true); // Используем capture phase для надежности
 
-        // Обработчик изменения типа единицы измерения
+        // Обработчик для формы награды через делегирование
+        appSection.addEventListener("submit", async function(e) {
+            if (e.target && e.target.id === "new-reward-form") {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                try {
+                    if (typeof createReward === 'function') {
+                        await createReward();
+                    } else if (typeof window.createReward === 'function') {
+                        await window.createReward();
+                    } else {
+                        console.error("createReward function not found");
+                    }
+                } catch (error) {
+                    console.error("Error creating reward:", error);
+                }
+                return false;
+            }
+        }, true); // Используем capture phase для надежности
+        
+        appSection.setAttribute('data-form-handlers-attached', 'true');
+        console.log("Form handlers attached via event delegation");
+        return true;
+    }
+    
+    // Пытаемся прикрепить обработчики сразу
+    attachFormHandlers();
+    
+    // Также пытаемся прикрепить после задержки (на случай динамической загрузки)
+    setTimeout(() => attachFormHandlers(), 500);
+    setTimeout(() => attachFormHandlers(), 2000);
+
+    // Инициализация обработчика изменения типа единицы измерения (после загрузки компонентов)
+    function initActivityUnitTypeHandler() {
         const unitTypeEl = document.getElementById("activity-unit-type");
-        if (unitTypeEl) {
-            unitTypeEl.addEventListener("change", updateActivityXPInputs);
+        if (unitTypeEl && typeof updateActivityXPInputs === 'function') {
+            // Удаляем старый обработчик если есть
+            const newUnitTypeEl = unitTypeEl.cloneNode(true);
+            unitTypeEl.parentNode.replaceChild(newUnitTypeEl, unitTypeEl);
+            // Добавляем новый обработчик
+            newUnitTypeEl.addEventListener("change", updateActivityXPInputs);
             updateActivityXPInputs(); // Инициализация при загрузке
         }
     }
-
-    // Reward form
-    if (newRewardForm) {
-        newRewardForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            createReward();
-        });
+    
+    // Пытаемся инициализировать сразу, если элемент уже есть
+    initActivityUnitTypeHandler();
+    
+    // Также пытаемся инициализировать после небольшой задержки (на случай динамической загрузки)
+    setTimeout(initActivityUnitTypeHandler, 500);
+    setTimeout(initActivityUnitTypeHandler, 2000);
+    
+    // Экспортируем функции инициализации для вызова после загрузки компонентов
+    if (typeof window !== 'undefined') {
+        window.initFormHandlers = function() {
+            attachFormHandlers();
+            initActivityUnitTypeHandler();
+        };
+        window.attachFormHandlers = attachFormHandlers;
     }
 
     // Manual time form
