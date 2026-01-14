@@ -288,11 +288,27 @@
                 appComponentsLoaded = true;
                 
                 // Инициализируем обработчики форм после загрузки компонентов
-                if (typeof window.initFormHandlers === 'function') {
-                    setTimeout(() => {
+                console.log("[loadAppComponents] Components loaded, initializing form handlers...");
+                
+                // Множественные попытки инициализации
+                const initHandlers = () => {
+                    if (typeof window.initFormHandlers === 'function') {
+                        console.log("[loadAppComponents] Calling window.initFormHandlers()");
                         window.initFormHandlers();
-                    }, 100);
-                }
+                    }
+                    if (typeof window.attachFormHandlers === 'function') {
+                        console.log("[loadAppComponents] Calling window.attachFormHandlers()");
+                        window.attachFormHandlers();
+                    }
+                    if (typeof window.attachDirectFormHandlers === 'function') {
+                        console.log("[loadAppComponents] Calling window.attachDirectFormHandlers()");
+                        window.attachDirectFormHandlers();
+                    }
+                };
+                
+                setTimeout(initHandlers, 100);
+                setTimeout(initHandlers, 500);
+                setTimeout(initHandlers, 1500);
             } catch (error) {
                 console.error('Error loading app components:', error);
             }
