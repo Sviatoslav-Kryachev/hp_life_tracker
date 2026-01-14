@@ -2902,9 +2902,7 @@ window.addEventListener("DOMContentLoaded", () => {
         window.attachDirectFormHandlers = attachDirectFormHandlers;
     }
 
-    // Делегирование событий на уровне document для надежности
-    console.log("[app.js] Setting up document-level click delegation");
-    document.addEventListener("click", function(e) {
+    // Manual time form
         // Проверяем, кликнули ли на кнопку создания активности
         if (e.target && (e.target.id === "create-activity-btn" || e.target.closest("#create-activity-btn"))) {
             const btn = e.target.id === "create-activity-btn" ? e.target : e.target.closest("#create-activity-btn");
