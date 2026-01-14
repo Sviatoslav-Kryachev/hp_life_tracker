@@ -511,8 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============= AUTH STATE =============
-let authToken = localStorage.getItem('token') || '';
-let currentUser = null;
+// authToken и currentUser определены в app_auth.js
 
 // Функция для получения актуального токена (всегда из localStorage)
 function getAuthToken() {
