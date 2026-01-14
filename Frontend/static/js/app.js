@@ -2873,28 +2873,37 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => attachFormHandlers(), 500);
     setTimeout(() => attachFormHandlers(), 2000);
     
-    // Дополнительная попытка прикрепить обработчики к самим формам после их загрузки
+    // Прикрепляем обработчики напрямую к кнопкам (более надежный способ)
     function attachDirectFormHandlers() {
-        const activityForm = document.getElementById("new-activity-form");
-        const rewardForm = document.getElementById("new-reward-form");
-        
-        if (activityForm && !activityForm.hasAttribute('data-handler-attached')) {
-            console.log("[Direct Handler] Attaching handler directly to activity form");
-            
-            // Обработчик на форму
-            activityForm.addEventListener("submit", async function(e) {
-                console.log("[Direct Handler] Activity form submit (direct)");
+        // Обработчик для кнопки создания активности
+        const activityBtn = document.getElementById("create-activity-btn");
+        if (activityBtn && !activityBtn.hasAttribute('data-handler-attached')) {
+            console.log("[Direct Handler] Attaching handler to activity button");
+            activityBtn.addEventListener("click", async function(e) {
+                console.log("[Direct Handler] Activity button clicked");
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
+                
+                // Предотвращаем отправку формы
+                const form = activityBtn.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        return false;
+                    }, true);
+                }
+                
                 try {
                     if (typeof createActivity === 'function') {
+                        console.log("[Direct Handler] Calling createActivity()");
                         await createActivity();
                     } else if (typeof window.createActivity === 'function') {
+                        console.log("[Direct Handler] Calling window.createActivity()");
                         await window.createActivity();
                     } else {
                         console.error("[Direct Handler] createActivity not found");
-                        alert("Функция createActivity не найдена!");
+                        alert("Функция createActivity не найдена! Проверьте консоль.");
                     }
                 } catch (error) {
                     console.error("[Direct Handler] Error:", error);
@@ -2902,54 +2911,38 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
                 return false;
             }, true);
-            
-            // Также прикрепляем обработчик на кнопку submit напрямую
-            const submitBtn = activityForm.querySelector('button[type="submit"]');
-            if (submitBtn && !submitBtn.hasAttribute('data-handler-attached')) {
-                console.log("[Direct Handler] Attaching handler to activity submit button");
-                submitBtn.addEventListener("click", async function(e) {
-                    console.log("[Direct Handler] Activity button clicked");
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    try {
-                        if (typeof createActivity === 'function') {
-                            await createActivity();
-                        } else if (typeof window.createActivity === 'function') {
-                            await window.createActivity();
-                        } else {
-                            console.error("[Direct Handler] createActivity not found");
-                            alert("Функция createActivity не найдена!");
-                        }
-                    } catch (error) {
-                        console.error("[Direct Handler] Error:", error);
-                        alert("Ошибка: " + error.message);
-                    }
-                    return false;
-                }, true);
-                submitBtn.setAttribute('data-handler-attached', 'true');
-            }
-            
-            activityForm.setAttribute('data-handler-attached', 'true');
+            activityBtn.setAttribute('data-handler-attached', 'true');
         }
         
-        if (rewardForm && !rewardForm.hasAttribute('data-handler-attached')) {
-            console.log("[Direct Handler] Attaching handler directly to reward form");
-            
-            // Обработчик на форму
-            rewardForm.addEventListener("submit", async function(e) {
-                console.log("[Direct Handler] Reward form submit (direct)");
+        // Обработчик для кнопки создания награды
+        const rewardBtn = document.getElementById("create-reward-btn");
+        if (rewardBtn && !rewardBtn.hasAttribute('data-handler-attached')) {
+            console.log("[Direct Handler] Attaching handler to reward button");
+            rewardBtn.addEventListener("click", async function(e) {
+                console.log("[Direct Handler] Reward button clicked");
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
+                
+                // Предотвращаем отправку формы
+                const form = rewardBtn.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        return false;
+                    }, true);
+                }
+                
                 try {
                     if (typeof createReward === 'function') {
+                        console.log("[Direct Handler] Calling createReward()");
                         await createReward();
                     } else if (typeof window.createReward === 'function') {
+                        console.log("[Direct Handler] Calling window.createReward()");
                         await window.createReward();
                     } else {
                         console.error("[Direct Handler] createReward not found");
-                        alert("Функция createReward не найдена!");
+                        alert("Функция createReward не найдена! Проверьте консоль.");
                     }
                 } catch (error) {
                     console.error("[Direct Handler] Error:", error);
@@ -2957,35 +2950,33 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
                 return false;
             }, true);
-            
-            // Также прикрепляем обработчик на кнопку submit напрямую
-            const submitBtn = rewardForm.querySelector('button[type="submit"]');
-            if (submitBtn && !submitBtn.hasAttribute('data-handler-attached')) {
-                console.log("[Direct Handler] Attaching handler to reward submit button");
-                submitBtn.addEventListener("click", async function(e) {
-                    console.log("[Direct Handler] Reward button clicked");
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    try {
-                        if (typeof createReward === 'function') {
-                            await createReward();
-                        } else if (typeof window.createReward === 'function') {
-                            await window.createReward();
-                        } else {
-                            console.error("[Direct Handler] createReward not found");
-                            alert("Функция createReward не найдена!");
-                        }
-                    } catch (error) {
-                        console.error("[Direct Handler] Error:", error);
-                        alert("Ошибка: " + error.message);
-                    }
-                    return false;
-                }, true);
-                submitBtn.setAttribute('data-handler-attached', 'true');
-            }
-            
-            rewardForm.setAttribute('data-handler-attached', 'true');
+            rewardBtn.setAttribute('data-handler-attached', 'true');
+        }
+        
+        // Также прикрепляем обработчики к формам для дополнительной защиты
+        const activityForm = document.getElementById("new-activity-form");
+        const rewardForm = document.getElementById("new-reward-form");
+        
+        if (activityForm && !activityForm.hasAttribute('data-form-handler-attached')) {
+            activityForm.addEventListener("submit", function(e) {
+                console.log("[Form Handler] Activity form submit prevented");
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }, true);
+            activityForm.setAttribute('data-form-handler-attached', 'true');
+        }
+        
+        if (rewardForm && !rewardForm.hasAttribute('data-form-handler-attached')) {
+            rewardForm.addEventListener("submit", function(e) {
+                console.log("[Form Handler] Reward form submit prevented");
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }, true);
+            rewardForm.setAttribute('data-form-handler-attached', 'true');
         }
     }
     
