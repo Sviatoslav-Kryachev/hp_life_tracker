@@ -511,12 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============= AUTH STATE =============
-// authToken и currentUser определены в app_auth.js
-
-// Функция для получения актуального токена (всегда из localStorage)
-function getAuthToken() {
-    return localStorage.getItem('token') || authToken || '';
-}
+// authToken, currentUser и getAuthToken() определены в app_auth.js
 
 // ============= APP STATE =============
 const activeTimers = new Map();
