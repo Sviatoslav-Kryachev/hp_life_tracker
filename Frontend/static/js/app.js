@@ -2903,64 +2903,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Manual time form
-        // Проверяем, кликнули ли на кнопку создания активности
-        if (e.target && (e.target.id === "create-activity-btn" || e.target.closest("#create-activity-btn"))) {
-            const btn = e.target.id === "create-activity-btn" ? e.target : e.target.closest("#create-activity-btn");
-            console.log("[Document Click Handler] Activity button clicked via delegation!", btn);
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            
-            if (typeof window.createActivity === 'function') {
-                console.log("[Document Click Handler] Calling window.createActivity()");
-                window.createActivity().catch(err => {
-                    console.error("[Document Click Handler] Error:", err);
-                    alert("Ошибка: " + err.message);
-                });
-            } else if (typeof createActivity === 'function') {
-                console.log("[Document Click Handler] Calling createActivity()");
-                createActivity().catch(err => {
-                    console.error("[Document Click Handler] Error:", err);
-                    alert("Ошибка: " + err.message);
-                });
-            } else {
-                console.error("[Document Click Handler] createActivity not found!");
-                console.error("[Document Click Handler] Available functions:", Object.keys(window).filter(k => k.includes('Activity')));
-                alert("Функция createActivity не найдена! Проверьте консоль.");
-            }
-            return false;
-        }
-        
-        // Проверяем, кликнули ли на кнопку создания награды
-        if (e.target && (e.target.id === "create-reward-btn" || e.target.closest("#create-reward-btn"))) {
-            const btn = e.target.id === "create-reward-btn" ? e.target : e.target.closest("#create-reward-btn");
-            console.log("[Document Click Handler] Reward button clicked via delegation!", btn);
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            
-            if (typeof window.createReward === 'function') {
-                console.log("[Document Click Handler] Calling window.createReward()");
-                window.createReward().catch(err => {
-                    console.error("[Document Click Handler] Error:", err);
-                    alert("Ошибка: " + err.message);
-                });
-            } else if (typeof createReward === 'function') {
-                console.log("[Document Click Handler] Calling createReward()");
-                createReward().catch(err => {
-                    console.error("[Document Click Handler] Error:", err);
-                    alert("Ошибка: " + err.message);
-                });
-            } else {
-                console.error("[Document Click Handler] createReward not found!");
-                console.error("[Document Click Handler] Available functions:", Object.keys(window).filter(k => k.includes('Reward')));
-                alert("Функция createReward не найдена! Проверьте консоль.");
-            }
-            return false;
-        }
-    }, true); // Используем capture phase
-
-    // Manual time form
     const manualForm = document.getElementById("manual-time-form");
     if (manualForm) {
         manualForm.addEventListener("submit", async (e) => {
