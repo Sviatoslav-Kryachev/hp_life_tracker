@@ -2877,10 +2877,11 @@ window.addEventListener("DOMContentLoaded", () => {
     function attachDirectFormHandlers() {
         // Обработчик для кнопки создания активности
         const activityBtn = document.getElementById("create-activity-btn");
+        console.log("[attachDirectFormHandlers] Looking for activity button:", !!activityBtn);
         if (activityBtn && !activityBtn.hasAttribute('data-handler-attached')) {
             console.log("[Direct Handler] Attaching handler to activity button");
             activityBtn.addEventListener("click", async function(e) {
-                console.log("[Direct Handler] Activity button clicked");
+                console.log("[Direct Handler] Activity button clicked!");
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -2889,29 +2890,43 @@ window.addEventListener("DOMContentLoaded", () => {
                 const form = activityBtn.closest('form');
                 if (form) {
                     form.addEventListener('submit', function(e) {
+                        console.log("[Direct Handler] Form submit prevented");
                         e.preventDefault();
                         return false;
                     }, true);
                 }
                 
                 try {
+                    console.log("[Direct Handler] Checking createActivity function...");
+                    console.log("[Direct Handler] typeof createActivity:", typeof createActivity);
+                    console.log("[Direct Handler] typeof window.createActivity:", typeof window.createActivity);
+                    
                     if (typeof createActivity === 'function') {
                         console.log("[Direct Handler] Calling createActivity()");
                         await createActivity();
+                        console.log("[Direct Handler] createActivity() completed");
                     } else if (typeof window.createActivity === 'function') {
                         console.log("[Direct Handler] Calling window.createActivity()");
                         await window.createActivity();
+                        console.log("[Direct Handler] window.createActivity() completed");
                     } else {
-                        console.error("[Direct Handler] createActivity not found");
+                        console.error("[Direct Handler] createActivity not found anywhere!");
+                        console.error("[Direct Handler] Available window functions:", Object.keys(window).filter(k => k.includes('Activity')));
                         alert("Функция createActivity не найдена! Проверьте консоль.");
                     }
                 } catch (error) {
                     console.error("[Direct Handler] Error:", error);
+                    console.error("[Direct Handler] Error stack:", error.stack);
                     alert("Ошибка: " + error.message);
                 }
                 return false;
             }, true);
             activityBtn.setAttribute('data-handler-attached', 'true');
+            console.log("[Direct Handler] Activity button handler attached successfully");
+        } else if (activityBtn) {
+            console.log("[Direct Handler] Activity button handler already attached");
+        } else {
+            console.warn("[Direct Handler] Activity button not found!");
         }
         
         // Обработчик для кнопки создания награды

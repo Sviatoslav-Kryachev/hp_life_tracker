@@ -765,12 +765,17 @@ async function stopTimer(activityId, button) {
 
 // ============= CREATE ACTIVITY =============
 async function createActivity() {
+    console.log("[createActivity] Function called");
     if (!activityNameInput) {
         activityNameInput = document.getElementById("activity-name");
     }
     if (!xpPerHourInput) {
         xpPerHourInput = document.getElementById("xp-per-hour");
     }
+    console.log("[createActivity] Inputs found:", {
+        activityNameInput: !!activityNameInput,
+        xpPerHourInput: !!xpPerHourInput
+    });
 
     const name = activityNameInput ? activityNameInput.value.trim() : '';
     const categoryEl = document.getElementById("activity-category");
