@@ -2800,10 +2800,10 @@ window.addEventListener("DOMContentLoaded", () => {
         
         // Обработчик для формы активности через делегирование
         appSection.addEventListener("submit", async function(e) {
-            console.log("[Form Handler] Submit event caught, target:", e.target?.id);
+            console.log("[Form Handler] Submit event caught, target:", e.target && e.target.id);
             if (e.target && e.target.id === "new-activity-form") {
                 console.log("[Form Handler] Activity form submit intercepted");
-                e.preventDefault();
+            e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
                 try {
@@ -2828,7 +2828,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // Обработчик для формы награды через делегирование
         appSection.addEventListener("submit", async function(e) {
-            console.log("[Form Handler] Submit event caught, target:", e.target?.id);
+            console.log("[Form Handler] Submit event caught, target:", e.target && e.target.id);
             if (e.target && e.target.id === "new-reward-form") {
                 console.log("[Form Handler] Reward form submit intercepted");
                 e.preventDefault();
@@ -3008,7 +3008,7 @@ window.addEventListener("DOMContentLoaded", () => {
             updateActivityXPInputs(); // Инициализация при загрузке
         }
     }
-    
+
     // Пытаемся инициализировать сразу, если элемент уже есть
     initActivityUnitTypeHandler();
     
