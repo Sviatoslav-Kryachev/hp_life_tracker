@@ -53,7 +53,7 @@ class ActivityService:
         return result
     
     @staticmethod
-    def create_activity(db: Session, user_id: int, activity_data: Dict[str, Any]) -> Activity:
+    def create_activity(db: Session, user_id: int, activity_data: Dict[str, Any]) -> Dict[str, Any]:
         """Создать новую активность"""
         # Устанавливаем category по умолчанию если не передано
         if 'category' not in activity_data or not activity_data.get('category'):
@@ -74,10 +74,26 @@ class ActivityService:
         db.add(activity)
         db.commit()
         db.refresh(activity)
-        return activity
+        
+        # Возвращаем в том же формате, что и get_activities
+        created_at = None
+        if hasattr(activity, 'created_at') and activity.created_at:
+            created_at = activity.created_at.isoformat() if hasattr(activity.created_at, 'isoformat') else str(activity.created_at)
+        
+        return {
+            "id": activity.id,
+            "name": activity.name,
+            "category": activity.category or "general",
+            "xp_per_hour": activity.xp_per_hour or 60.0,
+            "unit_type": activity.unit_type if hasattr(activity, 'unit_type') and activity.unit_type else "time",
+            "xp_per_unit": activity.xp_per_unit if hasattr(activity, 'xp_per_unit') else None,
+            "display_order": getattr(activity, 'display_order', 0) or 0,
+            "color": getattr(activity, 'color', "#3498db"),
+            "created_at": created_at
+        }
     
     @staticmethod
-    def update_activity(db: Session, user_id: int, activity_id: int, activity_data: Dict[str, Any]) -> Activity:
+    def update_activity(db: Session, user_id: int, activity_id: int, activity_data: Dict[str, Any]) -> Dict[str, Any]:
         """Обновить активность"""
         activity = db.query(Activity).filter(
             Activity.id == activity_id,
@@ -97,7 +113,23 @@ class ActivityService:
         
         db.commit()
         db.refresh(activity)
-        return activity
+        
+        # Возвращаем в том же формате, что и get_activities
+        created_at = None
+        if hasattr(activity, 'created_at') and activity.created_at:
+            created_at = activity.created_at.isoformat() if hasattr(activity.created_at, 'isoformat') else str(activity.created_at)
+        
+        return {
+            "id": activity.id,
+            "name": activity.name,
+            "category": activity.category or "general",
+            "xp_per_hour": activity.xp_per_hour or 60.0,
+            "unit_type": activity.unit_type if hasattr(activity, 'unit_type') and activity.unit_type else "time",
+            "xp_per_unit": activity.xp_per_unit if hasattr(activity, 'xp_per_unit') else None,
+            "display_order": getattr(activity, 'display_order', 0) or 0,
+            "color": getattr(activity, 'color', "#3498db"),
+            "created_at": created_at
+        }
     
     @staticmethod
     def delete_activity(db: Session, user_id: int, activity_id: int) -> Dict[str, str]:

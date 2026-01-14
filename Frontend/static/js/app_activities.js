@@ -834,15 +834,18 @@ async function createActivity() {
         if (xpPerUnitInput) xpPerUnitInput.value = "1";
         if (unitTypeEl) unitTypeEl.value = "time";
         if (typeof window.updateActivityXPInputs === 'function') window.updateActivityXPInputs();
-        allActivities.push(created);
-        updateActivitiesCategoryFilter();
-        applyActivitiesFilters();
+        
+        // Перезагружаем активности с сервера для обеспечения согласованности
+        await loadActivities();
+        
+        // Находим только что созданную активность для её подсветки
+        const createdActivityId = created.id;
         
         // Если новая активность попала в скрытый список (больше 5 активностей), открываем аккордеон
         getActivitiesElements();
         const activitiesContainer = document.getElementById('activities-list-container');
         if (allActivities.length > 5 && activitiesAccordionBtn && activitiesListHidden && activitiesContainer) {
-            const newActivityElement = document.querySelector(`[data-activity-id="${created.id}"]`);
+            const newActivityElement = document.querySelector(`[data-activity-id="${createdActivityId}"]`);
             const newActivityInHidden = newActivityElement && activitiesListHidden.contains(newActivityElement);
             
             if (newActivityInHidden) {
