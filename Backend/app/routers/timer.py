@@ -81,8 +81,8 @@ async def stop_timer(
     db.commit()
     
     # Обновляем streak после завершения активности
-    from app.routers.streak import update_streak as update_streak_func
-    streak_result = update_streak_func(db, current_user.id)
+    from app.services.streak_service import StreakService
+    streak_result = StreakService.update_streak(db, current_user.id)
     
     # Обновляем прогресс целей
     from app.routers.goals import update_goal_progress

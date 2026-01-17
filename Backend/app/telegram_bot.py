@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.core.database import SessionLocal
 from app.models.base import User, Activity, XPWallet, ActivityLog, TimerLog
-from app.routers.streak import update_streak
+from app.services.streak_service import StreakService
 
 # Настройка логирования
 logging.basicConfig(
@@ -24,9 +24,12 @@ try:
     from config import TELEGRAM_BOT_TOKEN as CONFIG_TOKEN
     DEFAULT_TOKEN = CONFIG_TOKEN
 except ImportError:
-    DEFAULT_TOKEN = "8351741227:AAEkDtvBaDe3HP_reSegjtaoiUfItqRhKJI"
+    DEFAULT_TOKEN = None  # Токен должен быть установлен через переменную окружения TELEGRAM_BOT_TOKEN
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", DEFAULT_TOKEN)
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or DEFAULT_TOKEN
+
+if not TELEGRAM_BOT_TOKEN:
+    logger.error("TELEGRAM_BOT_TOKEN не установлен! Установите переменную окружения TELEGRAM_BOT_TOKEN.")
 
 
 
@@ -216,7 +219,7 @@ async def add_time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 wallet.level += 1
         
         # Обновляем streak
-        streak_result = update_streak(db, user.id)
+        streak_result = StreakService.update_streak(db, user.id)
         
         db.commit()
         
@@ -621,7 +624,7 @@ async def add_time_from_button(query, user, activity_id, minutes):
                 wallet.level += 1
         
         # Обновляем streak
-        streak_result = update_streak(db, user.id)
+        streak_result = StreakService.update_streak(db, user.id)
         
         db.commit()
         
@@ -716,7 +719,7 @@ async def handle_custom_minutes(update: Update, context: ContextTypes.DEFAULT_TY
                 if wallet.total_earned >= wallet.level * 1000:
                     wallet.level += 1
             
-            streak_result = update_streak(db, user.id)
+            streak_result = StreakService.update_streak(db, user.id)
             db.commit()
             
             bonus_text = ""
