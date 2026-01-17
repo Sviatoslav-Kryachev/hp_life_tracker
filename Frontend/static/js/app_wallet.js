@@ -384,6 +384,14 @@ async function loadCalendar(period = currentCalendarPeriod) {
                 </div>
             `;
         }
+        
+        // Синхронизируем высоту виджетов после загрузки календаря
+        // Используем requestAnimationFrame и небольшой таймаут для гарантии, что DOM обновился
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                syncWidgetsHeight();
+            }, 50);
+        });
     } catch (e) {
         console.error("Error loading calendar", e);
     }

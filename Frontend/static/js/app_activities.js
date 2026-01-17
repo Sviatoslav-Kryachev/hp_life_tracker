@@ -83,28 +83,37 @@ async function loadActivities() {
         // Обновляем фильтр категорий
         updateActivitiesCategoryFilter();
 
-        // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
-        applyActivitiesFilters();
-        
         // Сразу после загрузки активностей загружаем активные таймеры
-        // Это нужно сделать после applyActivitiesFilters, чтобы карточки активностей уже были созданы
+        // Затем применяем фильтры, чтобы показать правильное состояние таймеров
         if (typeof loadActiveTimers === 'function') {
             loadActiveTimers().then(() => {
-                // После загрузки таймеров обновляем отображение активностей
-                // чтобы показать запущенные таймеры
+                // После загрузки таймеров применяем фильтры
                 applyActivitiesFilters();
             }).catch(err => {
                 console.error("Error loading active timers:", err);
+                // Если загрузка таймеров не удалась, все равно применяем фильтры
+                applyActivitiesFilters();
             });
         } else if (typeof window.loadActiveTimers === 'function') {
             window.loadActiveTimers().then(() => {
-                // После загрузки таймеров обновляем отображение активностей
+                // После загрузки таймеров применяем фильтры
                 if (typeof window.applyActivitiesFilters === 'function') {
                     window.applyActivitiesFilters();
+                } else if (typeof applyActivitiesFilters === 'function') {
+                    applyActivitiesFilters();
                 }
             }).catch(err => {
                 console.error("Error loading active timers:", err);
+                // Если загрузка таймеров не удалась, все равно применяем фильтры
+                if (typeof window.applyActivitiesFilters === 'function') {
+                    window.applyActivitiesFilters();
+                } else if (typeof applyActivitiesFilters === 'function') {
+                    applyActivitiesFilters();
+                }
             });
+        } else {
+            // Если loadActiveTimers недоступен, просто применяем фильтры
+            applyActivitiesFilters();
         }
     } catch (e) {
         console.error("Error loading activities", e);
@@ -321,8 +330,9 @@ function applyActivitiesFilters() {
         }
     }
 
-    // Загружаем активные таймеры
-    loadActiveTimers();
+    // НЕ вызываем loadActiveTimers() здесь, так как это уже делается после loadActivities()
+    // и может вызвать бесконечный цикл или частые перерисовки
+    // loadActiveTimers() должен вызываться только после loadActivities() или при явных действиях пользователя
 }
 
 // Инициализация фильтров и аккордеона для активностей
@@ -586,13 +596,12 @@ async function loadActiveTimers() {
             updateTimerDisplay(timerData.activity_id, startTime, activity);
         });
         
-        // Всегда обновляем отображение всех активностей после загрузки таймеров
-        // Это нужно чтобы показать правильное состояние таймеров в карточках
-        if (typeof applyActivitiesFilters === 'function') {
-            applyActivitiesFilters();
-        } else if (typeof window.applyActivitiesFilters === 'function') {
-            window.applyActivitiesFilters();
-        }
+        // Обновляем только отображение таймеров в существующих карточках
+        // НЕ вызываем applyActivitiesFilters(), так как это может вызвать бесконечный цикл
+        // applyActivitiesFilters() уже вызывает loadActiveTimers() после рендера
+        activeTimers.forEach((timerInfo, activityId) => {
+            updateTimerDisplay(activityId, timerInfo.startTime, timerInfo.activity);
+        });
     } catch (e) {
         console.error("Error loading active timers:", e);
     }
