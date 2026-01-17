@@ -1399,9 +1399,23 @@ async function addManualTime() {
 
         const data = await res.json();
         closeManualTimeModal();
+        
+        // Обновляем все данные после добавления времени/количества
         if (typeof window.loadWallet === 'function') await window.loadWallet();
+        if (typeof window.loadTodayStats === 'function') await window.loadTodayStats();
         if (typeof window.loadHistory === 'function') await window.loadHistory();
         if (typeof window.loadGoals === 'function') await window.loadGoals();
+        if (typeof window.loadStreak === 'function') await window.loadStreak();
+        if (typeof window.loadCategoryStats === 'function') await window.loadCategoryStats();
+        
+        // Обновляем календарь текущего периода
+        const currentPeriod = typeof window.currentCalendarPeriod !== 'undefined' ? window.currentCalendarPeriod : 'week';
+        if (typeof window.loadCalendar === 'function') {
+            await window.loadCalendar(currentPeriod);
+        } else if (typeof window.loadWeekCalendar === 'function') {
+            await window.loadWeekCalendar();
+        }
+        
         if (unitType === 'quantity') {
             const quantity = Number(document.getElementById("manual-quantity").value);
             showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${quantity} ${t('units')}!`, "success");
