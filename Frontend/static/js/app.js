@@ -2393,9 +2393,19 @@ async function addManualTime() {
 
         const data = await res.json();
         closeManualTimeModal();
+        
+        // Обновляем все данные после добавления времени/количества
         await loadWallet();
+        await loadTodayStats();
         await loadHistory();
         await loadGoals(); // Обновляем цели для проверки достижений
+        await loadStreak();
+        await loadCategoryStats();
+        
+        // Обновляем календарь текущего периода
+        const currentPeriod = typeof currentCalendarPeriod !== 'undefined' ? currentCalendarPeriod : 'week';
+        await loadCalendar(currentPeriod);
+        
         if (unitType === 'quantity') {
             const quantity = Number(document.getElementById("manual-quantity").value);
             showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${quantity} ${t('units')}!`, "success");

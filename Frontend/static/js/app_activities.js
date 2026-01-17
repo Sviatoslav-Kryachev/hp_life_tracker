@@ -1161,9 +1161,11 @@ async function updateActivity() {
                     ? (updatedActivity.xp_per_unit || 1) + ' ' + t('xp_per_unit')
                     : (updatedActivity.xp_per_hour || 60) + ' ' + t('xp_per_hour');
             }
-        } else {
-            applyActivitiesFilters();
         }
+        
+        // Всегда применяем фильтры для обновления всех карточек активностей
+        // Это гарантирует, что изменения видны везде, даже если карточка не найдена напрямую
+        applyActivitiesFilters();
         
         closeEditModal();
         showActivityMessage(`✅ ${t('activity_updated')}`, "success");
