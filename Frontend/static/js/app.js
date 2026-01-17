@@ -2936,25 +2936,25 @@ window.addEventListener("DOMContentLoaded", () => {
 console.log("[app.js] Setting up document-level click delegation (global, outside DOMContentLoaded)");
 document.addEventListener("click", function(e) {
     // Проверяем, кликнули ли на кнопку создания активности
-    if (e.target && (e.target.id === "create-activity-btn" || e.target.closest("#create-activity-btn"))) {
-        const btn = e.target.id === "create-activity-btn" ? e.target : e.target.closest("#create-activity-btn");
-        // Проверяем, что кнопка находится в форме (избегаем обработки если элемент не в DOM)
-        if (!btn || !document.body.contains(btn)) return;
+    const activityBtn = e.target.id === "create-activity-btn" ? e.target : 
+                       (e.target.closest && e.target.closest("#create-activity-btn"));
+    
+    if (activityBtn) {
+        // Проверяем, что кнопка находится в DOM
+        if (!document.body.contains(activityBtn)) {
+            console.warn("[Document Click Handler] Activity button not in DOM");
+            return;
+        }
         
-        console.log("[Document Click Handler] Activity button clicked via delegation!", btn);
+        console.log("[Document Click Handler] Activity button clicked via delegation!", activityBtn);
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
         
         // Предотвращаем отправку формы
-        const form = btn.closest('form');
+        const form = activityBtn.closest('form');
         if (form && form.id === 'new-activity-form') {
-            const submitEvent = new Event('submit', { cancelable: true, bubbles: false });
-            form.dispatchEvent(submitEvent);
-            if (submitEvent.defaultPrevented) {
-                // Форма уже обработана, не обрабатываем дальше
-                return false;
-            }
+            // Форма уже предотвращена через preventDefault выше
         }
         
         if (typeof window.createActivity === 'function') {
@@ -2978,9 +2978,17 @@ document.addEventListener("click", function(e) {
     }
     
     // Проверяем, кликнули ли на кнопку создания награды
-    if (e.target && (e.target.id === "create-reward-btn" || e.target.closest("#create-reward-btn"))) {
-        const btn = e.target.id === "create-reward-btn" ? e.target : e.target.closest("#create-reward-btn");
-        console.log("[Document Click Handler] Reward button clicked via delegation!", btn);
+    const rewardBtn = e.target.id === "create-reward-btn" ? e.target : 
+                     (e.target.closest && e.target.closest("#create-reward-btn"));
+    
+    if (rewardBtn) {
+        // Проверяем, что кнопка находится в DOM
+        if (!document.body.contains(rewardBtn)) {
+            console.warn("[Document Click Handler] Reward button not in DOM");
+            return;
+        }
+        
+        console.log("[Document Click Handler] Reward button clicked via delegation!", rewardBtn);
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
