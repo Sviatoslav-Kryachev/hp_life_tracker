@@ -249,32 +249,75 @@ function applyActivitiesFilters() {
     }
 
     // Проверяем, открыт ли аккордеон (из localStorage или класса контейнера)
-    const isAccordionExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true' ||
-                                 (activitiesContainer && activitiesContainer.classList.contains('activities-expanded'));
+    const wasExpanded = localStorage.getItem('activitiesAccordionExpanded') === 'true';
+    const shouldShowAccordion = filtered.length > 4;
 
-    // Отрисовываем отфильтрованные активности
-    filtered.forEach((activity, index) => {
-        const card = renderActivityCard(activity);
-        if (isAccordionExpanded) {
-            // Если аккордеон открыт - все активности в hidden контейнер
-            activitiesListHidden.appendChild(card);
-        } else {
-            // Если аккордеон закрыт - первые 5 в visible, остальные в hidden
-            if (index < 5) {
-                activitiesListVisible.appendChild(card);
-            } else {
+    // Если аккордеон должен быть развернут или был развернут, все активности идут в hidden
+    // Иначе первые 4 в visible, остальные в hidden
+    if (wasExpanded && shouldShowAccordion && activitiesContainer) {
+        // Аккордеон развернут - все активности в hidden
+        filtered.forEach(activity => {
+            const card = renderActivityCard(activity);
+            if (card && activitiesListHidden) {
                 activitiesListHidden.appendChild(card);
             }
-        }
-    });
-
-    // Показываем/скрываем кнопку аккордеона
-    if (activitiesAccordionBtn) {
-        if (filtered.length > 5) {
+        });
+        
+        activitiesListHidden.classList.remove('hidden');
+        activitiesContainer.classList.add('activities-expanded');
+        
+        // Устанавливаем maxHeight после отрисовки
+        requestAnimationFrame(() => {
+            if (activitiesContainer && activitiesListHidden.children.length > 0) {
+                const firstCard = activitiesListHidden.children[0];
+                if (firstCard) {
+                    const cardHeight = firstCard.offsetHeight || 120; // fallback высота
+                    const gap = 16; // space-y-4 = 1rem = 16px
+                    const visibleCards = Math.min(4, activitiesListHidden.children.length);
+                    const calculatedHeight = (cardHeight * visibleCards) + (gap * (visibleCards - 1));
+                    activitiesContainer.style.maxHeight = calculatedHeight + 'px';
+                    activitiesContainer.style.overflowY = 'auto';
+                }
+            }
+        });
+        
+        if (activitiesAccordionBtn) {
             activitiesAccordionBtn.classList.remove('hidden');
-            updateActivitiesAccordionButton();
-        } else {
-            activitiesAccordionBtn.classList.add('hidden');
+            const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
+            const text = activitiesAccordionBtn.querySelector('.accordion-text');
+            const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
+            if (icon) icon.style.transform = 'rotate(180deg)';
+            if (text) text.textContent = t('hide_activities');
+        }
+    } else {
+        // Аккордеон закрыт - первые 4 в visible, остальные в hidden
+        filtered.forEach((activity, index) => {
+            const card = renderActivityCard(activity);
+            if (card) {
+                if (index < 4) {
+                    activitiesListVisible.appendChild(card);
+                } else {
+                    activitiesListHidden.appendChild(card);
+                }
+            }
+        });
+        
+        activitiesListHidden.classList.add('hidden');
+        activitiesContainer.classList.remove('activities-expanded');
+        activitiesContainer.style.maxHeight = '';
+        activitiesContainer.style.overflowY = '';
+        
+        if (activitiesAccordionBtn) {
+            if (shouldShowAccordion) {
+                activitiesAccordionBtn.classList.remove('hidden');
+                const icon = activitiesAccordionBtn.querySelector('.accordion-icon');
+                const text = activitiesAccordionBtn.querySelector('.accordion-text');
+                const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
+                if (icon) icon.style.transform = 'rotate(0deg)';
+                if (text) text.textContent = t('show_all_activities');
+            } else {
+                activitiesAccordionBtn.classList.add('hidden');
+            }
         }
     }
 
@@ -351,10 +394,12 @@ function toggleActivitiesAccordion() {
             if (activitiesContainer && activitiesListHidden.children.length > 0) {
                 const firstCard = activitiesListHidden.children[0];
                 if (firstCard) {
-                    const cardHeight = firstCard.offsetHeight;
+                    const cardHeight = firstCard.offsetHeight || 120; // fallback высота
                     const gap = 16; // space-y-4 = 1rem = 16px
-                    const calculatedHeight = (cardHeight * 4) + (gap * 3);
+                    const visibleCards = Math.min(4, activitiesListHidden.children.length);
+                    const calculatedHeight = (cardHeight * visibleCards) + (gap * (visibleCards - 1));
                     activitiesContainer.style.maxHeight = calculatedHeight + 'px';
+                    activitiesContainer.style.overflowY = 'auto';
                 }
                 activitiesContainer.scrollTop = 0;
             }
@@ -375,7 +420,7 @@ function toggleActivitiesAccordion() {
         activitiesListHidden.innerHTML = "";
 
         allCards.forEach((card, index) => {
-            if (index < 5) {
+            if (index < 4) {
                 activitiesListVisible.appendChild(card);
             } else {
                 activitiesListHidden.appendChild(card);
@@ -384,6 +429,7 @@ function toggleActivitiesAccordion() {
 
         activitiesContainer.classList.remove('activities-expanded');
         activitiesContainer.style.maxHeight = '';
+        activitiesContainer.style.overflowY = '';
         activitiesListHidden.classList.add('hidden');
 
         icon.style.transform = 'rotate(0deg)';
@@ -421,10 +467,12 @@ function updateActivitiesAccordionButton() {
             if (activitiesContainer && activitiesListHidden.children.length > 0) {
                 const firstCard = activitiesListHidden.children[0];
                 if (firstCard) {
-                    const cardHeight = firstCard.offsetHeight;
+                    const cardHeight = firstCard.offsetHeight || 120; // fallback высота
                     const gap = 16;
-                    const calculatedHeight = (cardHeight * 4) + (gap * 3);
+                    const visibleCards = Math.min(4, activitiesListHidden.children.length);
+                    const calculatedHeight = (cardHeight * visibleCards) + (gap * (visibleCards - 1));
                     activitiesContainer.style.maxHeight = calculatedHeight + 'px';
+                    activitiesContainer.style.overflowY = 'auto';
                 }
                 activitiesContainer.scrollTop = 0;
             }
@@ -443,7 +491,7 @@ function updateActivitiesAccordionButton() {
         activitiesListHidden.innerHTML = "";
 
         allCards.forEach((card, index) => {
-            if (index < 5) {
+            if (index < 4) {
                 activitiesListVisible.appendChild(card);
             } else {
                 activitiesListHidden.appendChild(card);
@@ -452,6 +500,7 @@ function updateActivitiesAccordionButton() {
 
         activitiesContainer.classList.remove('activities-expanded');
         activitiesContainer.style.maxHeight = '';
+        activitiesContainer.style.overflowY = '';
         activitiesListHidden.classList.add('hidden');
 
         icon.style.transform = 'rotate(0deg)';
@@ -903,7 +952,7 @@ async function createActivity() {
         // Если новая активность попала в скрытый список (больше 5 активностей), открываем аккордеон
         getActivitiesElements();
         const activitiesContainer = document.getElementById('activities-list-container');
-        if (allActivities.length > 5 && activitiesAccordionBtn && activitiesListHidden && activitiesContainer) {
+        if (allActivities.length > 4 && activitiesAccordionBtn && activitiesListHidden && activitiesContainer) {
             const newActivityElement = document.querySelector(`[data-activity-id="${createdActivityId}"]`);
             const newActivityInHidden = newActivityElement && activitiesListHidden.contains(newActivityElement);
             
