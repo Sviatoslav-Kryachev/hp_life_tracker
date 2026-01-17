@@ -2895,11 +2895,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Manual time form
     const manualForm = document.getElementById("manual-time-form");
-    if (manualForm) {
+    if (manualForm && !manualForm.hasAttribute('data-submit-handler-attached')) {
         manualForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            await addManualTime();
-        });
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Вызываем функцию из app_activities.js если доступна, иначе из app.js
+            if (typeof window.addManualTime === 'function') {
+                await window.addManualTime();
+            } else if (typeof addManualTime === 'function') {
+                await addManualTime();
+            } else {
+                console.error("addManualTime function not found!");
+                alert("Ошибка: функция добавления времени не найдена");
+            }
+            return false;
+        }, true); // Используем capture phase для надежности
+        manualForm.setAttribute('data-submit-handler-attached', 'true');
 
         document.getElementById("manual-minutes").addEventListener("input", () => {
             const activityId = document.getElementById("manual-activity-select").value;
