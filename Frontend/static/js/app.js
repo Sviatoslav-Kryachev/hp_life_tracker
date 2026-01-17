@@ -2634,14 +2634,17 @@ window.addEventListener("DOMContentLoaded", () => {
     function attachFormHandlers() {
         const appSection = document.getElementById("app-section");
         if (!appSection) {
-            console.warn("app-section not found, will retry form handler attachment");
+            console.warn("[attachFormHandlers] app-section not found, will retry form handler attachment");
             return false;
         }
         
         // Проверяем, не прикреплены ли уже обработчики
         if (appSection.hasAttribute('data-form-handlers-attached')) {
+            console.log("[attachFormHandlers] Form handlers already attached, skipping");
             return true;
         }
+        
+        console.log("[attachFormHandlers] Attaching form handlers to app-section");
         
         // Обработчик для формы активности через делегирование
         appSection.addEventListener("submit", async function(e) {
@@ -2711,16 +2714,19 @@ window.addEventListener("DOMContentLoaded", () => {
         return true;
     }
     
-    // Пытаемся прикрепить обработчики сразу
-    attachFormHandlers();
-    
-    // Также пытаемся прикрепить после задержки (на случай динамической загрузки)
-    setTimeout(() => attachFormHandlers(), 500);
-    setTimeout(() => attachFormHandlers(), 2000);
+    // НЕ прикрепляем обработчики сразу - они будут прикреплены после загрузки компонентов
+    // через loadAppComponents() -> initFormHandlers()
     
     // Прикрепляем обработчики напрямую к кнопкам (более надежный способ)
     function attachDirectFormHandlers() {
         console.log("[attachDirectFormHandlers] Function called");
+        
+        // Проверяем, что app-section загружен
+        const appSection = document.getElementById("app-section");
+        if (!appSection) {
+            console.warn("[attachDirectFormHandlers] app-section not found, will retry");
+            return false;
+        }
         
         // Обработчик для кнопки создания активности
         const activityBtn = document.getElementById("create-activity-btn");
@@ -2735,47 +2741,27 @@ window.addEventListener("DOMContentLoaded", () => {
         
         if (activityBtn && !activityBtn.hasAttribute('data-handler-attached')) {
             console.log("[Direct Handler] Attaching handler to activity button");
+            
+            // Предотвращаем отправку формы через submit
+            const activityForm = activityBtn.closest('form');
+            if (activityForm && activityForm.id === 'new-activity-form' && !activityForm.hasAttribute('data-submit-prevented')) {
+                activityForm.addEventListener("submit", function(e) {
+                    console.log("[Direct Handler] Activity form submit prevented");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, true);
+                activityForm.setAttribute('data-submit-prevented', 'true');
+            }
+            
+            // Добавляем обработчик клика на кнопку (но document-level delegation должен работать)
+            // Это запасной вариант на случай, если document-level не сработает
             activityBtn.addEventListener("click", async function(e) {
-                console.log("[Direct Handler] Activity button clicked!");
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Предотвращаем отправку формы
-                const form = activityBtn.closest('form');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        console.log("[Direct Handler] Form submit prevented");
-                        e.preventDefault();
-                        return false;
-                    }, true);
-                }
-                
-                try {
-                    console.log("[Direct Handler] Checking createActivity function...");
-                    console.log("[Direct Handler] typeof createActivity:", typeof createActivity);
-                    console.log("[Direct Handler] typeof window.createActivity:", typeof window.createActivity);
-                    
-                    if (typeof createActivity === 'function') {
-                        console.log("[Direct Handler] Calling createActivity()");
-                        await createActivity();
-                        console.log("[Direct Handler] createActivity() completed");
-                    } else if (typeof window.createActivity === 'function') {
-                        console.log("[Direct Handler] Calling window.createActivity()");
-                        await window.createActivity();
-                        console.log("[Direct Handler] window.createActivity() completed");
-                    } else {
-                        console.error("[Direct Handler] createActivity not found anywhere!");
-                        console.error("[Direct Handler] Available window functions:", Object.keys(window).filter(k => k.includes('Activity')));
-                        alert("Функция createActivity не найдена! Проверьте консоль.");
-                    }
-                } catch (error) {
-                    console.error("[Direct Handler] Error:", error);
-                    console.error("[Direct Handler] Error stack:", error.stack);
-                    alert("Ошибка: " + error.message);
-                }
-                return false;
-            }, true);
+                console.log("[Direct Handler] Activity button clicked (direct handler)!");
+                // Не вызываем preventDefault здесь, так как это может конфликтовать с document-level
+                // и document-level уже должен обработать это
+            }, false); // Используем bubbling, чтобы document-level сработал первым
+            
             activityBtn.setAttribute('data-handler-attached', 'true');
             console.log("[Direct Handler] Activity button handler attached successfully");
         } else if (activityBtn) {
@@ -2797,39 +2783,33 @@ window.addEventListener("DOMContentLoaded", () => {
         
         if (rewardBtn && !rewardBtn.hasAttribute('data-handler-attached')) {
             console.log("[Direct Handler] Attaching handler to reward button");
+            
+            // Предотвращаем отправку формы через submit
+            const rewardForm = rewardBtn.closest('form');
+            if (rewardForm && rewardForm.id === 'new-reward-form' && !rewardForm.hasAttribute('data-submit-prevented')) {
+                rewardForm.addEventListener("submit", function(e) {
+                    console.log("[Direct Handler] Reward form submit prevented");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, true);
+                rewardForm.setAttribute('data-submit-prevented', 'true');
+            }
+            
+            // Добавляем обработчик клика на кнопку (но document-level delegation должен работать)
+            // Это запасной вариант на случай, если document-level не сработает
             rewardBtn.addEventListener("click", async function(e) {
-                console.log("[Direct Handler] Reward button clicked");
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Предотвращаем отправку формы
-                const form = rewardBtn.closest('form');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        return false;
-                    }, true);
-                }
-                
-                try {
-                    if (typeof createReward === 'function') {
-                        console.log("[Direct Handler] Calling createReward()");
-                        await createReward();
-                    } else if (typeof window.createReward === 'function') {
-                        console.log("[Direct Handler] Calling window.createReward()");
-                        await window.createReward();
-                    } else {
-                        console.error("[Direct Handler] createReward not found");
-                        alert("Функция createReward не найдена! Проверьте консоль.");
-                    }
-                } catch (error) {
-                    console.error("[Direct Handler] Error:", error);
-                    alert("Ошибка: " + error.message);
-                }
-                return false;
-            }, true);
+                console.log("[Direct Handler] Reward button clicked (direct handler)!");
+                // Не вызываем preventDefault здесь, так как это может конфликтовать с document-level
+                // и document-level уже должен обработать это
+            }, false); // Используем bubbling, чтобы document-level сработал первым
+            
             rewardBtn.setAttribute('data-handler-attached', 'true');
+            console.log("[Direct Handler] Reward button handler attached successfully");
+        } else if (rewardBtn) {
+            console.log("[Direct Handler] Reward button handler already attached");
+        } else {
+            console.warn("[Direct Handler] Reward button not found!");
         }
         
         // Также прикрепляем обработчики к формам для дополнительной защиты
@@ -2859,12 +2839,8 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    // Пытаемся прикрепить обработчики напрямую к формам
-    setTimeout(attachDirectFormHandlers, 500);
-    setTimeout(attachDirectFormHandlers, 1000);
-    setTimeout(attachDirectFormHandlers, 2000);
-    setTimeout(attachDirectFormHandlers, 3000);
-    setTimeout(attachDirectFormHandlers, 5000);
+    // НЕ прикрепляем обработчики напрямую сразу - они будут прикреплены после загрузки компонентов
+    // через loadAppComponents() -> initFormHandlers() -> attachDirectFormHandlers()
 
     // Инициализация обработчика изменения типа единицы измерения (после загрузки компонентов)
     function initActivityUnitTypeHandler() {
@@ -2962,10 +2938,24 @@ document.addEventListener("click", function(e) {
     // Проверяем, кликнули ли на кнопку создания активности
     if (e.target && (e.target.id === "create-activity-btn" || e.target.closest("#create-activity-btn"))) {
         const btn = e.target.id === "create-activity-btn" ? e.target : e.target.closest("#create-activity-btn");
+        // Проверяем, что кнопка находится в форме (избегаем обработки если элемент не в DOM)
+        if (!btn || !document.body.contains(btn)) return;
+        
         console.log("[Document Click Handler] Activity button clicked via delegation!", btn);
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+        
+        // Предотвращаем отправку формы
+        const form = btn.closest('form');
+        if (form && form.id === 'new-activity-form') {
+            const submitEvent = new Event('submit', { cancelable: true, bubbles: false });
+            form.dispatchEvent(submitEvent);
+            if (submitEvent.defaultPrevented) {
+                // Форма уже обработана, не обрабатываем дальше
+                return false;
+            }
+        }
         
         if (typeof window.createActivity === 'function') {
             console.log("[Document Click Handler] Calling window.createActivity()");
