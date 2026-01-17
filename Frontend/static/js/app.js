@@ -514,14 +514,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // authToken, currentUser и getAuthToken() определены в app_auth.js
 
 // ============= APP STATE =============
-const activeTimers = new Map();
-let allActivities = [];
-let activitiesFilterState = {
-    sort: 'newest', // newest, oldest, name-asc, name-desc
-    category: 'all'
-};
+// activeTimers, allActivities, activitiesFilterState определены в app_activities.js
+// allRewards определен в app_rewards.js
 let activitiesAccordionExpanded = false; // По умолчанию свернут - показываем только первые 5 активностей
-let allRewards = [];
 
 // ============= DOM ELEMENTS =============
 let authSection, appSection, activityNameInput, xpPerHourInput, newActivityForm, balanceSpan, levelSpan;
