@@ -85,6 +85,27 @@ async function loadActivities() {
 
         // Применяем фильтры и сортировку (это отобразит активности в правильных списках)
         applyActivitiesFilters();
+        
+        // Сразу после загрузки активностей загружаем активные таймеры
+        // Это нужно сделать после applyActivitiesFilters, чтобы карточки активностей уже были созданы
+        if (typeof loadActiveTimers === 'function') {
+            loadActiveTimers().then(() => {
+                // После загрузки таймеров обновляем отображение активностей
+                // чтобы показать запущенные таймеры
+                applyActivitiesFilters();
+            }).catch(err => {
+                console.error("Error loading active timers:", err);
+            });
+        } else if (typeof window.loadActiveTimers === 'function') {
+            window.loadActiveTimers().then(() => {
+                // После загрузки таймеров обновляем отображение активностей
+                if (typeof window.applyActivitiesFilters === 'function') {
+                    window.applyActivitiesFilters();
+                }
+            }).catch(err => {
+                console.error("Error loading active timers:", err);
+            });
+        }
     } catch (e) {
         console.error("Error loading activities", e);
         getActivitiesElements();
@@ -511,7 +532,20 @@ async function loadActiveTimers() {
                 }
             }, 1000);
             timerInfo.intervalId = intervalId;
+            
+            // Сразу обновляем отображение таймера после создания
+            updateTimerDisplay(timerData.activity_id, startTime, activity);
         });
+        
+        // Обновляем отображение всех активностей, чтобы показать запущенные таймеры
+        if (activeTimers.size > 0) {
+            // Применяем фильтры заново, чтобы обновить карточки с таймерами
+            if (typeof applyActivitiesFilters === 'function') {
+                applyActivitiesFilters();
+            } else if (typeof window.applyActivitiesFilters === 'function') {
+                window.applyActivitiesFilters();
+            }
+        }
     } catch (e) {
         console.error("Error loading active timers:", e);
     }

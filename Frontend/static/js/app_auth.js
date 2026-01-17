@@ -395,80 +395,72 @@ async function showApp() {
         window.activitiesAccordionBtn = null;
     }
 
-    // Загружаем данные - ждем, пока все модули загрузятся
-    // Используем более длинную задержку и проверяем наличие функций
+    // Загружаем данные сразу без задержек
     const loadData = async () => {
-        // Проверяем, что основные функции загружены (увеличиваем список проверяемых функций)
-        const requiredFunctions = [
-            'loadWallet', 'loadActivities', 'loadRewards', 'loadGoals',
-            'loadCategories', 'loadHistory', 'loadGroups', 'loadLeaderboard',
-            'loadChallenges', 'loadAchievements', 'loadStreak', 'loadRecommendations'
-        ];
+        console.log('[showApp] Starting data load immediately...');
         
-        let attempts = 0;
-        const maxAttempts = 50; // Максимум 5 секунд (50 * 100ms)
-        
-        const checkAndLoad = async () => {
-            attempts++;
-            const allLoaded = requiredFunctions.every(fn => typeof window[fn] === 'function');
-            
-            if (!allLoaded && attempts < maxAttempts) {
-                // Если функции еще не загружены, ждем еще немного
-                console.log(`[showApp] Waiting for modules to load... (attempt ${attempts}/${maxAttempts})`);
-                setTimeout(checkAndLoad, 100);
-                return;
-            }
-            
-            if (!allLoaded) {
-                console.warn('[showApp] Some modules not loaded after max attempts, loading anyway...');
-            }
-            
-        console.log('[showApp] All modules loaded, starting data load...');
-        
-        // Используем window.* для доступа к функциям, так как они экспортируются в window
-        // Загружаем данные последовательно для надежности
+        // Загружаем данные параллельно и последовательно для критичных
         try {
-            if (typeof window !== 'undefined' && typeof window.loadWallet === 'function') await window.loadWallet();
-            if (typeof window !== 'undefined' && typeof window.loadCategories === 'function') await window.loadCategories();
-            if (typeof window !== 'undefined' && typeof window.loadActivities === 'function') await window.loadActivities();
-            if (typeof window !== 'undefined' && typeof window.initActivitiesFilters === 'function') window.initActivitiesFilters();
-            if (typeof window !== 'undefined' && typeof window.loadRewards === 'function') await window.loadRewards();
-            if (typeof window !== 'undefined' && typeof window.loadTodayStats === 'function') await window.loadTodayStats();
-            if (typeof window !== 'undefined' && typeof window.loadWeekCalendar === 'function') await window.loadWeekCalendar();
-            if (typeof window !== 'undefined' && typeof window.loadCategoryStats === 'function') setTimeout(() => window.loadCategoryStats(), 100);
-            if (typeof window !== 'undefined' && typeof window.loadStreak === 'function') await window.loadStreak();
-            if (typeof window !== 'undefined' && typeof window.loadRecommendations === 'function') await window.loadRecommendations();
-            if (typeof window !== 'undefined' && typeof window.loadGoals === 'function') await window.loadGoals();
-            if (typeof window !== 'undefined' && typeof window.loadHistory === 'function') {
-                await window.loadHistory();
-                if (document.getElementById('history-period-today') && typeof window.setHistoryPeriod === 'function') {
-                    window.setHistoryPeriod(window.historyPeriod);
-                }
+            // Критичные данные загружаем параллельно для скорости
+            const criticalLoads = Promise.all([
+                typeof window.loadWallet === 'function' ? window.loadWallet() : Promise.resolve(),
+                typeof window.loadCategories === 'function' ? window.loadCategories() : Promise.resolve(),
+                typeof window.loadActivities === 'function' ? window.loadActivities() : Promise.resolve(),
+            ]);
+            
+            await criticalLoads;
+            
+            // После загрузки активностей сразу загружаем активные таймеры
+            if (typeof window.loadActiveTimers === 'function') {
+                await window.loadActiveTimers();
             }
-            if (typeof window !== 'undefined' && typeof window.loadGroups === 'function') await window.loadGroups();
-            if (typeof window !== 'undefined' && typeof window.loadLeaderboard === 'function') await window.loadLeaderboard();
-            if (typeof window !== 'undefined' && typeof window.loadChallenges === 'function') await window.loadChallenges();
-            if (typeof window !== 'undefined' && typeof window.loadAchievements === 'function') await window.loadAchievements();
-
-            if (typeof window !== 'undefined' && typeof window.updateCategoryDropdown === 'function') {
-                setTimeout(() => {
-                    window.updateCategoryDropdown('activity-category');
-                    window.updateCategoryDropdown('edit-activity-category');
-                }, 200);
+            
+            // Инициализируем фильтры активностей
+            if (typeof window.initActivitiesFilters === 'function') window.initActivitiesFilters();
+            
+            // Остальные данные загружаем параллельно
+            const parallelLoads = Promise.all([
+                typeof window.loadRewards === 'function' ? window.loadRewards() : Promise.resolve(),
+                typeof window.loadTodayStats === 'function' ? window.loadTodayStats() : Promise.resolve(),
+                typeof window.loadWeekCalendar === 'function' ? window.loadWeekCalendar() : Promise.resolve(),
+                typeof window.loadStreak === 'function' ? window.loadStreak() : Promise.resolve(),
+                typeof window.loadRecommendations === 'function' ? window.loadRecommendations() : Promise.resolve(),
+                typeof window.loadGoals === 'function' ? window.loadGoals() : Promise.resolve(),
+                typeof window.loadHistory === 'function' ? window.loadHistory() : Promise.resolve(),
+                typeof window.loadGroups === 'function' ? window.loadGroups() : Promise.resolve(),
+                typeof window.loadChallenges === 'function' ? window.loadChallenges() : Promise.resolve(),
+                typeof window.loadAchievements === 'function' ? window.loadAchievements() : Promise.resolve(),
+            ]);
+            
+            await parallelLoads;
+            
+            // Устанавливаем период истории
+            if (document.getElementById('history-period-today') && typeof window.setHistoryPeriod === 'function') {
+                window.setHistoryPeriod(window.historyPeriod);
+            }
+            
+            // Обновляем категории и другие UI элементы
+            if (typeof window.updateCategoryDropdown === 'function') {
+                window.updateCategoryDropdown('activity-category');
+                window.updateCategoryDropdown('edit-activity-category');
+            }
+            
+            // Не критичные данные загружаем в фоне
+            if (typeof window.loadCategoryStats === 'function') {
+                setTimeout(() => window.loadCategoryStats(), 100);
+            }
+            if (typeof window.loadLeaderboard === 'function') {
+                setTimeout(() => window.loadLeaderboard(), 100);
             }
             
             console.log('[showApp] All data loaded successfully');
         } catch (error) {
             console.error('[showApp] Error loading data:', error);
         }
-        };
-        
-        // Начинаем проверку и загрузку
-        checkAndLoad();
     };
     
-    // Начинаем загрузку данных с небольшой задержкой
-    setTimeout(loadData, 200);
+    // Начинаем загрузку данных сразу без задержек
+    loadData();
 }
 
 // Экспортируем функции в глобальную область видимости
