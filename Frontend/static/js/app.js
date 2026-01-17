@@ -29,7 +29,17 @@ function changeLanguage(lang) {
     // Перезагружаем данные, которые зависят от языка
     if (document.getElementById('app-section') && !document.getElementById('app-section').classList.contains('hidden')) {
         loadCategoryStats();
-        loadCalendar(currentCalendarPeriod);
+        loadCalendar(currentCalendarPeriod).then(() => {
+            // Синхронизируем высоту виджетов после загрузки календаря
+            if (typeof window.syncWidgetsHeight === 'function') {
+                setTimeout(() => window.syncWidgetsHeight(), 100);
+            }
+        }).catch(() => {
+            // Если loadCalendar не вернул promise, просто вызываем syncWidgetsHeight
+            if (typeof window.syncWidgetsHeight === 'function') {
+                setTimeout(() => window.syncWidgetsHeight(), 200);
+            }
+        });
         loadActivities();
         loadRewards(); // Перезагружаем награды для обновления кнопки "Купить"
         loadRecommendations();
