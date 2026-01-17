@@ -537,14 +537,12 @@ async function loadActiveTimers() {
             updateTimerDisplay(timerData.activity_id, startTime, activity);
         });
         
-        // Обновляем отображение всех активностей, чтобы показать запущенные таймеры
-        if (activeTimers.size > 0) {
-            // Применяем фильтры заново, чтобы обновить карточки с таймерами
-            if (typeof applyActivitiesFilters === 'function') {
-                applyActivitiesFilters();
-            } else if (typeof window.applyActivitiesFilters === 'function') {
-                window.applyActivitiesFilters();
-            }
+        // Всегда обновляем отображение всех активностей после загрузки таймеров
+        // Это нужно чтобы показать правильное состояние таймеров в карточках
+        if (typeof applyActivitiesFilters === 'function') {
+            applyActivitiesFilters();
+        } else if (typeof window.applyActivitiesFilters === 'function') {
+            window.applyActivitiesFilters();
         }
     } catch (e) {
         console.error("Error loading active timers:", e);
