@@ -297,11 +297,16 @@
                     const activityBtn = document.getElementById("create-activity-btn");
                     const rewardBtn = document.getElementById("create-reward-btn");
                     
-                    console.log("[loadAppComponents] Checking elements:", {
+                    console.log("[loadAppComponents] Checking elements (attempt):", {
                         activityForm: !!activityForm,
                         rewardForm: !!rewardForm,
                         activityBtn: !!activityBtn,
-                        rewardBtn: !!rewardBtn
+                        rewardBtn: !!rewardBtn,
+                        createActivity: typeof window.createActivity,
+                        createReward: typeof window.createReward,
+                        initFormHandlers: typeof window.initFormHandlers,
+                        attachFormHandlers: typeof window.attachFormHandlers,
+                        attachDirectFormHandlers: typeof window.attachDirectFormHandlers
                     });
                     
                     // Если элементы еще не загружены, пропускаем инициализацию
@@ -309,6 +314,18 @@
                         console.warn("[loadAppComponents] Forms or buttons not found yet, will retry");
                         return false;
                     }
+                    
+                    // Проверяем наличие функций
+                    if (typeof window.createActivity !== 'function') {
+                        console.warn("[loadAppComponents] window.createActivity is not a function yet, will retry");
+                        return false;
+                    }
+                    if (typeof window.createReward !== 'function') {
+                        console.warn("[loadAppComponents] window.createReward is not a function yet, will retry");
+                        return false;
+                    }
+                    
+                    console.log("[loadAppComponents] All elements and functions found, initializing handlers...");
                     
                     if (typeof window.initFormHandlers === 'function') {
                         console.log("[loadAppComponents] Calling window.initFormHandlers()");
@@ -322,24 +339,38 @@
                         console.log("[loadAppComponents] Calling window.attachDirectFormHandlers()");
                         window.attachDirectFormHandlers();
                     }
+                    
+                    console.log("[loadAppComponents] Form handlers initialization completed successfully!");
                     return true;
                 };
                 
                 // Пробуем инициализировать несколько раз с увеличением задержек
                 let attempts = 0;
-                const maxAttempts = 10;
+                const maxAttempts = 20; // Увеличиваем количество попыток
                 const tryInit = () => {
                     attempts++;
-                    if (initHandlers() || attempts >= maxAttempts) {
-                        if (attempts >= maxAttempts) {
+                    const success = initHandlers();
+                    if (success || attempts >= maxAttempts) {
+                        if (!success && attempts >= maxAttempts) {
                             console.error("[loadAppComponents] Failed to initialize form handlers after", maxAttempts, "attempts");
+                            console.error("[loadAppComponents] Final state:", {
+                                activityForm: !!document.getElementById("new-activity-form"),
+                                rewardForm: !!document.getElementById("new-reward-form"),
+                                activityBtn: !!document.getElementById("create-activity-btn"),
+                                rewardBtn: !!document.getElementById("create-reward-btn"),
+                                createActivity: typeof window.createActivity,
+                                createReward: typeof window.createReward
+                            });
+                        } else if (success) {
+                            console.log("[loadAppComponents] Successfully initialized form handlers on attempt", attempts);
                         }
                         return;
                     }
-                    setTimeout(tryInit, 200 * attempts); // Увеличиваем задержку с каждой попыткой
+                    setTimeout(tryInit, 100 * attempts); // Увеличиваем задержку с каждой попыткой
                 };
                 
-                tryInit();
+                // Начинаем с небольшой задержки, чтобы дать скриптам время загрузиться
+                setTimeout(tryInit, 100);
             } catch (error) {
                 console.error('Error loading app components:', error);
             }
