@@ -554,7 +554,7 @@ async function loadActiveTimers() {
 // ============= RENDER ACTIVITY CARD =============
 function renderActivityCard(activity) {
     const div = document.createElement("div");
-    div.className = "activity-card p-4 rounded-xl bg-white/80 border border-blue-100 shadow-sm hover:shadow-lg flex items-center justify-between gap-3";
+    div.className = "activity-card p-4 rounded-xl bg-white/80 border border-blue-100 shadow-sm flex items-center justify-between gap-3";
     div.setAttribute("data-activity-id", activity.id);
 
     const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;

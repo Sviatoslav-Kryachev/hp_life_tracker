@@ -117,7 +117,7 @@
 
             <!-- Кнопка Создать (красиво размещена) -->
             <div class="flex justify-center pt-2">
-                <button type="button" id="create-activity-btn" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 font-semibold text-lg min-w-[200px]">
+                <button type="button" id="create-activity-btn" onclick="if(typeof window.createActivity==='function')window.createActivity();else if(typeof createActivity==='function')createActivity();else alert('Функция createActivity не найдена');" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg font-semibold text-lg min-w-[200px]">
                     <i class="fas fa-plus"></i>
                     <span data-i18n="create">Создать</span>
                 </button>
