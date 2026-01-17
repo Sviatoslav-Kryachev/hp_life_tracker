@@ -101,7 +101,7 @@ function closeCreateGroupModal() {
 }
 
 async function createGroup(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const name = document.getElementById('group-name').value.trim();
     const description = document.getElementById('group-description').value.trim();
     const errorEl = document.getElementById('create-group-error');
@@ -112,11 +112,14 @@ async function createGroup(e) {
         return;
     }
     
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         const res = await fetch(`${API_URL}/groups/`, {
             method: 'POST',
             headers: {
-                "Authorization": `Bearer ${authToken}`,
+                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ name, description: description || null })
@@ -147,7 +150,7 @@ function closeJoinGroupModal() {
 }
 
 async function joinGroup(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const inviteCode = document.getElementById('group-invite-code').value.trim().toUpperCase();
     const errorEl = document.getElementById('join-group-error');
     
@@ -157,11 +160,14 @@ async function joinGroup(e) {
         return;
     }
     
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         const res = await fetch(`${API_URL}/groups/join`, {
             method: 'POST',
             headers: {
-                "Authorization": `Bearer ${authToken}`,
+                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ invite_code: inviteCode })
@@ -202,10 +208,13 @@ async function leaveGroup(groupId) {
 async function deleteGroup(groupId) {
     if (!confirm('Вы уверены, что хотите удалить группу? Это действие нельзя отменить.')) return;
     
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         const res = await fetch(`${API_URL}/groups/${groupId}`, {
             method: 'DELETE',
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         
         if (!res.ok) throw new Error("Ошибка");
@@ -224,9 +233,12 @@ function copyInviteCode(code) {
 }
 
 async function viewGroupMembers(groupId) {
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         const res = await fetch(`${API_URL}/groups/${groupId}/members`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         if (!res.ok) throw new Error("Ошибка");
         const members = await res.json();
@@ -303,6 +315,9 @@ async function loadLeaderboard() {
     
     if (!container) return;
     
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         let url = `${API_URL}/leaderboard/`;
         if (groupId && groupId !== 'global') {
@@ -312,7 +327,7 @@ async function loadLeaderboard() {
         }
         
         const res = await fetch(url, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         
         if (!res.ok) throw new Error("Ошибка загрузки");
@@ -489,8 +504,24 @@ function openCreateChallengeModal() {
     const startDate = new Date(now.getTime() + 60 * 60 * 1000); // Через час
     const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Через неделю
     
-    document.getElementById('challenge-start-date').value = formatDateTimeLocal(startDate);
-    document.getElementById('challenge-end-date').value = formatDateTimeLocal(endDate);
+    const startDateInput = document.getElementById('challenge-start-date');
+    const endDateInput = document.getElementById('challenge-end-date');
+    
+    // Для input type="date" нужен формат YYYY-MM-DD
+    if (startDateInput) {
+        startDateInput.value = startDate.toISOString().split('T')[0];
+    }
+    if (endDateInput) {
+        endDateInput.value = endDate.toISOString().split('T')[0];
+    }
+    
+    // Очищаем поля целевых значений
+    const targetXpInput = document.getElementById('challenge-target-xp');
+    const targetTimeInput = document.getElementById('challenge-target-time');
+    const targetStreakInput = document.getElementById('challenge-target-streak');
+    if (targetXpInput) targetXpInput.value = '';
+    if (targetTimeInput) targetTimeInput.value = '';
+    if (targetStreakInput) targetStreakInput.value = '';
 }
 
 function closeCreateChallengeModal() {
@@ -511,19 +542,44 @@ function formatDate(date) {
 }
 
 async function createChallenge(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const title = document.getElementById('challenge-title').value.trim();
     const description = document.getElementById('challenge-description').value.trim();
     const groupId = document.getElementById('challenge-group-select').value;
-    const challengeType = document.getElementById('challenge-type').value;
-    const targetXp = parseFloat(document.getElementById('challenge-target').value);
-    const startDate = new Date(document.getElementById('challenge-start-date').value);
-    const endDate = new Date(document.getElementById('challenge-end-date').value);
-    const rewardXp = parseFloat(document.getElementById('challenge-reward-xp').value) || 0;
+    
+    // Определяем тип челленджа и целевое значение на основе заполненных полей
+    const targetXp = parseFloat(document.getElementById('challenge-target-xp')?.value) || 0;
+    const targetTime = parseFloat(document.getElementById('challenge-target-time')?.value) || 0;
+    const targetStreak = parseFloat(document.getElementById('challenge-target-streak')?.value) || 0;
+    
+    let challengeType = 'xp';
+    let targetValue = targetXp;
+    
+    if (targetTime > 0) {
+        challengeType = 'time';
+        targetValue = targetTime;
+    } else if (targetStreak > 0) {
+        challengeType = 'streak';
+        targetValue = targetStreak;
+    } else if (targetXp > 0) {
+        challengeType = 'xp';
+        targetValue = targetXp;
+    }
+    
+    const startDateInput = document.getElementById('challenge-start-date');
+    const endDateInput = document.getElementById('challenge-end-date');
+    const startDate = startDateInput ? new Date(startDateInput.value) : null;
+    const endDate = endDateInput ? new Date(endDateInput.value) : null;
     const errorEl = document.getElementById('create-challenge-error');
     
-    if (!title || !targetXp || targetXp <= 0) {
-        errorEl.textContent = 'Заполните все обязательные поля';
+    if (!title || !targetValue || targetValue <= 0) {
+        errorEl.textContent = 'Заполните название и хотя бы одно целевое значение (XP, время или серия)';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+    
+    if (!startDate || !endDate) {
+        errorEl.textContent = 'Заполните даты начала и окончания';
         errorEl.classList.remove('hidden');
         return;
     }
@@ -534,11 +590,14 @@ async function createChallenge(e) {
         return;
     }
     
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         const res = await fetch(`${API_URL}/challenges/`, {
             method: 'POST',
             headers: {
-                "Authorization": `Bearer ${authToken}`,
+                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -546,10 +605,10 @@ async function createChallenge(e) {
                 description: description || null,
                 group_id: groupId ? parseInt(groupId) : null,
                 challenge_type: challengeType,
-                target_xp: targetXp,
+                target_xp: targetValue,
                 start_date: startDate.toISOString(),
                 end_date: endDate.toISOString(),
-                reward_xp: rewardXp
+                reward_xp: 0
             })
         });
         
@@ -568,9 +627,12 @@ async function createChallenge(e) {
 }
 
 async function viewChallengeParticipants(challengeId) {
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         const res = await fetch(`${API_URL}/challenges/${challengeId}/participants`, {
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         if (!res.ok) throw new Error("Ошибка");
         const participants = await res.json();
@@ -688,11 +750,14 @@ async function loadAchievements() {
 }
 
 async function toggleAchievementShare(achievementId, isShared) {
+    const getToken = typeof getAuthToken === 'function' ? getAuthToken : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken : () => localStorage.getItem('token') || '';
+    const token = getToken();
+    
     try {
         const endpoint = isShared ? 'unshare' : 'share';
         const res = await fetch(`${API_URL}/achievements/${achievementId}/${endpoint}`, {
             method: 'POST',
-            headers: { "Authorization": `Bearer ${authToken}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
         
         if (!res.ok) throw new Error("Ошибка");
@@ -719,4 +784,28 @@ function showMessage(message, type = 'info') {
     } else {
         alert(message);
     }
+}
+
+// Экспортируем функции в глобальную область видимости
+if (typeof window !== 'undefined') {
+    window.loadGroups = loadGroups;
+    window.createGroup = createGroup;
+    window.joinGroup = joinGroup;
+    window.leaveGroup = leaveGroup;
+    window.deleteGroup = deleteGroup;
+    window.openCreateGroupModal = openCreateGroupModal;
+    window.closeCreateGroupModal = closeCreateGroupModal;
+    window.openJoinGroupModal = openJoinGroupModal;
+    window.closeJoinGroupModal = closeJoinGroupModal;
+    window.copyInviteCode = copyInviteCode;
+    window.viewGroupMembers = viewGroupMembers;
+    window.viewGroupLeaderboard = viewGroupLeaderboard;
+    window.loadLeaderboard = loadLeaderboard;
+    window.loadChallenges = loadChallenges;
+    window.createChallenge = createChallenge;
+    window.openCreateChallengeModal = openCreateChallengeModal;
+    window.closeCreateChallengeModal = closeCreateChallengeModal;
+    window.viewChallengeParticipants = viewChallengeParticipants;
+    window.loadAchievements = loadAchievements;
+    window.toggleAchievementShare = toggleAchievementShare;
 }
