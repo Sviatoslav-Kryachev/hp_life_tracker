@@ -194,43 +194,110 @@ async function loadRewards() {
             return;
         }
 
-        const visibleRewards = sortedData.slice(0, 4);
-        const hiddenRewards = sortedData.slice(4);
+        // Проверяем, был ли аккордеон развернут при предыдущей загрузке
+        const wasExpanded = localStorage.getItem('rewardsAccordionExpanded') === 'true';
+        const rewardsContainer = document.getElementById('rewards-list-container');
+        const shouldShowAccordion = sortedData.length > 4;
 
         if (!rewardsListVisible) {
             console.error("rewardsListVisible is null before rendering visible rewards");
             return;
         }
 
-        visibleRewards.forEach(reward => {
-            const div = renderRewardCard(reward);
-            if (div && rewardsListVisible) {
-                rewardsListVisible.appendChild(div);
-            }
-        });
-
-        if (hiddenRewards.length > 0) {
+        // Если аккордеон должен быть развернут или был развернут, все награды идут в hidden
+        // Иначе первые 4 в visible, остальные в hidden
+        if (wasExpanded && shouldShowAccordion && rewardsContainer) {
+            // Аккордеон развернут - все награды в hidden
             if (!rewardsListHidden) {
-                console.error("rewardsListHidden is null before rendering hidden rewards");
+                console.error("rewardsListHidden is null before rendering rewards");
                 return;
             }
-
-            hiddenRewards.forEach(reward => {
+            
+            sortedData.forEach(reward => {
                 const div = renderRewardCard(reward);
                 if (div && rewardsListHidden) {
                     rewardsListHidden.appendChild(div);
                 }
             });
-
+            
+            rewardsListHidden.classList.remove('hidden');
+            rewardsContainer.classList.add('rewards-expanded');
+            
+            // Устанавливаем maxHeight после отрисовки
+            requestAnimationFrame(() => {
+                if (rewardsContainer && rewardsListHidden.children.length > 0) {
+                    const firstCard = rewardsListHidden.children[0];
+                    if (firstCard) {
+                        const cardHeight = firstCard.offsetHeight || 80; // fallback высота
+                        const gap = 8;
+                        const visibleCards = Math.min(4, rewardsListHidden.children.length);
+                        const calculatedHeight = (cardHeight * visibleCards) + (gap * (visibleCards - 1));
+                        rewardsContainer.style.maxHeight = calculatedHeight + 'px';
+                        rewardsContainer.style.overflowY = 'auto';
+                    }
+                }
+            });
+            
             if (rewardsAccordionBtn) {
                 rewardsAccordionBtn.classList.remove('hidden');
-                setTimeout(() => {
-                    updateRewardsAccordionButton();
-                }, 0);
+                const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
+                const text = rewardsAccordionBtn.querySelector('.accordion-text');
+                const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
+                if (icon) icon.style.transform = 'rotate(180deg)';
+                if (text) text.textContent = t('hide_rewards');
             }
         } else {
+            // Аккордеон свернут - первые 4 в visible, остальные в hidden
+            const visibleRewards = sortedData.slice(0, 4);
+            const hiddenRewards = sortedData.slice(4);
+
+            visibleRewards.forEach(reward => {
+                const div = renderRewardCard(reward);
+                if (div && rewardsListVisible) {
+                    rewardsListVisible.appendChild(div);
+                }
+            });
+
+            if (hiddenRewards.length > 0) {
+                if (!rewardsListHidden) {
+                    console.error("rewardsListHidden is null before rendering hidden rewards");
+                    return;
+                }
+
+                hiddenRewards.forEach(reward => {
+                    const div = renderRewardCard(reward);
+                    if (div && rewardsListHidden) {
+                        rewardsListHidden.appendChild(div);
+                    }
+                });
+                
+                if (rewardsContainer) {
+                    rewardsContainer.classList.remove('rewards-expanded');
+                    rewardsContainer.style.maxHeight = '';
+                    rewardsContainer.style.overflowY = '';
+                }
+                if (rewardsListHidden) {
+                    rewardsListHidden.classList.add('hidden');
+                }
+            } else {
+                if (rewardsContainer) {
+                    rewardsContainer.classList.remove('rewards-expanded');
+                    rewardsContainer.style.maxHeight = '';
+                    rewardsContainer.style.overflowY = '';
+                }
+            }
+
             if (rewardsAccordionBtn) {
-                rewardsAccordionBtn.classList.add('hidden');
+                if (shouldShowAccordion) {
+                    rewardsAccordionBtn.classList.remove('hidden');
+                    const icon = rewardsAccordionBtn.querySelector('.accordion-icon');
+                    const text = rewardsAccordionBtn.querySelector('.accordion-text');
+                    const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
+                    if (icon) icon.style.transform = 'rotate(0deg)';
+                    if (text) text.textContent = t('show_all_rewards');
+                } else {
+                    rewardsAccordionBtn.classList.add('hidden');
+                }
             }
         }
     } catch (e) {
