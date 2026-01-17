@@ -187,7 +187,32 @@ function changeCalendarPeriod(period) {
     }
 
     // Загружаем календарь для выбранного периода
-    loadCalendar(period);
+    loadCalendar(period).then(() => {
+        // Синхронизируем высоту виджетов после загрузки календаря
+        syncWidgetsHeight();
+    });
+}
+
+// Функция синхронизации высоты виджетов
+function syncWidgetsHeight() {
+    // Ждем немного, чтобы календарь успел отрисоваться
+    setTimeout(() => {
+        const calendarContainer = document.querySelector('#widget-calendar-container > div');
+        const todayContainer = document.querySelector('#widget-today-container > div');
+        const progressContainer = document.querySelector('#widget-progress-container > div');
+        
+        if (calendarContainer && (todayContainer || progressContainer)) {
+            const calendarHeight = calendarContainer.offsetHeight;
+            
+            // Устанавливаем минимальную высоту для виджетов "Сегодня" и "Прогресс"
+            if (todayContainer) {
+                todayContainer.style.minHeight = calendarHeight + 'px';
+            }
+            if (progressContainer) {
+                progressContainer.style.minHeight = calendarHeight + 'px';
+            }
+        }
+    }, 100);
 }
 
 async function loadCalendar(period = currentCalendarPeriod) {
@@ -820,6 +845,7 @@ if (typeof window !== 'undefined') {
     window.loadCalendar = loadCalendar;
     window.loadWeekCalendar = loadWeekCalendar;
     window.changeCalendarPeriod = changeCalendarPeriod;
+    window.syncWidgetsHeight = syncWidgetsHeight;
     window.showDayDetails = showDayDetails;
     window.closeDayDetailsModal = closeDayDetailsModal;
     window.showMonthDetails = showMonthDetails;
