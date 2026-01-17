@@ -1316,6 +1316,14 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         } else {
             titleEl.textContent = `📊 ${t('manual_quantity')}`;
             titleEl.setAttribute('data-i18n', 'manual_quantity');
+            const timeContainer = document.getElementById("manual-time-input-container");
+            const quantityContainer = document.getElementById("manual-quantity-input-container");
+            if (timeContainer) timeContainer.classList.add('hidden');
+            if (quantityContainer) quantityContainer.classList.remove('hidden');
+            const timeInput = document.getElementById("manual-minutes");
+            if (timeInput) timeInput.removeAttribute('required');
+            const quantityInput = document.getElementById("manual-quantity");
+            if (quantityInput) quantityInput.setAttribute('required', 'required');
         }
         if (typeof window.applyTranslations === 'function') {
             window.applyTranslations();
