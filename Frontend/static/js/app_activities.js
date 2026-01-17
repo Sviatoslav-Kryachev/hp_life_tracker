@@ -619,11 +619,25 @@ function renderActivityCard(activity) {
         }
 
         timerBtn.dataset.activityId = activity.id;
-        timerBtn.addEventListener("click", (e) => {
+        timerBtn.onclick = function(e) {
+            e.preventDefault();
             e.stopPropagation();
-            toggleTimer(activity.id, e.currentTarget, activity);
+            e.stopImmediatePropagation();
+            console.log("[Timer Button] Start button clicked for activity", activity.id);
+            if (typeof toggleTimer === 'function') {
+                toggleTimer(activity.id, this, activity);
+            } else if (typeof window.toggleTimer === 'function') {
+                window.toggleTimer(activity.id, this, activity);
+            } else {
+                console.error("[Timer Button] toggleTimer function not found!");
+                alert("Ошибка: функция toggleTimer не найдена");
+            }
+            return false;
+        };
+        timerBtn.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
         });
-        timerBtn.addEventListener("mousedown", (e) => e.stopPropagation());
     }
 
     // Manual time/quantity button
