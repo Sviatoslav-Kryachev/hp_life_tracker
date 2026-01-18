@@ -149,16 +149,7 @@
                     <div id="widget-goals-container"></div>
 
                     <!-- Умные рекомендации (компактный) -->
-                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border-2 border-green-200">
-                        <div class="flex items-center justify-center gap-2 mb-2 md:mb-3">
-                            <i class="fas fa-lightbulb text-green-600 text-sm md:text-base"></i>
-                            <h3 class="text-xs md:text-sm font-bold text-gray-800" data-i18n="smart_recommendations">Рекомендации</h3>
-                        </div>
-                        <div class="flex flex-col">
-                            <div id="recommendations-list-visible" class="space-y-2"></div>
-                            <div id="recommendations-list-hidden" class="space-y-2 hidden"></div>
-                        </div>
-                    </div>
+                    <div id="widget-recommendations-container"></div>
 
                 </div>
             </div>
@@ -242,6 +233,7 @@
                     { name: 'widget-streak', selector: '#widget-streak-container', path: 'widgets/widget-streak' },
                     { name: 'widget-category-stats', selector: '#widget-category-stats-container', path: 'widgets/widget-category-stats' },
                     { name: 'widget-goals', selector: '#widget-goals-container', path: 'widgets/widget-goals' },
+                    { name: 'widget-recommendations', selector: '#widget-recommendations-container', path: 'widgets/widget-recommendations' },
                     // Загружаем основные секции
                     { name: 'section-activities', selector: '#section-activities-container', path: 'sections/section-activities' },
                     { name: 'section-rewards', selector: '#section-rewards-container', path: 'sections/section-rewards' },

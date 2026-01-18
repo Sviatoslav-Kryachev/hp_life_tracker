@@ -398,8 +398,7 @@ body {
     /* Исправляем обрезание блоков справа на мобильных (Xiaomi/Android) */
     #activities,
     #activities > div,
-    .bg-gradient-to-r.from-blue-50.to-indigo-50,
-    #recommendations-list {
+    .bg-gradient-to-r.from-blue-50.to-indigo-50 {
         padding-right: 0.75rem !important;
         padding-left: 0.75rem !important;
         margin-right: 0 !important;
@@ -595,8 +594,7 @@ body {
     /* Исправляем обрезание блоков справа на Android/Xiaomi */
     #activities,
     #activities > div,
-    .bg-gradient-to-r.from-blue-50.to-indigo-50,
-    #recommendations-list {
+    .bg-gradient-to-r.from-blue-50.to-indigo-50 {
         padding-right: 1rem !important;
         margin-right: 0 !important;
         box-sizing: border-box !important;
@@ -906,17 +904,6 @@ body {
     #activities,
     #activities > div,
     .bg-gradient-to-r.from-blue-50.to-indigo-50 {
-        padding-right: 1rem !important;
-        margin-right: 0 !important;
-        box-sizing: border-box !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        overflow-x: visible !important;
-        overflow-y: visible !important;
-    }
-    
-    /* Исправляем обрезание рекомендаций */
-    #recommendations-list {
         padding-right: 1rem !important;
         margin-right: 0 !important;
         box-sizing: border-box !important;
