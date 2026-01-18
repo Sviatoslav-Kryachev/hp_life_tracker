@@ -1,0 +1,145 @@
+/* ============= SOCIAL SECTIONS ============= */
+/* Стили для социальных секций (Groups, Leaderboard, Challenges, Achievements) */
+
+/* Контейнер социальных секций - ограничиваем шириной родительского контейнера */
+#social {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Все блоки социальных секций - обновлено для новой структуры с колонками */
+#social > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
+}
+
+/* Контейнеры компонентов внутри колонок */
+#social #section-groups-container,
+#social #section-challenges-container,
+#social #section-leaderboard-container,
+#social #section-achievements-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Внутренние контейнеры списков */
+#groups-list,
+#leaderboard-list,
+#challenges-list,
+#achievements-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    word-wrap: break-word !important;
+    padding-right: 0.5rem !important;
+}
+
+/* Скроллбары вынесены в components/common/scrollbars.css */
+
+/* Карточки внутри списков */
+#groups-list > div,
+#leaderboard-list > div,
+#challenges-list > div,
+#achievements-list > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    min-width: 0 !important;
+}
+
+/* Все элементы внутри карточек */
+#groups-list > div *,
+#leaderboard-list > div *,
+#challenges-list > div *,
+#achievements-list > div * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Кнопки внутри карточек */
+#groups-list button,
+#challenges-list button {
+    flex-shrink: 0 !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* Flex контейнеры внутри карточек */
+#groups-list .flex,
+#leaderboard-list .flex,
+#challenges-list .flex,
+#achievements-list .flex {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Flex-1 элементы должны уметь сжиматься */
+#groups-list .flex-1,
+#leaderboard-list .flex-1,
+#challenges-list .flex-1,
+#achievements-list .flex-1 {
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Текст внутри карточек */
+#groups-list h3,
+#groups-list p,
+#leaderboard-list .font-medium,
+#challenges-list h3,
+#challenges-list p,
+#achievements-list h3,
+#achievements-list p {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+}
+
+/* Select элементы (базовые стили в components/common/forms.css) */
+#leaderboard-group-select,
+#leaderboard-sort-select,
+#achievements-group-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Заголовки секций */
+#social > div > div:first-child {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+/* Контентные области секций */
+#social > div > div:last-child {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
+}
+
+/* Кнопки в секциях */
+#social button {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-width: fit-content !important;
+}
