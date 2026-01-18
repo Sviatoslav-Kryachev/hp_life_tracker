@@ -1340,6 +1340,72 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     if (quantityInput) quantityInput.value = "";
     if (previewEl) previewEl.classList.add("hidden");
     
+    // Устанавливаем обработчики для превью XP после открытия модального окна
+    // Удаляем старые обработчики если есть, чтобы избежать дублирования
+    if (minutesInput) {
+        const newMinutesInput = minutesInput.cloneNode(true);
+        minutesInput.parentNode.replaceChild(newMinutesInput, minutesInput);
+        newMinutesInput.addEventListener("input", () => {
+            const currentActivityId = document.getElementById("manual-activity-select").value;
+            if (typeof window.updateManualPreview === 'function') {
+                window.updateManualPreview(currentActivityId);
+            } else if (typeof updateManualPreview === 'function') {
+                updateManualPreview(currentActivityId);
+            }
+        });
+    }
+    
+    if (quantityInput) {
+        const newQuantityInput = quantityInput.cloneNode(true);
+        quantityInput.parentNode.replaceChild(newQuantityInput, quantityInput);
+        newQuantityInput.addEventListener("input", () => {
+            const currentActivityId = document.getElementById("manual-activity-select").value;
+            if (typeof window.updateManualPreview === 'function') {
+                window.updateManualPreview(currentActivityId);
+            } else if (typeof updateManualPreview === 'function') {
+                updateManualPreview(currentActivityId);
+            }
+        });
+    }
+    
+    const activitySelect = document.getElementById("manual-activity-select");
+    if (activitySelect) {
+        // Удаляем старый обработчик если есть
+        const newSelect = activitySelect.cloneNode(true);
+        activitySelect.parentNode.replaceChild(newSelect, activitySelect);
+        newSelect.addEventListener("change", (e) => {
+            if (typeof window.updateManualModalUI === 'function') {
+                window.updateManualModalUI(e.target.value);
+            }
+            if (typeof window.updateManualPreview === 'function') {
+                window.updateManualPreview(e.target.value);
+            } else if (typeof updateManualPreview === 'function') {
+                updateManualPreview(e.target.value);
+            }
+        });
+    }
+    
+    // Устанавливаем обработчик формы если еще не установлен
+    const manualForm = document.getElementById("manual-time-form");
+    if (manualForm && !manualForm.hasAttribute('data-submit-handler-attached')) {
+        manualForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            if (typeof window.addManualTime === 'function') {
+                await window.addManualTime();
+            } else if (typeof addManualTime === 'function') {
+                await addManualTime();
+            } else {
+                console.error("addManualTime function not found!");
+                alert("Ошибка: функция добавления времени не найдена");
+            }
+            return false;
+        }, true);
+        manualForm.setAttribute('data-submit-handler-attached', 'true');
+    }
+    
     const modal = document.getElementById("manual-time-modal");
     if (modal) {
         modal.classList.remove("hidden");
