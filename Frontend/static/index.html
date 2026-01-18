@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="components/common/cards.css">
     <link rel="stylesheet" href="components/common/forms.css">
     <link rel="stylesheet" href="components/common/scrollbars.css">
+    <link rel="stylesheet" href="components/common/widget-base.css">
     <link rel="stylesheet" href="components/layout/grid.css">
     <link rel="stylesheet" href="components/layout/spacing.css">
     <link rel="stylesheet" href="style.css?v=58">
@@ -233,6 +234,7 @@
             try {
                 await loadComponents([
                     { name: 'header', selector: '#header-container' },
+                    { name: 'app-layout', selector: '#app-layout-container', path: 'layout/app-layout' },
                     { name: 'footer', selector: '#footer-container' },
                     // Загружаем виджеты
                     { name: 'widget-today', selector: '#widget-today-container', path: 'widgets/widget-today' },
