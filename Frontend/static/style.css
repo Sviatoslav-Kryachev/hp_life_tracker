@@ -399,7 +399,6 @@ body {
     #activities,
     #activities > div,
     .bg-gradient-to-r.from-blue-50.to-indigo-50,
-    #goals-list,
     #recommendations-list {
         padding-right: 0.75rem !important;
         padding-left: 0.75rem !important;
@@ -597,7 +596,6 @@ body {
     #activities,
     #activities > div,
     .bg-gradient-to-r.from-blue-50.to-indigo-50,
-    #goals-list,
     #recommendations-list {
         padding-right: 1rem !important;
         margin-right: 0 !important;
@@ -908,17 +906,6 @@ body {
     #activities,
     #activities > div,
     .bg-gradient-to-r.from-blue-50.to-indigo-50 {
-        padding-right: 1rem !important;
-        margin-right: 0 !important;
-        box-sizing: border-box !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        overflow-x: visible !important;
-        overflow-y: visible !important;
-    }
-    
-    /* Исправляем обрезание целей */
-    #goals-list {
         padding-right: 1rem !important;
         margin-right: 0 !important;
         box-sizing: border-box !important;

@@ -146,18 +146,7 @@
                     <div id="widget-category-stats-container"></div>
 
                     <!-- Цели (компактный) -->
-                    <div class="bg-white/90 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border border-white/50">
-                        <div class="flex items-center justify-center gap-1.5 md:gap-2 mb-2 md:mb-3">
-                            <i class="fas fa-bullseye text-purple-600 text-sm md:text-base"></i>
-                            <h3 class="text-xs md:text-sm font-bold text-gray-800" data-i18n="my_goals">Мои цели</h3>
-                            <button onclick="showCreateGoalModal()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white w-5 h-5 rounded-lg transition-all text-xs flex items-center justify-center" title="Добавить цель">
-                                <i class="fas fa-plus text-[10px]"></i>
-                            </button>
-                        </div>
-                        <div id="goals-list" class="space-y-1.5 md:space-y-2 max-h-[250px] md:max-h-[300px] overflow-y-auto overflow-x-hidden pr-1 md:pr-2" style="scrollbar-width: thin; scrollbar-color: rgba(156, 163, 175, 0.5) transparent;">
-                            <div class="text-center text-gray-400 py-2 text-xs">Загрузка...</div>
-                        </div>
-                    </div>
+                    <div id="widget-goals-container"></div>
 
                     <!-- Умные рекомендации (компактный) -->
                     <div class="bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border-2 border-green-200">
@@ -252,6 +241,7 @@
                     { name: 'widget-progress', selector: '#widget-progress-container', path: 'widgets/widget-progress' },
                     { name: 'widget-streak', selector: '#widget-streak-container', path: 'widgets/widget-streak' },
                     { name: 'widget-category-stats', selector: '#widget-category-stats-container', path: 'widgets/widget-category-stats' },
+                    { name: 'widget-goals', selector: '#widget-goals-container', path: 'widgets/widget-goals' },
                     // Загружаем основные секции
                     { name: 'section-activities', selector: '#section-activities-container', path: 'sections/section-activities' },
                     { name: 'section-rewards', selector: '#section-rewards-container', path: 'sections/section-rewards' },

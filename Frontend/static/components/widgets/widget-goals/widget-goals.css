@@ -1,0 +1,20 @@
+/* ============= GOALS WIDGET STYLES ============= */
+/* Стили для виджета целей */
+
+/* Исправляем обрезание целей на мобильных устройствах */
+#goals-list {
+    padding-right: 0.75rem !important;
+    padding-left: 0.75rem !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow-x: visible !important;
+}
+
+/* Для планшетов и десктопов */
+@media (min-width: 768px) {
+    #goals-list {
+        padding-right: 1rem !important;
+    }
+}
