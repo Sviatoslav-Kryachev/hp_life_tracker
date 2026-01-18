@@ -20,38 +20,21 @@ const REWARD_PRESETS = {
 };
 
 // ============= HELPER FUNCTIONS =============
+// Используем getElementInApp из core/dom.js для устранения дублирования
 function getRewardsElements() {
-    const appSection = document.getElementById("app-section");
-    if (!appSection || appSection.classList.contains("hidden")) {
-        rewardsListVisible = null;
-        rewardsListHidden = null;
-        rewardsAccordionBtn = null;
-        return;
-    }
-
-    rewardsListVisible = document.getElementById("rewards-list-visible");
-    rewardsListHidden = document.getElementById("rewards-list-hidden");
-    rewardsAccordionBtn = document.getElementById("rewards-accordion-btn");
-
-    if (!rewardsListVisible) {
-        rewardsListVisible = document.querySelector("#rewards-list-visible");
-    }
-    if (!rewardsListHidden) {
-        rewardsListHidden = document.querySelector("#rewards-list-hidden");
-    }
-    if (!rewardsAccordionBtn) {
-        rewardsAccordionBtn = document.querySelector("#rewards-accordion-btn");
-    }
+    rewardsListVisible = getElementInApp("rewards-list-visible");
+    rewardsListHidden = getElementInApp("rewards-list-hidden");
+    rewardsAccordionBtn = getElementInApp("rewards-accordion-btn");
 }
 
 function selectPreset(presetKey) {
     const preset = REWARD_PRESETS[presetKey];
     if (preset) {
         if (!rewardNameInput) {
-            rewardNameInput = document.getElementById("reward-name");
+            rewardNameInput = getElement("reward-name");
         }
         if (!rewardCostInput) {
-            rewardCostInput = document.getElementById("reward-cost");
+            rewardCostInput = getElement("reward-cost");
         }
         if (rewardNameInput) rewardNameInput.value = preset.name;
         if (rewardCostInput) rewardCostInput.value = preset.xp_cost;

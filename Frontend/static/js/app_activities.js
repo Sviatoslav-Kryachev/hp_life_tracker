@@ -14,37 +14,24 @@ let activitiesListVisible, activitiesListHidden, activitiesAccordionBtn;
 let activityNameInput, xpPerHourInput;
 
 // ============= HELPER FUNCTIONS =============
+// Используем getElement из core/dom.js для устранения дублирования
 function getActivitiesElements() {
-    if (!activitiesListVisible) {
-        activitiesListVisible = document.getElementById("activities-list-visible");
-    }
-    if (!activitiesListHidden) {
-        activitiesListHidden = document.getElementById("activities-list-hidden");
-    }
-    if (!activitiesAccordionBtn) {
-        activitiesAccordionBtn = document.getElementById("activities-accordion-btn");
-    }
-
-    // Если элементы не найдены, пробуем через querySelector
-    if (!activitiesListVisible) {
-        activitiesListVisible = document.querySelector("#activities-list-visible");
-    }
-    if (!activitiesListHidden) {
-        activitiesListHidden = document.querySelector("#activities-list-hidden");
-    }
-    if (!activitiesAccordionBtn) {
-        activitiesAccordionBtn = document.querySelector("#activities-accordion-btn");
-    }
+    activitiesListVisible = getElement("activities-list-visible");
+    activitiesListHidden = getElement("activities-list-hidden");
+    activitiesAccordionBtn = getElement("activities-accordion-btn");
 }
 
 function showActivityMessage(text, type) {
-    const msgEl = document.getElementById("activity-message");
+    const msgEl = getElement("activity-message");
     if (!msgEl) return;
-    msgEl.textContent = text;
-    msgEl.classList.remove("hidden", "text-red-500", "text-green-600");
-    if (type === "error") msgEl.classList.add("text-red-500");
-    else if (type === "success") msgEl.classList.add("text-green-600");
-    setTimeout(() => msgEl.classList.add("hidden"), 4000);
+    setText(msgEl, text);
+    removeClass(msgEl, ["hidden", "text-red-500", "text-green-600"]);
+    if (type === "error") {
+        addClass(msgEl, "text-red-500");
+    } else if (type === "success") {
+        addClass(msgEl, "text-green-600");
+    }
+    setTimeout(() => hideElement(msgEl), 4000);
 }
 
 // ============= LOAD ACTIVITIES =============
@@ -126,7 +113,7 @@ async function loadActivities() {
 
 // Обновление фильтра категорий
 function updateActivitiesCategoryFilter() {
-    const categoryFilter = document.getElementById('activities-category-filter');
+    const categoryFilter = getElement('activities-category-filter');
     if (!categoryFilter) return;
 
     // Сохраняем текущее значение
@@ -186,7 +173,7 @@ function updateActivitiesCategoryFilter() {
 function applyActivitiesFilters() {
     getActivitiesElements();
 
-    const activitiesContainer = document.getElementById('activities-list-container');
+    const activitiesContainer = getElement('activities-list-container');
     if (!activitiesListVisible || !activitiesListHidden || !activitiesContainer) return;
 
     // Очищаем списки
@@ -1003,15 +990,31 @@ async function createActivity() {
 
 // ============= EDIT ACTIVITY =============
 function openEditModal(activity) {
+    // Сначала устанавливаем значение категории в скрытый input
+    const categoryEl = getElement("edit-activity-id");
+    const categoryValue = activity.category || "general";
+    
+    // Устанавливаем ID активности
+    const idEl = getElement("edit-activity-id");
+    if (idEl) idEl.value = activity.id;
+    
+    // Устанавливаем название
+    const nameEl = getElement("edit-activity-name");
+    if (nameEl) nameEl.value = activity.name;
+
+    // Устанавливаем категорию ПЕРЕД обновлением дропдауна
+    const categoryInput = getElement("edit-activity-category");
+    if (categoryInput) {
+        categoryInput.value = categoryValue;
+    }
+
+    // Теперь обновляем дропдаун (он сохранит текущее значение и обновит текст)
     if (typeof window.updateCategoryDropdown === 'function') {
         window.updateCategoryDropdown('edit-activity-category');
     }
 
-    document.getElementById("edit-activity-id").value = activity.id;
-    document.getElementById("edit-activity-name").value = activity.name;
-
     const unitType = activity.unit_type || 'time';
-    const unitTypeEl = document.getElementById("edit-activity-unit-type");
+    const unitTypeEl = getElement("edit-activity-unit-type");
     if (unitTypeEl) {
         unitTypeEl.value = unitType;
         if (typeof window.updateEditActivityXPInputs === 'function') {
@@ -1020,32 +1023,15 @@ function openEditModal(activity) {
     }
 
     if (unitType === 'quantity') {
-        const xpPerUnitEl = document.getElementById("edit-xp-per-unit");
+        const xpPerUnitEl = getElement("edit-xp-per-unit");
         if (xpPerUnitEl) {
             xpPerUnitEl.value = activity.xp_per_unit || 1;
         }
     } else {
-        const xpPerHourEl = document.getElementById("edit-xp-per-hour");
+        const xpPerHourEl = getElement("edit-xp-per-hour");
         if (xpPerHourEl) {
             xpPerHourEl.value = activity.xp_per_hour || 60;
         }
-    }
-
-    const categoryEl = document.getElementById("edit-activity-category");
-    const categoryText = document.getElementById("edit-activity-category-text");
-    if (categoryEl && categoryText) {
-        setTimeout(() => {
-            const categoryValue = activity.category || "general";
-            categoryEl.value = categoryValue;
-            const allCategories = typeof window !== 'undefined' && window.allCategories ? window.allCategories : { standard: [], custom: [] };
-            const allCats = [...(allCategories.standard || []), ...(allCategories.custom || [])];
-            const selectedCat = allCats.find(c => c.id === categoryValue);
-            if (selectedCat) {
-                categoryText.textContent = selectedCat.name;
-            } else {
-                categoryText.textContent = "Общее";
-            }
-        }, 100);
     }
 
     if (typeof window.applyTranslations === 'function') {
@@ -1060,7 +1046,7 @@ function openEditModal(activity) {
 }
 
 function closeEditModal() {
-    document.getElementById("edit-activity-modal").classList.add("hidden");
+    hideElement("edit-activity-modal");
     document.getElementById("edit-activity-form").reset();
 }
 
@@ -1069,16 +1055,17 @@ async function updateActivity() {
     const name = document.getElementById("edit-activity-name").value.trim();
     const categoryEl = document.getElementById("edit-activity-category");
     const category = categoryEl ? categoryEl.value || "general" : "general";
-    const unitTypeEl = document.getElementById("edit-activity-unit-type");
+    const unitTypeEl = getElement("edit-activity-unit-type");
     const unitType = unitTypeEl ? unitTypeEl.value : "time";
 
     let xpPerHour = null;
     let xpPerUnit = null;
 
     if (unitType === "time") {
-        xpPerHour = Number(document.getElementById("edit-xp-per-hour").value) || 60;
+        const xpPerHourEl = getElement("edit-xp-per-hour");
+        xpPerHour = xpPerHourEl ? Number(xpPerHourEl.value) || 60 : 60;
     } else {
-        const xpPerUnitInput = document.getElementById("edit-xp-per-unit");
+        const xpPerUnitInput = getElement("edit-xp-per-unit");
         xpPerUnit = xpPerUnitInput ? Number(xpPerUnitInput.value) || 1 : 1;
     }
 
@@ -1537,14 +1524,11 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         manualForm.setAttribute('data-submit-handler-attached', 'true');
     }
     
-    const modal = document.getElementById("manual-time-modal");
-    if (modal) {
-        modal.classList.remove("hidden");
-    }
+    showElement("manual-time-modal");
 }
 
 function closeManualTimeModal() {
-    document.getElementById("manual-time-modal").classList.add("hidden");
+    hideElement("manual-time-modal");
 }
 
 async function addManualTime() {

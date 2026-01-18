@@ -8,28 +8,11 @@ let historyListVisible, historyListHidden, historyAccordionBtn;
 let historyPeriod = 'today'; // По умолчанию показываем сегодня
 
 // ============= HELPER FUNCTIONS =============
+// Используем getElementInApp из core/dom.js для устранения дублирования
 function getHistoryElements() {
-    const appSection = document.getElementById("app-section");
-    if (!appSection || appSection.classList.contains("hidden")) {
-        historyListVisible = null;
-        historyListHidden = null;
-        historyAccordionBtn = null;
-        return;
-    }
-
-    historyListVisible = document.getElementById("history-list-visible");
-    historyListHidden = document.getElementById("history-list-hidden");
-    historyAccordionBtn = document.getElementById("history-accordion-btn");
-
-    if (!historyListVisible) {
-        historyListVisible = document.querySelector("#history-list-visible");
-    }
-    if (!historyListHidden) {
-        historyListHidden = document.querySelector("#history-list-hidden");
-    }
-    if (!historyAccordionBtn) {
-        historyAccordionBtn = document.querySelector("#history-accordion-btn");
-    }
+    historyListVisible = getElementInApp("history-list-visible");
+    historyListHidden = getElementInApp("history-list-hidden");
+    historyAccordionBtn = getElementInApp("history-accordion-btn");
 }
 
 function filterHistoryByPeriod(data, period) {
