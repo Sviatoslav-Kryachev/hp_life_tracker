@@ -754,10 +754,7 @@ function closeTelegramLinkModal() {
 
 async function checkTelegramStatus() {
     try {
-        const res = await fetch(`${API_BASE}/telegram/status`, {
-            headers: { "Authorization": `Bearer ${getAuthToken()}` }
-        });
-        
+        const data = await apiGet('/telegram/status');
         const statusDiv = document.getElementById('telegram-link-status');
         const input = document.getElementById('telegram-id-input');
         
