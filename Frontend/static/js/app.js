@@ -724,6 +724,10 @@ async function checkAdminStatus() {
         } catch (e) {
             // Не админ или ошибка
         }
+    } catch (e) {
+        // Ошибка при проверке статуса админа
+        console.error('Error checking admin status:', e);
+    }
 }
 
 // Функция logout определена в app_auth.js
