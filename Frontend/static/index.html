@@ -29,68 +29,7 @@
 </head>
 
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
-    <script>
-        // Функция проверки авторизации (будет вызвана после загрузки компонентов)
-        function applyAuthCheck() {
-            try {
-                const token = localStorage.getItem('token');
-                const authSection = document.getElementById('auth-section');
-                const appSection = document.getElementById('app-section');
-                
-                if (token) {
-                    // Если есть токен, скрываем auth-section и показываем app-section
-                    if (authSection) {
-                        authSection.classList.add('hidden');
-                        authSection.style.display = 'none';
-                        authSection.style.visibility = 'visible';
-                        authSection.style.height = '0';
-                        authSection.style.overflow = 'hidden';
-                    }
-                    if (appSection) {
-                        appSection.classList.remove('hidden');
-                        appSection.style.display = '';
-                        appSection.style.visibility = 'visible';
-                        appSection.style.height = '';
-                        appSection.style.overflow = '';
-                        appSection.style.position = '';
-                        appSection.style.left = '';
-                    }
-                } else {
-                    // Если токена нет, показываем auth-section и скрываем app-section
-                    if (authSection) {
-                        authSection.classList.remove('hidden');
-                        authSection.style.display = '';
-                        authSection.style.visibility = 'visible';
-                        authSection.style.height = '';
-                        authSection.style.overflow = '';
-                    }
-                    if (appSection) {
-                        appSection.classList.add('hidden');
-                        appSection.style.display = 'none';
-                        appSection.style.visibility = 'visible';
-                        appSection.style.height = '0';
-                        appSection.style.overflow = 'hidden';
-                        appSection.style.position = 'absolute';
-                        appSection.style.left = '-9999px';
-                    }
-                }
-                
-                // Предотвращаем скролл вниз при загрузке
-                window.scrollTo(0, 0);
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
-                
-                // Дополнительная проверка через небольшую задержку
-                setTimeout(() => {
-                    window.scrollTo(0, 0);
-                    document.documentElement.scrollTop = 0;
-                    document.body.scrollTop = 0;
-                }, 50);
-            } catch(e) {
-                console.error('Auth check error:', e);
-            }
-        }
-    </script>
+    <!-- Auth initialization script вынесен в js/app_auth_init.js -->
 
     <!-- AUTH SECTION Component Container -->
     <div id="auth-section"></div>
@@ -100,79 +39,8 @@
         <!-- Header Component Container -->
         <div id="header-container"></div>
 
-        <!-- Content with top padding for fixed header -->
-        <div class="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-6xl pt-20 md:pt-24">
-            <!-- Admin Panel (hidden by default) -->
-            <!-- Admin Panel Component Container -->
-            <div id="section-admin-container"></div>
-
-            <!-- Модальные окна загружаются динамически через components.js -->
-
-            <!-- Виджеты: Сегодня + Неделя + Прогресс -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
-                <!-- Виджет Сегодня -->
-                <div id="widget-today-container"></div>
-
-                <!-- Календарь активности -->
-                <div id="widget-calendar-container"></div>
-
-                <!-- Прогресс до следующего уровня -->
-                <div id="widget-progress-container"></div>
-            </div>
-
-            <!-- Основной контент: Активности + Боковая панель -->
-            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
-                <!-- Активности Component Container -->
-                <div id="section-activities-container" class="lg:col-span-2"></div>
-
-                <!-- Боковая панель (правая колонка) -->
-                <div class="space-y-3 md:space-y-4">
-                    <!-- Виджет Streak (компактный) -->
-                    <div id="widget-streak-container"></div>
-
-                    <!-- Статистика по категориям -->
-                    <div id="widget-category-stats-container"></div>
-
-                    <!-- Цели (компактный) -->
-                    <div id="widget-goals-container"></div>
-
-                    <!-- Умные рекомендации (компактный) -->
-                    <div id="widget-recommendations-container"></div>
-
-                </div>
-            </div>
-
-            <!-- Награды и История транзакций (общий контейнер) -->
-            <div class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start">
-                <!-- Награды Component Container -->
-                <div id="section-rewards-container" class="lg:col-span-2"></div>
-
-                <!-- История транзакций Component Container -->
-                <div id="section-history-container"></div>
-                </div>
-            </div>
-
-            <!-- Социальные функции: Группы, Лидерборды, Челленджи, Достижения -->
-            <div id="social" class="grid lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6 lg:items-start scroll-mt-20 md:scroll-mt-24">
-                <!-- Левая колонка: Группы и Челленджи (2 колонки из 3, как активности/награды) -->
-                <div class="lg:col-span-2 space-y-4 md:space-y-6">
-                    <!-- Группы Component Container -->
-                    <div id="section-groups-container"></div>
-
-                    <!-- Челленджи Component Container -->
-                    <div id="section-challenges-container"></div>
-                </div>
-
-                <!-- Правая колонка: Лидерборд и Достижения (1 колонка из 3, как история) -->
-                <div class="space-y-4 md:space-y-6">
-                    <!-- Лидерборд Component Container -->
-                    <div id="section-leaderboard-container"></div>
-
-                    <!-- Достижения Component Container -->
-                    <div id="section-achievements-container"></div>
-                </div>
-            </div>
-        </div>
+        <!-- App Layout Component Container (layout вынесен в components/layout/app-layout.html) -->
+        <div id="app-layout-container"></div>
 
         <!-- Footer Component Container -->
         <div id="footer-container"></div>
@@ -187,6 +55,7 @@
     <script src="js/components.js"></script>
            <!-- JavaScript Modules (загружаются в правильном порядке) -->
            <script src="js/app_utils.js"></script>
+           <script src="js/app_auth_init.js"></script>
            <script src="js/app_auth.js"></script>
            <script src="js/app_activities.js"></script>
            <script src="js/app_rewards.js"></script>

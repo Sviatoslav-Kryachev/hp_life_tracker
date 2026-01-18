@@ -79,14 +79,26 @@ tail -f /var/log/nginx/hp-life-tracker_access.log
 ## SSL (Certbot)
 
 ```bash
+# Список сертификатов
+sudo certbot certificates
+
+# Получение нового сертификата для домена
+sudo certbot --nginx -d hp-life-tracker.app-toolbox.space
+
 # Обновление сертификата (тест)
-certbot renew --dry-run
+sudo certbot renew --dry-run
 
 # Принудительное обновление
-certbot renew --force-renewal
+sudo certbot renew --force-renewal
 
-# Список сертификатов
-certbot certificates
+# Удаление сертификата (если нужно пересоздать)
+sudo certbot delete --cert-name hp-life-tracker.app-toolbox.space
+
+# Проверка сертификата через openssl
+openssl s_client -connect hp-life-tracker.app-toolbox.space:443 -servername hp-life-tracker.app-toolbox.space < /dev/null 2>/dev/null | openssl x509 -noout -dates
+
+# Проверка DNS записи
+dig hp-life-tracker.app-toolbox.space +short
 ```
 
 ## Проверка работоспособности
