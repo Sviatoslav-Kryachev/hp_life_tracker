@@ -1,0 +1,151 @@
+/* ============= ICONS ============= */
+/* Стили для иконок Font Awesome */
+
+/* Базовые стили для иконок */
+i.fas,
+i.far,
+i.fab {
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+/* Размеры иконок */
+.icon-xs {
+    font-size: 0.625rem;
+}
+
+.icon-sm {
+    font-size: 0.75rem;
+}
+
+.icon-base {
+    font-size: 0.875rem;
+}
+
+.icon-lg {
+    font-size: 1rem;
+}
+
+.icon-xl {
+    font-size: 1.25rem;
+}
+
+.icon-2xl {
+    font-size: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .icon-lg {
+        font-size: 1.125rem;
+    }
+    
+    .icon-xl {
+        font-size: 1.5rem;
+    }
+    
+    .icon-2xl {
+        font-size: 1.875rem;
+    }
+}
+
+/* Цвета иконок */
+.icon-white {
+    color: rgb(255, 255, 255);
+}
+
+.icon-gray {
+    color: rgb(107, 114, 128);
+}
+
+.icon-gray-400 {
+    color: rgb(156, 163, 175);
+}
+
+.icon-gray-500 {
+    color: rgb(107, 114, 128);
+}
+
+.icon-gray-600 {
+    color: rgb(75, 85, 99);
+}
+
+.icon-blue-600 {
+    color: rgb(37, 99, 235);
+}
+
+.icon-green-600 {
+    color: rgb(22, 163, 74);
+}
+
+.icon-purple-600 {
+    color: rgb(147, 51, 234);
+}
+
+.icon-indigo-600 {
+    color: rgb(79, 70, 229);
+}
+
+.icon-orange-500 {
+    color: rgb(249, 115, 22);
+}
+
+.icon-amber-500 {
+    color: rgb(245, 158, 11);
+}
+
+.icon-yellow-300 {
+    color: rgb(253, 224, 71);
+}
+
+.icon-red-500 {
+    color: rgb(239, 68, 68);
+}
+
+.icon-pink-500 {
+    color: rgb(236, 72, 153);
+}
+
+/* Иконки в кнопках */
+button i {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Иконки в заголовках секций */
+.section-header-icon {
+    font-size: 1.25rem;
+    color: rgb(255, 255, 255);
+}
+
+@media (min-width: 768px) {
+    .section-header-icon {
+        font-size: 1.5rem;
+    }
+}
+
+/* Иконки в виджетах */
+.widget-icon {
+    font-size: 0.875rem;
+    color: inherit;
+}
+
+@media (min-width: 768px) {
+    .widget-icon {
+        font-size: 1rem;
+    }
+}
+
+/* Иконки в модальных окнах */
+.modal-icon {
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+/* Hover эффекты для иконок */
+.icon-hover:hover {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}

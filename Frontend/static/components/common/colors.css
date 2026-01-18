@@ -1,0 +1,120 @@
+/* ============= COLORS ============= */
+/* Цветовая палитра и утилиты */
+
+/* CSS переменные для цветов */
+:root {
+    /* Primary colors */
+    --color-indigo-600: #4f46e5;
+    --color-purple-600: #9333ea;
+    
+    /* Success colors */
+    --color-green-500: #22c55e;
+    --color-green-600: #16a34a;
+    --color-emerald-500: #10b981;
+    --color-emerald-600: #059669;
+    --color-teal-500: #14b8a6;
+    --color-teal-600: #0d9488;
+    
+    /* Blue colors */
+    --color-blue-500: #3b82f6;
+    --color-blue-600: #2563eb;
+    --color-indigo-500: #6366f1;
+    
+    /* Purple/Pink colors */
+    --color-purple-500: #a855f7;
+    --color-pink-500: #ec4899;
+    --color-pink-600: #db2777;
+    
+    /* Orange/Amber colors */
+    --color-orange-500: #f97316;
+    --color-orange-600: #ea580c;
+    --color-amber-500: #f59e0b;
+    --color-amber-600: #d97706;
+    --color-yellow-400: #facc15;
+    
+    /* Gray colors */
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    
+    /* Red colors */
+    --color-red-500: #ef4444;
+    
+    /* White with opacity */
+    --color-white-80: rgba(255, 255, 255, 0.8);
+    --color-white-90: rgba(255, 255, 255, 0.9);
+    --color-white-95: rgba(255, 255, 255, 0.95);
+}
+
+/* Text colors */
+.text-primary {
+    color: var(--color-indigo-600);
+}
+
+.text-secondary {
+    color: var(--color-gray-600);
+}
+
+.text-muted {
+    color: var(--color-gray-400);
+}
+
+.text-white {
+    color: rgb(255, 255, 255);
+}
+
+.text-white-80 {
+    color: var(--color-white-80);
+}
+
+.text-gray-700 {
+    color: var(--color-gray-700);
+}
+
+.text-gray-800 {
+    color: var(--color-gray-800);
+}
+
+.text-gray-400 {
+    color: var(--color-gray-400);
+}
+
+.text-gray-500 {
+    color: var(--color-gray-500);
+}
+
+.text-blue-600 {
+    color: var(--color-blue-600);
+}
+
+.text-green-600 {
+    color: var(--color-green-600);
+}
+
+.text-purple-600 {
+    color: var(--color-purple-600);
+}
+
+.text-red-500 {
+    color: var(--color-red-500);
+}
+
+.text-amber-500 {
+    color: var(--color-amber-500);
+}
+
+/* Active state colors */
+.active-color {
+    color: var(--color-indigo-600) !important;
+}
+
+/* Hover states */
+.hover-gray-600:hover {
+    color: var(--color-gray-600);
+}
+
+.hover-gray-700:hover {
+    color: var(--color-gray-700);
+}

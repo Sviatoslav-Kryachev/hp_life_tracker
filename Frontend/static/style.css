@@ -17,8 +17,9 @@ body {
     max-width: 100vw;
 }
 
+/* Базовый шрифт вынесен в components/common/typography.css */
+
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
 }
@@ -399,15 +400,15 @@ body {
 }
 
 .mobile-nav-btn.active-nav {
-    color: #4f46e5 !important; /* indigo-600 */
+    color: var(--color-indigo-600, #4f46e5) !important;
 }
 
 .mobile-nav-btn.active-nav i {
-    color: #4f46e5 !important;
+    color: var(--color-indigo-600, #4f46e5) !important;
 }
 
 .mobile-nav-btn.active-nav span {
-    color: #4f46e5 !important;
+    color: var(--color-indigo-600, #4f46e5) !important;
 }
 
 /* Анимация для активной кнопки */

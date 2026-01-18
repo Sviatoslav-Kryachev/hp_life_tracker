@@ -13,10 +13,7 @@ button.transition-all {
     transition-duration: 150ms;
 }
 
-/* Кнопки с иконками */
-button i {
-    display: inline-block;
-}
+/* Кнопки с иконками - стили вынесены в components/common/icons.css */
 
 /* Кнопки в модальных окнах */
 .modal-button {

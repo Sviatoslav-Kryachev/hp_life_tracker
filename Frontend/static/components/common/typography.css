@@ -1,0 +1,169 @@
+/* ============= TYPOGRAPHY ============= */
+/* Типографика и текстовые стили */
+
+/* Базовый шрифт */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Заголовки */
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+    h1 {
+        font-size: 1.875rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+}
+
+/* Размеры текста */
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.text-base {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.5;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 1.3;
+}
+
+.text-3xl {
+    font-size: 1.875rem;
+    line-height: 1.2;
+}
+
+/* Font weights */
+.font-light {
+    font-weight: 300;
+}
+
+.font-normal {
+    font-weight: 400;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-black {
+    font-weight: 900;
+}
+
+/* Line heights */
+.leading-tight {
+    line-height: 1.25;
+}
+
+.leading-normal {
+    line-height: 1.5;
+}
+
+.leading-relaxed {
+    line-height: 1.75;
+}
+
+/* Section headers */
+.section-header {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+    .section-header {
+        font-size: 1.5rem;
+    }
+}
+
+.section-subtitle {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin-top: 0.125rem;
+}
+
+/* Modal titles */
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(31, 41, 55);
+}
+
+/* Labels */
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(55, 65, 81);
+    margin-bottom: 0.5rem;
+}
+
+/* Loading text */
+.loading-text {
+    text-align: center;
+    color: rgb(156, 163, 175);
+    padding: 1rem 0;
+    font-size: 0.75rem;
+}
+
+/* Error text */
+.error-text {
+    color: rgb(239, 68, 68);
+    font-size: 0.875rem;
+}
+
+/* Success text */
+.success-text {
+    color: rgb(34, 197, 94);
+    font-size: 0.875rem;
+}
