@@ -2609,7 +2609,6 @@ window.resetPassword = resetPassword;
 window.openManualTimeModal = openManualTimeModal;
 window.closeManualTimeModal = closeManualTimeModal;
 window.updateManualPreview = updateManualPreview;
-window.updateManualPreview = updateManualPreview;
 
 // ============= INITIALIZATION =============
 window.addEventListener("DOMContentLoaded", () => {
