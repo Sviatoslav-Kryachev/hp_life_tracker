@@ -134,6 +134,8 @@ class ActivityService:
     @staticmethod
     def delete_activity(db: Session, user_id: int, activity_id: int) -> Dict[str, str]:
         """Удалить активность"""
+        from app.models.base import ActivityLog, TimerLog, Goal
+        
         activity = db.query(Activity).filter(
             Activity.id == activity_id,
             Activity.user_id == user_id
@@ -142,6 +144,29 @@ class ActivityService:
         if not activity:
             raise HTTPException(status_code=404, detail="Активность не найдена")
         
+        # Удаляем связанные записи перед удалением активности
+        # Удаляем логи активности
+        activity_logs = db.query(ActivityLog).filter(
+            ActivityLog.activity_id == activity_id
+        ).all()
+        for log in activity_logs:
+            db.delete(log)
+        
+        # Удаляем логи таймеров
+        timer_logs = db.query(TimerLog).filter(
+            TimerLog.activity_id == activity_id
+        ).all()
+        for log in timer_logs:
+            db.delete(log)
+        
+        # Обнуляем связь в целях (не удаляем цели, только убираем связь с активностью)
+        goals = db.query(Goal).filter(
+            Goal.activity_id == activity_id
+        ).all()
+        for goal in goals:
+            goal.activity_id = None
+        
+        # Удаляем саму активность
         db.delete(activity)
         db.commit()
         return {"message": "Активность удалена"}
