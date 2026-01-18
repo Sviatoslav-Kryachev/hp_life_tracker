@@ -1375,14 +1375,23 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     if (minutesInput) {
         const newMinutesInput = minutesInput.cloneNode(true);
         minutesInput.parentNode.replaceChild(newMinutesInput, minutesInput);
-        newMinutesInput.addEventListener("input", () => {
+        newMinutesInput.addEventListener("input", (e) => {
             const currentActivityId = document.getElementById("manual-activity-select").value;
+            console.log("[Manual Time] Minutes input changed:", e.target.value, "Activity ID:", currentActivityId);
             if (currentActivityId) {
                 if (typeof window.updateManualPreview === 'function') {
+                    console.log("[Manual Time] Calling window.updateManualPreview");
                     window.updateManualPreview(currentActivityId);
                 } else if (typeof updateManualPreview === 'function') {
+                    console.log("[Manual Time] Calling updateManualPreview");
                     updateManualPreview(currentActivityId);
+                } else {
+                    console.error("[Manual Time] updateManualPreview function not found!");
                 }
+            } else {
+                console.log("[Manual Time] No activity selected, hiding preview");
+                const previewEl = document.getElementById("manual-time-preview");
+                if (previewEl) previewEl.classList.add("hidden");
             }
         });
     }

@@ -2320,29 +2320,46 @@ function closeManualTimeModal() {
 }
 
 function updateManualPreview(activityId) {
+    console.log("[updateManualPreview] Called with activityId:", activityId);
     const activity = allActivities.find(a => a.id == activityId);
-    if (!activity) return;
+    if (!activity) {
+        console.warn("[updateManualPreview] Activity not found:", activityId);
+        return;
+    }
 
     const unitType = activity.unit_type || 'time';
     const preview = document.getElementById("manual-time-preview");
+    
+    if (!preview) {
+        console.error("[updateManualPreview] Preview element not found!");
+        return;
+    }
+
+    console.log("[updateManualPreview] Activity found:", activity.name, "Unit type:", unitType);
 
     if (unitType === 'quantity') {
         const quantity = document.getElementById("manual-quantity").value;
+        console.log("[updateManualPreview] Quantity value:", quantity);
         if (activityId && quantity) {
             const xp = Math.round(quantity * (activity.xp_per_unit || 1));
             preview.textContent = `+${xp} XP`;
             preview.classList.remove("hidden");
+            console.log("[updateManualPreview] Showing preview:", `+${xp} XP`);
         } else {
             preview.classList.add("hidden");
+            console.log("[updateManualPreview] Hiding preview (no quantity)");
         }
     } else {
         const minutes = document.getElementById("manual-minutes").value;
+        console.log("[updateManualPreview] Minutes value:", minutes);
         if (activityId && minutes) {
             const xp = Math.round((minutes / 60) * activity.xp_per_hour);
             preview.textContent = `+${xp} XP`;
             preview.classList.remove("hidden");
+            console.log("[updateManualPreview] Showing preview:", `+${xp} XP`);
         } else {
             preview.classList.add("hidden");
+            console.log("[updateManualPreview] Hiding preview (no minutes)");
         }
     }
 }
