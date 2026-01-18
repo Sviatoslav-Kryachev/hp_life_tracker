@@ -1299,6 +1299,36 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         if (typeof window.updateManualModalUI === 'function') {
             window.updateManualModalUI(activityId);
         }
+        // Обновляем UI для выбранной активности
+        const activity = allActivities.find(a => a.id == activityId);
+        if (activity) {
+            const unitType = activity.unit_type || 'time';
+            const titleEl = document.getElementById("manual-modal-title");
+            const timeContainer = document.getElementById("manual-time-input-container");
+            const quantityContainer = document.getElementById("manual-quantity-input-container");
+            const timeInput = document.getElementById("manual-minutes");
+            const quantityInput = document.getElementById("manual-quantity");
+            
+            if (unitType === 'quantity') {
+                if (titleEl) {
+                    titleEl.textContent = `📊 ${t('manual_quantity')}`;
+                    titleEl.setAttribute('data-i18n', 'manual_quantity');
+                }
+                if (timeContainer) timeContainer.classList.add('hidden');
+                if (quantityContainer) quantityContainer.classList.remove('hidden');
+                if (timeInput) timeInput.removeAttribute('required');
+                if (quantityInput) quantityInput.setAttribute('required', 'required');
+            } else {
+                if (titleEl) {
+                    titleEl.textContent = `⏱️ ${t('manual_time')}`;
+                    titleEl.setAttribute('data-i18n', 'manual_time');
+                }
+                if (timeContainer) timeContainer.classList.remove('hidden');
+                if (quantityContainer) quantityContainer.classList.add('hidden');
+                if (timeInput) timeInput.setAttribute('required', 'required');
+                if (quantityInput) quantityInput.removeAttribute('required');
+            }
+        }
     } else {
         const titleEl = document.getElementById("manual-modal-title");
         if (filterByTime) {
@@ -1347,10 +1377,12 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         minutesInput.parentNode.replaceChild(newMinutesInput, minutesInput);
         newMinutesInput.addEventListener("input", () => {
             const currentActivityId = document.getElementById("manual-activity-select").value;
-            if (typeof window.updateManualPreview === 'function') {
-                window.updateManualPreview(currentActivityId);
-            } else if (typeof updateManualPreview === 'function') {
-                updateManualPreview(currentActivityId);
+            if (currentActivityId) {
+                if (typeof window.updateManualPreview === 'function') {
+                    window.updateManualPreview(currentActivityId);
+                } else if (typeof updateManualPreview === 'function') {
+                    updateManualPreview(currentActivityId);
+                }
             }
         });
     }
@@ -1360,10 +1392,12 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         quantityInput.parentNode.replaceChild(newQuantityInput, quantityInput);
         newQuantityInput.addEventListener("input", () => {
             const currentActivityId = document.getElementById("manual-activity-select").value;
-            if (typeof window.updateManualPreview === 'function') {
-                window.updateManualPreview(currentActivityId);
-            } else if (typeof updateManualPreview === 'function') {
-                updateManualPreview(currentActivityId);
+            if (currentActivityId) {
+                if (typeof window.updateManualPreview === 'function') {
+                    window.updateManualPreview(currentActivityId);
+                } else if (typeof updateManualPreview === 'function') {
+                    updateManualPreview(currentActivityId);
+                }
             }
         });
     }
@@ -1377,12 +1411,34 @@ async function openManualTimeModal(activityId, filterByTime = true) {
             if (typeof window.updateManualModalUI === 'function') {
                 window.updateManualModalUI(e.target.value);
             }
-            if (typeof window.updateManualPreview === 'function') {
-                window.updateManualPreview(e.target.value);
-            } else if (typeof updateManualPreview === 'function') {
-                updateManualPreview(e.target.value);
+            if (e.target.value) {
+                if (typeof window.updateManualPreview === 'function') {
+                    window.updateManualPreview(e.target.value);
+                } else if (typeof updateManualPreview === 'function') {
+                    updateManualPreview(e.target.value);
+                }
+            } else {
+                // Скрываем превью если активность не выбрана
+                const previewEl = document.getElementById("manual-time-preview");
+                if (previewEl) previewEl.classList.add("hidden");
             }
         });
+    }
+    
+    // Если активность уже выбрана, показываем превью сразу (если есть значение в поле)
+    if (activityId) {
+        // Небольшая задержка, чтобы убедиться, что обработчики установлены
+        setTimeout(() => {
+            const currentMinutes = document.getElementById("manual-minutes")?.value;
+            const currentQuantity = document.getElementById("manual-quantity")?.value;
+            if (currentMinutes || currentQuantity) {
+                if (typeof window.updateManualPreview === 'function') {
+                    window.updateManualPreview(activityId);
+                } else if (typeof updateManualPreview === 'function') {
+                    updateManualPreview(activityId);
+                }
+            }
+        }, 50);
     }
     
     // Устанавливаем обработчик формы если еще не установлен
