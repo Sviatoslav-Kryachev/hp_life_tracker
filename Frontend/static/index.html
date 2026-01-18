@@ -143,15 +143,7 @@
                     <div id="widget-streak-container"></div>
 
                     <!-- Статистика по категориям -->
-                    <div class="bg-white/90 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border border-white/50">
-                        <div class="flex items-center justify-center gap-1.5 md:gap-2 mb-2 md:mb-3">
-                            <i class="fas fa-chart-pie text-blue-600 text-sm md:text-base"></i>
-                            <h3 class="text-xs md:text-sm font-bold text-gray-800" data-i18n="category_stats">Статистика по категориям</h3>
-                        </div>
-                        <div id="category-stats" class="space-y-2 max-h-[200px] md:max-h-[250px] overflow-y-auto overflow-x-hidden pr-1 md:pr-2" style="scrollbar-width: thin; scrollbar-color: rgba(156, 163, 175, 0.5) transparent;">
-                            <div class="text-center text-gray-400 py-2 text-xs">Загрузка...</div>
-                        </div>
-                    </div>
+                    <div id="widget-category-stats-container"></div>
 
                     <!-- Цели (компактный) -->
                     <div class="bg-white/90 backdrop-blur rounded-xl md:rounded-2xl p-3 md:p-4 shadow-xl border border-white/50">
@@ -259,6 +251,7 @@
                     { name: 'widget-calendar', selector: '#widget-calendar-container', path: 'widgets/widget-calendar' },
                     { name: 'widget-progress', selector: '#widget-progress-container', path: 'widgets/widget-progress' },
                     { name: 'widget-streak', selector: '#widget-streak-container', path: 'widgets/widget-streak' },
+                    { name: 'widget-category-stats', selector: '#widget-category-stats-container', path: 'widgets/widget-category-stats' },
                     // Загружаем основные секции
                     { name: 'section-activities', selector: '#section-activities-container', path: 'sections/section-activities' },
                     { name: 'section-rewards', selector: '#section-rewards-container', path: 'sections/section-rewards' },
