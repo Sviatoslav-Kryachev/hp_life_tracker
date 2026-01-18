@@ -100,7 +100,18 @@ function applyTranslations() {
 function toggleLanguageMenu() {
     const menu = document.getElementById('language-menu');
     if (menu) {
+        const isHidden = menu.classList.contains('hidden');
+        // Закрываем все другие открытые меню
+        document.querySelectorAll('#language-menu:not(.hidden)').forEach(m => {
+            if (m !== menu) m.classList.add('hidden');
+        });
+        // Переключаем текущее меню
         menu.classList.toggle('hidden');
+        // Для мобильных устройств убеждаемся, что меню видимо
+        if (!isHidden === false) {
+            // Меню открывается - убеждаемся, что оно на переднем плане
+            menu.style.zIndex = '10002';
+        }
     }
 }
 
@@ -171,7 +182,9 @@ function updateLanguageMenu(langParam) {
 document.addEventListener('click', (e) => {
     const wrapper = document.getElementById('language-switcher-wrapper');
     const menu = document.getElementById('language-menu');
-    if (wrapper && menu && !wrapper.contains(e.target)) {
+    const btn = document.getElementById('language-switcher-btn');
+    // Не закрываем, если клик был по кнопке или внутри меню
+    if (wrapper && menu && !wrapper.contains(e.target) && e.target !== btn) {
         closeLanguageMenu();
     }
 
@@ -326,21 +339,38 @@ function navigateToSection(section) {
 
 // Функция для показа/скрытия секций на мобильных
 function showMobileSection(section) {
-    // Находим все grid контейнеры
-    const activitiesGrid = document.querySelector('#activities')?.parentElement;
-    const rewardsGrid = document.querySelector('#rewards')?.parentElement;
-    const historyGrid = document.querySelector('#history')?.parentElement;
-    const sidebar = document.querySelector('.grid.lg\\:grid-cols-3 > .lg\\:col-span-1');
+    console.log('[showMobileSection] Showing section:', section);
     
-    // Скрываем все grid контейнеры и секции
-    [activitiesGrid, rewardsGrid, historyGrid].forEach(grid => {
+    // Находим все grid контейнеры с классом lg:grid-cols-3
+    // Их два: один для activities+sidebar, другой для rewards+history
+    const allGrids = document.querySelectorAll('.grid.lg\\:grid-cols-3');
+    
+    // Первый grid содержит activities (lg:col-span-2) и sidebar (lg:col-span-1)
+    const activitiesGrid = allGrids[0] || null;
+    
+    // Второй grid содержит rewards (lg:col-span-2) и history
+    const rewardsHistoryGrid = allGrids[1] || null;
+    
+    // Ищем sidebar (виджеты: goals, streak, category-stats, recommendations)
+    // Он находится в первом grid контейнере
+    const sidebar = activitiesGrid ? activitiesGrid.querySelector('.lg\\:col-span-1') : null;
+    
+    console.log('[showMobileSection] Found elements:', {
+        activitiesGrid: !!activitiesGrid,
+        rewardsHistoryGrid: !!rewardsHistoryGrid,
+        sidebar: !!sidebar,
+        totalGrids: allGrids.length
+    });
+    
+    // Скрываем все grid контейнеры
+    allGrids.forEach(grid => {
         if (grid) {
             grid.classList.remove('mobile-section-visible');
             grid.classList.add('mobile-section-hidden');
         }
     });
     
-    // Скрываем sidebar
+    // Скрываем sidebar отдельно
     if (sidebar) {
         sidebar.classList.remove('mobile-section-visible');
         sidebar.classList.add('mobile-section-hidden');
@@ -352,24 +382,36 @@ function showMobileSection(section) {
             if (activitiesGrid) {
                 activitiesGrid.classList.remove('mobile-section-hidden');
                 activitiesGrid.classList.add('mobile-section-visible');
+                console.log('[showMobileSection] Activities section shown');
+            } else {
+                console.warn('[showMobileSection] Activities grid not found!');
             }
             break;
         case 'rewards':
-            if (rewardsGrid) {
-                rewardsGrid.classList.remove('mobile-section-hidden');
-                rewardsGrid.classList.add('mobile-section-visible');
+            if (rewardsHistoryGrid) {
+                rewardsHistoryGrid.classList.remove('mobile-section-hidden');
+                rewardsHistoryGrid.classList.add('mobile-section-visible');
+                console.log('[showMobileSection] Rewards section shown');
+            } else {
+                console.warn('[showMobileSection] Rewards grid not found!');
             }
             break;
         case 'history':
-            if (historyGrid) {
-                historyGrid.classList.remove('mobile-section-hidden');
-                historyGrid.classList.add('mobile-section-visible');
+            if (rewardsHistoryGrid) {
+                rewardsHistoryGrid.classList.remove('mobile-section-hidden');
+                rewardsHistoryGrid.classList.add('mobile-section-visible');
+                console.log('[showMobileSection] History section shown');
+            } else {
+                console.warn('[showMobileSection] History grid not found!');
             }
             break;
         case 'goals':
             if (sidebar) {
                 sidebar.classList.remove('mobile-section-hidden');
                 sidebar.classList.add('mobile-section-visible');
+                console.log('[showMobileSection] Goals sidebar shown');
+            } else {
+                console.warn('[showMobileSection] Sidebar not found!');
             }
             break;
     }
@@ -389,18 +431,35 @@ window.showMobileSection = showMobileSection;
 function initBottomNavigation() {
     const bottomNav = document.getElementById('bottom-navigation');
     if (bottomNav) {
+        // Удаляем старые обработчики, если они есть (через проверку атрибута)
+        if (bottomNav.hasAttribute('data-handler-attached')) {
+            return; // Обработчик уже прикреплен
+        }
+        
         // Используем делегирование событий для кнопок навигации
         bottomNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
             const button = e.target.closest('.mobile-nav-btn');
             if (button && button.dataset.section) {
                 const section = button.dataset.section;
-                if (typeof navigateToSection === 'function') {
+                console.log('[initBottomNavigation] Button clicked, section:', section);
+                
+                if (typeof window.navigateToSection === 'function') {
+                    window.navigateToSection(section);
+                } else if (typeof navigateToSection === 'function') {
                     navigateToSection(section);
                 } else {
-                    console.warn('navigateToSection is not defined yet');
+                    console.error('navigateToSection is not defined!');
                 }
             }
-        });
+        }, true); // Используем capture phase для надежности
+        
+        bottomNav.setAttribute('data-handler-attached', 'true');
+        console.log('[initBottomNavigation] Bottom navigation initialized');
+    } else {
+        console.warn('[initBottomNavigation] Bottom navigation element not found');
     }
 }
 
@@ -520,7 +579,10 @@ window.addEventListener('popstate', (event) => {
             navigateToSection(hash);
         } else {
             // По умолчанию показываем activities
-            navigateToSection('activities');
+            // На мобильных показываем секцию activities по умолчанию
+            if (window.innerWidth <= 1024) {
+                navigateToSection('activities');
+            }
         }
     }
 });
@@ -1857,13 +1919,13 @@ function renderActivityCard(activity) {
     const unitType = activity.unit_type || 'time';
 
     const left = document.createElement("div");
-    left.className = "flex-grow";
+    left.className = "flex-grow min-w-0";
     left.innerHTML = `
-        <div class="flex items-center gap-2 mb-1">
-            <div class="text-lg font-semibold text-gray-800">${activity.name}</div>
-            <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700 flex items-center justify-center whitespace-normal text-center">${categoryName}</span>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+            <div class="text-base sm:text-lg font-semibold text-gray-800 truncate">${activity.name}</div>
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700 flex items-center justify-center whitespace-nowrap flex-shrink-0">${categoryName}</span>
         </div>
-        <div class="text-sm text-gray-500">${unitType === 'quantity' ? (activity.xp_per_unit || 1) + ' ' + t('xp_per_unit') : (activity.xp_per_hour || 60) + ' ' + t('xp_per_hour')}</div>
+        <div class="text-xs sm:text-sm text-gray-500">${unitType === 'quantity' ? (activity.xp_per_unit || 1) + ' ' + t('xp_per_unit') : (activity.xp_per_hour || 60) + ' ' + t('xp_per_hour')}</div>
     `;
 
     // Timer button - показываем только для активностей типа "time"
@@ -1886,11 +1948,11 @@ function renderActivityCard(activity) {
             const xpPerSecond = (activity.xp_per_hour || 60) / 3600;
             const earnedXP = Math.round(elapsedSeconds * xpPerSecond);
 
-            timerBtn.className = "timer-btn px-6 py-2 rounded-xl text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-2 transition-all duration-300";
-            timerBtn.innerHTML = `<i class="fas fa-stop text-red-500"></i> <span id="timer-${activity.id}">${minutes}:${seconds} (+${earnedXP} XP)</span>`;
+            timerBtn.className = "timer-btn px-3 sm:px-6 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 flex items-center gap-1 sm:gap-2 transition-all duration-300 flex-shrink-0";
+            timerBtn.innerHTML = `<i class="fas fa-stop text-red-500 text-xs sm:text-sm"></i> <span id="timer-${activity.id}" class="whitespace-nowrap">${minutes}:${seconds} (+${earnedXP} XP)</span>`;
         } else {
-            timerBtn.className = "timer-btn px-4 py-2 rounded-xl text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-2";
-            timerBtn.innerHTML = `<i class="fas fa-play text-green-500"></i> ${t('start')}`;
+            timerBtn.className = "timer-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 flex items-center gap-1 sm:gap-2 flex-shrink-0";
+            timerBtn.innerHTML = `<i class="fas fa-play text-green-500 text-xs sm:text-sm"></i> <span class="hidden sm:inline">${t('start')}</span>`;
         }
 
         timerBtn.dataset.activityId = activity.id;
@@ -1903,8 +1965,8 @@ function renderActivityCard(activity) {
 
     // Manual time/quantity button
     const manualTimeBtn = document.createElement("button");
-    manualTimeBtn.className = "manual-time-btn p-2 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
-    manualTimeBtn.innerHTML = '<i class="fas fa-clock"></i>';
+    manualTimeBtn.className = "manual-time-btn p-2 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-600 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 shadow-sm hover:shadow-md flex-shrink-0";
+    manualTimeBtn.innerHTML = '<i class="fas fa-clock text-sm sm:text-base"></i>';
     manualTimeBtn.draggable = false;
     // Устанавливаем подсказку в зависимости от типа активности
     manualTimeBtn.title = unitType === 'quantity' ? t('manual_quantity') : t('manual_time');
@@ -1929,8 +1991,8 @@ function renderActivityCard(activity) {
 
     // Delete button
     const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center w-10 h-10 shadow-sm hover:shadow-md";
-    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    deleteBtn.className = "delete-btn p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 shadow-sm hover:shadow-md flex-shrink-0";
+    deleteBtn.innerHTML = '<i class="fas fa-trash-alt text-sm sm:text-base"></i>';
     deleteBtn.title = t('delete');
     deleteBtn.draggable = false;
     deleteBtn.addEventListener("click", (e) => {
@@ -1939,12 +2001,22 @@ function renderActivityCard(activity) {
     });
     deleteBtn.addEventListener("mousedown", (e) => e.stopPropagation());
 
+    // Контейнер для кнопок действий
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.className = "flex items-center gap-1 sm:gap-2 flex-shrink-0 flex-wrap sm:flex-nowrap";
+    
     // Иконка перетаскивания удалена - используем только сортировку через фильтры
     div.appendChild(left);
-    div.appendChild(timerBtn);
-    div.appendChild(manualTimeBtn);
-    div.appendChild(editBtn);
-    div.appendChild(deleteBtn);
+    
+    // Добавляем кнопки в контейнер
+    if (unitType !== 'quantity') {
+        buttonsContainer.appendChild(timerBtn);
+    }
+    buttonsContainer.appendChild(manualTimeBtn);
+    buttonsContainer.appendChild(editBtn);
+    buttonsContainer.appendChild(deleteBtn);
+    
+    div.appendChild(buttonsContainer);
     // Возвращаем элемент вместо добавления напрямую
     return div;
 }
@@ -2981,11 +3053,23 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Edit activity form
     const editForm = document.getElementById("edit-activity-form");
-    if (editForm) {
+    if (editForm && !editForm.hasAttribute('data-submit-handler-attached')) {
         editForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            await updateActivity();
-        });
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            console.log("[app.js] Edit activity form submit prevented");
+            if (typeof window.updateActivity === 'function') {
+                await window.updateActivity();
+            } else if (typeof updateActivity === 'function') {
+                await updateActivity();
+            } else {
+                console.error("updateActivity function not found!");
+                alert("Ошибка: функция обновления активности не найдена");
+            }
+            return false;
+        }, true); // Используем capture phase для надежности
+        editForm.setAttribute('data-submit-handler-attached', 'true');
 
         // Обработчик изменения типа единицы измерения в модальном окне редактирования
         const editUnitTypeEl = document.getElementById("edit-activity-unit-type");

@@ -1,5 +1,5 @@
 <!-- Fixed Header -->
-<div class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl shadow-lg border-b border-white/50">
+<div class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl shadow-lg border-b border-white/50 overflow-visible">
     <div class="container mx-auto px-3 md:px-4 py-1.5 md:py-3 max-w-6xl">
         <div class="flex justify-between items-center gap-2">
             <div class="flex items-center gap-2 md:gap-4">
@@ -11,7 +11,7 @@
                     </h1>
                 </div>
                 <!-- Navigation Menu -->
-                <nav class="flex items-center gap-2">
+                <nav class="hidden md:flex items-center gap-2">
                     <a href="#activities" class="px-3 py-1.5 text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" data-i18n-title="activities">
                         <i class="fas fa-tasks mr-1"></i><span data-i18n="activities">Активности</span>
                     </a>
@@ -26,11 +26,11 @@
             <div class="flex items-center gap-1 md:gap-2">
                 <!-- Language Switcher -->
                 <div class="relative" id="language-switcher-wrapper">
-                    <button id="language-switcher-btn" onclick="toggleLanguageMenu()" class="p-2 rounded-lg hover:bg-gray-100 transition-all relative flex items-center gap-1.5" title="Выбрать язык">
+                    <button id="language-switcher-btn" onclick="toggleLanguageMenu(); event.stopPropagation();" class="p-2 rounded-lg hover:bg-gray-100 transition-all relative flex items-center gap-1.5 touch-manipulation" title="Выбрать язык" type="button">
                         <i class="fas fa-globe text-gray-700 text-base md:text-lg"></i>
                         <span id="current-language-flag" class="text-base">🇷🇺</span>
                     </button>
-                    <div id="language-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
+                    <div id="language-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-[10002]">
                         <button onclick="changeLanguage('ru')" class="w-full px-4 py-3 text-left hover:bg-gray-50 transition-all flex items-center gap-3 language-option" data-lang="ru">
                             <span class="text-lg">🇷🇺</span>
                             <span class="font-medium text-gray-700">Русский</span>

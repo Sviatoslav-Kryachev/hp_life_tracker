@@ -7,9 +7,12 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 0.75rem;
-    padding: 0.75rem;
+    padding: 0.5rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.5);
+    overflow-x: hidden;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -64,6 +67,9 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 0.25rem;
+    box-sizing: border-box;
+    max-width: 100%;
+    width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -78,9 +84,12 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 0.75rem;
-    padding: 0.75rem;
+    padding: 0.5rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     border: 2px solid rgb(187, 247, 208);
+    overflow-x: hidden;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 
 @media (min-width: 768px) {

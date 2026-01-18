@@ -4,13 +4,13 @@
 /* Исправляем обрезание рекомендаций на мобильных устройствах */
 #recommendations-list-visible,
 #recommendations-list-hidden {
-    padding-right: 0.75rem !important;
-    padding-left: 0.75rem !important;
+    padding-right: 0.5rem !important;
+    padding-left: 0.5rem !important;
     margin-right: 0 !important;
     box-sizing: border-box !important;
     max-width: 100% !important;
     width: 100% !important;
-    overflow-x: visible !important;
+    overflow-x: hidden !important;
 }
 
 /* Для планшетов и десктопов */

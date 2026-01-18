@@ -52,6 +52,15 @@
     overflow: visible !important;
 }
 
+/* Убеждаемся, что на мобильных кнопка кликабельна */
+#language-switcher-btn {
+    position: relative !important;
+    z-index: 10001 !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+    touch-action: manipulation !important;
+}
+
 #language-switcher-btn {
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -152,9 +161,23 @@
     .fixed.top-0 #language-menu {
         top: calc(100% + 0.5rem) !important;
         right: 0 !important;
-        z-index: 10001 !important;
+        z-index: 10002 !important;
         max-height: 60vh !important;
         overflow-y: auto !important;
+        position: fixed !important;
+        transform: translateX(0) !important;
+    }
+    
+    /* Убеждаемся, что меню не обрезается на мобильных */
+    #language-switcher-wrapper {
+        overflow: visible !important;
+    }
+    
+    /* Улучшаем кликабельность на мобильных */
+    #language-switcher-btn {
+        min-width: 2.5rem !important;
+        min-height: 2.5rem !important;
+        padding: 0.5rem !important;
     }
 }
 

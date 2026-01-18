@@ -454,6 +454,19 @@ async function showApp() {
             }
             
             console.log('[showApp] All data loaded successfully');
+            
+            // Инициализируем мобильную навигацию после загрузки данных
+            if (window.innerWidth <= 1024 && typeof window.navigateToSection === 'function') {
+                // Небольшая задержка, чтобы DOM успел обновиться
+                setTimeout(() => {
+                    const hash = window.location.hash.replace('#', '');
+                    if (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) {
+                        window.navigateToSection(hash);
+                    } else {
+                        window.navigateToSection('activities');
+                    }
+                }, 100);
+            }
         } catch (error) {
             console.error('[showApp] Error loading data:', error);
         }

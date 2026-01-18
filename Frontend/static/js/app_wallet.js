@@ -150,15 +150,15 @@ async function loadCategoryStats() {
             const catName = categoryNames[cat.category] || cat.category;
             const percentage = data.total_xp > 0 ? (cat.total_xp / data.total_xp * 100) : 0;
             return `
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200 mb-2">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-gray-800 text-sm">${catName}</span>
-                        <span class="font-bold text-blue-600 text-sm">${Math.round(cat.total_xp)} XP</span>
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 sm:p-3 border border-blue-200 mb-2 overflow-hidden">
+                    <div class="flex justify-between items-center mb-2 gap-2 min-w-0">
+                        <span class="font-medium text-gray-800 text-xs sm:text-sm truncate flex-shrink min-w-0">${catName}</span>
+                        <span class="font-bold text-blue-600 text-xs sm:text-sm whitespace-nowrap flex-shrink-0">${Math.round(cat.total_xp)} XP</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                    <div class="w-full bg-gray-200 rounded-full h-2 mb-1 overflow-hidden">
                         <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
                     </div>
-                    <div class="text-xs text-gray-500">${Math.round(cat.total_time)} ${t('min_short')} • ${formatActivitiesCount(cat.activity_count)}</div>
+                    <div class="text-[10px] sm:text-xs text-gray-500 truncate">${Math.round(cat.total_time)} ${t('min_short')} • ${formatActivitiesCount(cat.activity_count)}</div>
                 </div>
             `;
         }).join('');
@@ -817,15 +817,15 @@ async function loadRecommendations() {
             }
 
             return `
-                <div class="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-xl ${bgColor} border ${borderColor} ${notStartedStyles} transition-all hover:shadow-md hover:border-opacity-80 group">
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <i class="fas fa-caret-right text-emerald-500 text-sm md:text-base"></i>
-                        <div class="w-7 h-7 md:w-8 md:h-8 rounded-lg ${iconBgColor} flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                            <i class="${icon} ${textColor} text-xs md:text-sm"></i>
+                <div class="flex items-center gap-1.5 sm:gap-2 md:gap-3 p-2 sm:p-2.5 md:p-3 rounded-xl ${bgColor} border ${borderColor} ${notStartedStyles} transition-all hover:shadow-md hover:border-opacity-80 group overflow-hidden">
+                    <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <i class="fas fa-caret-right text-emerald-500 text-xs sm:text-sm md:text-base"></i>
+                        <div class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-lg ${iconBgColor} flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow flex-shrink-0">
+                            <i class="${icon} ${textColor} text-[10px] sm:text-xs md:text-sm"></i>
                         </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="font-medium ${textColor} text-xs md:text-sm leading-tight">${localizedMessage}</div>
+                    <div class="flex-1 min-w-0 overflow-hidden">
+                        <div class="font-medium ${textColor} text-[11px] sm:text-xs md:text-sm leading-tight break-words">${localizedMessage}</div>
                     </div>
                     ${actionBtn}
                 </div>

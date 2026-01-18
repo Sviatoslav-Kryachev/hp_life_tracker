@@ -13,6 +13,18 @@
     min-height: 200px;
 }
 
+/* Адаптивность для карточек активностей на мобильных */
+@media (max-width: 640px) {
+    .activity-card {
+        flex-wrap: wrap;
+    }
+    
+    .activity-card > div:first-child {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
 #activities-accordion-btn {
     transition: all 0.3s;
 }

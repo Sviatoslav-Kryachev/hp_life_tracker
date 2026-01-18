@@ -990,8 +990,27 @@ async function createActivity() {
 
 // ============= EDIT ACTIVITY =============
 function openEditModal(activity) {
+    // Убеждаемся, что обработчик формы прикреплен (форма загружается динамически)
+    const editForm = getElement("edit-activity-form");
+    if (editForm && !editForm.hasAttribute('data-submit-handler-attached')) {
+        editForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            if (typeof window.updateActivity === 'function') {
+                await window.updateActivity();
+            } else if (typeof updateActivity === 'function') {
+                await updateActivity();
+            } else {
+                console.error("updateActivity function not found!");
+                alert("Ошибка: функция обновления активности не найдена");
+            }
+            return false;
+        }, true); // Используем capture phase для надежности
+        editForm.setAttribute('data-submit-handler-attached', 'true');
+    }
+    
     // Сначала устанавливаем значение категории в скрытый input
-    const categoryEl = getElement("edit-activity-id");
     const categoryValue = activity.category || "general";
     
     // Устанавливаем ID активности
@@ -1042,21 +1061,39 @@ function openEditModal(activity) {
         window.updateEditActivityXPInputs();
     }
 
-    document.getElementById("edit-activity-modal").classList.remove("hidden");
+    showElement("edit-activity-modal");
 }
 
 function closeEditModal() {
     hideElement("edit-activity-modal");
-    document.getElementById("edit-activity-form").reset();
+    const editForm = getElement("edit-activity-form");
+    if (editForm) {
+        editForm.reset();
+    }
 }
 
 async function updateActivity() {
-    const id = document.getElementById("edit-activity-id").value;
-    const name = document.getElementById("edit-activity-name").value.trim();
-    const categoryEl = document.getElementById("edit-activity-category");
-    const category = categoryEl ? categoryEl.value || "general" : "general";
+    const idEl = getElement("edit-activity-id");
+    const id = idEl ? idEl.value : null;
+    if (!id) {
+        const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
+        alert(t('error_activity_id_not_found') || "Ошибка: ID активности не найден");
+        return;
+    }
+    
+    const nameEl = getElement("edit-activity-name");
+    const name = nameEl ? nameEl.value.trim() : "";
+    
+    // Получаем значение категории из скрытого input
+    const categoryEl = getElement("edit-activity-category");
+    const category = categoryEl ? (categoryEl.value || "general") : "general";
+    
+    console.log("[updateActivity] Starting update for ID:", id, "Category:", category);
+    
     const unitTypeEl = getElement("edit-activity-unit-type");
     const unitType = unitTypeEl ? unitTypeEl.value : "time";
+    
+    console.log("[updateActivity] Unit type:", unitType);
 
     let xpPerHour = null;
     let xpPerUnit = null;
@@ -1064,9 +1101,11 @@ async function updateActivity() {
     if (unitType === "time") {
         const xpPerHourEl = getElement("edit-xp-per-hour");
         xpPerHour = xpPerHourEl ? Number(xpPerHourEl.value) || 60 : 60;
+        console.log("[updateActivity] XP per hour:", xpPerHour);
     } else {
         const xpPerUnitInput = getElement("edit-xp-per-unit");
         xpPerUnit = xpPerUnitInput ? Number(xpPerUnitInput.value) || 1 : 1;
+        console.log("[updateActivity] XP per unit:", xpPerUnit);
     }
 
     const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
@@ -1085,8 +1124,12 @@ async function updateActivity() {
             xp_per_unit: unitType === "quantity" ? xpPerUnit : null
         };
 
+        console.log("[updateActivity] Sending data:", activityData);
+
         // Используем apiPut из core/api.js вместо прямого fetch
         const updatedActivity = await apiPut(`/activities/${id}`, activityData);
+        
+        console.log("[updateActivity] Response received:", updatedActivity);
         const activityId = parseInt(id);
         
         const activityIndex = allActivities.findIndex(a => a.id === activityId);
@@ -1183,7 +1226,10 @@ async function deleteActivity(activityId, cardElement) {
 
 // ============= MANUAL TIME/QUANTITY =============
 async function openManualTimeModal(activityId, filterByTime = true) {
-    const select = document.getElementById("manual-activity-select");
+    // Сначала открываем модальное окно, чтобы элементы были доступны
+    showElement("manual-time-modal");
+    
+    const select = getElement("manual-activity-select");
     if (!select) {
         console.error("manual-activity-select not found");
         return;
@@ -1272,69 +1318,119 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         // Преобразуем activityId в строку для сравнения с value опций
         const activityIdStr = String(activityId);
         
-        // Устанавливаем значение сразу после добавления опций (без setTimeout)
-        // Проверяем, что опция с таким value существует
-        const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
-        console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Option exists:", optionExists, "Options:", Array.from(select.options).map(o => o.value));
-        
-        if (optionExists) {
-            select.value = activityIdStr;
-            console.log("[openManualTimeModal] Select value set to:", select.value);
-            
-            // Триггерим событие change для обновления UI
-            const changeEvent = new Event('change', { bubbles: true });
-            select.dispatchEvent(changeEvent);
-            
-            if (typeof window.updateManualModalUI === 'function') {
-                window.updateManualModalUI(activityIdStr);
-            }
-        } else {
-            console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select! Retrying...");
-            // Если опция не найдена, пробуем еще раз через небольшую задержку
-            setTimeout(() => {
-                const optionExistsRetry = Array.from(select.options).some(opt => opt.value === activityIdStr);
-                if (optionExistsRetry) {
-                    select.value = activityIdStr;
-                    const changeEvent = new Event('change', { bubbles: true });
-                    select.dispatchEvent(changeEvent);
-                    if (typeof window.updateManualModalUI === 'function') {
-                        window.updateManualModalUI(activityIdStr);
+        // Используем двойной requestAnimationFrame для гарантии обновления UI после открытия модального окна
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                // Проверяем, что опция с таким value существует
+                const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
+                console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Option exists:", optionExists, "Options:", Array.from(select.options).map(o => o.value));
+                
+                if (optionExists) {
+                    // Находим опцию и устанавливаем её как выбранную
+                    const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
+                    if (selectedOption) {
+                        // Снимаем выделение со всех опций
+                        Array.from(select.options).forEach(opt => opt.selected = false);
+                        
+                        // Устанавливаем выбранную опцию
+                        selectedOption.selected = true;
+                        select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                        select.value = activityIdStr;
+                        
+                        console.log("[openManualTimeModal] Select value set to:", select.value, "selectedIndex:", select.selectedIndex, "selectedOption:", selectedOption.textContent);
+                        
+                        // Триггерим события для обновления UI
+                        const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+                        select.dispatchEvent(changeEvent);
+                        
+                        const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+                        select.dispatchEvent(inputEvent);
+                        
+                        // Принудительно обновляем визуальное отображение через небольшой таймаут
+                        setTimeout(() => {
+                            // Проверяем, что значение действительно установлено
+                            if (select.value !== activityIdStr) {
+                                select.value = activityIdStr;
+                                selectedOption.selected = true;
+                                select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                            }
+                            console.log("[openManualTimeModal] Final check - value:", select.value, "selectedIndex:", select.selectedIndex);
+                        }, 10);
+                        
+                        if (typeof window.updateManualModalUI === 'function') {
+                            window.updateManualModalUI(activityIdStr);
+                        }
                     }
                 } else {
-                    console.error("[openManualTimeModal] Option still not found after retry!");
+                    console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select! Retrying...");
+                    // Если опция не найдена, пробуем еще раз через небольшую задержку
+                    setTimeout(() => {
+                        const optionExistsRetry = Array.from(select.options).some(opt => opt.value === activityIdStr);
+                        if (optionExistsRetry) {
+                            const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
+                            if (selectedOption) {
+                                Array.from(select.options).forEach(opt => opt.selected = false);
+                                selectedOption.selected = true;
+                                select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                                select.value = activityIdStr;
+                                
+                                const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+                                select.dispatchEvent(changeEvent);
+                                const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+                                select.dispatchEvent(inputEvent);
+                                
+                                setTimeout(() => {
+                                    if (select.value !== activityIdStr) {
+                                        select.value = activityIdStr;
+                                        selectedOption.selected = true;
+                                        select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                                    }
+                                }, 10);
+                                
+                                if (typeof window.updateManualModalUI === 'function') {
+                                    window.updateManualModalUI(activityIdStr);
+                                }
+                            }
+                        } else {
+                            console.error("[openManualTimeModal] Option still not found after retry!");
+                        }
+                    }, 150);
                 }
-            }, 50);
-        }
-        // Обновляем UI для выбранной активности
-        const activity = allActivities.find(a => a.id == activityId);
-        if (activity) {
-            const unitType = activity.unit_type || 'time';
-            const titleEl = document.getElementById("manual-modal-title");
-            const timeContainer = document.getElementById("manual-time-input-container");
-            const quantityContainer = document.getElementById("manual-quantity-input-container");
-            const timeInput = document.getElementById("manual-minutes");
-            const quantityInput = document.getElementById("manual-quantity");
-            
-            if (unitType === 'quantity') {
-                if (titleEl) {
-                    titleEl.textContent = `📊 ${t('manual_quantity')}`;
-                    titleEl.setAttribute('data-i18n', 'manual_quantity');
+            });
+        });
+        
+        // Обновляем UI для выбранной активности после установки значения
+        requestAnimationFrame(() => {
+            const activity = allActivities.find(a => a.id == activityId);
+            if (activity) {
+                const unitType = activity.unit_type || 'time';
+                const titleEl = getElement("manual-modal-title");
+                const timeContainer = getElement("manual-time-input-container");
+                const quantityContainer = getElement("manual-quantity-input-container");
+                const timeInput = getElement("manual-minutes");
+                const quantityInput = getElement("manual-quantity");
+                
+                if (unitType === 'quantity') {
+                    if (titleEl) {
+                        setText(titleEl, `📊 ${t('manual_quantity')}`);
+                        titleEl.setAttribute('data-i18n', 'manual_quantity');
+                    }
+                    if (timeContainer) hideElement(timeContainer);
+                    if (quantityContainer) showElement(quantityContainer);
+                    if (timeInput) timeInput.removeAttribute('required');
+                    if (quantityInput) quantityInput.setAttribute('required', 'required');
+                } else {
+                    if (titleEl) {
+                        setText(titleEl, `⏱️ ${t('manual_time')}`);
+                        titleEl.setAttribute('data-i18n', 'manual_time');
+                    }
+                    if (timeContainer) showElement(timeContainer);
+                    if (quantityContainer) hideElement(quantityContainer);
+                    if (timeInput) timeInput.setAttribute('required', 'required');
+                    if (quantityInput) quantityInput.removeAttribute('required');
                 }
-                if (timeContainer) timeContainer.classList.add('hidden');
-                if (quantityContainer) quantityContainer.classList.remove('hidden');
-                if (timeInput) timeInput.removeAttribute('required');
-                if (quantityInput) quantityInput.setAttribute('required', 'required');
-            } else {
-                if (titleEl) {
-                    titleEl.textContent = `⏱️ ${t('manual_time')}`;
-                    titleEl.setAttribute('data-i18n', 'manual_time');
-                }
-                if (timeContainer) timeContainer.classList.remove('hidden');
-                if (quantityContainer) quantityContainer.classList.add('hidden');
-                if (timeInput) timeInput.setAttribute('required', 'required');
-                if (quantityInput) quantityInput.removeAttribute('required');
             }
-        }
+        });
     } else {
         const titleEl = document.getElementById("manual-modal-title");
         if (filterByTime) {
@@ -1524,7 +1620,7 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         manualForm.setAttribute('data-submit-handler-attached', 'true');
     }
     
-    showElement("manual-time-modal");
+    // Модальное окно уже открыто в начале функции
 }
 
 function closeManualTimeModal() {
