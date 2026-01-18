@@ -881,7 +881,12 @@ async function createActivity() {
         xpPerHour = xpPerHourInput ? Number(xpPerHourInput.value) || 60 : 60;
     } else {
         const xpPerUnitInput = document.getElementById("xp-per-unit");
-        xpPerUnit = xpPerUnitInput ? Number(xpPerUnitInput.value) || 1 : 1;
+        // Читаем значение из поля, если оно пустое или 0, используем 1
+        const inputValue = xpPerUnitInput ? xpPerUnitInput.value.trim() : '';
+        xpPerUnit = inputValue ? Number(inputValue) : 1;
+        // Убеждаемся, что значение не меньше 0.1
+        if (xpPerUnit < 0.1) xpPerUnit = 1;
+        console.log("[createActivity] XP per unit value:", xpPerUnit, "from input:", inputValue);
     }
 
     if (!name) {
@@ -929,7 +934,10 @@ async function createActivity() {
         const xpPerUnitInput = document.getElementById("xp-per-unit");
         if (xpPerUnitInput) xpPerUnitInput.value = "1";
         if (unitTypeEl) unitTypeEl.value = "time";
-        if (typeof window.updateActivityXPInputs === 'function') window.updateActivityXPInputs();
+        // Обновляем UI после сброса формы
+        if (typeof window.updateActivityXPInputs === 'function') {
+            window.updateActivityXPInputs();
+        }
         
         // Перезагружаем активности с сервера для обеспечения согласованности
         try {
@@ -1052,6 +1060,11 @@ function openEditModal(activity) {
             xpPerHourEl.value = activity.xp_per_hour || 60;
         }
     }
+    
+    // Еще раз вызываем обновление после установки значений, чтобы обновить label и placeholder
+    if (typeof window.updateEditActivityXPInputs === 'function') {
+        window.updateEditActivityXPInputs();
+    }
 
     if (typeof window.applyTranslations === 'function') {
         window.applyTranslations();
@@ -1104,8 +1117,12 @@ async function updateActivity() {
         console.log("[updateActivity] XP per hour:", xpPerHour);
     } else {
         const xpPerUnitInput = getElement("edit-xp-per-unit");
-        xpPerUnit = xpPerUnitInput ? Number(xpPerUnitInput.value) || 1 : 1;
-        console.log("[updateActivity] XP per unit:", xpPerUnit);
+        // Читаем значение из поля, если оно пустое или 0, используем 1
+        const inputValue = xpPerUnitInput ? xpPerUnitInput.value.trim() : '';
+        xpPerUnit = inputValue ? Number(inputValue) : 1;
+        // Убеждаемся, что значение не меньше 0.1
+        if (xpPerUnit < 0.1) xpPerUnit = 1;
+        console.log("[updateActivity] XP per unit:", xpPerUnit, "from input:", inputValue);
     }
 
     const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;

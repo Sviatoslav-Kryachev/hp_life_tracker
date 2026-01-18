@@ -2220,17 +2220,47 @@ function updateEditActivityXPInputs() {
     const unitTypeEl = document.getElementById("edit-activity-unit-type");
     const xpTimeContainer = document.getElementById("edit-activity-xp-time");
     const xpQuantityContainer = document.getElementById("edit-activity-xp-quantity");
+    const xpLabel = document.getElementById("edit-activity-xp-label");
+    const xpPerHourInput = document.getElementById("edit-xp-per-hour");
+    const xpPerUnitInput = document.getElementById("edit-xp-per-unit");
 
     if (!unitTypeEl) return;
 
     const unitType = unitTypeEl.value;
+    const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
 
     if (unitType === "quantity") {
+        // Показываем поле для количества
         xpTimeContainer.classList.add("hidden");
         xpQuantityContainer.classList.remove("hidden");
+        
+        // Обновляем label
+        if (xpLabel) {
+            xpLabel.textContent = t('unit_quantity') || 'Количество (штуки)';
+            xpLabel.setAttribute('data-i18n', 'unit_quantity');
+        }
+        
+        // Обновляем placeholder для поля количества
+        if (xpPerUnitInput) {
+            xpPerUnitInput.placeholder = t('xp_per_unit') || 'XP/штука';
+            xpPerUnitInput.setAttribute('data-i18n-placeholder', 'xp_per_unit');
+        }
     } else {
+        // Показываем поле для времени
         xpTimeContainer.classList.remove("hidden");
         xpQuantityContainer.classList.add("hidden");
+        
+        // Обновляем label
+        if (xpLabel) {
+            xpLabel.textContent = t('unit_time') || 'Время (минуты)';
+            xpLabel.setAttribute('data-i18n', 'unit_time');
+        }
+        
+        // Обновляем placeholder для поля времени
+        if (xpPerHourInput) {
+            xpPerHourInput.placeholder = t('xp_per_hour') || 'XP/час';
+            xpPerHourInput.setAttribute('data-i18n-placeholder', 'xp_per_hour');
+        }
     }
 }
 
@@ -5009,17 +5039,47 @@ function updateActivityXPInputs() {
     const unitTypeEl = document.getElementById("activity-unit-type");
     const xpTimeContainer = document.getElementById("activity-xp-time");
     const xpQuantityContainer = document.getElementById("activity-xp-quantity");
+    const xpLabel = document.getElementById("activity-xp-label");
+    const xpPerHourInput = document.getElementById("xp-per-hour");
+    const xpPerUnitInput = document.getElementById("xp-per-unit");
 
     if (!unitTypeEl) return;
 
     const unitType = unitTypeEl.value;
+    const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
 
     if (unitType === "quantity") {
+        // Показываем поле для количества
         xpTimeContainer.classList.add("hidden");
         xpQuantityContainer.classList.remove("hidden");
+        
+        // Обновляем label
+        if (xpLabel) {
+            xpLabel.textContent = t('unit_quantity') || 'Количество (штуки)';
+            xpLabel.setAttribute('data-i18n', 'unit_quantity');
+        }
+        
+        // Обновляем placeholder для поля количества
+        if (xpPerUnitInput) {
+            xpPerUnitInput.placeholder = t('xp_per_unit') || 'XP/штука';
+            xpPerUnitInput.setAttribute('data-i18n-placeholder', 'xp_per_unit');
+        }
     } else {
+        // Показываем поле для времени
         xpTimeContainer.classList.remove("hidden");
         xpQuantityContainer.classList.add("hidden");
+        
+        // Обновляем label
+        if (xpLabel) {
+            xpLabel.textContent = t('unit_time') || 'Время (минуты)';
+            xpLabel.setAttribute('data-i18n', 'unit_time');
+        }
+        
+        // Обновляем placeholder для поля времени
+        if (xpPerHourInput) {
+            xpPerHourInput.placeholder = t('xp_per_hour') || 'XP/час';
+            xpPerHourInput.setAttribute('data-i18n-placeholder', 'xp_per_hour');
+        }
     }
 }
 

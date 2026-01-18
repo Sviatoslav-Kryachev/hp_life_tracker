@@ -256,13 +256,28 @@ async function checkAdminStatus() {
         if (res.ok) {
             const adminBtn = document.getElementById("admin-btn");
             const footerAdminBtn = document.getElementById("footer-admin-btn");
-            if (adminBtn) adminBtn.classList.remove("hidden");
-            if (footerAdminBtn) footerAdminBtn.classList.remove("hidden");
+            if (adminBtn) {
+                adminBtn.classList.remove("hidden");
+                // Дополнительно убеждаемся, что кнопка видна
+                adminBtn.style.display = "inline-flex";
+                adminBtn.style.visibility = "visible";
+                adminBtn.style.opacity = "1";
+                console.log("[checkAdminStatus] Admin button shown:", adminBtn);
+            }
+            if (footerAdminBtn) {
+                footerAdminBtn.classList.remove("hidden");
+                footerAdminBtn.style.display = "flex";
+                footerAdminBtn.style.visibility = "visible";
+                footerAdminBtn.style.opacity = "1";
+            }
             if (typeof loadInviteCode === 'function') {
                 loadInviteCode();
             }
+        } else {
+            console.log("[checkAdminStatus] User is not admin, status:", res.status);
         }
     } catch (e) {
+        console.log("[checkAdminStatus] Error checking admin status:", e);
         // Не админ или ошибка
     }
 }
@@ -437,6 +452,14 @@ async function showApp() {
     const loadData = async () => {
         console.log('[showApp] Starting data load immediately...');
         
+        // Проверяем статус администратора сразу после загрузки компонентов
+        // Используем небольшую задержку, чтобы убедиться, что компоненты загружены
+        setTimeout(() => {
+            if (typeof checkAdminStatus === 'function') {
+                checkAdminStatus();
+            }
+        }, 200);
+        
         // Загружаем данные параллельно и последовательно для критичных
         try {
             // Критичные данные загружаем параллельно для скорости
@@ -492,6 +515,14 @@ async function showApp() {
             }
             
             console.log('[showApp] All data loaded successfully');
+            
+            // Проверяем статус администратора после загрузки всех данных
+            // Делаем это с задержкой, чтобы убедиться, что все компоненты загружены
+            setTimeout(() => {
+                if (typeof checkAdminStatus === 'function') {
+                    checkAdminStatus();
+                }
+            }, 300);
             
             // Инициализируем мобильную навигацию после загрузки данных
             // Только если токен валидный (мы уже проверили это в начале showApp)
