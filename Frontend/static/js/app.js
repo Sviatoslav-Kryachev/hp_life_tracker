@@ -2321,9 +2321,14 @@ function closeManualTimeModal() {
 
 function updateManualPreview(activityId) {
     console.log("[updateManualPreview] Called with activityId:", activityId);
-    const activity = allActivities.find(a => a.id == activityId);
+    // Получаем allActivities из window или локальной переменной
+    const activities = typeof window !== 'undefined' && window.allActivities 
+        ? window.allActivities 
+        : (typeof allActivities !== 'undefined' ? allActivities : []);
+    console.log("[updateManualPreview] Available activities:", activities?.length || 0);
+    const activity = activities.find(a => a.id == activityId || a.id == Number(activityId));
     if (!activity) {
-        console.warn("[updateManualPreview] Activity not found:", activityId);
+        console.warn("[updateManualPreview] Activity not found:", activityId, "Available IDs:", activities.map(a => a.id));
         return;
     }
 
