@@ -1295,9 +1295,17 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     }
     
     if (activityId) {
-        select.value = activityId;
+        // Преобразуем activityId в строку для сравнения с value опций
+        const activityIdStr = String(activityId);
+        select.value = activityIdStr;
+        console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Select value:", select.value);
+        
+        // Триггерим событие change для обновления UI
+        const changeEvent = new Event('change', { bubbles: true });
+        select.dispatchEvent(changeEvent);
+        
         if (typeof window.updateManualModalUI === 'function') {
-            window.updateManualModalUI(activityId);
+            window.updateManualModalUI(activityIdStr);
         }
         // Обновляем UI для выбранной активности
         const activity = allActivities.find(a => a.id == activityId);
@@ -1399,14 +1407,23 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     if (quantityInput) {
         const newQuantityInput = quantityInput.cloneNode(true);
         quantityInput.parentNode.replaceChild(newQuantityInput, quantityInput);
-        newQuantityInput.addEventListener("input", () => {
+        newQuantityInput.addEventListener("input", (e) => {
             const currentActivityId = document.getElementById("manual-activity-select").value;
+            console.log("[Manual Time] Quantity input changed:", e.target.value, "Activity ID:", currentActivityId);
             if (currentActivityId) {
                 if (typeof window.updateManualPreview === 'function') {
+                    console.log("[Manual Time] Calling window.updateManualPreview for quantity");
                     window.updateManualPreview(currentActivityId);
                 } else if (typeof updateManualPreview === 'function') {
+                    console.log("[Manual Time] Calling updateManualPreview for quantity");
                     updateManualPreview(currentActivityId);
+                } else {
+                    console.error("[Manual Time] updateManualPreview function not found!");
                 }
+            } else {
+                console.log("[Manual Time] No activity selected, hiding preview");
+                const previewEl = document.getElementById("manual-time-preview");
+                if (previewEl) previewEl.classList.add("hidden");
             }
         });
     }
@@ -1549,13 +1566,7 @@ async function addManualTime() {
             await window.loadWeekCalendar();
         }
         
-        if (unitType === 'quantity') {
-            const quantity = Number(document.getElementById("manual-quantity").value);
-            showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${quantity} ${t('units')}!`, "success");
-        } else {
-            const minutes = Number(document.getElementById("manual-minutes").value);
-            showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${minutes} ${t('min_short')}!`, "success");
-        }
+        // Сообщение уже показано в модальном окне, не нужно показывать еще раз
     } catch (e) {
         console.error("Error:", e);
         alert(t('network_error'));
