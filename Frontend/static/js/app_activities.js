@@ -1098,25 +1098,8 @@ async function updateActivity() {
             xp_per_unit: unitType === "quantity" ? xpPerUnit : null
         };
 
-        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
-        const token = typeof getAuthToken === 'function' ? getAuthToken() : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken() : localStorage.getItem('token') || '';
-        
-        const res = await fetch(`${apiBase}/activities/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(activityData)
-        });
-
-        if (!res.ok) {
-            const error = await res.json();
-            alert(error.detail || t('error_updating'));
-            return;
-        }
-
-        const updatedActivity = await res.json();
+        // Используем apiPut из core/api.js вместо прямого fetch
+        const updatedActivity = await apiPut(`/activities/${id}`, activityData);
         const activityId = parseInt(id);
         
         const activityIndex = allActivities.findIndex(a => a.id === activityId);
@@ -1162,6 +1145,9 @@ async function updateActivity() {
                     : (updatedActivity.xp_per_hour || 60) + ' ' + t('xp_per_hour');
             }
         }
+        
+        // Перезагружаем активности для получения актуальных данных с сервера
+        await loadActivities();
         
         // Всегда применяем фильтры для обновления всех карточек активностей
         // Это гарантирует, что изменения видны везде, даже если карточка не найдена напрямую
@@ -1298,27 +1284,40 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     if (activityId) {
         // Преобразуем activityId в строку для сравнения с value опций
         const activityIdStr = String(activityId);
-        // Используем setTimeout чтобы убедиться, что все опции добавлены в DOM
-        setTimeout(() => {
-            // Проверяем, что опция с таким value существует
-            const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
-            console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Option exists:", optionExists, "Options:", Array.from(select.options).map(o => o.value));
+        
+        // Устанавливаем значение сразу после добавления опций (без setTimeout)
+        // Проверяем, что опция с таким value существует
+        const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
+        console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Option exists:", optionExists, "Options:", Array.from(select.options).map(o => o.value));
+        
+        if (optionExists) {
+            select.value = activityIdStr;
+            console.log("[openManualTimeModal] Select value set to:", select.value);
             
-            if (optionExists) {
-                select.value = activityIdStr;
-                console.log("[openManualTimeModal] Select value set to:", select.value);
-                
-                // Триггерим событие change для обновления UI
-                const changeEvent = new Event('change', { bubbles: true });
-                select.dispatchEvent(changeEvent);
-                
-                if (typeof window.updateManualModalUI === 'function') {
-                    window.updateManualModalUI(activityIdStr);
-                }
-            } else {
-                console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select!");
+            // Триггерим событие change для обновления UI
+            const changeEvent = new Event('change', { bubbles: true });
+            select.dispatchEvent(changeEvent);
+            
+            if (typeof window.updateManualModalUI === 'function') {
+                window.updateManualModalUI(activityIdStr);
             }
-        }, 100);
+        } else {
+            console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select! Retrying...");
+            // Если опция не найдена, пробуем еще раз через небольшую задержку
+            setTimeout(() => {
+                const optionExistsRetry = Array.from(select.options).some(opt => opt.value === activityIdStr);
+                if (optionExistsRetry) {
+                    select.value = activityIdStr;
+                    const changeEvent = new Event('change', { bubbles: true });
+                    select.dispatchEvent(changeEvent);
+                    if (typeof window.updateManualModalUI === 'function') {
+                        window.updateManualModalUI(activityIdStr);
+                    }
+                } else {
+                    console.error("[openManualTimeModal] Option still not found after retry!");
+                }
+            }, 50);
+        }
         // Обновляем UI для выбранной активности
         const activity = allActivities.find(a => a.id == activityId);
         if (activity) {
