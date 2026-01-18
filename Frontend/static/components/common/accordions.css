@@ -1,0 +1,124 @@
+/* ============= ACCORDIONS ============= */
+/* Стили для аккордеонов (rewards, history, activities) */
+
+/* Базовые контейнеры аккордеонов */
+#rewards-list-container,
+#history-list-container {
+    position: relative;
+}
+
+/* ============= REWARDS ACCORDION ============= */
+
+/* Когда аккордеон наград открыт - контейнер становится скроллируемым */
+#rewards-list-container.rewards-expanded {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    transition: max-height 300ms ease;
+}
+
+/* При открытом аккордеоне наград скрываем visible и показываем hidden */
+#rewards-list-container.rewards-expanded #rewards-list-visible {
+    display: none !important;
+}
+
+#rewards-list-container.rewards-expanded #rewards-list-hidden {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: relative !important;
+}
+
+/* Убираем fixed позиционирование при открытом аккордеоне наград */
+#rewards-list-container.rewards-expanded .reward-card {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+}
+
+/* ============= HISTORY ACCORDION ============= */
+
+/* Когда аккордеон истории открыт - контейнер становится скроллируемым */
+/* Этот стиль применяется когда класс history-expanded на контейнере */
+#history-list-container.history-expanded {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    flex: 1 1 0;
+    min-height: 0;
+    /* Контейнер заполняет доступное пространство через flex, не расширяется вниз */
+}
+
+/* При открытом аккордеоне истории скрываем visible и показываем hidden */
+#history-list-container.history-expanded #history-list-visible {
+    display: none !important;
+    position: relative !important;
+    top: auto !important;
+    background: transparent !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    z-index: 1 !important;
+}
+
+#history-list-container.history-expanded #history-list-visible::after {
+    display: none !important;
+}
+
+#history-list-container.history-expanded #history-list-hidden {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: relative !important;
+}
+
+/* Убираем sticky позиционирование при открытом аккордеоне истории */
+#history-list-container.history-expanded .history-fixed {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+    background: transparent !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* ============= ACTIVITIES ACCORDION ============= */
+
+/* Умный аккордеон для активностей с ограниченной высотой и скроллом */
+#activities-list-container {
+    position: relative;
+}
+
+#activities-list-hidden {
+    overflow-x: hidden;
+    max-height: 0;
+    overflow-y: hidden;
+}
+
+/* Когда аккордеон открыт - весь контейнер становится скроллируемым */
+#activities-list-container.activities-expanded {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+#activities-list-container.activities-expanded #activities-list-visible {
+    display: none !important;
+}
+
+#activities-list-container.activities-expanded #activities-list-hidden {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: relative !important;
+}
+
+#activities-list-container.activities-expanded .activity-card {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+}
+
+/* ============= COMMON STYLES ============= */
+
+/* Скрытые списки аккордеонов */
+#rewards-list-hidden,
+#history-list-hidden {
+    overflow: visible;
+}
