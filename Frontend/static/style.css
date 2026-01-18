@@ -39,53 +39,7 @@ body {
 
 /* Стили аккордеонов вынесены в components/common/accordions.css */
 
-/* ============= RESPONSIVE STYLES ============= */
-
-/* Мобильная навигация - показ/скрытие секций вместо скролла */
-@media (max-width: 1024px) {
-    /* По умолчанию все grid контейнеры скрыты на мобильных */
-    .grid.lg\\:grid-cols-3 {
-        display: none !important;
-    }
-    
-    /* Показываем только те, которые имеют класс mobile-section-visible */
-    .mobile-section-visible {
-        display: grid !important; /* grid для grid контейнеров */
-    }
-    
-    .mobile-section-hidden {
-        display: none !important;
-    }
-    
-    /* Блоки Today, Calendar, Progress всегда видны */
-    .grid.grid-cols-1.md\\:grid-cols-3 {
-        display: grid !important;
-    }
-    
-    /* Grid контейнеры для секций - переопределяем скрытие если есть класс visible */
-    .grid.lg\\:grid-cols-3.mobile-section-visible {
-        display: grid !important;
-    }
-    
-    .grid.lg\\:grid-cols-3.mobile-section-hidden {
-        display: none !important;
-    }
-    
-    /* Sidebar (цели) - скрыт по умолчанию */
-    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1 {
-        display: none !important;
-    }
-    
-    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1.mobile-section-hidden {
-        display: none !important;
-    }
-    
-    .grid.lg\\:grid-cols-3 > .lg\\:col-span-1.mobile-section-visible {
-        display: block !important;
-    }
-}
-
-/* Медиа-запросы вынесены в components/layout/responsive.css */
+/* Медиа-запросы для мобильной навигации вынесены в components/layout/responsive.css */
 
 /* Медиа-запросы для bottom-navigation вынесены в components/layout/responsive.css */
 
