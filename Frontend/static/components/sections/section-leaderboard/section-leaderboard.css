@@ -1,19 +1,2 @@
 /* Стили для секции лидерборда */
 /* Скроллбары вынесены в components/common/scrollbars.css - используйте класс .list-scrollbar */
-
-#leaderboard-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-#leaderboard-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-#leaderboard-list::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
-    border-radius: 3px;
-}
-
-#leaderboard-list::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(156, 163, 175, 0.7);
-}
