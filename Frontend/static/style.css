@@ -23,13 +23,7 @@ body {
     min-height: 100vh;
 }
 
-.container {
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    box-sizing: border-box;
-}
+/* Базовый .container вынесен в components/layout/grid.css */
 
 /* Убеждаемся, что все контейнеры с max-w-6xl ограничены */
 .max-w-6xl {
@@ -40,45 +34,7 @@ body {
     box-sizing: border-box !important;
 }
 
-/* Карточки активностей */
-.activity-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.activity-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
-}
-
-/* Карточки наград */
-.reward-card {
-    animation: fadeIn 0.25s ease-out;
-    max-width: 100%;
-    overflow: hidden;
-}
-
-.reward-card:hover {
-    transform: none !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Плавные переходы */
-.transition-all {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-}
+/* Карточки и анимации вынесены в модули components/common/ */
 
 
 
@@ -295,6 +251,7 @@ body {
         }
     }
     
+    /* Специфичные стили для .container в мобильной версии (базовые в components/layout/) */
     .container {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
@@ -1021,36 +978,7 @@ body {
     padding-right: 0.5rem !important;
 }
 
-/* Кастомный скроллбар для списков */
-#groups-list::-webkit-scrollbar,
-#leaderboard-list::-webkit-scrollbar,
-#challenges-list::-webkit-scrollbar,
-#achievements-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-#groups-list::-webkit-scrollbar-track,
-#leaderboard-list::-webkit-scrollbar-track,
-#challenges-list::-webkit-scrollbar-track,
-#achievements-list::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-}
-
-#groups-list::-webkit-scrollbar-thumb,
-#leaderboard-list::-webkit-scrollbar-thumb,
-#challenges-list::-webkit-scrollbar-thumb,
-#achievements-list::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-#groups-list::-webkit-scrollbar-thumb:hover,
-#leaderboard-list::-webkit-scrollbar-thumb:hover,
-#challenges-list::-webkit-scrollbar-thumb:hover,
-#achievements-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
-}
+/* Скроллбары вынесены в components/common/scrollbars.css */
 
 /* Карточки внутри списков */
 #groups-list > div,
@@ -1115,7 +1043,7 @@ body {
     max-width: 100% !important;
 }
 
-/* Select элементы */
+/* Select элементы (базовые стили в components/common/forms.css) */
 #leaderboard-group-select,
 #leaderboard-sort-select,
 #achievements-group-select {

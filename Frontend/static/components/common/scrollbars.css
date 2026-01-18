@@ -48,3 +48,34 @@
 .list-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: rgba(156, 163, 175, 0.7);
 }
+
+/* Скроллбар для социальных списков */
+#groups-list::-webkit-scrollbar,
+#leaderboard-list::-webkit-scrollbar,
+#challenges-list::-webkit-scrollbar,
+#achievements-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#groups-list::-webkit-scrollbar-track,
+#leaderboard-list::-webkit-scrollbar-track,
+#challenges-list::-webkit-scrollbar-track,
+#achievements-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+#groups-list::-webkit-scrollbar-thumb,
+#leaderboard-list::-webkit-scrollbar-thumb,
+#challenges-list::-webkit-scrollbar-thumb,
+#achievements-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+#groups-list::-webkit-scrollbar-thumb:hover,
+#leaderboard-list::-webkit-scrollbar-thumb:hover,
+#challenges-list::-webkit-scrollbar-thumb:hover,
+#achievements-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}

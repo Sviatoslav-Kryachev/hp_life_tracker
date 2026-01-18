@@ -1,0 +1,99 @@
+/* ============= GRID & LAYOUT ============= */
+/* Сетка и layout утилиты */
+
+/* Базовый контейнер */
+.container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
+/* Flex контейнеры */
+.flex-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-container-row {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Grid контейнеры */
+.grid-container {
+    display: grid;
+    gap: 1rem;
+}
+
+.grid-container-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-container-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-container-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Адаптивная сетка */
+@media (max-width: 768px) {
+    .grid-container-2,
+    .grid-container-3,
+    .grid-container-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Контейнеры списков */
+.list-container {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.list-container.expanded {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Скрытие на мобильных */
+@media (max-width: 767px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Показ только на мобильных */
+@media (min-width: 768px) {
+    .show-mobile-only {
+        display: none !important;
+    }
+}
