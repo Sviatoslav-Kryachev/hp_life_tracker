@@ -78,7 +78,15 @@
             if (appComponentsLoaded) return;
             
             const appSection = document.getElementById('app-section');
-            if (!appSection) return;
+            if (!appSection) {
+                console.error('app-section not found!');
+                return;
+            }
+            
+            // Убеждаемся, что app-section видим перед загрузкой компонентов
+            appSection.classList.remove('hidden');
+            appSection.style.display = '';
+            appSection.style.visibility = 'visible';
             
             try {
                 await loadComponents([
@@ -107,6 +115,11 @@
                     { name: 'bottom-navigation', selector: '#bottom-navigation-container', path: 'bottom-navigation' }
                 ]);
                 appComponentsLoaded = true;
+                
+                // Убеждаемся, что app-section видим после загрузки компонентов
+                appSection.classList.remove('hidden');
+                appSection.style.display = '';
+                appSection.style.visibility = 'visible';
                 
                 // Инициализируем обработчики форм после загрузки компонентов
                 console.log("[loadAppComponents] Components loaded, initializing form handlers...");
