@@ -714,19 +714,16 @@ async function checkAdminStatus() {
         const token = getAuthToken();
         if (!token) return;
         // Пытаемся получить invite код - если успешно, значит админ
-        const res = await fetch(`${API_BASE}/admin/invite-code`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (res.ok) {
+        try {
+            await apiGet('/admin/invite-code');
             const adminBtn = document.getElementById("admin-btn");
             const footerAdminBtn = document.getElementById("footer-admin-btn");
             if (adminBtn) adminBtn.classList.remove("hidden");
             if (footerAdminBtn) footerAdminBtn.classList.remove("hidden");
             loadInviteCode();
+        } catch (e) {
+            // Не админ или ошибка
         }
-    } catch (e) {
-        // Не админ или ошибка
-    }
 }
 
 // Функция logout определена в app_auth.js
@@ -761,17 +758,15 @@ async function checkTelegramStatus() {
             headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
         
-        if (res.ok) {
-            const data = await res.json();
-            const statusDiv = document.getElementById('telegram-link-status');
-            const input = document.getElementById('telegram-id-input');
-            
-            if (data.linked) {
-                if (statusDiv) {
-                    statusDiv.className = 'p-3 rounded-xl bg-green-50 border border-green-200';
-                    statusDiv.innerHTML = `<p class="text-sm text-green-800">✅ ${t('telegram_linked')}: ${data.telegram_id}</p>`;
-                    statusDiv.classList.remove('hidden');
-                }
+        const statusDiv = document.getElementById('telegram-link-status');
+        const input = document.getElementById('telegram-id-input');
+        
+        if (data.linked) {
+            if (statusDiv) {
+                statusDiv.className = 'p-3 rounded-xl bg-green-50 border border-green-200';
+                statusDiv.innerHTML = `<p class="text-sm text-green-800">✅ ${t('telegram_linked')}: ${data.telegram_id}</p>`;
+                statusDiv.classList.remove('hidden');
+            }
                 if (input) {
                     input.value = data.telegram_id;
                     input.disabled = true;
@@ -1743,16 +1738,7 @@ async function loadActiveTimers() {
             });
         });
 
-        const res = await fetch(`${API_BASE}/timer/active`, {
-            headers: { "Authorization": `Bearer ${getAuthToken()}` }
-        });
-
-        if (!res.ok) {
-            console.warn("Failed to load active timers:", res.status);
-            return;
-        }
-
-        const activeTimersData = await res.json();
+        const activeTimersData = await apiGet('/timer/active');
 
         // Очищаем старые интервалы перед восстановлением
         activeTimers.forEach((timerInfo) => {
