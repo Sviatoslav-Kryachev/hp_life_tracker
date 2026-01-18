@@ -38,15 +38,15 @@
 }
 
 .mobile-nav-btn.active-nav {
-    color: #4f46e5 !important; /* indigo-600 */
+    color: var(--color-indigo-600, #4f46e5) !important; /* indigo-600 */
 }
 
 .mobile-nav-btn.active-nav i {
-    color: #4f46e5 !important;
+    color: var(--color-indigo-600, #4f46e5) !important;
 }
 
 .mobile-nav-btn.active-nav span {
-    color: #4f46e5 !important;
+    color: var(--color-indigo-600, #4f46e5) !important;
 }
 
 /* Анимация для активной кнопки */

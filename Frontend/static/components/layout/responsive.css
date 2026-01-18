@@ -228,16 +228,7 @@
         overflow-y: visible !important;
     }
     
-    /* Bottom navigation */
-    #bottom-navigation {
-        display: flex !important;
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 1000 !important;
-        background: white !important;
-    }
+    /* Bottom navigation стили вынесены в components/bottom-navigation/bottom-navigation.css */
     
     /* Social sections */
     #social {
@@ -257,11 +248,7 @@
 }
 
 /* Desktop (1025px+) */
-@media (min-width: 1025px) {
-    #bottom-navigation {
-        display: none !important;
-    }
-}
+/* Bottom navigation стили вынесены в components/bottom-navigation/bottom-navigation.css */
 
 /* Tablets (768px - 1024px) */
 @media (min-width: 768px) and (max-width: 1024px) {
