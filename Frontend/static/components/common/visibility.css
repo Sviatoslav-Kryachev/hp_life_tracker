@@ -2,8 +2,9 @@
 /* Утилиты для управления видимостью элементов */
 
 /* Скрываем секции по умолчанию до проверки токена */
-#auth-section,
-#app-section {
+/* Примечание: visibility: hidden убран, так как это мешает загрузке компонентов */
+#auth-section:empty,
+#app-section:empty {
     visibility: hidden;
 }
 

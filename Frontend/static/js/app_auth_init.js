@@ -49,6 +49,18 @@ function applyAuthCheck() {
             }
         }
         
+        // Убеждаемся, что секции видны после применения стилей
+        if (token && appSection) {
+            // Дополнительная проверка через небольшую задержку для режима инкогнито
+            setTimeout(() => {
+            if (appSection.classList.contains('hidden')) {
+                appSection.classList.remove('hidden');
+                appSection.style.display = '';
+                appSection.style.visibility = 'visible';
+            }
+        }, 100);
+        }
+        
         // Предотвращаем скролл вниз при загрузке
         window.scrollTo(0, 0);
         document.documentElement.scrollTop = 0;

@@ -52,6 +52,10 @@ async function loadComponent(componentName, containerSelector, componentPath = n
         } else {
             // Для обычных компонентов заменяем содержимое контейнера
             container.innerHTML = html;
+            // Убеждаемся, что контейнер виден после загрузки
+            if (container.style.visibility === 'hidden' && container.innerHTML.trim() !== '') {
+                container.style.visibility = 'visible';
+            }
         }
 
         console.log(`✓ Component "${componentName}" loaded`);

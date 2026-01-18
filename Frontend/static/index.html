@@ -215,7 +215,11 @@
             // Загружаем компоненты app-section если пользователь уже залогинен
             const token = localStorage.getItem('token');
             if (token) {
+                // Небольшая задержка для гарантии, что applyAuthCheck применил стили
+                await new Promise(resolve => setTimeout(resolve, 50));
                 await loadAppComponents();
+                // Повторно применяем проверку после загрузки компонентов
+                applyAuthCheck();
             }
             
             // Загружаем все модальные окна в body (всегда, они скрыты по умолчанию)
