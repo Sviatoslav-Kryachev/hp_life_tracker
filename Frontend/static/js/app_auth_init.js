@@ -53,12 +53,16 @@ function applyAuthCheck() {
         if (token && appSection) {
             // Дополнительная проверка через небольшую задержку для режима инкогнито
             setTimeout(() => {
-            if (appSection.classList.contains('hidden')) {
-                appSection.classList.remove('hidden');
+                if (appSection.classList.contains('hidden')) {
+                    appSection.classList.remove('hidden');
+                }
                 appSection.style.display = '';
                 appSection.style.visibility = 'visible';
-            }
-        }, 100);
+                appSection.style.height = '';
+                appSection.style.overflow = '';
+                appSection.style.position = '';
+                appSection.style.left = '';
+            }, 100);
         }
         
         // Предотвращаем скролл вниз при загрузке
