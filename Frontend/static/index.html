@@ -18,35 +18,7 @@
     <link rel="stylesheet" href="components/layout/spacing.css">
     <link rel="stylesheet" href="style.css?v=58">
     <title>HP Life Tracker</title>
-    <style>
-        /* Скрываем секции по умолчанию до проверки токена */
-        #auth-section, #app-section {
-            visibility: hidden;
-        }
-        /* Убеждаемся, что скрытые секции действительно скрыты и не занимают место */
-        #auth-section.hidden {
-            display: none !important;
-            visibility: visible !important;
-            height: 0 !important;
-            overflow: hidden !important;
-        }
-        #app-section.hidden {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            overflow: hidden !important;
-            position: absolute !important;
-            left: -9999px !important;
-        }
-        /* Убеждаемся, что footer скрывается вместе с app-section */
-        #app-section.hidden #footer-container {
-            display: none !important;
-        }
-        /* Убеждаемся, что body не прокручивается когда app-section скрыт */
-        body:has(#app-section.hidden) {
-            overflow-x: hidden;
-        }
-    </style>
+    <!-- Visibility styles вынесены в components/common/visibility.css -->
 </head>
 
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">

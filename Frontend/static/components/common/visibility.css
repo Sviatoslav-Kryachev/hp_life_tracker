@@ -1,0 +1,36 @@
+/* ============= VISIBILITY UTILITIES ============= */
+/* Утилиты для управления видимостью элементов */
+
+/* Скрываем секции по умолчанию до проверки токена */
+#auth-section,
+#app-section {
+    visibility: hidden;
+}
+
+/* Скрытая секция auth */
+#auth-section.hidden {
+    display: none !important;
+    visibility: visible !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Скрытая секция app */
+#app-section.hidden {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* Footer скрывается вместе с app-section */
+#app-section.hidden #footer-container {
+    display: none !important;
+}
+
+/* Body не прокручивается когда app-section скрыт */
+body:has(#app-section.hidden) {
+    overflow-x: hidden;
+}

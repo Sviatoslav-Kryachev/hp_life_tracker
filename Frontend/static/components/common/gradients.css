@@ -1,0 +1,157 @@
+/* ============= GRADIENTS ============= */
+/* Переиспользуемые градиенты */
+
+/* Primary градиенты (indigo to purple) */
+.gradient-primary {
+    background: linear-gradient(to right, rgb(99, 102, 241), rgb(147, 51, 234));
+}
+
+.gradient-primary-text {
+    background: linear-gradient(to right, rgb(79, 70, 229), rgb(147, 51, 234));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Success градиенты (green/emerald/teal) */
+.gradient-success {
+    background: linear-gradient(to right, rgb(34, 197, 94), rgb(16, 185, 129));
+}
+
+.gradient-success-hover {
+    background: linear-gradient(to right, rgb(22, 163, 74), rgb(5, 150, 105));
+}
+
+.gradient-success-light {
+    background: linear-gradient(to right, rgb(240, 253, 250), rgb(209, 250, 229));
+}
+
+/* Purple to Pink градиенты (для целей, кнопок) */
+.gradient-purple-pink {
+    background: linear-gradient(to right, rgb(168, 85, 247), rgb(236, 72, 153));
+}
+
+.gradient-purple-pink-hover {
+    background: linear-gradient(to right, rgb(147, 51, 234), rgb(219, 39, 119));
+}
+
+.gradient-purple-pink-br {
+    background: linear-gradient(to bottom right, rgb(168, 85, 247), rgb(236, 72, 153));
+}
+
+/* Blue градиенты */
+.gradient-blue {
+    background: linear-gradient(to right, rgb(59, 130, 246), rgb(99, 102, 241));
+}
+
+.gradient-blue-hover {
+    background: linear-gradient(to right, rgb(37, 99, 235), rgb(79, 70, 229));
+}
+
+.gradient-blue-light {
+    background: linear-gradient(to right, rgb(239, 246, 255), rgb(238, 242, 255));
+}
+
+/* Orange/Amber градиенты (для наград) */
+.gradient-orange {
+    background: linear-gradient(to right, rgb(249, 115, 22), rgb(251, 146, 60));
+}
+
+.gradient-orange-hover {
+    background: linear-gradient(to right, rgb(234, 88, 12), rgb(251, 146, 60));
+}
+
+.gradient-orange-via {
+    background: linear-gradient(to right, rgb(251, 146, 60), rgb(249, 115, 22), rgb(244, 63, 94));
+}
+
+.gradient-orange-via-hover {
+    background: linear-gradient(to right, rgb(251, 146, 60), rgb(234, 88, 12), rgb(225, 29, 72));
+}
+
+.gradient-orange-light {
+    background: linear-gradient(to right, rgb(255, 237, 213), rgb(254, 215, 170));
+}
+
+.gradient-orange-light-hover {
+    background: linear-gradient(to right, rgb(254, 215, 170), rgb(253, 186, 116));
+}
+
+/* Yellow/Orange градиенты (для прогресса) */
+.gradient-yellow-orange {
+    background: linear-gradient(to right, rgb(250, 204, 21), rgb(249, 115, 22));
+}
+
+/* Emerald/Teal градиенты (для виджета Today, wallet) */
+.gradient-emerald-teal {
+    background: linear-gradient(to bottom right, rgb(16, 185, 129), rgb(20, 184, 166));
+}
+
+.gradient-emerald-teal-hover {
+    background: linear-gradient(to bottom right, rgb(5, 150, 105), rgb(15, 118, 110));
+}
+
+/* Orange/Red/Pink градиенты (для Streak) */
+.gradient-orange-red-pink {
+    background: linear-gradient(to bottom right, rgb(249, 115, 22), rgb(239, 68, 68), rgb(236, 72, 153));
+}
+
+/* Violet/Purple градиенты (для Progress) */
+.gradient-violet-purple {
+    background: linear-gradient(to bottom right, rgb(139, 92, 246), rgb(147, 51, 234));
+}
+
+/* Section header градиенты */
+.gradient-section-achievements {
+    background: linear-gradient(to right, rgb(99, 102, 241), rgb(59, 130, 246), rgb(6, 182, 212));
+}
+
+.gradient-section-challenges {
+    background: linear-gradient(to right, rgb(168, 85, 247), rgb(236, 72, 153), rgb(244, 63, 94));
+}
+
+.gradient-section-groups {
+    background: linear-gradient(to right, rgb(34, 197, 94), rgb(16, 185, 129), rgb(20, 184, 166));
+}
+
+.gradient-section-leaderboard {
+    background: linear-gradient(to right, rgb(234, 179, 8), rgb(251, 146, 60), rgb(249, 115, 22));
+}
+
+.gradient-section-rewards {
+    background: linear-gradient(to right, rgb(251, 146, 60), rgb(249, 115, 22), rgb(244, 63, 94));
+}
+
+.gradient-section-history {
+    background: linear-gradient(to right, rgb(59, 130, 246), rgb(99, 102, 241), rgb(168, 85, 247));
+}
+
+.gradient-section-activities {
+    background: linear-gradient(to right, rgb(239, 246, 255), rgb(238, 242, 255));
+}
+
+/* Accordion button градиенты */
+.gradient-accordion-blue {
+    background: linear-gradient(to right, rgb(219, 234, 254), rgb(224, 231, 255));
+}
+
+.gradient-accordion-blue-hover {
+    background: linear-gradient(to right, rgb(191, 219, 254), rgb(199, 210, 254));
+}
+
+.gradient-accordion-purple {
+    background: linear-gradient(to right, rgb(221, 214, 254), rgb(237, 233, 254));
+}
+
+.gradient-accordion-purple-hover {
+    background: linear-gradient(to right, rgb(196, 181, 253), rgb(221, 214, 254));
+}
+
+/* Decorative blur градиенты */
+.gradient-blur-yellow-orange {
+    background: linear-gradient(to bottom right, rgb(250, 204, 21), rgb(249, 115, 22));
+}
+
+.gradient-blur-pink-rose {
+    background: linear-gradient(to bottom right, rgb(244, 114, 182), rgb(244, 63, 94));
+}
