@@ -1294,19 +1294,31 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         select.appendChild(option);
     }
     
+    // Устанавливаем выбранную активность ПОСЛЕ добавления всех опций
     if (activityId) {
         // Преобразуем activityId в строку для сравнения с value опций
         const activityIdStr = String(activityId);
-        select.value = activityIdStr;
-        console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Select value:", select.value);
-        
-        // Триггерим событие change для обновления UI
-        const changeEvent = new Event('change', { bubbles: true });
-        select.dispatchEvent(changeEvent);
-        
-        if (typeof window.updateManualModalUI === 'function') {
-            window.updateManualModalUI(activityIdStr);
-        }
+        // Используем setTimeout чтобы убедиться, что все опции добавлены в DOM
+        setTimeout(() => {
+            // Проверяем, что опция с таким value существует
+            const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
+            console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Option exists:", optionExists, "Options:", Array.from(select.options).map(o => o.value));
+            
+            if (optionExists) {
+                select.value = activityIdStr;
+                console.log("[openManualTimeModal] Select value set to:", select.value);
+                
+                // Триггерим событие change для обновления UI
+                const changeEvent = new Event('change', { bubbles: true });
+                select.dispatchEvent(changeEvent);
+                
+                if (typeof window.updateManualModalUI === 'function') {
+                    window.updateManualModalUI(activityIdStr);
+                }
+            } else {
+                console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select!");
+            }
+        }, 100);
         // Обновляем UI для выбранной активности
         const activity = allActivities.find(a => a.id == activityId);
         if (activity) {
@@ -1438,7 +1450,25 @@ async function openManualTimeModal(activityId, filterByTime = true) {
                     console.log("[Manual Time] Calling updateManualPreview for quantity");
                     updateManualPreview(currentActivityId);
                 } else {
-                    console.error("[Manual Time] updateManualPreview function not found!");
+                    console.error("[Manual Time] updateManualPreview function not found for quantity!");
+                    // Fallback: показываем превью напрямую
+                    const previewEl = document.getElementById("manual-time-preview");
+                    if (previewEl) {
+                        const activities = typeof window !== 'undefined' && window.allActivities 
+                            ? window.allActivities 
+                            : (typeof allActivities !== 'undefined' ? allActivities : []);
+                        const activity = activities.find(a => a.id == currentActivityId || a.id === Number(currentActivityId));
+                        if (activity) {
+                            const unitType = activity.unit_type || 'time';
+                            const quantity = e.target.value;
+                            if (unitType === 'quantity' && quantity) {
+                                const xp = Math.round(Number(quantity) * (activity.xp_per_unit || 1));
+                                previewEl.textContent = `+${xp} XP`;
+                                previewEl.classList.remove("hidden");
+                                console.log("[Manual Time] Showing preview directly for quantity:", `+${xp} XP`);
+                            }
+                        }
+                    }
                 }
             } else {
                 console.log("[Manual Time] No activity selected, hiding preview");
