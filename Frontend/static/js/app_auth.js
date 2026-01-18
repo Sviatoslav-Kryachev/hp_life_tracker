@@ -318,6 +318,43 @@ function showAuth() {
 }
 
 async function showApp() {
+    // Проверяем валидность токена перед показом приложения
+    const token = getAuthToken();
+    if (!token) {
+        console.warn('[showApp] No token found, showing auth section');
+        showAuth();
+        return;
+    }
+    
+    // Проверяем валидность токена через API
+    try {
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        const res = await fetch(`${apiBase}/auth/me`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        if (!res.ok) {
+            // Токен невалидный, очищаем и показываем форму авторизации
+            console.warn('[showApp] Token validation failed, clearing token and showing auth');
+            localStorage.removeItem('token');
+            authToken = '';
+            currentUser = null;
+            showAuth();
+            return;
+        }
+        
+        // Токен валидный, загружаем данные пользователя
+        currentUser = await res.json();
+    } catch (error) {
+        console.error('[showApp] Error validating token:', error);
+        // При ошибке сети тоже показываем форму авторизации для безопасности
+        localStorage.removeItem('token');
+        authToken = '';
+        currentUser = null;
+        showAuth();
+        return;
+    }
+    
     const authSection = document.getElementById("auth-section");
     const appSection = document.getElementById("app-section");
     
@@ -356,6 +393,7 @@ async function showApp() {
     document.body.scrollTop = 0;
     
     // Инициализируем мобильную навигацию
+    // Только если токен валидный (мы уже проверили это в начале showApp)
     const isMobile = window.innerWidth <= 1024;
     if (isMobile) {
         setTimeout(() => {
@@ -456,6 +494,7 @@ async function showApp() {
             console.log('[showApp] All data loaded successfully');
             
             // Инициализируем мобильную навигацию после загрузки данных
+            // Только если токен валидный (мы уже проверили это в начале showApp)
             if (window.innerWidth <= 1024 && typeof window.navigateToSection === 'function') {
                 // Небольшая задержка, чтобы DOM успел обновиться
                 setTimeout(() => {

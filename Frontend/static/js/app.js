@@ -262,6 +262,18 @@ function closeMobileMenu() {
 let isScrolling = false;
 
 function navigateToSection(section) {
+    // Проверяем авторизацию перед навигацией
+    const token = typeof getAuthToken === 'function' ? getAuthToken() : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken() : localStorage.getItem('token') || '';
+    if (!token) {
+        console.warn('[navigateToSection] No token, redirecting to auth');
+        // Очищаем hash и показываем форму авторизации
+        window.location.hash = '';
+        if (typeof window.showAuth === 'function') {
+            window.showAuth();
+        }
+        return;
+    }
+    
     // Проверяем, мобильное ли устройство (до 1024px)
     const isMobile = window.innerWidth <= 1024;
     
@@ -574,14 +586,26 @@ window.addEventListener('popstate', (event) => {
         navigateToSection(event.state.section);
     } else if (isMobile) {
         // Если нет state, проверяем hash в URL
-        const hash = window.location.hash.replace('#', '');
-        if (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) {
-            navigateToSection(hash);
+        // НО только если пользователь авторизован
+        const token = typeof getAuthToken === 'function' ? getAuthToken() : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken() : localStorage.getItem('token') || '';
+        if (token) {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) {
+                navigateToSection(hash);
+            } else {
+                // По умолчанию показываем activities
+                // На мобильных показываем секцию activities по умолчанию
+                if (window.innerWidth <= 1024) {
+                    navigateToSection('activities');
+                }
+            }
         } else {
-            // По умолчанию показываем activities
-            // На мобильных показываем секцию activities по умолчанию
-            if (window.innerWidth <= 1024) {
-                navigateToSection('activities');
+            // Если не авторизован, очищаем hash и показываем форму авторизации
+            if (window.location.hash) {
+                window.location.hash = '';
+            }
+            if (typeof window.showAuth === 'function') {
+                window.showAuth();
             }
         }
     }

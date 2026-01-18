@@ -124,7 +124,7 @@
 }
 
 /* Адаптивный хедер для мобильных */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     @supports (padding: env(safe-area-inset-top)) {
         .fixed.top-0 {
             padding-top: env(safe-area-inset-top) !important;
@@ -145,8 +145,12 @@
         }
     }
     
-    nav.hidden.md\:flex {
+    /* На мобильных скрываем навигационное меню */
+    /* Это правило применяется только на экранах до 767px */
+    .fixed.top-0 nav.hidden.md\:flex,
+    .fixed.top-0 > .container > div.flex > div:first-child > nav.hidden.md\:flex {
         display: none !important;
+        visibility: hidden !important;
     }
     
     .fixed.top-0 img.h-8.w-8.md\:h-10.md\:w-10 {
@@ -178,6 +182,53 @@
         min-width: 2.5rem !important;
         min-height: 2.5rem !important;
         padding: 0.5rem !important;
+    }
+}
+
+/* Десктоп (от 768px) - показываем навигацию */
+/* Это правило должно быть после всех правил для мобильных, чтобы иметь приоритет */
+@media (min-width: 768px) {
+    /* КРИТИЧНО: Переопределяем класс hidden для навигации на десктопе */
+    /* Это правило должно переопределить Tailwind класс hidden */
+    .fixed.top-0 nav.hidden,
+    .fixed.top-0 nav.hidden.md\:flex {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        width: auto !important;
+    }
+    
+    /* Также убеждаемся, что навигация видна, даже если есть другие классы */
+    .fixed.top-0 > .container > div.flex > div:first-child > nav.hidden,
+    .fixed.top-0 > .container > div.flex > div:first-child > nav.hidden.md\:flex {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        width: auto !important;
+    }
+    
+    /* Дополнительное правило для гарантии видимости навигации на десктопе */
+    /* Это правило переопределяет любое скрытие навигации на десктопе */
+    .fixed.top-0 > .container > div.flex > div:first-child > nav {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    /* Еще одно правило с максимальной специфичностью для гарантии */
+    .fixed.top-0 > .container > div.flex > div:first-child > nav.hidden.md\:flex.items-center.gap-2 {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    /* Правило для всех ссылок внутри навигации на десктопе */
+    .fixed.top-0 > .container > div.flex > div:first-child > nav a {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 
@@ -218,6 +269,39 @@
 .fixed.top-0 button,
 .fixed.top-0 a {
     flex-shrink: 0 !important;
+}
+
+/* Кнопка администратора - показываем, если класс hidden удален */
+#admin-btn:not(.hidden) {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Убеждаемся, что кнопка администратора видна внутри контейнера */
+.fixed.top-0 .bg-gray-50.border.border-gray-200.rounded-xl #admin-btn:not(.hidden) {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Убеждаемся, что кнопка администратора видна на всех разрешениях, если она не скрыта */
+@media (min-width: 768px) {
+    #admin-btn:not(.hidden),
+    .fixed.top-0 .bg-gray-50.border.border-gray-200.rounded-xl #admin-btn:not(.hidden) {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+@media (max-width: 767px) {
+    #admin-btn:not(.hidden),
+    .fixed.top-0 .bg-gray-50.border.border-gray-200.rounded-xl #admin-btn:not(.hidden) {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
 }
 
 /* Исправляем высоту строки в дропдауне */
@@ -295,5 +379,24 @@
     .fixed.top-0 > .container > div > div:last-child {
         flex-shrink: 1;
         min-width: 0;
+    }
+    
+    /* Гарантируем видимость навигации на планшетах */
+    .fixed.top-0 nav.hidden,
+    .fixed.top-0 nav.hidden.md\:flex {
+        display: flex !important;
+        visibility: visible !important;
+    }
+}
+
+/* ФИНАЛЬНОЕ ПРАВИЛО: Гарантируем видимость навигации на всех десктопных разрешениях */
+/* Это правило должно быть в самом конце файла для максимального приоритета */
+@media (min-width: 768px) {
+    /* Переопределяем ВСЕ возможные скрытия навигации на десктопе */
+    .fixed.top-0 nav[class*="hidden"],
+    .fixed.top-0 > .container > div.flex > div:first-child > nav[class*="hidden"] {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }

@@ -2,6 +2,8 @@
 /* Специфичные стили для модального окна создания челленджа */
 
 #create-challenge-modal {
+    z-index: 10000 !important; /* Выше хедера (9999) */
+    position: fixed !important; /* Гарантируем fixed позиционирование */
     /* Базовые стили наследуются из modal-base.css */
 }
 
