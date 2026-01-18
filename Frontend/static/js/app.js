@@ -385,6 +385,37 @@ function showMobileSection(section) {
 window.navigateToSection = navigateToSection;
 window.showMobileSection = showMobileSection;
 
+// Инициализируем обработчики событий для bottom navigation после загрузки DOM
+function initBottomNavigation() {
+    const bottomNav = document.getElementById('bottom-navigation');
+    if (bottomNav) {
+        // Используем делегирование событий для кнопок навигации
+        bottomNav.addEventListener('click', (e) => {
+            const button = e.target.closest('.mobile-nav-btn');
+            if (button && button.dataset.section) {
+                const section = button.dataset.section;
+                if (typeof navigateToSection === 'function') {
+                    navigateToSection(section);
+                } else {
+                    console.warn('navigateToSection is not defined yet');
+                }
+            }
+        });
+    }
+}
+
+// Инициализируем при загрузке DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBottomNavigation);
+} else {
+    initBottomNavigation();
+}
+
+// Также инициализируем после загрузки компонентов (на случай динамической загрузки)
+if (typeof window !== 'undefined') {
+    window.initBottomNavigation = initBottomNavigation;
+}
+
 // Устанавливаем активную кнопку при скролле (опционально)
 // Флаг для отслеживания программной прокрутки (объявлен выше, в функции navigateToSection)
 

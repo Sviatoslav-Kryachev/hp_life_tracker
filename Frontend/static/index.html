@@ -65,7 +65,7 @@
            <script src="js/app_goals.js"></script>
            <script src="js/app_categories.js"></script>
            <!-- Main App Script (остальной код, который еще не модуляризован) -->
-           <script src="js/app.js?v=52"></script>
+           <script src="js/app.js?v=53"></script>
     <!-- Social Features -->
     <script src="js/app_social.js"></script>
     <!-- Load Components -->
@@ -115,6 +115,11 @@
                     { name: 'bottom-navigation', selector: '#bottom-navigation-container', path: 'bottom-navigation' }
                 ]);
                 appComponentsLoaded = true;
+                
+                // Инициализируем обработчики событий для bottom navigation
+                if (typeof window.initBottomNavigation === 'function') {
+                    window.initBottomNavigation();
+                }
                 
                 // Убеждаемся, что app-section видим после загрузки компонентов
                 appSection.classList.remove('hidden');
