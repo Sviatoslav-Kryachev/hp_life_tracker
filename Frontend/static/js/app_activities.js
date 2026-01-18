@@ -1387,6 +1387,7 @@ async function openManualTimeModal(activityId, filterByTime = true) {
             const currentActivityId = document.getElementById("manual-activity-select").value;
             console.log("[Manual Time] Minutes input changed:", e.target.value, "Activity ID:", currentActivityId);
             if (currentActivityId) {
+                // Пробуем вызвать функцию из разных источников
                 if (typeof window.updateManualPreview === 'function') {
                     console.log("[Manual Time] Calling window.updateManualPreview");
                     window.updateManualPreview(currentActivityId);
@@ -1394,7 +1395,26 @@ async function openManualTimeModal(activityId, filterByTime = true) {
                     console.log("[Manual Time] Calling updateManualPreview");
                     updateManualPreview(currentActivityId);
                 } else {
-                    console.error("[Manual Time] updateManualPreview function not found!");
+                    console.error("[Manual Time] updateManualPreview function not found! Available functions:", 
+                        Object.keys(window).filter(k => k.includes('Manual') || k.includes('Preview')));
+                    // Попробуем вызвать напрямую из app.js если он загружен
+                    const previewEl = document.getElementById("manual-time-preview");
+                    if (previewEl) {
+                        const activities = typeof window !== 'undefined' && window.allActivities 
+                            ? window.allActivities 
+                            : (typeof allActivities !== 'undefined' ? allActivities : []);
+                        const activity = activities.find(a => a.id == currentActivityId || a.id === Number(currentActivityId));
+                        if (activity) {
+                            const unitType = activity.unit_type || 'time';
+                            const minutes = e.target.value;
+                            if (unitType === 'time' && minutes) {
+                                const xp = Math.round((Number(minutes) / 60) * (activity.xp_per_hour || 60));
+                                previewEl.textContent = `+${xp} XP`;
+                                previewEl.classList.remove("hidden");
+                                console.log("[Manual Time] Showing preview directly:", `+${xp} XP`);
+                            }
+                        }
+                    }
                 }
             } else {
                 console.log("[Manual Time] No activity selected, hiding preview");
