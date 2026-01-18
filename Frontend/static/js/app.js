@@ -2265,6 +2265,28 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     if (quantityInput) quantityInput.value = "";
     if (previewEl) previewEl.classList.add("hidden");
     
+    // Прикрепляем обработчик формы, если он еще не прикреплен
+    const manualForm = document.getElementById("manual-time-form");
+    if (manualForm && !manualForm.hasAttribute('data-submit-handler-attached')) {
+        manualForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Вызываем функцию из app_activities.js если доступна, иначе из app.js
+            if (typeof window.addManualTime === 'function') {
+                await window.addManualTime();
+            } else if (typeof addManualTime === 'function') {
+                await addManualTime();
+            } else {
+                console.error("addManualTime function not found!");
+                alert("Ошибка: функция добавления времени не найдена");
+            }
+            return false;
+        }, true); // Используем capture phase для надежности
+        manualForm.setAttribute('data-submit-handler-attached', 'true');
+    }
+    
     const modal = document.getElementById("manual-time-modal");
     if (modal) {
         modal.classList.remove("hidden");
@@ -2381,22 +2403,7 @@ async function addManualTime() {
     }
 
     try {
-        const res = await fetch(`${API_BASE}/timer/manual`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${getAuthToken()}`
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        if (!res.ok) {
-            const error = await res.json();
-            alert(error.detail || t('error_adding'));
-            return;
-        }
-
-        const data = await res.json();
+        const data = await apiPost('/timer/manual', requestData);
         closeManualTimeModal();
         
         // Обновляем все данные после добавления времени/количества
@@ -2419,8 +2426,9 @@ async function addManualTime() {
             showActivityMessage(`✅ +${Math.round(data.xp_earned)} XP за ${minutes} ${t('minutes_short')}!`, "success");
         }
     } catch (e) {
-        console.error("Error:", e);
-        alert(t('network_error'));
+        console.error("Error adding manual time:", e);
+        const errorMessage = e.message || e.detail || t('network_error');
+        alert(errorMessage);
     }
 }
 
