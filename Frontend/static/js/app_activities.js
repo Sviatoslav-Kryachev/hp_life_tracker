@@ -1122,25 +1122,74 @@ async function updateActivity() {
     let xpPerHour = null;
     let xpPerUnit = null;
 
-    if (unitType === "time") {
-        const xpPerHourEl = getElement("edit-xp-per-hour");
-        xpPerHour = xpPerHourEl ? Number(xpPerHourEl.value) || 60 : 60;
-        console.log("[updateActivity] XP per hour:", xpPerHour);
-    } else {
-        const xpPerUnitInput = getElement("edit-xp-per-unit");
-        // Читаем значение из поля, если оно пустое или 0, используем 1
-        const inputValue = xpPerUnitInput ? xpPerUnitInput.value.trim() : '';
-        xpPerUnit = inputValue ? Number(inputValue) : 1;
-        // Убеждаемся, что значение не меньше 0.1
-        if (xpPerUnit < 0.1) xpPerUnit = 1;
-        console.log("[updateActivity] XP per unit:", xpPerUnit, "from input:", inputValue);
-    }
-
     const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
 
     if (!name) {
-        alert(t('enter_activity_name'));
+        alert(t('enter_activity_name') || 'Введите название активности');
         return;
+    }
+
+    // Валидация полей XP
+    if (unitType === "time") {
+        const xpPerHourEl = getElement("edit-xp-per-hour");
+        const xpPerHourValue = xpPerHourEl ? xpPerHourEl.value.trim() : '';
+        
+        if (!xpPerHourValue || xpPerHourValue === '') {
+            alert(t('enter_xp_per_hour') || 'Введите количество HP за час');
+            if (xpPerHourEl) {
+                xpPerHourEl.focus();
+                xpPerHourEl.style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    xpPerHourEl.style.borderColor = '';
+                }, 3000);
+            }
+            return;
+        }
+        
+        xpPerHour = Number(xpPerHourValue);
+        if (isNaN(xpPerHour) || xpPerHour <= 0) {
+            alert(t('invalid_xp_per_hour') || 'Введите корректное количество HP за час (больше 0)');
+            if (xpPerHourEl) {
+                xpPerHourEl.focus();
+                xpPerHourEl.style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    xpPerHourEl.style.borderColor = '';
+                }, 3000);
+            }
+            return;
+        }
+        
+        console.log("[updateActivity] XP per hour:", xpPerHour);
+    } else {
+        const xpPerUnitInput = getElement("edit-xp-per-unit");
+        const inputValue = xpPerUnitInput ? xpPerUnitInput.value.trim() : '';
+        
+        if (!inputValue || inputValue === '') {
+            alert(t('enter_xp_per_unit') || 'Введите количество HP за штуку');
+            if (xpPerUnitInput) {
+                xpPerUnitInput.focus();
+                xpPerUnitInput.style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    xpPerUnitInput.style.borderColor = '';
+                }, 3000);
+            }
+            return;
+        }
+        
+        xpPerUnit = Number(inputValue);
+        if (isNaN(xpPerUnit) || xpPerUnit < 0.1) {
+            alert(t('invalid_xp_per_unit') || 'Введите корректное количество HP за штуку (минимум 0.1)');
+            if (xpPerUnitInput) {
+                xpPerUnitInput.focus();
+                xpPerUnitInput.style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    xpPerUnitInput.style.borderColor = '';
+                }, 3000);
+            }
+            return;
+        }
+        
+        console.log("[updateActivity] XP per unit:", xpPerUnit, "from input:", inputValue);
     }
 
     try {

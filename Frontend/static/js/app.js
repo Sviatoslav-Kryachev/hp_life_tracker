@@ -2215,6 +2215,19 @@ function openEditModal(activity) {
 
     // Обновляем поля XP при открытии
     updateEditActivityXPInputs();
+    
+    // Добавляем обработчик изменения типа единицы измерения для модального окна редактирования
+    const editUnitTypeEl = document.getElementById("edit-activity-unit-type");
+    if (editUnitTypeEl) {
+        // Удаляем старые обработчики, если они есть
+        const newEditUnitTypeEl = editUnitTypeEl.cloneNode(true);
+        editUnitTypeEl.parentNode.replaceChild(newEditUnitTypeEl, editUnitTypeEl);
+        
+        // Добавляем новый обработчик
+        newEditUnitTypeEl.addEventListener("change", function() {
+            updateEditActivityXPInputs();
+        });
+    }
 
     document.getElementById("edit-activity-modal").classList.remove("hidden");
 }
@@ -2244,10 +2257,13 @@ function updateEditActivityXPInputs() {
             xpLabel.setAttribute('data-i18n', 'unit_quantity');
         }
         
-        // Обновляем placeholder для поля количества
+        // Обновляем placeholder для поля количества - используем HP вместо XP
         if (xpPerUnitInput) {
-            xpPerUnitInput.placeholder = t('xp_per_unit') || 'XP/штука';
-            xpPerUnitInput.setAttribute('data-i18n-placeholder', 'xp_per_unit');
+            xpPerUnitInput.placeholder = 'HP/штука';
+            xpPerUnitInput.setAttribute('data-i18n-placeholder', 'hp_per_unit');
+            // Добавляем required атрибут для валидации
+            xpPerUnitInput.required = true;
+            xpPerUnitInput.min = 0.1;
         }
     } else {
         // Показываем поле для времени
@@ -2260,10 +2276,13 @@ function updateEditActivityXPInputs() {
             xpLabel.setAttribute('data-i18n', 'unit_time');
         }
         
-        // Обновляем placeholder для поля времени
+        // Обновляем placeholder для поля времени - используем HP вместо XP
         if (xpPerHourInput) {
-            xpPerHourInput.placeholder = t('xp_per_hour') || 'XP/час';
-            xpPerHourInput.setAttribute('data-i18n-placeholder', 'xp_per_hour');
+            xpPerHourInput.placeholder = 'HP/час';
+            xpPerHourInput.setAttribute('data-i18n-placeholder', 'hp_per_hour');
+            // Добавляем required атрибут для валидации
+            xpPerHourInput.required = true;
+            xpPerHourInput.min = 1;
         }
     }
 }
