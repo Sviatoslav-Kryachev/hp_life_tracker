@@ -1335,7 +1335,20 @@ async function openManualTimeModal(activityId, filterByTime = true) {
         // Преобразуем activityId в строку для сравнения с value опций
         const activityIdStr = String(activityId);
         
-        // Используем двойной requestAnimationFrame для гарантии обновления UI после открытия модального окна
+        // Сначала устанавливаем значение синхронно, сразу после добавления опций
+        const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
+        if (optionExists) {
+            select.value = activityIdStr;
+            // Принудительно обновляем selectedIndex
+            const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
+            if (selectedOption) {
+                Array.from(select.options).forEach(opt => opt.selected = false);
+                selectedOption.selected = true;
+                select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+            }
+        }
+        
+        // Затем используем requestAnimationFrame для гарантии обновления UI
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 // Проверяем, что опция с таким value существует
@@ -1355,6 +1368,12 @@ async function openManualTimeModal(activityId, filterByTime = true) {
                         select.value = activityIdStr;
                         
                         console.log("[openManualTimeModal] Select value set to:", select.value, "selectedIndex:", select.selectedIndex, "selectedOption:", selectedOption.textContent);
+                        
+                        // Принудительно обновляем визуальное отображение через изменение стиля
+                        const originalDisplay = select.style.display;
+                        select.style.display = 'none';
+                        select.offsetHeight; // Принудительный reflow
+                        select.style.display = originalDisplay;
                         
                         // Триггерим события для обновления UI
                         const changeEvent = new Event('change', { bubbles: true, cancelable: true });
@@ -1390,6 +1409,12 @@ async function openManualTimeModal(activityId, filterByTime = true) {
                                 selectedOption.selected = true;
                                 select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
                                 select.value = activityIdStr;
+                                
+                                // Принудительно обновляем визуальное отображение
+                                const originalDisplay = select.style.display;
+                                select.style.display = 'none';
+                                select.offsetHeight; // Принудительный reflow
+                                select.style.display = originalDisplay;
                                 
                                 const changeEvent = new Event('change', { bubbles: true, cancelable: true });
                                 select.dispatchEvent(changeEvent);

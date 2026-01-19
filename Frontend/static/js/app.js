@@ -2857,6 +2857,7 @@ window.requestResetCode = requestResetCode;
 window.resetPassword = resetPassword;
 window.openManualTimeModal = openManualTimeModal;
 window.closeManualTimeModal = closeManualTimeModal;
+window.showAdminPanel = showAdminPanel;
 window.updateManualPreview = updateManualPreview;
 
 // ============= INITIALIZATION =============
