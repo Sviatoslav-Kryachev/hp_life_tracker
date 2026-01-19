@@ -1135,7 +1135,7 @@ async function updateActivity() {
         const xpPerHourValue = xpPerHourEl ? xpPerHourEl.value.trim() : '';
         
         if (!xpPerHourValue || xpPerHourValue === '') {
-            alert(t('enter_xp_per_hour') || 'Введите количество HP за час');
+            alert(t('enter_xp_per_hour') || 'Введите количество XP за час');
             if (xpPerHourEl) {
                 xpPerHourEl.focus();
                 xpPerHourEl.style.borderColor = '#ef4444';
@@ -1148,7 +1148,7 @@ async function updateActivity() {
         
         xpPerHour = Number(xpPerHourValue);
         if (isNaN(xpPerHour) || xpPerHour <= 0) {
-            alert(t('invalid_xp_per_hour') || 'Введите корректное количество HP за час (больше 0)');
+            alert(t('invalid_xp_per_hour') || 'Введите корректное количество XP за час (больше 0)');
             if (xpPerHourEl) {
                 xpPerHourEl.focus();
                 xpPerHourEl.style.borderColor = '#ef4444';
@@ -1165,7 +1165,7 @@ async function updateActivity() {
         const inputValue = xpPerUnitInput ? xpPerUnitInput.value.trim() : '';
         
         if (!inputValue || inputValue === '') {
-            alert(t('enter_xp_per_unit') || 'Введите количество HP за штуку');
+            alert(t('enter_xp_per_unit') || 'Введите количество XP за штуку');
             if (xpPerUnitInput) {
                 xpPerUnitInput.focus();
                 xpPerUnitInput.style.borderColor = '#ef4444';
@@ -1178,7 +1178,7 @@ async function updateActivity() {
         
         xpPerUnit = Number(inputValue);
         if (isNaN(xpPerUnit) || xpPerUnit < 0.1) {
-            alert(t('invalid_xp_per_unit') || 'Введите корректное количество HP за штуку (минимум 0.1)');
+            alert(t('invalid_xp_per_unit') || 'Введите корректное количество XP за штуку (минимум 0.1)');
             if (xpPerUnitInput) {
                 xpPerUnitInput.focus();
                 xpPerUnitInput.style.borderColor = '#ef4444';
