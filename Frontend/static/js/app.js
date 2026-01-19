@@ -2219,14 +2219,24 @@ function openEditModal(activity) {
     // Добавляем обработчик изменения типа единицы измерения для модального окна редактирования
     const editUnitTypeEl = document.getElementById("edit-activity-unit-type");
     if (editUnitTypeEl) {
-        // Удаляем старые обработчики, если они есть
+        console.log("[openEditModal] Setting up unit type change handler");
+        // Удаляем старые обработчики, если они есть, клонируя элемент
         const newEditUnitTypeEl = editUnitTypeEl.cloneNode(true);
         editUnitTypeEl.parentNode.replaceChild(newEditUnitTypeEl, editUnitTypeEl);
         
         // Добавляем новый обработчик
-        newEditUnitTypeEl.addEventListener("change", function() {
+        newEditUnitTypeEl.addEventListener("change", function(e) {
+            console.log("[openEditModal] Unit type changed to:", e.target.value);
             updateEditActivityXPInputs();
         });
+        
+        // Также добавляем обработчик через onchange для надежности
+        newEditUnitTypeEl.onchange = function() {
+            console.log("[openEditModal] Unit type onchange triggered, value:", this.value);
+            updateEditActivityXPInputs();
+        };
+    } else {
+        console.warn("[openEditModal] edit-activity-unit-type element not found");
     }
 
     document.getElementById("edit-activity-modal").classList.remove("hidden");
@@ -2234,6 +2244,7 @@ function openEditModal(activity) {
 
 // Функция для переключения полей XP в модальном окне редактирования
 function updateEditActivityXPInputs() {
+    console.log("[updateEditActivityXPInputs] Function called");
     const unitTypeEl = document.getElementById("edit-activity-unit-type");
     const xpTimeContainer = document.getElementById("edit-activity-xp-time");
     const xpQuantityContainer = document.getElementById("edit-activity-xp-quantity");
@@ -2241,15 +2252,19 @@ function updateEditActivityXPInputs() {
     const xpPerHourInput = document.getElementById("edit-xp-per-hour");
     const xpPerUnitInput = document.getElementById("edit-xp-per-unit");
 
-    if (!unitTypeEl) return;
+    if (!unitTypeEl) {
+        console.warn("[updateEditActivityXPInputs] unitTypeEl not found");
+        return;
+    }
 
     const unitType = unitTypeEl.value;
+    console.log("[updateEditActivityXPInputs] Unit type:", unitType);
     const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
 
     if (unitType === "quantity") {
         // Показываем поле для количества
-        xpTimeContainer.classList.add("hidden");
-        xpQuantityContainer.classList.remove("hidden");
+        if (xpTimeContainer) xpTimeContainer.classList.add("hidden");
+        if (xpQuantityContainer) xpQuantityContainer.classList.remove("hidden");
         
         // Обновляем label
         if (xpLabel) {
@@ -2259,16 +2274,20 @@ function updateEditActivityXPInputs() {
         
         // Обновляем placeholder для поля количества
         if (xpPerUnitInput) {
-            xpPerUnitInput.placeholder = t('xp_per_unit') || 'XP/штука';
+            const placeholder = 'XP/штука';
+            xpPerUnitInput.placeholder = placeholder;
             xpPerUnitInput.setAttribute('data-i18n-placeholder', 'xp_per_unit');
             // Добавляем required атрибут для валидации
             xpPerUnitInput.required = true;
             xpPerUnitInput.min = 0.1;
+            console.log("[updateEditActivityXPInputs] Updated quantity placeholder to:", placeholder);
+        } else {
+            console.warn("[updateEditActivityXPInputs] xpPerUnitInput not found");
         }
     } else {
         // Показываем поле для времени
-        xpTimeContainer.classList.remove("hidden");
-        xpQuantityContainer.classList.add("hidden");
+        if (xpTimeContainer) xpTimeContainer.classList.remove("hidden");
+        if (xpQuantityContainer) xpQuantityContainer.classList.add("hidden");
         
         // Обновляем label
         if (xpLabel) {
@@ -2278,11 +2297,15 @@ function updateEditActivityXPInputs() {
         
         // Обновляем placeholder для поля времени
         if (xpPerHourInput) {
-            xpPerHourInput.placeholder = t('xp_per_hour') || 'XP/час';
+            const placeholder = 'XP/час';
+            xpPerHourInput.placeholder = placeholder;
             xpPerHourInput.setAttribute('data-i18n-placeholder', 'xp_per_hour');
             // Добавляем required атрибут для валидации
             xpPerHourInput.required = true;
             xpPerHourInput.min = 1;
+            console.log("[updateEditActivityXPInputs] Updated time placeholder to:", placeholder);
+        } else {
+            console.warn("[updateEditActivityXPInputs] xpPerHourInput not found");
         }
     }
 }
@@ -2896,6 +2919,7 @@ function showRewardMessage(text, type) {
 
 // ============= GLOBAL FUNCTIONS FOR ONCLICK =============
 // Делаем функции глобальными для использования в onclick
+// Примечание: showAdminPanel будет экспортирована после её определения
 window.toggleRewardsAccordion = toggleRewardsAccordion;
 window.toggleHistoryAccordion = toggleHistoryAccordion;
 window.showForgotPassword = showForgotPassword;
@@ -2904,7 +2928,6 @@ window.requestResetCode = requestResetCode;
 window.resetPassword = resetPassword;
 window.openManualTimeModal = openManualTimeModal;
 window.closeManualTimeModal = closeManualTimeModal;
-window.showAdminPanel = showAdminPanel;
 window.updateManualPreview = updateManualPreview;
 window.closeChildStats = closeChildStats;
 
@@ -3785,6 +3808,11 @@ async function showAdminPanel() {
     setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 100);
+}
+
+// Экспортируем showAdminPanel в window после определения функции
+if (typeof window !== 'undefined') {
+    window.showAdminPanel = showAdminPanel;
 }
 
 function hideAdminPanel() {
