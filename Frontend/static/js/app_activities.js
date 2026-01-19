@@ -1401,7 +1401,12 @@ async function openManualTimeModal(activityId, filterByTime = true) {
                     if (timeContainer) hideElement(timeContainer);
                     if (quantityContainer) showElement(quantityContainer);
                     if (timeInput) timeInput.removeAttribute('required');
-                    if (quantityInput) quantityInput.setAttribute('required', 'required');
+                    if (quantityInput) {
+                        quantityInput.setAttribute('required', 'required');
+                        // Обновляем плейсхолдер для количества
+                        quantityInput.placeholder = t('quantity_placeholder') || 'Введите к-во';
+                        quantityInput.setAttribute('data-i18n-placeholder', 'quantity_placeholder');
+                    }
                 } else {
                     if (titleEl) {
                         setText(titleEl, `⏱️ ${t('manual_time')}`);
@@ -1409,7 +1414,12 @@ async function openManualTimeModal(activityId, filterByTime = true) {
                     }
                     if (timeContainer) showElement(timeContainer);
                     if (quantityContainer) hideElement(quantityContainer);
-                    if (timeInput) timeInput.setAttribute('required', 'required');
+                    if (timeInput) {
+                        timeInput.setAttribute('required', 'required');
+                        // Обновляем плейсхолдер для времени
+                        timeInput.placeholder = t('minutes_placeholder') || 'Минут';
+                        timeInput.setAttribute('data-i18n-placeholder', 'minutes_placeholder');
+                    }
                     if (quantityInput) quantityInput.removeAttribute('required');
                 }
             }

@@ -2530,30 +2530,54 @@ async function openManualTimeModal(activityId, filterByTime = true) {
 }
 
 function updateManualModalUI(activityId) {
-    const activity = allActivities.find(a => a.id == activityId);
+    const activity = allActivities.find(a => a.id == activityId || a.id == Number(activityId));
     const unitType = activity ? (activity.unit_type || 'time') : 'time';
     const titleEl = document.getElementById("manual-modal-title");
     const timeContainer = document.getElementById("manual-time-input-container");
     const quantityContainer = document.getElementById("manual-quantity-input-container");
     const timeInput = document.getElementById("manual-minutes");
     const quantityInput = document.getElementById("manual-quantity");
+    const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
 
     if (unitType === 'quantity') {
-        titleEl.textContent = `📊 ${t('manual_quantity')}`;
-        titleEl.setAttribute('data-i18n', 'manual_quantity');
-        timeContainer.classList.add('hidden');
-        quantityContainer.classList.remove('hidden');
-        timeInput.removeAttribute('required');
-        quantityInput.setAttribute('required', 'required');
+        if (titleEl) {
+            titleEl.textContent = `📊 ${t('manual_quantity')}`;
+            titleEl.setAttribute('data-i18n', 'manual_quantity');
+        }
+        if (timeContainer) timeContainer.classList.add('hidden');
+        if (quantityContainer) quantityContainer.classList.remove('hidden');
+        if (timeInput) timeInput.removeAttribute('required');
+        if (quantityInput) {
+            quantityInput.setAttribute('required', 'required');
+            // Обновляем плейсхолдер для количества
+            quantityInput.placeholder = t('quantity_placeholder') || 'Введите к-во';
+            quantityInput.setAttribute('data-i18n-placeholder', 'quantity_placeholder');
+        }
     } else {
-        titleEl.textContent = `⏱️ ${t('manual_time')}`;
-        titleEl.setAttribute('data-i18n', 'manual_time');
-        timeContainer.classList.remove('hidden');
-        quantityContainer.classList.add('hidden');
-        quantityInput.removeAttribute('required');
-        timeInput.setAttribute('required', 'required');
+        if (titleEl) {
+            titleEl.textContent = `⏱️ ${t('manual_time')}`;
+            titleEl.setAttribute('data-i18n', 'manual_time');
+        }
+        if (timeContainer) timeContainer.classList.remove('hidden');
+        if (quantityContainer) quantityContainer.classList.add('hidden');
+        if (quantityInput) quantityInput.removeAttribute('required');
+        if (timeInput) {
+            timeInput.setAttribute('required', 'required');
+            // Обновляем плейсхолдер для времени
+            timeInput.placeholder = t('minutes_placeholder') || 'Минут';
+            timeInput.setAttribute('data-i18n-placeholder', 'minutes_placeholder');
+        }
     }
-    applyTranslations();
+    if (typeof window.applyTranslations === 'function') {
+        window.applyTranslations();
+    } else if (typeof applyTranslations === 'function') {
+        applyTranslations();
+    }
+}
+
+// Экспортируем функцию в window
+if (typeof window !== 'undefined') {
+    window.updateManualModalUI = updateManualModalUI;
 }
 
 function closeManualTimeModal() {
