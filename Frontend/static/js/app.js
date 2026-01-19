@@ -3857,9 +3857,11 @@ async function showAdminPanel() {
     }, 100);
 }
 
-// Экспортируем showAdminPanel в window после определения функции
+// Экспортируем showAdminPanel в window сразу после определения функции
+// Это гарантирует, что функция доступна для onclick в HTML
 if (typeof window !== 'undefined') {
     window.showAdminPanel = showAdminPanel;
+    console.log("[showAdminPanel] Function exported to window");
 }
 
 function hideAdminPanel() {
