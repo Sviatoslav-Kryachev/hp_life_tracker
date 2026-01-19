@@ -2859,6 +2859,7 @@ window.openManualTimeModal = openManualTimeModal;
 window.closeManualTimeModal = closeManualTimeModal;
 window.showAdminPanel = showAdminPanel;
 window.updateManualPreview = updateManualPreview;
+window.closeChildStats = closeChildStats;
 
 // ============= INITIALIZATION =============
 window.addEventListener("DOMContentLoaded", () => {
