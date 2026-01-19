@@ -2895,6 +2895,55 @@ window.addEventListener("DOMContentLoaded", () => {
     try {
         // Инициализируем DOM элементы
         initDOMElements();
+        
+        // Добавляем обработчик для кнопки админ-панели через addEventListener (резервный вариант)
+        const attachAdminButtonHandler = () => {
+            const adminBtn = document.getElementById("admin-btn");
+            const footerAdminBtn = document.getElementById("footer-admin-btn");
+            
+            if (adminBtn && !adminBtn.hasAttribute('data-handler-attached')) {
+                adminBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("[Admin Button] Click handler triggered");
+                    if (typeof window.showAdminPanel === 'function') {
+                        window.showAdminPanel();
+                    } else if (typeof showAdminPanel === 'function') {
+                        showAdminPanel();
+                    } else {
+                        console.error("[Admin Button] showAdminPanel function not found!");
+                        alert("Ошибка: функция админ-панели не найдена");
+                    }
+                });
+                adminBtn.setAttribute('data-handler-attached', 'true');
+                console.log("[Admin Button] Handler attached to admin-btn");
+            }
+            
+            if (footerAdminBtn && !footerAdminBtn.hasAttribute('data-handler-attached')) {
+                footerAdminBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("[Admin Button] Click handler triggered (footer)");
+                    if (typeof window.showAdminPanel === 'function') {
+                        window.showAdminPanel();
+                    } else if (typeof showAdminPanel === 'function') {
+                        showAdminPanel();
+                    } else {
+                        console.error("[Admin Button] showAdminPanel function not found!");
+                        alert("Ошибка: функция админ-панели не найдена");
+                    }
+                });
+                footerAdminBtn.setAttribute('data-handler-attached', 'true');
+                console.log("[Admin Button] Handler attached to footer-admin-btn");
+            }
+        };
+        
+        // Пытаемся привязать обработчик сразу
+        attachAdminButtonHandler();
+        
+        // Также пытаемся привязать после небольшой задержки (на случай динамической загрузки)
+        setTimeout(attachAdminButtonHandler, 500);
+        setTimeout(attachAdminButtonHandler, 2000);
 
         // Убеждаемся, что элементы найдены
         if (!authSection || !appSection) {
