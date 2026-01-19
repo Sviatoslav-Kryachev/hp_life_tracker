@@ -3117,13 +3117,31 @@ window.addEventListener("DOMContentLoaded", () => {
     // Инициализация обработчика изменения типа единицы измерения (после загрузки компонентов)
     function initActivityUnitTypeHandler() {
         const unitTypeEl = document.getElementById("activity-unit-type");
-        if (unitTypeEl && typeof updateActivityXPInputs === 'function') {
-            // Удаляем старый обработчик если есть
-            const newUnitTypeEl = unitTypeEl.cloneNode(true);
-            unitTypeEl.parentNode.replaceChild(newUnitTypeEl, unitTypeEl);
-            // Добавляем новый обработчик
-            newUnitTypeEl.addEventListener("change", updateActivityXPInputs);
-            updateActivityXPInputs(); // Инициализация при загрузке
+        if (unitTypeEl) {
+            // Используем функцию из window, если доступна
+            const updateFn = typeof window.updateActivityXPInputs === 'function' 
+                ? window.updateActivityXPInputs 
+                : (typeof updateActivityXPInputs === 'function' ? updateActivityXPInputs : null);
+            
+            if (updateFn) {
+                // Удаляем старые обработчики, клонируя элемент
+                const newUnitTypeEl = unitTypeEl.cloneNode(true);
+                unitTypeEl.parentNode.replaceChild(newUnitTypeEl, unitTypeEl);
+                
+                // Добавляем новый обработчик
+                newUnitTypeEl.addEventListener("change", function(e) {
+                    console.log("[initActivityUnitTypeHandler] Unit type changed, calling updateActivityXPInputs");
+                    updateFn();
+                });
+                
+                // Инициализация при загрузке
+                updateFn();
+                console.log("[initActivityUnitTypeHandler] Handler attached and initialized");
+            } else {
+                console.warn("[initActivityUnitTypeHandler] updateActivityXPInputs function not found");
+            }
+        } else {
+            console.warn("[initActivityUnitTypeHandler] activity-unit-type element not found");
         }
     }
 
@@ -5120,17 +5138,22 @@ function updateActivityXPInputs() {
     const xpPerHourInput = document.getElementById("xp-per-hour");
     const xpPerUnitInput = document.getElementById("xp-per-unit");
 
-    if (!unitTypeEl) return;
+    if (!unitTypeEl) {
+        console.warn("[updateActivityXPInputs] activity-unit-type element not found");
+        return;
+    }
 
     const unitType = unitTypeEl.value;
     const t = typeof window !== 'undefined' && window.t ? window.t : (key) => key;
 
+    console.log("[updateActivityXPInputs] Unit type changed to:", unitType);
+
     if (unitType === "quantity") {
         // Показываем поле для количества
-        xpTimeContainer.classList.add("hidden");
-        xpQuantityContainer.classList.remove("hidden");
+        if (xpTimeContainer) xpTimeContainer.classList.add("hidden");
+        if (xpQuantityContainer) xpQuantityContainer.classList.remove("hidden");
         
-        // Обновляем label
+        // Обновляем label (если существует)
         if (xpLabel) {
             xpLabel.textContent = t('unit_quantity') || 'Количество (штуки)';
             xpLabel.setAttribute('data-i18n', 'unit_quantity');
@@ -5140,13 +5163,14 @@ function updateActivityXPInputs() {
         if (xpPerUnitInput) {
             xpPerUnitInput.placeholder = t('xp_per_unit') || 'XP/штука';
             xpPerUnitInput.setAttribute('data-i18n-placeholder', 'xp_per_unit');
+            console.log("[updateActivityXPInputs] Updated quantity input placeholder to:", xpPerUnitInput.placeholder);
         }
     } else {
         // Показываем поле для времени
-        xpTimeContainer.classList.remove("hidden");
-        xpQuantityContainer.classList.add("hidden");
+        if (xpTimeContainer) xpTimeContainer.classList.remove("hidden");
+        if (xpQuantityContainer) xpQuantityContainer.classList.add("hidden");
         
-        // Обновляем label
+        // Обновляем label (если существует)
         if (xpLabel) {
             xpLabel.textContent = t('unit_time') || 'Время (минуты)';
             xpLabel.setAttribute('data-i18n', 'unit_time');
@@ -5156,8 +5180,14 @@ function updateActivityXPInputs() {
         if (xpPerHourInput) {
             xpPerHourInput.placeholder = t('xp_per_hour') || 'XP/час';
             xpPerHourInput.setAttribute('data-i18n-placeholder', 'xp_per_hour');
+            console.log("[updateActivityXPInputs] Updated time input placeholder to:", xpPerHourInput.placeholder);
         }
     }
+}
+
+// Экспортируем функцию в window для доступа из других скриптов
+if (typeof window !== 'undefined') {
+    window.updateActivityXPInputs = updateActivityXPInputs;
 }
 
 // Функция для обновления формы цели в зависимости от типа активности
