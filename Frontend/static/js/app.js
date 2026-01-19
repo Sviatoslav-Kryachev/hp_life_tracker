@@ -2290,6 +2290,12 @@ function showActivityMessage(text, type) {
 
 // ============= MANUAL TIME/QUANTITY =============
 async function openManualTimeModal(activityId, filterByTime = true) {
+    // Сначала открываем модальное окно, чтобы элементы были доступны
+    const modal = document.getElementById("manual-time-modal");
+    if (modal) {
+        modal.classList.remove("hidden");
+    }
+    
     const select = document.getElementById("manual-activity-select");
     if (!select) {
         console.error("manual-activity-select not found");
@@ -2387,9 +2393,83 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     
     // Устанавливаем выбранную активность, если она передана
     if (activityId) {
-        select.value = activityId;
-        // Обновляем интерфейс в зависимости от типа активности
-        updateManualModalUI(activityId);
+        // Преобразуем activityId в строку для сравнения с value опций
+        const activityIdStr = String(activityId);
+        
+        // Используем requestAnimationFrame для гарантии обновления UI после добавления опций
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                // Проверяем, что опция с таким value существует
+                const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
+                
+                if (optionExists) {
+                    // Находим опцию и устанавливаем её как выбранную
+                    const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
+                    if (selectedOption) {
+                        // Снимаем выделение со всех опций
+                        Array.from(select.options).forEach(opt => opt.selected = false);
+                        
+                        // Устанавливаем выбранную опцию
+                        selectedOption.selected = true;
+                        select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                        select.value = activityIdStr;
+                        
+                        // Триггерим события для обновления UI
+                        const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+                        select.dispatchEvent(changeEvent);
+                        
+                        const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+                        select.dispatchEvent(inputEvent);
+                        
+                        // Принудительно обновляем визуальное отображение через небольшой таймаут
+                        setTimeout(() => {
+                            // Проверяем, что значение действительно установлено
+                            if (select.value !== activityIdStr) {
+                                select.value = activityIdStr;
+                                selectedOption.selected = true;
+                                select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                            }
+                        }, 10);
+                        
+                        // Обновляем интерфейс в зависимости от типа активности
+                        updateManualModalUI(activityId);
+                    }
+                } else {
+                    console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select! Retrying...");
+                    // Если опция не найдена, пробуем еще раз через небольшую задержку
+                    setTimeout(() => {
+                        const optionExistsRetry = Array.from(select.options).some(opt => opt.value === activityIdStr);
+                        if (optionExistsRetry) {
+                            const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
+                            if (selectedOption) {
+                                Array.from(select.options).forEach(opt => opt.selected = false);
+                                selectedOption.selected = true;
+                                select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                                select.value = activityIdStr;
+                                
+                                const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+                                select.dispatchEvent(changeEvent);
+                                const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+                                select.dispatchEvent(inputEvent);
+                                
+                                setTimeout(() => {
+                                    if (select.value !== activityIdStr) {
+                                        select.value = activityIdStr;
+                                        selectedOption.selected = true;
+                                        select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                                    }
+                                }, 10);
+                                
+                                // Обновляем интерфейс в зависимости от типа активности
+                                updateManualModalUI(activityId);
+                            }
+                        } else {
+                            console.error("[openManualTimeModal] Option still not found after retry!");
+                        }
+                    }, 150);
+                }
+            });
+        });
     } else {
         // Если активность не передана, устанавливаем заголовок в зависимости от источника
         const titleEl = document.getElementById("manual-modal-title");
@@ -2446,11 +2526,6 @@ async function openManualTimeModal(activityId, filterByTime = true) {
             return false;
         }, true); // Используем capture phase для надежности
         manualForm.setAttribute('data-submit-handler-attached', 'true');
-    }
-    
-    const modal = document.getElementById("manual-time-modal");
-    if (modal) {
-        modal.classList.remove("hidden");
     }
 }
 
