@@ -2978,6 +2978,23 @@ window.closeManualTimeModal = closeManualTimeModal;
 window.updateManualPreview = updateManualPreview;
 window.closeChildStats = closeChildStats;
 
+// Предварительная заглушка для showAdminPanel, чтобы избежать ошибок при onclick
+// Реальная функция будет определена позже и перезапишет эту заглушку
+if (typeof window.showAdminPanel === 'undefined') {
+    window.showAdminPanel = function() {
+        console.warn("[showAdminPanel] Function not yet loaded, please wait...");
+        // Пытаемся вызвать функцию через небольшую задержку
+        setTimeout(() => {
+            if (typeof window.showAdminPanel === 'function' && window.showAdminPanel.toString().includes('async function')) {
+                window.showAdminPanel();
+            } else {
+                console.error("[showAdminPanel] Function still not available");
+                alert("Функция админ-панели еще не загружена. Пожалуйста, подождите и попробуйте снова.");
+            }
+        }, 500);
+    };
+}
+
 // ============= INITIALIZATION =============
 window.addEventListener("DOMContentLoaded", () => {
     try {
