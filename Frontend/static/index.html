@@ -78,7 +78,10 @@
         
         // Функция загрузки компонентов app-section
         async function loadAppComponents() {
-            if (appComponentsLoaded) return;
+            if (appComponentsLoaded) {
+                console.log("[loadAppComponents] Components already loaded, skipping");
+                return;
+            }
             
             const appSection = document.getElementById('app-section');
             if (!appSection) {
