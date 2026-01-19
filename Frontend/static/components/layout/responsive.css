@@ -178,6 +178,19 @@
         display: block !important;
     }
     
+    /* Конкретные секции внутри grid - скрыты по умолчанию на мобильных */
+    #activities.mobile-section-hidden,
+    #rewards.mobile-section-hidden,
+    #history.mobile-section-hidden {
+        display: none !important;
+    }
+    
+    #activities.mobile-section-visible,
+    #rewards.mobile-section-visible,
+    #history.mobile-section-visible {
+        display: flex !important; /* flex для секций с классом flex flex-col */
+    }
+    
     /* Container */
     .container,
     #app-section,

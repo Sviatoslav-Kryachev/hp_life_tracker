@@ -367,10 +367,18 @@ function showMobileSection(section) {
     // Он находится в первом grid контейнере
     const sidebar = activitiesGrid ? activitiesGrid.querySelector('.lg\\:col-span-1') : null;
     
+    // Находим конкретные секции по ID
+    const activitiesSection = document.getElementById('activities');
+    const rewardsSection = document.getElementById('rewards');
+    const historySection = document.getElementById('history');
+    
     console.log('[showMobileSection] Found elements:', {
         activitiesGrid: !!activitiesGrid,
         rewardsHistoryGrid: !!rewardsHistoryGrid,
         sidebar: !!sidebar,
+        activitiesSection: !!activitiesSection,
+        rewardsSection: !!rewardsSection,
+        historySection: !!historySection,
         totalGrids: allGrids.length
     });
     
@@ -388,12 +396,24 @@ function showMobileSection(section) {
         sidebar.classList.add('mobile-section-hidden');
     }
     
+    // Скрываем все конкретные секции
+    [activitiesSection, rewardsSection, historySection].forEach(sec => {
+        if (sec) {
+            sec.classList.remove('mobile-section-visible');
+            sec.classList.add('mobile-section-hidden');
+        }
+    });
+    
     // Показываем выбранную секцию
     switch(section) {
         case 'activities':
             if (activitiesGrid) {
                 activitiesGrid.classList.remove('mobile-section-hidden');
                 activitiesGrid.classList.add('mobile-section-visible');
+                if (activitiesSection) {
+                    activitiesSection.classList.remove('mobile-section-hidden');
+                    activitiesSection.classList.add('mobile-section-visible');
+                }
                 console.log('[showMobileSection] Activities section shown');
             } else {
                 console.warn('[showMobileSection] Activities grid not found!');
@@ -403,6 +423,16 @@ function showMobileSection(section) {
             if (rewardsHistoryGrid) {
                 rewardsHistoryGrid.classList.remove('mobile-section-hidden');
                 rewardsHistoryGrid.classList.add('mobile-section-visible');
+                // Показываем только секцию rewards
+                if (rewardsSection) {
+                    rewardsSection.classList.remove('mobile-section-hidden');
+                    rewardsSection.classList.add('mobile-section-visible');
+                }
+                // Скрываем history внутри того же grid
+                if (historySection) {
+                    historySection.classList.add('mobile-section-hidden');
+                    historySection.classList.remove('mobile-section-visible');
+                }
                 console.log('[showMobileSection] Rewards section shown');
             } else {
                 console.warn('[showMobileSection] Rewards grid not found!');
@@ -412,6 +442,16 @@ function showMobileSection(section) {
             if (rewardsHistoryGrid) {
                 rewardsHistoryGrid.classList.remove('mobile-section-hidden');
                 rewardsHistoryGrid.classList.add('mobile-section-visible');
+                // Показываем только секцию history
+                if (historySection) {
+                    historySection.classList.remove('mobile-section-hidden');
+                    historySection.classList.add('mobile-section-visible');
+                }
+                // Скрываем rewards внутри того же grid
+                if (rewardsSection) {
+                    rewardsSection.classList.add('mobile-section-hidden');
+                    rewardsSection.classList.remove('mobile-section-visible');
+                }
                 console.log('[showMobileSection] History section shown');
             } else {
                 console.warn('[showMobileSection] History grid not found!');
