@@ -28,6 +28,66 @@
     <link rel="stylesheet" href="style.css?v=58">
     <title>HP Life Tracker</title>
     <!-- Visibility styles вынесены в components/common/visibility.css -->
+    <!-- Inline script для предотвращения мигания auth-section при перезагрузке -->
+    <script>
+        // Сразу проверяем токен и скрываем auth-section если он есть
+        // Это предотвращает мигание окна авторизации при перезагрузке
+        (function() {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    // Скрываем auth-section сразу через inline стили
+                    // Это работает до загрузки CSS и JS
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const authSection = document.getElementById('auth-section');
+                        const appSection = document.getElementById('app-section');
+                        if (authSection) {
+                            authSection.style.display = 'none';
+                            authSection.style.visibility = 'hidden';
+                        }
+                        if (appSection) {
+                            appSection.style.display = 'none';
+                            appSection.style.visibility = 'hidden';
+                        }
+                    });
+                    
+                    // Также применяем сразу если DOM уже загружен
+                    if (document.readyState === 'loading') {
+                        // DOM еще загружается, обработчик выше сработает
+                    } else {
+                        // DOM уже загружен
+                        const authSection = document.getElementById('auth-section');
+                        const appSection = document.getElementById('app-section');
+                        if (authSection) {
+                            authSection.style.display = 'none';
+                            authSection.style.visibility = 'hidden';
+                        }
+                        if (appSection) {
+                            appSection.style.display = 'none';
+                            appSection.style.visibility = 'hidden';
+                        }
+                    }
+                } else {
+                    // Если токена нет, показываем auth-section
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const authSection = document.getElementById('auth-section');
+                        const appSection = document.getElementById('app-section');
+                        if (authSection) {
+                            authSection.style.display = '';
+                            authSection.style.visibility = 'visible';
+                        }
+                        if (appSection) {
+                            appSection.style.display = 'none';
+                            appSection.style.visibility = 'hidden';
+                        }
+                    });
+                }
+            } catch (e) {
+                // Игнорируем ошибки, основной JS обработает это
+                console.warn('Auth init script error:', e);
+            }
+        })();
+    </script>
 </head>
 
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
