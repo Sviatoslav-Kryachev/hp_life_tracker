@@ -3233,15 +3233,59 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(initActivityUnitTypeHandler, 500);
     setTimeout(initActivityUnitTypeHandler, 2000);
     
+    // Функция для привязки обработчика кнопки админ-панели
+    function attachAdminButtonHandler() {
+        const adminBtn = document.getElementById("admin-btn");
+        const footerAdminBtn = document.getElementById("footer-admin-btn");
+        
+        if (adminBtn && !adminBtn.hasAttribute('data-handler-attached')) {
+            adminBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("[Admin Button] Click handler triggered");
+                if (typeof window.showAdminPanel === 'function') {
+                    window.showAdminPanel();
+                } else if (typeof showAdminPanel === 'function') {
+                    showAdminPanel();
+                } else {
+                    console.error("[Admin Button] showAdminPanel function not found!");
+                    alert("Ошибка: функция админ-панели не найдена");
+                }
+            });
+            adminBtn.setAttribute('data-handler-attached', 'true');
+            console.log("[Admin Button] Handler attached to admin-btn");
+        }
+        
+        if (footerAdminBtn && !footerAdminBtn.hasAttribute('data-handler-attached')) {
+            footerAdminBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("[Admin Button] Click handler triggered (footer)");
+                if (typeof window.showAdminPanel === 'function') {
+                    window.showAdminPanel();
+                } else if (typeof showAdminPanel === 'function') {
+                    showAdminPanel();
+                } else {
+                    console.error("[Admin Button] showAdminPanel function not found!");
+                    alert("Ошибка: функция админ-панели не найдена");
+                }
+            });
+            footerAdminBtn.setAttribute('data-handler-attached', 'true');
+            console.log("[Admin Button] Handler attached to footer-admin-btn");
+        }
+    }
+    
     // Экспортируем функции инициализации для вызова после загрузки компонентов
     if (typeof window !== 'undefined') {
         window.initFormHandlers = function() {
             attachFormHandlers();
             attachDirectFormHandlers();
             initActivityUnitTypeHandler();
+            attachAdminButtonHandler(); // Привязываем обработчик админ-кнопки
         };
         window.attachFormHandlers = attachFormHandlers;
         window.attachDirectFormHandlers = attachDirectFormHandlers;
+        window.attachAdminButtonHandler = attachAdminButtonHandler;
     }
 
     // Manual time form
