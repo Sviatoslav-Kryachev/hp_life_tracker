@@ -3609,31 +3609,66 @@ async function loadInviteCode() {
 }
 
 async function showAdminPanel() {
+    console.log("[showAdminPanel] Function called");
+    
+    // Проверяем наличие элемента admin-panel
+    const adminPanel = document.getElementById("admin-panel");
+    if (!adminPanel) {
+        console.error("[showAdminPanel] admin-panel element not found!");
+        alert("Ошибка: панель администратора не найдена. Убедитесь, что компонент section-admin загружен.");
+        return;
+    }
+    
     // Добавляем обработчик клика при открытии
     setTimeout(() => {
         document.addEventListener('click', handleAdminPanelClickOutside);
     }, 100);
+    
     // Проверяем права доступа перед открытием панели
     try {
-        const res = await fetch(`${API_BASE}/admin/invite-code`, {
-            headers: { "Authorization": `Bearer ${getAuthToken()}` }
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : window.location.origin;
+        const token = typeof getAuthToken === 'function' ? getAuthToken() : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken() : localStorage.getItem('token') || '';
+        
+        const res = await fetch(`${apiBase}/admin/invite-code`, {
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) {
             // Подопечный пытается открыть админ-панель
-            showNotification(`🚫 ${t('access_denied')}`, 'error');
+            console.warn("[showAdminPanel] Access denied, status:", res.status);
+            if (typeof showNotification === 'function') {
+                showNotification(`🚫 ${t('access_denied')}`, 'error');
+            } else {
+                alert("Доступ запрещен");
+            }
             return;
         }
+        
+        console.log("[showAdminPanel] Access granted, showing panel");
     } catch (e) {
-        showNotification(`🚫 ${t('error_checking_access')}`, 'error');
+        console.error("[showAdminPanel] Error checking access:", e);
+        if (typeof showNotification === 'function') {
+            showNotification(`🚫 ${t('error_checking_access')}`, 'error');
+        } else {
+            alert("Ошибка проверки доступа: " + e.message);
+        }
         return;
     }
 
-    const adminPanel = document.getElementById("admin-panel");
+    // Показываем панель
     adminPanel.classList.remove("hidden");
-    updateAdminCategoryFilter();
-    loadChildren();
-    loadInviteCode();
+    console.log("[showAdminPanel] Panel shown");
+    
+    // Обновляем данные в панели
+    if (typeof updateAdminCategoryFilter === 'function') {
+        updateAdminCategoryFilter();
+    }
+    if (typeof loadChildren === 'function') {
+        loadChildren();
+    }
+    if (typeof loadInviteCode === 'function') {
+        loadInviteCode();
+    }
 
     // Прокручиваем к самому верху страницы, где находится админ-панель
     setTimeout(() => {
