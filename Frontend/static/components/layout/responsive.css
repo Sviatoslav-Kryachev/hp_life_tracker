@@ -68,33 +68,49 @@
     }
     
     /* Activities section */
-    .grid.lg\\:grid-cols-3 > #activities,
-    .grid.lg\\:grid-cols-3 > .lg\\:col-span-2 {
+    #activities {
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: 100vw !important;
         box-sizing: border-box !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+    }
+    
+    .grid.lg\\:grid-cols-3 > #activities,
+    .grid.lg\\:grid-cols-3 > .lg\\:col-span-2 {
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
     
     /* Activity cards */
     .activity-card {
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: calc(100vw - 1rem) !important;
         box-sizing: border-box !important;
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
+        padding: 0.5rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
         overflow-x: hidden !important;
         gap: 0.5rem !important;
+        flex-wrap: wrap !important;
     }
     
     .activity-card > div:first-child {
         min-width: 0 !important;
-        flex: 1 1 auto !important;
+        flex: 1 1 100% !important;
         max-width: 100% !important;
         overflow: hidden !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
     }
     
     .activity-card > button,
@@ -103,15 +119,18 @@
     .activity-card .edit-btn,
     .activity-card .delete-btn {
         flex-shrink: 0 !important;
-        min-width: auto !important;
+        min-width: 2.5rem !important;
+        max-width: 2.5rem !important;
+        padding: 0.5rem !important;
+        font-size: 0.875rem !important;
     }
     
     /* Activities container */
-    #activities,
     #activities > div,
+    #activities-accordion-content,
     .bg-gradient-to-r.from-blue-50.to-indigo-50 {
-        padding-right: 0.75rem !important;
-        padding-left: 0.75rem !important;
+        padding-right: 0 !important;
+        padding-left: 0 !important;
         margin-right: 0 !important;
         margin-left: 0 !important;
         box-sizing: border-box !important;
@@ -121,9 +140,36 @@
         overflow-y: visible !important;
     }
     
+    #activities,
     #activities * {
         max-width: 100% !important;
         box-sizing: border-box !important;
+    }
+    
+    /* Фильтры и сортировка на мобильных */
+    #activities .bg-gray-50 {
+        padding: 0.5rem !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    #activities .flex.flex-nowrap {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    #activities select,
+    #activities .custom-dropdown {
+        min-width: auto !important;
+        max-width: 100% !important;
+        font-size: 0.75rem !important;
+        padding: 0.5rem !important;
+    }
+    
+    /* Заголовок секции активностей */
+    #activities h2 {
+        font-size: 1.125rem !important;
+        padding: 0 0.5rem !important;
     }
     
     /* Safe area для iOS */
