@@ -885,17 +885,16 @@ async function checkTelegramStatus() {
                 statusDiv.innerHTML = `<p class="text-sm text-green-800">✅ ${t('telegram_linked')}: ${data.telegram_id}</p>`;
                 statusDiv.classList.remove('hidden');
             }
-                if (input) {
-                    input.value = data.telegram_id;
-                    input.disabled = true;
-                }
-            } else {
-                if (statusDiv) {
-                    statusDiv.classList.add('hidden');
-                }
-                if (input) {
-                    input.disabled = false;
-                }
+            if (input) {
+                input.value = data.telegram_id;
+                input.disabled = true;
+            }
+        } else {
+            if (statusDiv) {
+                statusDiv.classList.add('hidden');
+            }
+            if (input) {
+                input.disabled = false;
             }
         }
     } catch (e) {
