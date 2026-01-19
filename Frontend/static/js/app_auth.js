@@ -379,61 +379,26 @@ async function showApp() {
         }
     }
     
+    // Скрываем appSection до полной загрузки данных
+    if (appSection) {
+        appSection.classList.add("hidden");
+        appSection.style.display = 'none';
+    }
+    
     if (typeof window.loadAppComponents === 'function') {
         await window.loadAppComponents();
     }
     
+    // Скрываем authSection, но НЕ показываем appSection до загрузки данных
     if (authSection) {
         authSection.classList.add("hidden");
         authSection.style.display = 'none';
         authSection.style.height = '0';
         authSection.style.overflow = 'hidden';
     }
-    if (appSection) {
-        appSection.classList.remove("hidden");
-        appSection.style.display = '';
-        appSection.style.height = '';
-        appSection.style.overflow = '';
-        appSection.style.position = '';
-        appSection.style.left = '';
-    }
-    
-    const bottomNav = document.getElementById('bottom-navigation');
-    if (bottomNav) {
-        bottomNav.classList.remove('hidden');
-    }
 
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-    
-    // Инициализируем мобильную навигацию
-    // Только если токен валидный (мы уже проверили это в начале showApp)
-    const isMobile = window.innerWidth <= 1024;
-    if (isMobile) {
-        setTimeout(() => {
-            const hash = window.location.hash.replace('#', '');
-            const initialSection = (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) 
-                ? hash 
-                : 'activities';
-            
-            if (typeof showMobileSection === 'function') {
-                showMobileSection(initialSection);
-            }
-            
-            const activeBtn = document.querySelector(`.mobile-nav-btn[data-section="${initialSection}"]`);
-            if (activeBtn) {
-                document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-                    btn.classList.remove('active-nav');
-                });
-                activeBtn.classList.add('active-nav');
-            }
-            
-            if (window.location.hash !== `#${initialSection}`) {
-                window.history.replaceState({ section: initialSection }, '', `#${initialSection}`);
-            }
-        }, 100);
-    }
+    // НЕ показываем appSection и bottomNav до загрузки данных
+    // Они будут показаны после завершения loadData()
 
     // Сбрасываем кэш элементов
     if (typeof window !== 'undefined') {
@@ -516,6 +481,26 @@ async function showApp() {
             
             console.log('[showApp] All data loaded successfully');
             
+            // ТОЛЬКО ПОСЛЕ загрузки всех данных показываем appSection и остальной контент
+            if (appSection) {
+                appSection.classList.remove("hidden");
+                appSection.style.display = '';
+                appSection.style.height = '';
+                appSection.style.overflow = '';
+                appSection.style.position = '';
+                appSection.style.left = '';
+            }
+            
+            const bottomNav = document.getElementById('bottom-navigation');
+            if (bottomNav) {
+                bottomNav.classList.remove('hidden');
+            }
+            
+            // Прокручиваем страницу вверх после показа контента
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            
             // Проверяем статус администратора после загрузки всех данных
             // Делаем это с задержкой, чтобы убедиться, что все компоненты загружены
             setTimeout(() => {
@@ -526,24 +511,47 @@ async function showApp() {
             
             // Инициализируем мобильную навигацию после загрузки данных
             // Только если токен валидный (мы уже проверили это в начале showApp)
-            if (window.innerWidth <= 1024 && typeof window.navigateToSection === 'function') {
-                // Небольшая задержка, чтобы DOM успел обновиться
+            const isMobile = window.innerWidth <= 1024;
+            if (isMobile) {
                 setTimeout(() => {
                     const hash = window.location.hash.replace('#', '');
-                    if (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) {
-                        window.navigateToSection(hash);
-                    } else {
-                        window.navigateToSection('activities');
+                    const initialSection = (hash && ['activities', 'rewards', 'history', 'goals'].includes(hash)) 
+                        ? hash 
+                        : 'activities';
+                    
+                    if (typeof showMobileSection === 'function') {
+                        showMobileSection(initialSection);
+                    }
+                    
+                    const activeBtn = document.querySelector(`.mobile-nav-btn[data-section="${initialSection}"]`);
+                    if (activeBtn) {
+                        document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                            btn.classList.remove('active-nav');
+                        });
+                        activeBtn.classList.add('active-nav');
+                    }
+                    
+                    if (window.location.hash !== `#${initialSection}`) {
+                        window.history.replaceState({ section: initialSection }, '', `#${initialSection}`);
                     }
                 }, 100);
             }
         } catch (error) {
             console.error('[showApp] Error loading data:', error);
+            // Даже при ошибке показываем appSection, чтобы пользователь видел интерфейс
+            if (appSection) {
+                appSection.classList.remove("hidden");
+                appSection.style.display = '';
+            }
+            const bottomNav = document.getElementById('bottom-navigation');
+            if (bottomNav) {
+                bottomNav.classList.remove('hidden');
+            }
         }
     };
     
     // Начинаем загрузку данных сразу без задержек
-    loadData();
+    await loadData();
 }
 
 // Экспортируем функции в глобальную область видимости
