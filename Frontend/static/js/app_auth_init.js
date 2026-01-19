@@ -12,23 +12,18 @@ function applyAuthCheck() {
         const appSection = document.getElementById('app-section');
         
         if (token) {
-            // Если есть токен, проверяем его валидность асинхронно
-            // Но сначала показываем auth-section, пока не подтвердится валидность
+            // Если есть токен, скрываем auth-section сразу, чтобы избежать мигания
+            // Проверяем валидность токена асинхронно, но не показываем auth-section
             if (authSection) {
-                authSection.classList.remove('hidden');
-                authSection.style.display = '';
-                authSection.style.visibility = 'visible';
-                authSection.style.height = '';
-                authSection.style.overflow = '';
+                authSection.classList.add('hidden');
+                authSection.style.display = 'none';
+                authSection.style.visibility = 'hidden';
             }
             if (appSection) {
+                // app-section будет показан в showApp() после проверки токена
                 appSection.classList.add('hidden');
                 appSection.style.display = 'none';
-                appSection.style.visibility = 'visible';
-                appSection.style.height = '0';
-                appSection.style.overflow = 'hidden';
-                appSection.style.position = 'absolute';
-                appSection.style.left = '-9999px';
+                appSection.style.visibility = 'hidden';
             }
             
             // Асинхронно проверяем валидность токена
