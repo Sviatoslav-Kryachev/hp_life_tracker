@@ -1345,42 +1345,50 @@ async function openManualTimeModal(activityId, filterByTime = true) {
     if (activityId) {
         // Преобразуем activityId в строку для сравнения с value опций
         const activityIdStr = String(activityId);
+        console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Available options:", Array.from(select.options).map(o => ({value: o.value, text: o.textContent})));
         
         // Сначала устанавливаем значение синхронно, сразу после добавления опций
         const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
         if (optionExists) {
+            // Устанавливаем значение
             select.value = activityIdStr;
+            
             // Принудительно обновляем selectedIndex
             const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
             if (selectedOption) {
                 Array.from(select.options).forEach(opt => opt.selected = false);
                 selectedOption.selected = true;
                 select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
-            }
-        }
-        
-        // Обновляем UI для выбранной активности сразу после установки значения
-        if (optionExists && typeof window.updateManualModalUI === 'function') {
-            window.updateManualModalUI(activityIdStr);
-        }
-        
-        // Используем один requestAnimationFrame для гарантии обновления UI
-        requestAnimationFrame(() => {
-            // Проверяем, что значение установлено правильно
-            if (select.value !== activityIdStr) {
-                select.value = activityIdStr;
-                const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
-                if (selectedOption) {
-                    Array.from(select.options).forEach(opt => opt.selected = false);
-                    selectedOption.selected = true;
-                    select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
-                }
+                console.log("[openManualTimeModal] Activity selected:", selectedOption.textContent, "value:", select.value, "selectedIndex:", select.selectedIndex);
             }
             
-            // Триггерим событие change для обновления UI (только один раз)
-            const changeEvent = new Event('change', { bubbles: true, cancelable: true });
-            select.dispatchEvent(changeEvent);
-        });
+            // Обновляем UI для выбранной активности сразу после установки значения
+            if (typeof window.updateManualModalUI === 'function') {
+                window.updateManualModalUI(activityIdStr);
+            }
+            
+            // Используем один requestAnimationFrame для гарантии обновления UI
+            requestAnimationFrame(() => {
+                // Проверяем, что значение установлено правильно
+                if (select.value !== activityIdStr) {
+                    console.warn("[openManualTimeModal] Value was reset, restoring:", activityIdStr);
+                    select.value = activityIdStr;
+                    const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
+                    if (selectedOption) {
+                        Array.from(select.options).forEach(opt => opt.selected = false);
+                        selectedOption.selected = true;
+                        select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
+                    }
+                }
+                
+                // Триггерим событие change для обновления UI (только один раз)
+                const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+                select.dispatchEvent(changeEvent);
+                console.log("[openManualTimeModal] Change event dispatched, final value:", select.value);
+            });
+        } else {
+            console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select! Available values:", Array.from(select.options).map(o => o.value));
+        }
         
         // Обновляем UI для выбранной активности после установки значения
         requestAnimationFrame(() => {
