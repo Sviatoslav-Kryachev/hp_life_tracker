@@ -1359,97 +1359,27 @@ async function openManualTimeModal(activityId, filterByTime = true) {
             }
         }
         
-        // Затем используем requestAnimationFrame для гарантии обновления UI
+        // Обновляем UI для выбранной активности сразу после установки значения
+        if (optionExists && typeof window.updateManualModalUI === 'function') {
+            window.updateManualModalUI(activityIdStr);
+        }
+        
+        // Используем один requestAnimationFrame для гарантии обновления UI
         requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                // Проверяем, что опция с таким value существует
-                const optionExists = Array.from(select.options).some(opt => opt.value === activityIdStr);
-                console.log("[openManualTimeModal] Setting activity ID:", activityIdStr, "Option exists:", optionExists, "Options:", Array.from(select.options).map(o => o.value));
-                
-                if (optionExists) {
-                    // Находим опцию и устанавливаем её как выбранную
-                    const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
-                    if (selectedOption) {
-                        // Снимаем выделение со всех опций
-                        Array.from(select.options).forEach(opt => opt.selected = false);
-                        
-                        // Устанавливаем выбранную опцию
-                        selectedOption.selected = true;
-                        select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
-                        select.value = activityIdStr;
-                        
-                        console.log("[openManualTimeModal] Select value set to:", select.value, "selectedIndex:", select.selectedIndex, "selectedOption:", selectedOption.textContent);
-                        
-                        // Принудительно обновляем визуальное отображение через изменение стиля
-                        const originalDisplay = select.style.display;
-                        select.style.display = 'none';
-                        select.offsetHeight; // Принудительный reflow
-                        select.style.display = originalDisplay;
-                        
-                        // Триггерим события для обновления UI
-                        const changeEvent = new Event('change', { bubbles: true, cancelable: true });
-                        select.dispatchEvent(changeEvent);
-                        
-                        const inputEvent = new Event('input', { bubbles: true, cancelable: true });
-                        select.dispatchEvent(inputEvent);
-                        
-                        // Принудительно обновляем визуальное отображение через небольшой таймаут
-                        setTimeout(() => {
-                            // Проверяем, что значение действительно установлено
-                            if (select.value !== activityIdStr) {
-                                select.value = activityIdStr;
-                                selectedOption.selected = true;
-                                select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
-                            }
-                            console.log("[openManualTimeModal] Final check - value:", select.value, "selectedIndex:", select.selectedIndex);
-                        }, 10);
-                        
-                        if (typeof window.updateManualModalUI === 'function') {
-                            window.updateManualModalUI(activityIdStr);
-                        }
-                    }
-                } else {
-                    console.warn("[openManualTimeModal] Option with value", activityIdStr, "not found in select! Retrying...");
-                    // Если опция не найдена, пробуем еще раз через небольшую задержку
-                    setTimeout(() => {
-                        const optionExistsRetry = Array.from(select.options).some(opt => opt.value === activityIdStr);
-                        if (optionExistsRetry) {
-                            const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
-                            if (selectedOption) {
-                                Array.from(select.options).forEach(opt => opt.selected = false);
-                                selectedOption.selected = true;
-                                select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
-                                select.value = activityIdStr;
-                                
-                                // Принудительно обновляем визуальное отображение
-                                const originalDisplay = select.style.display;
-                                select.style.display = 'none';
-                                select.offsetHeight; // Принудительный reflow
-                                select.style.display = originalDisplay;
-                                
-                                const changeEvent = new Event('change', { bubbles: true, cancelable: true });
-                                select.dispatchEvent(changeEvent);
-                                const inputEvent = new Event('input', { bubbles: true, cancelable: true });
-                                select.dispatchEvent(inputEvent);
-                                
-                                setTimeout(() => {
-                                    if (select.value !== activityIdStr) {
-                                        select.value = activityIdStr;
-                                        selectedOption.selected = true;
-                                        select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
-                                    }
-                                }, 10);
-                                
-                                if (typeof window.updateManualModalUI === 'function') {
-                                    window.updateManualModalUI(activityIdStr);
-                                }
-                            }
-                        } else {
-                            console.error("[openManualTimeModal] Option still not found after retry!");
-                        }
-                    }, 150);
+            // Проверяем, что значение установлено правильно
+            if (select.value !== activityIdStr) {
+                select.value = activityIdStr;
+                const selectedOption = Array.from(select.options).find(opt => opt.value === activityIdStr);
+                if (selectedOption) {
+                    Array.from(select.options).forEach(opt => opt.selected = false);
+                    selectedOption.selected = true;
+                    select.selectedIndex = Array.from(select.options).indexOf(selectedOption);
                 }
-            });
+            }
+            
+            // Триггерим событие change для обновления UI (только один раз)
+            const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+            select.dispatchEvent(changeEvent);
         });
         
         // Обновляем UI для выбранной активности после установки значения
