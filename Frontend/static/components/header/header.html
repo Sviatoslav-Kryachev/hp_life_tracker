@@ -26,7 +26,7 @@
             <div class="flex items-center gap-1 md:gap-2">
                 <!-- Language Switcher -->
                 <div class="relative" id="language-switcher-wrapper">
-                    <button id="language-switcher-btn" onclick="toggleLanguageMenu(); event.stopPropagation();" class="p-2 rounded-lg hover:bg-gray-100 transition-all relative flex items-center gap-1.5 touch-manipulation" title="Выбрать язык" type="button">
+                    <button id="language-switcher-btn" onclick="if(typeof toggleLanguageMenu==='function')toggleLanguageMenu();else if(typeof window.toggleLanguageMenu==='function')window.toggleLanguageMenu();event.stopPropagation();" class="p-2 rounded-lg hover:bg-gray-100 transition-all relative flex items-center gap-1.5 touch-manipulation" title="Выбрать язык" type="button">
                         <i class="fas fa-globe text-gray-700 text-base md:text-lg"></i>
                         <span id="current-language-flag" class="text-base">🇷🇺</span>
                     </button>

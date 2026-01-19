@@ -98,20 +98,31 @@ function applyTranslations() {
 }
 
 function toggleLanguageMenu() {
+    console.log('[toggleLanguageMenu] Function called');
     const menu = document.getElementById('language-menu');
     if (menu) {
         const isHidden = menu.classList.contains('hidden');
+        console.log('[toggleLanguageMenu] Menu found, isHidden:', isHidden);
+        
         // Закрываем все другие открытые меню
         document.querySelectorAll('#language-menu:not(.hidden)').forEach(m => {
             if (m !== menu) m.classList.add('hidden');
         });
+        
         // Переключаем текущее меню
         menu.classList.toggle('hidden');
+        
         // Для мобильных устройств убеждаемся, что меню видимо
-        if (!isHidden === false) {
+        if (isHidden) {
             // Меню открывается - убеждаемся, что оно на переднем плане
             menu.style.zIndex = '10002';
+            menu.style.display = 'block';
+            console.log('[toggleLanguageMenu] Menu opened, z-index set to 10002');
+        } else {
+            console.log('[toggleLanguageMenu] Menu closed');
         }
+    } else {
+        console.warn('[toggleLanguageMenu] Language menu element not found!');
     }
 }
 

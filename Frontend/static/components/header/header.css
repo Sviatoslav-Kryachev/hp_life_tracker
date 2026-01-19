@@ -170,11 +170,14 @@
         overflow-y: auto !important;
         position: fixed !important;
         transform: translateX(0) !important;
+        display: block !important;
     }
     
     /* Убеждаемся, что меню не обрезается на мобильных */
     #language-switcher-wrapper {
         overflow: visible !important;
+        position: relative !important;
+        z-index: 10001 !important;
     }
     
     /* Улучшаем кликабельность на мобильных */
@@ -182,6 +185,15 @@
         min-width: 2.5rem !important;
         min-height: 2.5rem !important;
         padding: 0.5rem !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+    
+    /* Убеждаемся, что меню видимо на мобильных */
+    #language-menu:not(.hidden) {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 
