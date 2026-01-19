@@ -433,9 +433,8 @@ function toggleActivitiesAccordion() {
         text.textContent = t('show_all_activities');
         localStorage.setItem('activitiesAccordionExpanded', 'false');
 
-        setTimeout(() => {
-            loadActiveTimers();
-        }, 100);
+        // НЕ вызываем loadActiveTimers() здесь, так как это может вызвать бесконечный цикл
+        // Таймеры обновляются автоматически через setInterval в loadActiveTimers()
     }
 }
 
@@ -478,9 +477,8 @@ function updateActivitiesAccordionButton() {
         icon.style.transform = 'rotate(180deg)';
         text.textContent = t('hide_activities');
 
-        setTimeout(() => {
-            loadActiveTimers();
-        }, 100);
+        // НЕ вызываем loadActiveTimers() здесь, так как это может вызвать бесконечный цикл
+        // Таймеры обновляются автоматически через setInterval в loadActiveTimers()
     } else {
         const allCards = Array.from(activitiesListHidden.children);
 
@@ -506,10 +504,21 @@ function updateActivitiesAccordionButton() {
 }
 
 // Загружает активные таймеры с сервера и восстанавливает их состояние
+let isLoadingActiveTimers = false; // Флаг для предотвращения одновременных вызовов
 async function loadActiveTimers() {
+    // Защита от повторных вызовов
+    if (isLoadingActiveTimers) {
+        console.log("[loadActiveTimers] Already loading, skipping...");
+        return;
+    }
+    
+    isLoadingActiveTimers = true;
     try {
         const token = typeof getAuthToken === 'function' ? getAuthToken() : (typeof window !== 'undefined' && window.getAuthToken) ? window.getAuthToken() : localStorage.getItem('token') || '';
-        if (!token) return;
+        if (!token) {
+            isLoadingActiveTimers = false;
+            return;
+        }
 
         // Сохраняем текущие активные таймеры перед загрузкой с сервера
         const existingTimers = new Map();
@@ -591,6 +600,8 @@ async function loadActiveTimers() {
         });
     } catch (e) {
         console.error("Error loading active timers:", e);
+    } finally {
+        isLoadingActiveTimers = false;
     }
 }
 
