@@ -353,6 +353,13 @@ function navigateToSection(section) {
 function showMobileSection(section) {
     console.log('[showMobileSection] Showing section:', section);
     
+    // Проверяем, мобильное ли устройство
+    const isMobile = window.innerWidth <= 1024;
+    if (!isMobile) {
+        console.log('[showMobileSection] Not mobile device, skipping');
+        return;
+    }
+    
     // Находим все grid контейнеры с классом lg:grid-cols-3
     // Их два: один для activities+sidebar, другой для rewards+history
     const allGrids = document.querySelectorAll('.grid.lg\\:grid-cols-3');
