@@ -985,9 +985,13 @@ async function checkAuth() {
 
     // Сразу скрываем auth-section если есть токен, чтобы избежать мигания
     const token = getAuthToken();
+    // НЕ показываем appSection здесь - это сделает showApp() после загрузки данных
     if (token && authSection && appSection) {
+        // Скрываем authSection, но НЕ показываем appSection до загрузки данных
         authSection.classList.add("hidden");
-        appSection.classList.remove("hidden");
+        // Убеждаемся, что appSection скрыт до вызова showApp()
+        appSection.classList.add("hidden");
+        appSection.style.display = 'none';
     } else {
         if (authSection && appSection) {
             showAuth();
@@ -997,6 +1001,7 @@ async function checkAuth() {
 
     try {
         await loadCurrentUser();
+        // showApp() покажет appSection только после загрузки всех данных
         showApp();
         
         // После загрузки приложения убеждаемся, что страница вверху
@@ -2902,17 +2907,20 @@ window.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Сразу проверяем токен и скрываем auth-section если он есть
+        // Сразу проверяем токен
         const token = getAuthToken();
         if (token) {
+            // Скрываем auth-section, но НЕ показываем app-section до загрузки данных
+            // app-section будет показан в showApp() после загрузки всех данных
             authSection.classList.add("hidden");
-            appSection.classList.remove("hidden");
+            appSection.classList.add("hidden");
+            appSection.style.display = 'none';
         } else {
             // Если токена нет, показываем auth-section
             authSection.classList.remove("hidden");
             appSection.classList.add("hidden");
         }
-        // Check auth on load
+        // Check auth on load - это вызовет showApp() после проверки токена
         checkAuth();
     } catch (error) {
         console.error("Error during page initialization:", error);

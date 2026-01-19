@@ -414,6 +414,7 @@ async function showApp() {
     }
 
     // Загружаем данные сразу без задержек
+    // Эта функция должна завершиться только после загрузки всех критичных данных
     const loadData = async () => {
         console.log('[showApp] Starting data load immediately...');
         
